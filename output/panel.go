@@ -58,6 +58,8 @@ func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri s
 
 func (ap *AudioPanel) Play() {
 	speaker.Play(beep.Seq(ap.volume, beep.Callback(func() {
+		speaker.Clear()
+		speaker.Close()
 		ap.done <- struct{}{}
 	})))
 }

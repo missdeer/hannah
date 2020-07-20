@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/faiface/beep/speaker"
@@ -13,20 +14,32 @@ import (
 
 var (
 	ShouldQuit   = errors.New("should quit application now")
-	PreviousSong = errors.New("Play previous song")
-	NextSong     = errors.New("Play next song")
+	PreviousSong = errors.New("play previous song")
+	NextSong     = errors.New("play next song")
 	ap           *output.AudioPanel
 	screen       tcell.Screen
 	tcellEvents  = make(chan tcell.Event)
 )
 
 func PlayMedia(uri string, index int, total int, artist string, title string) error {
+	if ap != nil {
+		ap.SetMessage(fmt.Sprintf("Loading %s ...", uri))
+		screen.Clear()
+		ap.Draw(screen)
+		screen.Show()
+	}
 	r, err := input.OpenSource(uri)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
+	if ap != nil {
+		ap.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
+		screen.Clear()
+		ap.Draw(screen)
+		screen.Show()
+	}
 	decoder := getDecoder(uri)
 	streamer, format, err := decoder(r)
 	if err != nil {
@@ -34,6 +47,12 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	}
 	defer streamer.Close()
 
+	if ap != nil {
+		ap.SetMessage("Initializing speaker...")
+		screen.Clear()
+		ap.Draw(screen)
+		screen.Show()
+	}
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 	defer func() {
 		speaker.Clear()
@@ -62,6 +81,7 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 		ap.Update(format.SampleRate, streamer, uri, index, total, artist, title, done)
 	}
 
+	ap.SetMessage("")
 	screen.Clear()
 	ap.Draw(screen)
 	screen.Show()

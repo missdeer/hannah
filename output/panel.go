@@ -53,6 +53,7 @@ type AudioPanel struct {
 	total      int
 	artist     string
 	title      string
+	message    string
 	done       chan struct{}
 }
 
@@ -61,17 +62,17 @@ func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri s
 	resampler := beep.ResampleRatio(4, 1, ctrl)
 	volume := &effects.Volume{Streamer: resampler, Base: 2}
 	return &AudioPanel{
-		sampleRate,
-		streamer,
-		ctrl,
-		resampler,
-		volume,
-		uri,
-		index,
-		total,
-		artist,
-		title,
-		done,
+		sampleRate: sampleRate,
+		streamer:   streamer,
+		ctrl:       ctrl,
+		resampler:  resampler,
+		volume:     volume,
+		mediaURI:   uri,
+		index:      index,
+		total:      total,
+		artist:     artist,
+		title:      title,
+		done:       done,
 	}
 }
 
@@ -87,6 +88,10 @@ func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSee
 	ap.artist = artist
 	ap.title = title
 	ap.done = done
+}
+
+func (ap *AudioPanel) SetMessage(message string) {
+	ap.message = message
 }
 
 func (ap *AudioPanel) IsPaused() bool {
@@ -156,6 +161,10 @@ func (ap *AudioPanel) Draw(screen tcell.Screen) {
 	drawTextLine(screen, 0, row, "Repeat/Shuffle"+strings.Repeat(" ", len(s)-len(`Repeat/Shuffle(R/F):`))+"(R/F):", mainStyle)
 	drawTextLine(screen, len(s), row, fmt.Sprintf("%s/%s", bool2str(config.Repeat), bool2str(config.Shuffle)), statusStyle)
 	row++
+
+	if ap.message != "" {
+		drawTextLine(screen, 0, row+1, ap.message, mainStyle)
+	}
 }
 
 func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {

@@ -104,12 +104,16 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 
 	var res SearchResult
 	for _, r := range sr.Result.Songs {
+		var artists []string
+		for _, a := range r.Artists {
+			artists = append(artists, a.Name)
+		}
 		res = append(res, Song{
 			ID:       strconv.Itoa(r.ID),
 			URL:      fmt.Sprintf(`http://music.163.com/song/media/outer/url?id=%d.mp3`, r.ID),
 			Title:    r.Name,
 			Image:    r.Album.PicURL,
-			Artist:   r.Artists[0].Name,
+			Artist:   strings.Join(artists, "/"),
 			Provider: "netease",
 		})
 	}

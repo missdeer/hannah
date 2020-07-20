@@ -89,6 +89,10 @@ func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSee
 	ap.done = done
 }
 
+func (ap *AudioPanel) IsPaused() bool {
+	return ap.ctrl.Paused
+}
+
 func (ap *AudioPanel) Play() {
 	speaker.Play(beep.Seq(ap.volume, beep.Callback(func() {
 		ap.done <- struct{}{}
@@ -235,6 +239,8 @@ func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {
 			speaker.Close()
 			return true, HandleActionNEXT
 		}
+	case *tcell.EventResize:
+		return true, HandleActionNOP
 	}
 	return false, HandleActionNOP
 }

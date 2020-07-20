@@ -89,9 +89,11 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 				}
 			}
 		case <-seconds:
-			screen.Clear()
-			ap.Draw(screen)
-			screen.Show()
+			if !ap.IsPaused() {
+				screen.Clear()
+				ap.Draw(screen)
+				screen.Show()
+			}
 		case <-done:
 			return NextSong
 		}

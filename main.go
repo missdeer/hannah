@@ -15,6 +15,7 @@ import (
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/handler"
+	"github.com/missdeer/hannah/provider"
 )
 
 func scanMediasInDirectory(dir string) (res []string) {
@@ -37,8 +38,7 @@ func scanMediasInDirectory(dir string) (res []string) {
 	return
 }
 
-func scanMedias() (res []string) {
-	medias := flag.Args()
+func scanMedias(medias []string) (res []string) {
 	for _, media := range medias {
 		if strings.HasPrefix(media, "http://") || strings.HasPrefix(media, "https://") {
 			res = append(res, media)
@@ -61,6 +61,8 @@ func scanMedias() (res []string) {
 }
 
 func main() {
+	flag.IntVarP(&config.Page, "page", "", 0, "page number of search result")
+	flag.IntVarP(&config.Limit, "limit", "", 25, "max count of search result")
 	flag.BoolVarP(&config.Shuffle, "shuffle", "", false, "shuffle play list order")
 	flag.BoolVarP(&config.Repeat, "repeat", "", false, "repeat playing")
 	flag.StringVarP(&config.Action, "action", "a", "play", "play, search(search and play), m3u(search and save as m3u file), download(search and download media files)")
@@ -68,12 +70,16 @@ func main() {
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "", "", "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "", "", "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
 	flag.Parse()
-	medias := scanMedias()
-	if len(medias) == 0 {
-		fmt.Println("Please input media URL or local path.")
-		return
+
+	medias := flag.Args()
+	if config.Action == "play" {
+		medias = scanMedias(flag.Args())
+		if len(medias) == 0 {
+			fmt.Println("Please input media URL or local path.")
+			return
+		}
+		fmt.Printf("Found %d songs.\n", len(medias))
 	}
-	fmt.Printf("Found %d songs.\n", len(medias))
 	rand.Seed(time.Now().UnixNano())
 	switch config.Action {
 	case "play":
@@ -83,7 +89,7 @@ func main() {
 			}
 			for i := 0; i < len(medias); i++ {
 				media := medias[i]
-				err := handler.PlayMedia(media, i+1, len(medias))
+				err := handler.PlayMedia(media, i+1, len(medias), "", "") // TODO: extract from file name or IDv3 tag
 				switch err {
 				case handler.ShouldQuit:
 					return
@@ -92,6 +98,36 @@ func main() {
 				case handler.NextSong:
 					// auto next
 				default:
+				}
+			}
+		}
+	case "search":
+		if config.Provider == "" {
+			log.Fatal("set the provider parameter to search")
+		}
+		p := provider.GetProvider(config.Provider)
+		if p != nil {
+			songs, err := p.Search(strings.Join(medias, " "), config.Page, config.Limit)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for played := false; !played || config.Repeat; played = true {
+				if config.Shuffle {
+					rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
+				}
+				for i := 0; i < len(songs); i++ {
+					song := songs[i]
+					err := handler.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title)
+					switch err {
+					case handler.ShouldQuit:
+						return
+					case handler.PreviousSong:
+						i -= 2
+					case handler.NextSong:
+						// auto next
+					default:
+					}
 				}
 			}
 		}

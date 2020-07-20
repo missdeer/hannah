@@ -11,8 +11,10 @@ var (
 	Provider    string
 	Socks5Proxy string
 	HttpProxy   string
+	Limit       int
+	Page        int
 
-	supportedExtentions = map[string]struct{}{
+	supportedExtensions = map[string]struct{}{
 		".mp3":  {},
 		".flac": {},
 		".wav":  {},
@@ -21,6 +23,6 @@ var (
 )
 
 func SupportedFileType(ext string) bool {
-	_, ok := supportedExtentions[strings.ToLower(ext)]
+	_, ok := supportedExtensions[strings.ToLower(ext)]
 	return ok
 }

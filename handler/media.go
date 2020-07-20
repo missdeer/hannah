@@ -20,7 +20,7 @@ var (
 	tcellEvents  = make(chan tcell.Event)
 )
 
-func PlayMedia(uri string, index int, total int) error {
+func PlayMedia(uri string, index int, total int, artist string, title string) error {
 	r, err := input.OpenSource(uri)
 	if err != nil {
 		return err
@@ -35,14 +35,14 @@ func PlayMedia(uri string, index int, total int) error {
 	defer streamer.Close()
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	defer func(){
+	defer func() {
 		speaker.Clear()
 		speaker.Close()
 	}()
 
 	done := make(chan struct{})
 	if ap == nil {
-		ap = output.NewAudioPanel(format.SampleRate, streamer, uri, index, total, done)
+		ap = output.NewAudioPanel(format.SampleRate, streamer, uri, index, total, artist, title, done)
 
 		screen, err = tcell.NewScreen()
 		if err != nil {
@@ -59,7 +59,7 @@ func PlayMedia(uri string, index int, total int) error {
 			}
 		}()
 	} else {
-		ap.Update(format.SampleRate, streamer, uri, index, total, done)
+		ap.Update(format.SampleRate, streamer, uri, index, total, artist, title, done)
 	}
 
 	screen.Clear()

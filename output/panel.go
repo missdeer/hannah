@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/effects"
@@ -30,9 +31,14 @@ func bool2str(b bool) string {
 }
 
 func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
-	for _, r := range s {
+	text := []rune(s)
+	for _, r := range text {
 		screen.SetContent(x, y, r, nil, style)
-		x++
+		if utf8.RuneLen(r) > 1 {
+			x += 2
+		} else {
+			x++
+		}
 	}
 }
 
@@ -45,10 +51,12 @@ type AudioPanel struct {
 	mediaURI   string
 	index      int
 	total      int
+	artist     string
+	title      string
 	done       chan struct{}
 }
 
-func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, done chan struct{}) *AudioPanel {
+func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, artist string, title string, done chan struct{}) *AudioPanel {
 	ctrl := &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
 	resampler := beep.ResampleRatio(4, 1, ctrl)
 	volume := &effects.Volume{Streamer: resampler, Base: 2}
@@ -61,11 +69,13 @@ func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri s
 		uri,
 		index,
 		total,
+		artist,
+		title,
 		done,
 	}
 }
 
-func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, done chan struct{}) {
+func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, artist string, title string, done chan struct{}) {
 	ap.sampleRate = sampleRate
 	ap.streamer = streamer
 	ap.ctrl = &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
@@ -74,6 +84,8 @@ func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSee
 	ap.mediaURI = uri
 	ap.index = index
 	ap.total = total
+	ap.artist = artist
+	ap.title = title
 	ap.done = done
 }
 
@@ -113,17 +125,33 @@ func (ap *AudioPanel) Draw(screen tcell.Screen) {
 	drawTextLine(screen, 0, 5, s, mainStyle)
 	drawTextLine(screen, len(s), 5, ap.mediaURI, statusStyle)
 
-	drawTextLine(screen, 0, 6, "Position"+strings.Repeat(" ", len(s)-len(`Position(Q/W):`))+"(Q/W):", mainStyle)
-	drawTextLine(screen, len(s), 6, positionStatus, statusStyle)
+	row := 6
+	if ap.title != "" {
+		drawTextLine(screen, 0, row, "Title"+strings.Repeat(" ", len(s)-len(`Title:`))+":", mainStyle)
+		drawTextLine(screen, len(s), row, ap.title, statusStyle)
+		row++
+	}
+	if ap.artist != "" {
+		drawTextLine(screen, 0, row, "Artist"+strings.Repeat(" ", len(s)-len(`Artist:`))+":", mainStyle)
+		drawTextLine(screen, len(s), row, ap.artist, statusStyle)
+		row++
+	}
 
-	drawTextLine(screen, 0, 7, "Volume"+strings.Repeat(" ", len(s)-len(`Volume(A/S):`))+"(A/S):", mainStyle)
-	drawTextLine(screen, len(s), 7, volumeStatus, statusStyle)
+	drawTextLine(screen, 0, row, "Position"+strings.Repeat(" ", len(s)-len(`Position(Q/W):`))+"(Q/W):", mainStyle)
+	drawTextLine(screen, len(s), row, positionStatus, statusStyle)
+	row++
 
-	drawTextLine(screen, 0, 8, "Speed"+strings.Repeat(" ", len(s)-len(`Speed(Z/X):`))+"(Z/X):", mainStyle)
-	drawTextLine(screen, len(s), 8, speedStatus, statusStyle)
+	drawTextLine(screen, 0, row, "Volume"+strings.Repeat(" ", len(s)-len(`Volume(A/S):`))+"(A/S):", mainStyle)
+	drawTextLine(screen, len(s), row, volumeStatus, statusStyle)
+	row++
 
-	drawTextLine(screen, 0, 9, "Repeat/Shuffle"+strings.Repeat(" ", len(s)-len(`Repeat/Shuffle(R/F):`))+"(R/F):", mainStyle)
-	drawTextLine(screen, len(s), 9, fmt.Sprintf("%s/%s", bool2str(config.Repeat), bool2str(config.Shuffle)), statusStyle)
+	drawTextLine(screen, 0, row, "Speed"+strings.Repeat(" ", len(s)-len(`Speed(Z/X):`))+"(Z/X):", mainStyle)
+	drawTextLine(screen, len(s), row, speedStatus, statusStyle)
+	row++
+
+	drawTextLine(screen, 0, row, "Repeat/Shuffle"+strings.Repeat(" ", len(s)-len(`Repeat/Shuffle(R/F):`))+"(R/F):", mainStyle)
+	drawTextLine(screen, len(s), row, fmt.Sprintf("%s/%s", bool2str(config.Repeat), bool2str(config.Shuffle)), statusStyle)
+	row++
 }
 
 func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {

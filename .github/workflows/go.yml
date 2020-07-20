@@ -20,6 +20,7 @@ jobs:
         
     - name: Build
       run: |
+        sudo apt-get install libasound2
         env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o linux-amd64/hannah -ldflags="-s -w" .
         env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -o linux-386/hannah -ldflags="-s -w" .
         env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=5 go build -o linux-arm-5/hannah -ldflags="-s -w" .

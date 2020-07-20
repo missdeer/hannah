@@ -39,7 +39,7 @@ func PlayMedia(uri string, index int, total int) error {
 		speaker.Clear()
 		speaker.Close()
 	}()
-	
+
 	done := make(chan struct{})
 	if ap == nil {
 		ap = output.NewAudioPanel(format.SampleRate, streamer, uri, index, total, done)

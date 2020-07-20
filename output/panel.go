@@ -11,6 +11,8 @@ import (
 	"github.com/faiface/beep/effects"
 	"github.com/faiface/beep/speaker"
 	"github.com/gdamore/tcell"
+
+	"github.com/missdeer/hannah/config"
 )
 
 const (
@@ -19,6 +21,13 @@ const (
 	HandleActionNEXT
 	HandleActionNOP
 )
+
+func bool2str(b bool) string {
+	if b {
+		return "Enabled"
+	}
+	return "Disabled"
+}
 
 func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
 	for _, r := range s {
@@ -100,18 +109,21 @@ func (ap *AudioPanel) Draw(screen tcell.Screen) {
 	volumeStatus := fmt.Sprintf("%.1f", volume)
 	speedStatus := fmt.Sprintf("%.3fx", speed)
 
-	s := fmt.Sprintf("Media [%d/%d] (P/N):", ap.index, ap.total)
+	s := fmt.Sprintf("Media   [%d/%d] (P/N):", ap.index, ap.total)
 	drawTextLine(screen, 0, 5, s, mainStyle)
 	drawTextLine(screen, len(s), 5, ap.mediaURI, statusStyle)
 
-	drawTextLine(screen, 0, 6, "Position"+strings.Repeat(" ", len(s)-len(`Position`)-len(`(Q/W):`))+"(Q/W):", mainStyle)
+	drawTextLine(screen, 0, 6, "Position"+strings.Repeat(" ", len(s)-len(`Position(Q/W):`))+"(Q/W):", mainStyle)
 	drawTextLine(screen, len(s), 6, positionStatus, statusStyle)
 
-	drawTextLine(screen, 0, 7, "Volume"+strings.Repeat(" ", len(s)-len(`Volume`)-len(`(A/S):`))+"(A/S):", mainStyle)
+	drawTextLine(screen, 0, 7, "Volume"+strings.Repeat(" ", len(s)-len(`Volume(A/S):`))+"(A/S):", mainStyle)
 	drawTextLine(screen, len(s), 7, volumeStatus, statusStyle)
 
-	drawTextLine(screen, 0, 8, "Speed"+strings.Repeat(" ", len(s)-len(`Speed`)-len(`(Z/X):`))+"(Z/X):", mainStyle)
+	drawTextLine(screen, 0, 8, "Speed"+strings.Repeat(" ", len(s)-len(`Speed(Z/X):`))+"(Z/X):", mainStyle)
 	drawTextLine(screen, len(s), 8, speedStatus, statusStyle)
+
+	drawTextLine(screen, 0, 9, "Repeat/Shuffle"+strings.Repeat(" ", len(s)-len(`Repeat/Shuffle(R/F):`))+"(R/F):", mainStyle)
+	drawTextLine(screen, len(s), 9, fmt.Sprintf("%s/%s", bool2str(config.Repeat), bool2str(config.Shuffle)), statusStyle)
 }
 
 func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {
@@ -175,6 +187,14 @@ func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {
 			speaker.Lock()
 			ap.resampler.SetRatio(ap.resampler.Ratio() * 16 / 15)
 			speaker.Unlock()
+			return true, HandleActionNOP
+
+		case 'r':
+			config.Repeat = !config.Repeat
+			return true, HandleActionNOP
+
+		case 'f':
+			config.Shuffle = !config.Shuffle
 			return true, HandleActionNOP
 
 		case 'p':

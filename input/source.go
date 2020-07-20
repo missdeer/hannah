@@ -25,7 +25,7 @@ func openRemoteSource(u string) (io.ReadCloser, error) {
 
 	r, err := url.Parse(u)
 	if err == nil {
-		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Host))
+		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}
 
 	resp, err := client.Do(req)

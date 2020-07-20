@@ -89,7 +89,7 @@ func main() {
 			}
 			for i := 0; i < len(medias); i++ {
 				media := medias[i]
-				err := handler.PlayMedia(media, i+1, len(medias), "", "") // TODO: extract from file name or IDv3 tag
+				err := handler.PlayMedia(media, i+1, len(medias), "", "") // TODO: extract from file name or ID3v1/v2 tag
 				switch err {
 				case handler.ShouldQuit:
 					return
@@ -118,7 +118,12 @@ func main() {
 				}
 				for i := 0; i < len(songs); i++ {
 					song := songs[i]
-					err := handler.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title)
+					songURL, err := p.SongURL(song)
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+					err = handler.PlayMedia(songURL, i+1, len(songs), song.Artist, song.Title)
 					switch err {
 					case handler.ShouldQuit:
 						return

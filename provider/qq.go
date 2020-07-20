@@ -7,6 +7,10 @@ func (p *qq) Search(keyword string, page int, limit int) (SearchResult, error) {
 	return nil, nil
 }
 
+func (p *qq) SongURL(song Song) (string, error){
+	return "", nil
+}
+
 func (p *qq) HotPlaylist(page int) (Playlists, error) {
 	return nil, nil
 }

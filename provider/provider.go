@@ -3,7 +3,6 @@ package provider
 type Song struct {
 	ID       string
 	Title    string
-	URL      string
 	Image    string
 	Artist   string
 	Provider string
@@ -25,6 +24,7 @@ type Playlists []Playlist
 
 type IProvider interface {
 	Search(keyword string, page int, limit int) (SearchResult, error)
+	SongURL(song Song) (string, error)
 	HotPlaylist(page int) (Playlists, error)
 	PlaylistDetail(pl Playlist) (Songs, error)
 }

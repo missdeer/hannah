@@ -78,6 +78,7 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
 
 	client := util.GetHttpClient()
 
@@ -110,7 +111,6 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 		}
 		res = append(res, Song{
 			ID:       strconv.Itoa(r.ID),
-			URL:      fmt.Sprintf(`http://music.163.com/song/media/outer/url?id=%d.mp3`, r.ID),
 			Title:    r.Name,
 			Image:    r.Album.PicURL,
 			Artist:   strings.Join(artists, "/"),
@@ -119,6 +119,10 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 	}
 
 	return res, nil
+}
+
+func (p *netease) SongURL(song Song) (string, error) {
+	return fmt.Sprintf(`http://music.163.com/song/media/outer/url?id=%s.mp3`, song.ID), nil
 }
 
 func (p *netease) HotPlaylist(page int) (Playlists, error) {

@@ -7,6 +7,10 @@ func (p *bilibili) Search(keyword string, page int, limit int) (SearchResult, er
 	return nil, nil
 }
 
+func (p *bilibili) SongURL(song Song) (string, error){
+	return "", nil
+}
+
 func (p *bilibili) HotPlaylist(page int) (Playlists, error) {
 	return nil, nil
 }

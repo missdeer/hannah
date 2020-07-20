@@ -15,6 +15,9 @@ var (
 	ShouldQuit   = errors.New("should quit application now")
 	PreviousSong = errors.New("Play previous song")
 	NextSong     = errors.New("Play next song")
+	ap           *output.AudioPanel
+	screen       tcell.Screen
+	tcellEvents  = make(chan tcell.Event)
 )
 
 func PlayMedia(uri string, index int, total int) error {
@@ -33,18 +36,27 @@ func PlayMedia(uri string, index int, total int) error {
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-	screen, err := tcell.NewScreen()
-	if err != nil {
-		return err
-	}
-	err = screen.Init()
-	if err != nil {
-		return err
-	}
-	defer screen.Fini()
-
 	done := make(chan struct{})
-	ap := output.NewAudioPanel(format.SampleRate, streamer, uri, index, total, done)
+	if ap == nil {
+		ap = output.NewAudioPanel(format.SampleRate, streamer, uri, index, total, done)
+
+		screen, err = tcell.NewScreen()
+		if err != nil {
+			return err
+		}
+		err = screen.Init()
+		if err != nil {
+			return err
+		}
+
+		go func() {
+			for {
+				tcellEvents <- screen.PollEvent()
+			}
+		}()
+	} else {
+		ap.Update(format.SampleRate, streamer, uri, index, total, done)
+	}
 
 	screen.Clear()
 	ap.Draw(screen)
@@ -53,29 +65,24 @@ func PlayMedia(uri string, index int, total int) error {
 	ap.Play()
 
 	seconds := time.Tick(time.Second)
-	events := make(chan tcell.Event)
-	go func() {
-		for {
-			events <- screen.PollEvent()
-		}
-	}()
-
 	for {
 		select {
-		case event := <-events:
+		case event := <-tcellEvents:
 			changed, action := ap.Handle(event)
 			switch action {
 			case output.HandleActionQUIT:
+				screen.Fini()
 				return ShouldQuit
 			case output.HandleActionNEXT:
 				return NextSong
 			case output.HandleActionPREVIOUS:
 				return PreviousSong
-			}
-			if changed {
-				screen.Clear()
-				ap.Draw(screen)
-				screen.Show()
+			default:
+				if changed {
+					screen.Clear()
+					ap.Draw(screen)
+					screen.Show()
+				}
 			}
 		case <-seconds:
 			screen.Clear()

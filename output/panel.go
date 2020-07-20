@@ -56,10 +56,20 @@ func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri s
 	}
 }
 
+func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, done chan struct{}) {
+	ap.sampleRate = sampleRate
+	ap.streamer = streamer
+	ap.ctrl = &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
+	ap.resampler = beep.ResampleRatio(4, 1, ap.ctrl)
+	ap.volume = &effects.Volume{Streamer: ap.resampler, Base: 2}
+	ap.mediaURI = uri
+	ap.index = index
+	ap.total = total
+	ap.done = done
+}
+
 func (ap *AudioPanel) Play() {
 	speaker.Play(beep.Seq(ap.volume, beep.Callback(func() {
-		speaker.Clear()
-		speaker.Close()
 		ap.done <- struct{}{}
 	})))
 }

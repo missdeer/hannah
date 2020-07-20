@@ -1,8 +1,10 @@
 package input
 
 import (
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -20,6 +22,11 @@ func openRemoteSource(u string) (io.ReadCloser, error) {
 	}
 
 	client := util.GetHttpClient()
+
+	r, err := url.Parse(u)
+	if err == nil {
+		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Host))
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {

@@ -187,21 +187,23 @@ func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {
 
 		case 'q', 'w':
 			speaker.Lock()
-			newPos := ap.streamer.Position()
-			if event.Rune() == 'q' {
-				newPos -= ap.sampleRate.N(time.Second)
-			}
-			if event.Rune() == 'w' {
-				newPos += ap.sampleRate.N(time.Second)
-			}
-			if newPos < 0 {
-				newPos = 0
-			}
-			if newPos >= ap.streamer.Len() {
-				newPos = ap.streamer.Len() - 1
-			}
-			if err := ap.streamer.Seek(newPos); err != nil {
-				log.Fatal(err)
+			if ap.streamer.Len() > 0 {
+				newPos := ap.streamer.Position()
+				if event.Rune() == 'q' {
+					newPos -= ap.sampleRate.N(time.Second)
+				}
+				if event.Rune() == 'w' {
+					newPos += ap.sampleRate.N(time.Second)
+				}
+				if newPos < 0 {
+					newPos = 0
+				}
+				if newPos >= ap.streamer.Len() {
+					newPos = ap.streamer.Len() - 1
+				}
+				if err := ap.streamer.Seek(newPos); err != nil {
+					log.Fatal(err)
+				}
 			}
 			speaker.Unlock()
 			return true, HandleActionNOP

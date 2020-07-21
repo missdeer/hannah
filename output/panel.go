@@ -14,6 +14,7 @@ import (
 	"github.com/gdamore/tcell"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/util"
 )
 
 const (
@@ -22,13 +23,6 @@ const (
 	HandleActionNEXT
 	HandleActionNOP
 )
-
-func bool2str(b bool) string {
-	if b {
-		return "Enabled"
-	}
-	return "Disabled"
-}
 
 func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
 	text := []rune(s)
@@ -159,7 +153,7 @@ func (ap *AudioPanel) Draw(screen tcell.Screen) {
 	row++
 
 	drawTextLine(screen, 0, row, "Repeat/Shuffle"+strings.Repeat(" ", len(s)-len(`Repeat/Shuffle(R/F):`))+"(R/F):", mainStyle)
-	drawTextLine(screen, len(s), row, fmt.Sprintf("%s/%s", bool2str(config.Repeat), bool2str(config.Shuffle)), statusStyle)
+	drawTextLine(screen, len(s), row, fmt.Sprintf("%s/%s", util.Bool2Str(config.Repeat), util.Bool2Str(config.Shuffle)), statusStyle)
 	row++
 
 	if ap.message != "" {

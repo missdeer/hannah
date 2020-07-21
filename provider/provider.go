@@ -27,6 +27,7 @@ type IProvider interface {
 	SongURL(song Song) (string, error)
 	HotPlaylist(page int) (Playlists, error)
 	PlaylistDetail(pl Playlist) (Songs, error)
+	Name() string
 }
 
 type providerGetter func() IProvider

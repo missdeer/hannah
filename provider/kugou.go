@@ -18,3 +18,7 @@ func (p *kugou) HotPlaylist(page int) (Playlists, error) {
 func (p *kugou) PlaylistDetail(pl Playlist) (Songs, error){
 	return nil, nil
 }
+
+func (p *kugou) Name() string {
+	return "kugou"
+}

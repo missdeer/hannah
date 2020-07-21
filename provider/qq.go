@@ -18,3 +18,7 @@ func (p *qq) HotPlaylist(page int) (Playlists, error) {
 func (p *qq) PlaylistDetail(pl Playlist) (Songs, error){
 	return nil, nil
 }
+
+func (p *qq) Name() string {
+	return "qq"
+}

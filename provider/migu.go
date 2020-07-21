@@ -18,3 +18,9 @@ func (p *migu) HotPlaylist(page int) (Playlists, error) {
 func (p *migu) PlaylistDetail(pl Playlist) (Songs, error) {
 	return nil, nil
 }
+
+func (p *migu) Name() string {
+	return "migu"
+}
+
+

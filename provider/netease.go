@@ -132,3 +132,8 @@ func (p *netease) HotPlaylist(page int) (Playlists, error) {
 func (p *netease) PlaylistDetail(pl Playlist) (Songs, error) {
 	return nil, nil
 }
+
+func (p *netease) Name() string {
+	return "netease"
+}
+

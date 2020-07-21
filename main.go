@@ -118,12 +118,12 @@ func main() {
 				}
 				for i := 0; i < len(songs); i++ {
 					song := songs[i]
-					songURL, err := p.SongURL(song)
+					detail, err := p.SongDetail(song)
 					if err != nil {
 						log.Println(err)
 						continue
 					}
-					err = handler.PlayMedia(songURL, i+1, len(songs), song.Artist, song.Title)
+					err = handler.PlayMedia(detail.URL, i+1, len(songs), song.Artist, song.Title)
 					switch err {
 					case handler.ShouldQuit:
 						return

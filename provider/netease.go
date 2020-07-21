@@ -121,8 +121,9 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 	return res, nil
 }
 
-func (p *netease) SongURL(song Song) (string, error) {
-	return fmt.Sprintf(`http://music.163.com/song/media/outer/url?id=%s.mp3`, song.ID), nil
+func (p *netease) SongDetail(song Song) (Song, error) {
+	song.URL = fmt.Sprintf(`http://music.163.com/song/media/outer/url?id=%s.mp3`, song.ID)
+	return song, nil
 }
 
 func (p *netease) HotPlaylist(page int) (Playlists, error) {
@@ -136,4 +137,3 @@ func (p *netease) PlaylistDetail(pl Playlist) (Songs, error) {
 func (p *netease) Name() string {
 	return "netease"
 }
-

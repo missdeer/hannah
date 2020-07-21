@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"golang.org/x/net/proxy"
@@ -40,7 +41,7 @@ func (d *dialer) Dial(network, addr string) (net.Conn, error) {
 	return d.socks5.Dial(network, addr)
 }
 
-func socks5Proxy(addr string) *http.Transport {
+func socks5ProxyTransport(addr string) *http.Transport {
 	d := &dialer{addr: addr}
 	return &http.Transport{
 		DialContext: d.DialContext,
@@ -50,12 +51,20 @@ func socks5Proxy(addr string) *http.Transport {
 
 func GetHttpClient() http.Client {
 	client := http.Client{}
+	httpProxy := os.Getenv("HTTP_PROXY")
 	if config.HttpProxy != "" {
-		if proxyUrl, err := url.Parse(config.HttpProxy); err == nil {
+		httpProxy = config.HttpProxy
+	}
+	socks5Proxy := os.Getenv("SOCKS5_PROXY")
+	if config.Socks5Proxy != "" {
+		socks5Proxy = config.Socks5Proxy
+	}
+	if httpProxy != "" {
+		if proxyUrl, err := url.Parse(httpProxy); err == nil {
 			client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
 		}
-	} else if config.Socks5Proxy != "" {
-		client.Transport = socks5Proxy(config.Socks5Proxy)
+	} else if socks5Proxy != "" {
+		client.Transport = socks5ProxyTransport(socks5Proxy)
 	}
 	return client
 }

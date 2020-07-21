@@ -20,17 +20,17 @@ func TestNetease_Search(t *testing.T) {
 	}
 }
 
-func TestNetease_SongURL(t *testing.T) {
+func TestNetease_SongDetail(t *testing.T) {
 	p := GetProvider("netease")
 	if p == nil {
 		t.Error("can't get provider")
 	}
 
-	u, err := p.SongURL(Song{ID: "12341234"})
+	u, err := p.SongDetail(Song{ID: "12341234"})
 	if err != nil {
 		t.Error(err)
 	}
-	if u != `http://music.163.com/song/media/outer/url?id=12341234.mp3` {
+	if u.URL != `http://music.163.com/song/media/outer/url?id=12341234.mp3` {
 		t.Error("incorrect song URL")
 	}
 }

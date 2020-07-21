@@ -214,12 +214,12 @@ start:
 	return songs, nil
 }
 
-func (p *xiami) SongURL(song Song) (string, error) {
+func (p *xiami) SongDetail(song Song) (Song, error) {
 	u := fmt.Sprintf(`https://emumo.xiami.com/song/playlist/id/%s/object_name/default/object_id/0/cat/json`, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return "", err
+		return song, err
 	}
 
 	for _, c := range p.cookies {
@@ -237,26 +237,27 @@ func (p *xiami) SongURL(song Song) (string, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return song, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return "", errors.New("status != 200")
+		return song, errors.New("status != 200")
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)
 	if err != nil {
-		return "", err
+		return song, err
 	}
 
 	var sd xiamiSongDetail
 	err = json.Unmarshal(content, &sd)
 	if err != nil {
-		return "", err
+		return song, err
 	}
 
-	return caesar(sd.Data.TrackList[0].Location)
+	song.URL, err = caesar(sd.Data.TrackList[0].Location)
+	return song, err
 }
 
 func (p *xiami) HotPlaylist(page int) (Playlists, error) {

@@ -26,9 +26,18 @@ func TestBilibili_Search(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	songs, err := p.Search("backstreet", 0, 25)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't found songs for backstreet")
+	}
+
 }
 
-func TestBilibili_SongURL(t *testing.T) {
+func TestBilibili_SongDetail(t *testing.T) {
 	p := GetProvider("bilibili")
 	if p == nil {
 		t.Error("can't get provider")

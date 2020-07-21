@@ -44,7 +44,7 @@ func TestXiami_Search(t *testing.T) {
 	}
 }
 
-func TestXiami_SongURL(t *testing.T) {
+func TestXiami_SongDetail(t *testing.T) {
 	p := GetProvider("xiami")
 	if p == nil {
 		t.Error("can't get provider")

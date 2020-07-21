@@ -13,12 +13,13 @@ import (
 )
 
 var (
-	ShouldQuit   = errors.New("should quit application now")
-	PreviousSong = errors.New("play previous song")
-	NextSong     = errors.New("play next song")
-	ap           *output.AudioPanel
-	screen       tcell.Screen
-	tcellEvents  = make(chan tcell.Event)
+	ShouldQuit           = errors.New("should quit application now")
+	PreviousSong         = errors.New("play previous song")
+	NextSong             = errors.New("play next song")
+	UnsupportedMediaType = errors.New("unsupported media type")
+	ap                   *output.AudioPanel
+	screen               tcell.Screen
+	tcellEvents          = make(chan tcell.Event)
 )
 
 func PlayMedia(uri string, index int, total int, artist string, title string) error {
@@ -41,6 +42,9 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 		screen.Show()
 	}
 	decoder := getDecoder(uri)
+	if decoder == nil {
+		return UnsupportedMediaType
+	}
 	streamer, format, err := decoder(r)
 	if err != nil {
 		return err

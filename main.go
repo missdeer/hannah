@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
@@ -92,10 +91,7 @@ func main() {
 	flag.BoolVarP(&config.Shuffle, "shuffle", "s", config.Shuffle, "shuffle play list order")
 	flag.BoolVarP(&config.Repeat, "repeat", "r", config.Repeat, "repeat playing")
 	flag.BoolVarP(&config.Mpg123, "mpg123", "m", config.Mpg123, "use mpg123 decoder if it is available")
-	if runtime.GOOS == "windows" {
-		flag.BoolVarP(&config.ASIO, "asio", "", config.ASIO, "use ASIO driver, Windows only")
-		flag.BoolVarP(&config.WASAPI, "wasapi", "w", config.WASAPI, "use WASAPI driver, Windows only")
-	}
+	flag.StringVarP(&config.AudioDriver, "driver", "d", config.AudioDriver, "set audio deriver, values: "+strings.Join(config.AudioDriverList, ", "))
 	flag.StringVarP(&config.Engine, "engine", "e", config.Engine, "specify audio engine, values: builtin, bass, mpv")
 	flag.StringVarP(&config.Action, "action", "a", config.Action, "play, search(search and play), m3u(search and save as m3u file), download(search and download media files)")
 	flag.StringVarP(&config.Provider, "provider", "p", config.Provider, "netease, xiami, qq, kugou, kuwo, bilibili, migu")

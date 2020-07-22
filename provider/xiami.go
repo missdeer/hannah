@@ -14,6 +14,10 @@ import (
 	"github.com/missdeer/hannah/util"
 )
 
+var (
+	ErrCodeFieldNotExists = errors.New("code field does not exist")
+)
+
 type xiami struct {
 	cookies []*http.Cookie
 }
@@ -162,7 +166,7 @@ start:
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, errors.New("status != 200")
+		return nil, ErrStatusNotOK
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)
@@ -177,7 +181,7 @@ start:
 
 	code, ok := simpleResp["code"]
 	if !ok {
-		return nil, errors.New("code field does not exist")
+		return nil, ErrCodeFieldNotExists
 	}
 	codeStr, ok := code.(string)
 	if !ok {
@@ -242,7 +246,7 @@ func (p *xiami) SongDetail(song Song) (Song, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return song, errors.New("status != 200")
+		return song, ErrStatusNotOK
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)

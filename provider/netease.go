@@ -2,7 +2,6 @@ package provider
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -89,7 +88,7 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, errors.New("status != 200")
+		return nil, ErrStatusNotOK
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)

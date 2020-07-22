@@ -6,11 +6,13 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/missdeer/golib/fsutil"
 	flag "github.com/spf13/pflag"
 
 	"github.com/missdeer/hannah/config"
@@ -30,7 +32,7 @@ func scanMediasInDirectory(dir string) (res []string) {
 				res = append(res, scanMediasInDirectory(path.Join(dir, item.Name()))...)
 			}
 		} else {
-			if config.SupportedFileType(filepath.Ext(item.Name())) {
+			if config.BuiltinSupportedFileType(filepath.Ext(item.Name())) {
 				res = append(res, filepath.Join(dir, item.Name()))
 			}
 		}
@@ -52,7 +54,7 @@ func scanMedias(medias []string) (res []string) {
 		if fi.IsDir() {
 			res = append(res, scanMediasInDirectory(media)...)
 		} else {
-			if config.SupportedFileType(filepath.Ext(media)) {
+			if config.BuiltinSupportedFileType(filepath.Ext(media)) {
 				res = append(res, media)
 			}
 		}
@@ -69,6 +71,7 @@ func main() {
 	flag.StringVarP(&config.Provider, "provider", "p", "netease", "netease, xiami, qq, kugou, kuwo, bilibili, migu")
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "", "", "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "", "", "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
+	flag.StringVarP(&config.Player, "player", "", "", "specify external player path, use it when the media type is not supported by builtin decoders")
 	flag.Parse()
 
 	medias := flag.Args()
@@ -96,7 +99,15 @@ func main() {
 				case handler.PreviousSong:
 					i -= 2
 				case handler.NextSong:
-					// auto next
+				// auto next
+				case handler.UnsupportedMediaType:
+					if b, e := fsutil.FileExists(config.Player); e == nil && b {
+						log.Println(err, media, ", try to use external player", config.Player)
+						cmd := exec.Command(config.Player, media)
+						cmd.Run()
+					} else {
+						log.Println(err, media)
+					}
 				default:
 				}
 			}
@@ -131,6 +142,14 @@ func main() {
 						i -= 2
 					case handler.NextSong:
 						// auto next
+					case handler.UnsupportedMediaType:
+						if b, e := fsutil.FileExists(config.Player); e == nil && b {
+							log.Println(err, detail.URL, ", try to use external player", config.Player)
+							cmd := exec.Command(config.Player, detail.URL)
+							cmd.Run()
+						} else {
+							log.Println(err, detail.URL)
+						}
 					default:
 					}
 				}

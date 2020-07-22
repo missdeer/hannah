@@ -13,8 +13,9 @@ var (
 	HttpProxy   string
 	Limit       int
 	Page        int
+	Player      string
 
-	supportedExtensions = map[string]struct{}{
+	builtinSupportedExtensions = map[string]struct{}{
 		".mp3":  {},
 		".flac": {},
 		".wav":  {},
@@ -22,7 +23,7 @@ var (
 	}
 )
 
-func SupportedFileType(ext string) bool {
-	_, ok := supportedExtensions[strings.ToLower(ext)]
+func BuiltinSupportedFileType(ext string) bool {
+	_, ok := builtinSupportedExtensions[strings.ToLower(ext)]
 	return ok
 }

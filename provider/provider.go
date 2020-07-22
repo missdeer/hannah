@@ -1,5 +1,9 @@
 package provider
 
+import (
+	"errors"
+)
+
 type Song struct {
 	ID       string
 	Title    string
@@ -34,6 +38,8 @@ type IProvider interface {
 type providerGetter func() IProvider
 
 var (
+	ErrStatusNotOK = errors.New("status != 200")
+
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },
 		"xiami":    func() IProvider { return &xiami{} },

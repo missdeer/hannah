@@ -15,6 +15,8 @@ import (
 	"github.com/missdeer/golib/fsutil"
 	flag "github.com/spf13/pflag"
 
+	"github.com/jamesnetherton/m3u"
+
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 )
@@ -32,7 +34,15 @@ func scanSongsInDirectory(dir string) (res []string) {
 			}
 		} else {
 			if media.BuiltinSupportedFileType(filepath.Ext(item.Name())) {
-				res = append(res, filepath.Join(dir, item.Name()))
+				if strings.ToLower(filepath.Ext(item.Name())) == ".m3u" {
+					if playlist, err := m3u.Parse(filepath.Join(dir, item.Name())); err == nil {
+						for _, track := range playlist.Tracks {
+							res = append(res, track.URI)
+						}
+					}
+				} else {
+					res = append(res, filepath.Join(dir, item.Name()))
+				}
 			}
 		}
 	}
@@ -54,7 +64,15 @@ func scanSongs(songs []string) (res []string) {
 			res = append(res, scanSongsInDirectory(song)...)
 		} else {
 			if media.BuiltinSupportedFileType(filepath.Ext(song)) {
-				res = append(res, song)
+				if strings.ToLower(filepath.Ext(song)) == ".m3u" {
+					if playlist, err := m3u.Parse(song); err == nil {
+						for _, track := range playlist.Tracks {
+							res = append(res, track.URI)
+						}
+					}
+				} else {
+					res = append(res, song)
+				}
 			}
 		}
 	}

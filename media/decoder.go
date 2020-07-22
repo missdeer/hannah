@@ -1,4 +1,4 @@
-package handler
+package media
 
 import (
 	"io"
@@ -20,6 +20,13 @@ var (
 		".flac": func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return flac.Decode(r) },
 		".wav":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return wav.Decode(r) },
 	}
+
+	builtinSupportedExtensions = map[string]struct{}{
+		".mp3":  {},
+		".flac": {},
+		".wav":  {},
+		".ogg":  {},
+	}
 )
 
 func getDecoder(uri string) Decoder {
@@ -35,4 +42,9 @@ func getDecoder(uri string) Decoder {
 		}
 	}
 	return nil
+}
+
+func BuiltinSupportedFileType(ext string) bool {
+	_, ok := builtinSupportedExtensions[strings.ToLower(ext)]
+	return ok
 }

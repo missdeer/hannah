@@ -16,11 +16,11 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/missdeer/hannah/config"
-	"github.com/missdeer/hannah/handler"
+	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
 )
 
-func scanMediasInDirectory(dir string) (res []string) {
+func scanSongsInDirectory(dir string) (res []string) {
 	items, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Println(err)
@@ -29,10 +29,10 @@ func scanMediasInDirectory(dir string) (res []string) {
 	for _, item := range items {
 		if item.IsDir() {
 			if item.Name() != "." && item.Name() != ".." {
-				res = append(res, scanMediasInDirectory(path.Join(dir, item.Name()))...)
+				res = append(res, scanSongsInDirectory(path.Join(dir, item.Name()))...)
 			}
 		} else {
-			if config.BuiltinSupportedFileType(filepath.Ext(item.Name())) {
+			if media.BuiltinSupportedFileType(filepath.Ext(item.Name())) {
 				res = append(res, filepath.Join(dir, item.Name()))
 			}
 		}
@@ -40,22 +40,22 @@ func scanMediasInDirectory(dir string) (res []string) {
 	return
 }
 
-func scanMedias(medias []string) (res []string) {
-	for _, media := range medias {
-		if strings.HasPrefix(media, "http://") || strings.HasPrefix(media, "https://") {
-			res = append(res, media)
+func scanSongs(songs []string) (res []string) {
+	for _, song := range songs {
+		if strings.HasPrefix(song, "http://") || strings.HasPrefix(song, "https://") {
+			res = append(res, song)
 			continue
 		}
-		fi, err := os.Stat(media)
+		fi, err := os.Stat(song)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 		if fi.IsDir() {
-			res = append(res, scanMediasInDirectory(media)...)
+			res = append(res, scanSongsInDirectory(song)...)
 		} else {
-			if config.BuiltinSupportedFileType(filepath.Ext(media)) {
-				res = append(res, media)
+			if media.BuiltinSupportedFileType(filepath.Ext(song)) {
+				res = append(res, song)
 			}
 		}
 	}
@@ -76,7 +76,7 @@ func main() {
 
 	medias := flag.Args()
 	if config.Action == "play" {
-		medias = scanMedias(flag.Args())
+		medias = scanSongs(flag.Args())
 		if len(medias) == 0 {
 			fmt.Println("Please input media URL or local path.")
 			return
@@ -91,22 +91,22 @@ func main() {
 				rand.Shuffle(len(medias), func(i, j int) { medias[i], medias[j] = medias[j], medias[i] })
 			}
 			for i := 0; i < len(medias); i++ {
-				media := medias[i]
-				err := handler.PlayMedia(media, i+1, len(medias), "", "") // TODO: extract from file name or ID3v1/v2 tag
+				song := medias[i]
+				err := media.PlayMedia(song, i+1, len(medias), "", "") // TODO: extract from file name or ID3v1/v2 tag
 				switch err {
-				case handler.ShouldQuit:
+				case media.ShouldQuit:
 					return
-				case handler.PreviousSong:
+				case media.PreviousSong:
 					i -= 2
-				case handler.NextSong:
+				case media.NextSong:
 				// auto next
-				case handler.UnsupportedMediaType:
+				case media.UnsupportedMediaType:
 					if b, e := fsutil.FileExists(config.Player); e == nil && b {
-						log.Println(err, media, ", try to use external player", config.Player)
-						cmd := exec.Command(config.Player, media)
+						log.Println(err, song, ", try to use external player", config.Player)
+						cmd := exec.Command(config.Player, song)
 						cmd.Run()
 					} else {
-						log.Println(err, media)
+						log.Println(err, song)
 					}
 				default:
 				}
@@ -134,15 +134,15 @@ func main() {
 						log.Println(err)
 						continue
 					}
-					err = handler.PlayMedia(detail.URL, i+1, len(songs), song.Artist, song.Title)
+					err = media.PlayMedia(detail.URL, i+1, len(songs), song.Artist, song.Title)
 					switch err {
-					case handler.ShouldQuit:
+					case media.ShouldQuit:
 						return
-					case handler.PreviousSong:
+					case media.PreviousSong:
 						i -= 2
-					case handler.NextSong:
+					case media.NextSong:
 						// auto next
-					case handler.UnsupportedMediaType:
+					case media.UnsupportedMediaType:
 						if b, e := fsutil.FileExists(config.Player); e == nil && b {
 							log.Println(err, detail.URL, ", try to use external player", config.Player)
 							cmd := exec.Command(config.Player, detail.URL)

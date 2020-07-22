@@ -129,3 +129,8 @@ func (s *Speaker) Status() *SpeakerStatus {
 		Speed:    s.resampler.Ratio(),
 	}
 }
+func (s *Speaker) IsNil() bool {
+	speaker.Lock()
+	defer speaker.Unlock()
+	return s.streamer == nil
+}

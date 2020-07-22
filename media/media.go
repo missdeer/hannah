@@ -23,22 +23,24 @@ var (
 )
 
 func PlayMedia(uri string, index int, total int, artist string, title string) error {
-	if screenPanel != nil {
+	if !audioSpeaker.IsNil() {
 		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
 		status := audioSpeaker.Status()
 		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 	}
+
 	r, err := input.OpenSource(uri)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
-	if screenPanel != nil {
+	if !audioSpeaker.IsNil() {
 		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
 		status := audioSpeaker.Status()
 		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 	}
+
 	decoder := getDecoder(uri)
 	if decoder == nil {
 		return UnsupportedMediaType
@@ -49,7 +51,7 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	}
 	defer streamer.Close()
 
-	if screenPanel != nil {
+	if !audioSpeaker.IsNil() {
 		screenPanel.SetMessage("Initializing speaker...")
 		status := audioSpeaker.Status()
 		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)

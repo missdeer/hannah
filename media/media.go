@@ -9,6 +9,7 @@ import (
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/input"
+	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/output"
 	"github.com/missdeer/hannah/output/beep"
 )
@@ -59,7 +60,7 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 	}
 
-	decoder := getDecoder(uri)
+	decoder := decode.GetBuiltinDecoder(uri)
 	if decoder == nil {
 		return UnsupportedMediaType
 	}

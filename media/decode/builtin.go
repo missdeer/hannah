@@ -1,4 +1,4 @@
-package media
+package decode
 
 import (
 	"io"
@@ -11,10 +11,10 @@ import (
 	"github.com/faiface/beep/wav"
 )
 
-type Decoder func(io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error)
+type builtinDecoder func(io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error)
 
 var (
-	DecoderMap = map[string]Decoder{
+	builtinDecoderMap = map[string]builtinDecoder{
 		".mp3":  mp3.Decode,
 		".ogg":  vorbis.Decode,
 		".flac": func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return flac.Decode(r) },
@@ -30,8 +30,8 @@ var (
 	}
 )
 
-func getDecoder(uri string) Decoder {
-	for k, v := range DecoderMap {
+func GetBuiltinDecoder(uri string) builtinDecoder {
+	for k, v := range builtinDecoderMap {
 		if strings.HasPrefix(uri, "http://") || strings.HasPrefix(uri, "https://") {
 			if strings.Contains(uri, k) {
 				return v

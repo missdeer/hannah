@@ -2,7 +2,6 @@ package output
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 	"unicode"
@@ -53,22 +52,28 @@ type ScreenPanel struct {
 }
 
 func NewScreenPanel() *ScreenPanel {
-	screen, err := tcell.NewScreen()
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	}
-	err = screen.Init()
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	}
-
-	return &ScreenPanel{screen: screen}
+	return &ScreenPanel{}
 }
 
 func (sp *ScreenPanel) PollScreenEvent() tcell.Event {
 	return sp.screen.PollEvent()
+}
+
+func (sp *ScreenPanel) Initialize() error {
+	if sp.screen != nil {
+		return nil
+	}
+	screen, err := tcell.NewScreen()
+	if err != nil {
+		return err
+	}
+	err = screen.Init()
+	if err != nil {
+		return err
+	}
+
+	sp.screen = screen
+	return nil
 }
 
 func (sp *ScreenPanel) Finalize() {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"os/exec"
@@ -13,7 +14,7 @@ import (
 	"github.com/missdeer/hannah/provider"
 )
 
-type actionHandler func([]string)
+type actionHandler func([]string) error
 
 var (
 	actionHandlerMap = map[string]actionHandler{
@@ -22,7 +23,7 @@ var (
 	}
 )
 
-func actionPlay(songs []string) {
+func actionPlay(songs []string) error {
 	for played := false; !played || config.Repeat; played = true {
 		if config.Shuffle {
 			rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
@@ -32,7 +33,7 @@ func actionPlay(songs []string) {
 			err := media.PlayMedia(song, i+1, len(songs), "", "") // TODO: extract from file name or ID3v1/v2 tag
 			switch err {
 			case media.ShouldQuit:
-				return
+				return err
 			case media.PreviousSong:
 				i -= 2
 			case media.NextSong:
@@ -43,25 +44,27 @@ func actionPlay(songs []string) {
 					cmd := exec.Command(config.Player, song)
 					cmd.Run()
 				} else {
-					log.Println(err, song)
+					log.Println(e, song)
 				}
 			default:
+				log.Println(err)
 			}
 		}
 	}
+	return nil
 }
 
-func actionSearch(keywords []string) {
+func actionSearch(keywords []string) error {
 	if config.Provider == "" {
-		log.Fatal("set the provider parameter to search")
+		return errors.New("set the provider parameter to search")
 	}
 	p := provider.GetProvider(config.Provider)
 	if p == nil {
-		log.Fatal("unsupported provider")
+		return errors.New("unsupported provider")
 	}
 	songs, err := p.Search(strings.Join(keywords, " "), config.Page, config.Limit)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for played := false; !played || config.Repeat; played = true {
@@ -78,7 +81,7 @@ func actionSearch(keywords []string) {
 			err = media.PlayMedia(detail.URL, i+1, len(songs), song.Artist, song.Title)
 			switch err {
 			case media.ShouldQuit:
-				return
+				return err
 			case media.PreviousSong:
 				i -= 2
 			case media.NextSong:
@@ -89,11 +92,11 @@ func actionSearch(keywords []string) {
 					cmd := exec.Command(config.Player, detail.URL)
 					cmd.Run()
 				} else {
-					log.Println(err, detail.URL)
+					log.Println(e, detail.URL)
 				}
 			default:
 			}
 		}
 	}
-
+	return nil
 }

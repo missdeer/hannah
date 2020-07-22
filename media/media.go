@@ -18,10 +18,27 @@ var (
 	PreviousSong         = errors.New("play previous song")
 	NextSong             = errors.New("play next song")
 	UnsupportedMediaType = errors.New("unsupported media type")
-	screenPanel          = output.NewScreenPanel()
-	audioSpeaker         = beep.NewSpeaker()
-	tcellEvents          = make(chan tcell.Event)
+	screenPanel          *output.ScreenPanel
+	audioSpeaker         *beep.Speaker
+	tcellEvents          chan tcell.Event
 )
+
+func Initialize() error {
+	audioSpeaker = beep.NewSpeaker()
+
+	screenPanel = output.NewScreenPanel()
+	if err := screenPanel.Initialize(); err != nil {
+		return err
+	}
+
+	go func() {
+		tcellEvents = make(chan tcell.Event)
+		for {
+			tcellEvents <- screenPanel.PollScreenEvent()
+		}
+	}()
+	return nil
+}
 
 func PlayMedia(uri string, index int, total int, artist string, title string) error {
 	if !audioSpeaker.IsNil() {
@@ -63,12 +80,6 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 
 	done := make(chan struct{})
 	audioSpeaker.Update(format.SampleRate, streamer, done)
-
-	go func() {
-		for {
-			tcellEvents <- screenPanel.PollScreenEvent()
-		}
-	}()
 
 	screenPanel.Update(uri, index, total, artist, title)
 

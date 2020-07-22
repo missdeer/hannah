@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/faiface/beep/speaker"
 	"github.com/gdamore/tcell"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/output"
 )
@@ -17,17 +17,17 @@ var (
 	PreviousSong         = errors.New("play previous song")
 	NextSong             = errors.New("play next song")
 	UnsupportedMediaType = errors.New("unsupported media type")
-	ap                   *output.AudioPanel
+	screenPanel          *output.ScreenPanel
+	audioSpeaker         *output.Speaker
 	screen               tcell.Screen
 	tcellEvents          = make(chan tcell.Event)
 )
 
 func PlayMedia(uri string, index int, total int, artist string, title string) error {
-	if ap != nil {
-		ap.SetMessage(fmt.Sprintf("Loading %s ...", uri))
-		screen.Clear()
-		ap.Draw(screen)
-		screen.Show()
+	if screenPanel != nil {
+		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
+		status := audioSpeaker.Status()
+		screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
 	}
 	r, err := input.OpenSource(uri)
 	if err != nil {
@@ -35,11 +35,10 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	}
 	defer r.Close()
 
-	if ap != nil {
-		ap.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
-		screen.Clear()
-		ap.Draw(screen)
-		screen.Show()
+	if screenPanel != nil {
+		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
+		status := audioSpeaker.Status()
+		screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
 	}
 	decoder := getDecoder(uri)
 	if decoder == nil {
@@ -51,21 +50,25 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	}
 	defer streamer.Close()
 
-	if ap != nil {
-		ap.SetMessage("Initializing speaker...")
-		screen.Clear()
-		ap.Draw(screen)
-		screen.Show()
+	if screenPanel != nil {
+		screenPanel.SetMessage("Initializing speaker...")
+		status := audioSpeaker.Status()
+		screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
 	}
-	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	defer func() {
-		speaker.Clear()
-		speaker.Close()
-	}()
 
 	done := make(chan struct{})
-	if ap == nil {
-		ap = output.NewAudioPanel(format.SampleRate, streamer, uri, index, total, artist, title, done)
+
+	if audioSpeaker == nil {
+		audioSpeaker = output.NewSpeaker(format.SampleRate, streamer, done)
+		audioSpeaker.Initialize(format.SampleRate, format.SampleRate.N(time.Second/10))
+	} else {
+		audioSpeaker.Update(format.SampleRate, streamer, done)
+		audioSpeaker.Initialize(format.SampleRate, format.SampleRate.N(time.Second/10))
+	}
+	defer audioSpeaker.Shutdown()
+
+	if screenPanel == nil {
+		screenPanel = output.NewScreenPanel(uri, index, total, artist, title)
 
 		screen, err = tcell.NewScreen()
 		if err != nil {
@@ -82,21 +85,20 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 			}
 		}()
 	} else {
-		ap.Update(format.SampleRate, streamer, uri, index, total, artist, title, done)
+		screenPanel.Update(uri, index, total, artist, title)
 	}
 
-	ap.SetMessage("")
-	screen.Clear()
-	ap.Draw(screen)
-	screen.Show()
+	screenPanel.SetMessage("")
+	status := audioSpeaker.Status()
+	screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
 
-	ap.Play()
+	audioSpeaker.Play()
 
 	seconds := time.Tick(time.Second)
 	for {
 		select {
 		case event := <-tcellEvents:
-			changed, action := ap.Handle(event)
+			changed, action := screenPanel.Handle(event)
 			switch action {
 			case output.HandleActionQUIT:
 				return ShouldQuit
@@ -104,18 +106,34 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 				return NextSong
 			case output.HandleActionPREVIOUS:
 				return PreviousSong
+			case output.HandleActionRepeat:
+				config.Repeat = !config.Repeat
+			case output.HandleActionShuffle:
+				config.Shuffle = !config.Shuffle
+			case output.HandleActionPauseResume:
+				audioSpeaker.PauseResume()
+			case output.HandleActionBackward:
+				audioSpeaker.Backward()
+			case output.HandleActionForward:
+				audioSpeaker.Forward()
+			case output.HandleActionDecreaseVolume:
+				audioSpeaker.DecreaseVolume()
+			case output.HandleActionIncreaseVolume:
+				audioSpeaker.IncreaseVolume()
+			case output.HandleActionSlowdown:
+				audioSpeaker.Slowdown()
+			case output.HandleActionSpeedup:
+				audioSpeaker.Speedup()
 			default:
-				if changed {
-					screen.Clear()
-					ap.Draw(screen)
-					screen.Show()
-				}
+			}
+			if changed {
+				status := audioSpeaker.Status()
+				screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
 			}
 		case <-seconds:
-			if !ap.IsPaused() {
-				screen.Clear()
-				ap.Draw(screen)
-				screen.Show()
+			if !audioSpeaker.IsPaused() {
+				status := audioSpeaker.Status()
+				screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
 			}
 		case <-done:
 			return NextSong

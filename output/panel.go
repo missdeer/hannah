@@ -2,15 +2,11 @@ package output
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/faiface/beep"
-	"github.com/faiface/beep/effects"
-	"github.com/faiface/beep/speaker"
 	"github.com/gdamore/tcell"
 
 	"github.com/missdeer/hannah/config"
@@ -22,6 +18,15 @@ const (
 	HandleActionPREVIOUS
 	HandleActionNEXT
 	HandleActionNOP
+	HandleActionPauseResume
+	HandleActionBackward
+	HandleActionForward
+	HandleActionSlowdown
+	HandleActionSpeedup
+	HandleActionIncreaseVolume
+	HandleActionDecreaseVolume
+	HandleActionRepeat
+	HandleActionShuffle
 )
 
 func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
@@ -36,69 +41,39 @@ func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
 	}
 }
 
-type AudioPanel struct {
-	sampleRate beep.SampleRate
-	streamer   beep.StreamSeeker
-	ctrl       *beep.Ctrl
-	resampler  *beep.Resampler
-	volume     *effects.Volume
-	mediaURI   string
-	index      int
-	total      int
-	artist     string
-	title      string
-	message    string
-	done       chan struct{}
+type ScreenPanel struct {
+	mediaURI string
+	index    int
+	total    int
+	artist   string
+	title    string
+	message  string
 }
 
-func NewAudioPanel(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, artist string, title string, done chan struct{}) *AudioPanel {
-	ctrl := &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
-	resampler := beep.ResampleRatio(4, 1, ctrl)
-	volume := &effects.Volume{Streamer: resampler, Base: 2}
-	return &AudioPanel{
-		sampleRate: sampleRate,
-		streamer:   streamer,
-		ctrl:       ctrl,
-		resampler:  resampler,
-		volume:     volume,
-		mediaURI:   uri,
-		index:      index,
-		total:      total,
-		artist:     artist,
-		title:      title,
-		done:       done,
+func NewScreenPanel(uri string, index int, total int, artist string, title string) *ScreenPanel {
+	return &ScreenPanel{
+		mediaURI: uri,
+		index:    index,
+		total:    total,
+		artist:   artist,
+		title:    title,
 	}
 }
 
-func (ap *AudioPanel) Update(sampleRate beep.SampleRate, streamer beep.StreamSeeker, uri string, index int, total int, artist string, title string, done chan struct{}) {
-	ap.sampleRate = sampleRate
-	ap.streamer = streamer
-	ap.ctrl = &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
-	ap.resampler = beep.ResampleRatio(4, 1, ap.ctrl)
-	ap.volume = &effects.Volume{Streamer: ap.resampler, Base: 2}
+func (ap *ScreenPanel) Update(uri string, index int, total int, artist string, title string) {
 	ap.mediaURI = uri
 	ap.index = index
 	ap.total = total
 	ap.artist = artist
 	ap.title = title
-	ap.done = done
 }
 
-func (ap *AudioPanel) SetMessage(message string) {
+func (ap *ScreenPanel) SetMessage(message string) {
 	ap.message = message
 }
 
-func (ap *AudioPanel) IsPaused() bool {
-	return ap.ctrl.Paused
-}
-
-func (ap *AudioPanel) Play() {
-	speaker.Play(beep.Seq(ap.volume, beep.Callback(func() {
-		ap.done <- struct{}{}
-	})))
-}
-
-func (ap *AudioPanel) Draw(screen tcell.Screen) {
+func (ap *ScreenPanel) Draw(screen tcell.Screen, position time.Duration, length time.Duration, volume float64, speed float64) {
+	screen.Clear()
 	mainStyle := tcell.StyleDefault.
 		Background(tcell.NewHexColor(0x473437)).
 		Foreground(tcell.NewHexColor(0xD7D8A2))
@@ -112,13 +87,6 @@ func (ap *AudioPanel) Draw(screen tcell.Screen) {
 	drawTextLine(screen, 0, 1, "Press [ESC] to quit.", mainStyle)
 	drawTextLine(screen, 0, 2, "Press [SPACE] to pause/resume.", mainStyle)
 	drawTextLine(screen, 0, 3, "Use keys in (?/?) to turn the buttons.", mainStyle)
-
-	speaker.Lock()
-	position := ap.sampleRate.D(ap.streamer.Position())
-	length := ap.sampleRate.D(ap.streamer.Len())
-	volume := ap.volume.Volume
-	speed := ap.resampler.Ratio()
-	speaker.Unlock()
 
 	positionStatus := fmt.Sprintf("%v / %v", position.Round(time.Second), length.Round(time.Second))
 	volumeStatus := fmt.Sprintf("%.1f", volume)
@@ -159,9 +127,11 @@ func (ap *AudioPanel) Draw(screen tcell.Screen) {
 	if ap.message != "" {
 		drawTextLine(screen, 0, row+1, ap.message, mainStyle)
 	}
+
+	screen.Show()
 }
 
-func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {
+func (ap *ScreenPanel) Handle(event tcell.Event) (changed bool, action int) {
 	switch event := event.(type) {
 	case *tcell.EventKey:
 		if event.Key() == tcell.KeyESC {
@@ -172,77 +142,21 @@ func (ap *AudioPanel) Handle(event tcell.Event) (changed bool, action int) {
 			return false, HandleActionNOP
 		}
 
-		switch unicode.ToLower(event.Rune()) {
-		case ' ':
-			speaker.Lock()
-			ap.ctrl.Paused = !ap.ctrl.Paused
-			speaker.Unlock()
-			return false, HandleActionNOP
-
-		case 'q', 'w':
-			speaker.Lock()
-			if ap.streamer.Len() > 0 {
-				newPos := ap.streamer.Position()
-				if event.Rune() == 'q' {
-					newPos -= ap.sampleRate.N(time.Second)
-				}
-				if event.Rune() == 'w' {
-					newPos += ap.sampleRate.N(time.Second)
-				}
-				if newPos < 0 {
-					newPos = 0
-				}
-				if newPos >= ap.streamer.Len() {
-					newPos = ap.streamer.Len() - 1
-				}
-				if err := ap.streamer.Seek(newPos); err != nil {
-					log.Fatal(err)
-				}
-			}
-			speaker.Unlock()
-			return true, HandleActionNOP
-
-		case 'a':
-			speaker.Lock()
-			ap.volume.Volume -= 0.1
-			speaker.Unlock()
-			return true, HandleActionNOP
-
-		case 's':
-			speaker.Lock()
-			ap.volume.Volume += 0.1
-			speaker.Unlock()
-			return true, HandleActionNOP
-
-		case 'z':
-			speaker.Lock()
-			ap.resampler.SetRatio(ap.resampler.Ratio() * 15 / 16)
-			speaker.Unlock()
-			return true, HandleActionNOP
-
-		case 'x':
-			speaker.Lock()
-			ap.resampler.SetRatio(ap.resampler.Ratio() * 16 / 15)
-			speaker.Unlock()
-			return true, HandleActionNOP
-
-		case 'r':
-			config.Repeat = !config.Repeat
-			return true, HandleActionNOP
-
-		case 'f':
-			config.Shuffle = !config.Shuffle
-			return true, HandleActionNOP
-
-		case 'p':
-			speaker.Clear()
-			speaker.Close()
-			return true, HandleActionPREVIOUS
-
-		case 'n':
-			speaker.Clear()
-			speaker.Close()
-			return true, HandleActionNEXT
+		cmdMap := map[rune]int{
+			' ': HandleActionPauseResume,
+			'q': HandleActionBackward,
+			'w': HandleActionForward,
+			'a': HandleActionDecreaseVolume,
+			's': HandleActionIncreaseVolume,
+			'z': HandleActionSlowdown,
+			'x': HandleActionSpeedup,
+			'p': HandleActionPREVIOUS,
+			'n': HandleActionNEXT,
+			'r': HandleActionRepeat,
+			'f': HandleActionShuffle,
+		}
+		if action, ok := cmdMap[unicode.ToLower(event.Rune())]; ok {
+			return true, action
 		}
 	case *tcell.EventResize:
 		return true, HandleActionNOP

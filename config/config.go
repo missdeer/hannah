@@ -10,16 +10,14 @@ import (
 var (
 	Shuffle     bool
 	Repeat      bool
-	Action      = "play"
-	Provider    = "netease"
 	Socks5Proxy string
 	HttpProxy   string
+	Player      string
+	Action      = "play"
+	Provider    = "netease"
 	Limit       = 25
 	Page        = 0
-	Player      string
 	Engine      = "builtin"
-	ASIO        bool
-	WASAPI      bool
 	Mpg123      = true
 )
 
@@ -39,11 +37,8 @@ func LoadConfigurationFromFile(fn string) error {
 	if b, err := cfg.Section("").Key("repeat").Bool(); err == nil {
 		Repeat = b
 	}
-	if b, err := cfg.Section("").Key("asio").Bool(); err == nil {
-		ASIO = b
-	}
-	if b, err := cfg.Section("").Key("wasapi").Bool(); err == nil {
-		WASAPI = b
+	if s := cfg.Section("").Key("driver").String(); s != "" {
+		AudioDriver = s
 	}
 	if s := cfg.Section("").Key("action").String(); s != "" {
 		Action = s

@@ -25,18 +25,8 @@ type SpeakerStatus struct {
 	Speed    float64
 }
 
-func NewSpeaker(sampleRate beep.SampleRate, streamer beep.StreamSeeker, done chan struct{}) *Speaker {
-	ctrl := &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
-	resampler := beep.ResampleRatio(4, 1, ctrl)
-	volume := &effects.Volume{Streamer: resampler, Base: 2}
-	return &Speaker{
-		sampleRate: sampleRate,
-		streamer:   streamer,
-		ctrl:       ctrl,
-		resampler:  resampler,
-		volume:     volume,
-		done:       done,
-	}
+func NewSpeaker() *Speaker {
+	return &Speaker{}
 }
 
 func (s *Speaker) Update(sampleRate beep.SampleRate, streamer beep.StreamSeeker, done chan struct{}) {
@@ -60,7 +50,7 @@ func (s *Speaker) Play() {
 	})))
 }
 
-func (s *Speaker) Initialize(sampleRate beep.SampleRate, bufferSize int) {
+func (s *Speaker) InitializeSpeaker(sampleRate beep.SampleRate, bufferSize int) {
 	speaker.Init(sampleRate, bufferSize)
 }
 

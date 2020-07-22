@@ -17,9 +17,8 @@ var (
 	PreviousSong         = errors.New("play previous song")
 	NextSong             = errors.New("play next song")
 	UnsupportedMediaType = errors.New("unsupported media type")
-	screenPanel          *output.ScreenPanel
-	audioSpeaker         *output.Speaker
-	screen               tcell.Screen
+	screenPanel          = output.NewScreenPanel()
+	audioSpeaker         = output.NewSpeaker()
 	tcellEvents          = make(chan tcell.Event)
 )
 
@@ -27,7 +26,7 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	if screenPanel != nil {
 		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
 		status := audioSpeaker.Status()
-		screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
+		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 	}
 	r, err := input.OpenSource(uri)
 	if err != nil {
@@ -38,7 +37,7 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	if screenPanel != nil {
 		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
 		status := audioSpeaker.Status()
-		screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
+		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 	}
 	decoder := getDecoder(uri)
 	if decoder == nil {
@@ -53,44 +52,26 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 	if screenPanel != nil {
 		screenPanel.SetMessage("Initializing speaker...")
 		status := audioSpeaker.Status()
-		screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
+		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 	}
 
-	done := make(chan struct{})
-
-	if audioSpeaker == nil {
-		audioSpeaker = output.NewSpeaker(format.SampleRate, streamer, done)
-		audioSpeaker.Initialize(format.SampleRate, format.SampleRate.N(time.Second/10))
-	} else {
-		audioSpeaker.Update(format.SampleRate, streamer, done)
-		audioSpeaker.Initialize(format.SampleRate, format.SampleRate.N(time.Second/10))
-	}
+	audioSpeaker.InitializeSpeaker(format.SampleRate, format.SampleRate.N(time.Second/10))
 	defer audioSpeaker.Shutdown()
 
-	if screenPanel == nil {
-		screenPanel = output.NewScreenPanel(uri, index, total, artist, title)
+	done := make(chan struct{})
+	audioSpeaker.Update(format.SampleRate, streamer, done)
 
-		screen, err = tcell.NewScreen()
-		if err != nil {
-			return err
+	go func() {
+		for {
+			tcellEvents <- screenPanel.PollScreenEvent()
 		}
-		err = screen.Init()
-		if err != nil {
-			return err
-		}
+	}()
 
-		go func() {
-			for {
-				tcellEvents <- screen.PollEvent()
-			}
-		}()
-	} else {
-		screenPanel.Update(uri, index, total, artist, title)
-	}
+	screenPanel.Update(uri, index, total, artist, title)
 
 	screenPanel.SetMessage("")
 	status := audioSpeaker.Status()
-	screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
+	screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 
 	audioSpeaker.Play()
 
@@ -128,12 +109,12 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 			}
 			if changed {
 				status := audioSpeaker.Status()
-				screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
+				screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 			}
 		case <-seconds:
 			if !audioSpeaker.IsPaused() {
 				status := audioSpeaker.Status()
-				screenPanel.Draw(screen, status.Position, status.Length, status.Volume, status.Speed)
+				screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
 			}
 		case <-done:
 			return NextSong
@@ -143,7 +124,5 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 }
 
 func Finalize() {
-	if screen != nil {
-		screen.Fini()
-	}
+	screenPanel.Finalize()
 }

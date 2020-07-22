@@ -20,7 +20,7 @@ jobs:
         
     - name: Build
       run: |
-        go build -o linux-amd64/hannah -ldflags="-s -w" .
+        go build -o darwin-amd64/hannah -ldflags="-s -w" .
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
     - name: Upload artifact hannah-darwin-amd64

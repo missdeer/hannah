@@ -4,7 +4,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
 
     - name: Set up Go 1.14
@@ -20,19 +20,8 @@ jobs:
         
     - name: Build
       run: |
-        sudo apt-get install libasound2-dev
-        env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o linux-amd64/hannah -ldflags="-s -w" .
-        env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o darwin-amd64/hannah -ldflags="-s -w" .
-        env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o windows-amd64/hannah.exe -ldflags="-s -w" .
+        go build -o linux-amd64/hannah -ldflags="-s -w" .
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
-      
-    - name: Upload artifact hannah-linux-amd64
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        # Artifact name
-        name: hannah-linux-amd64
-        # Directory containing files to upload
-        path: linux-amd64
 
     - name: Upload artifact hannah-darwin-amd64
       uses: actions/upload-artifact@v1.0.0
@@ -41,14 +30,6 @@ jobs:
         name: hannah-darwin-amd64
         # Directory containing files to upload
         path: darwin-amd64
-
-    - name: Upload artifact hannah-windows-amd64
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        # Artifact name
-        name: hannah-windows-amd64
-        # Directory containing files to upload
-        path: windows-amd64
 
     - name: Remove old artifacts
       run: |

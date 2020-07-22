@@ -99,7 +99,6 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 			changed, action := ap.Handle(event)
 			switch action {
 			case output.HandleActionQUIT:
-				screen.Fini()
 				return ShouldQuit
 			case output.HandleActionNEXT:
 				return NextSong
@@ -123,4 +122,10 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 		}
 	}
 	return nil
+}
+
+func Finalize() {
+	if screen != nil {
+		screen.Fini()
+	}
 }

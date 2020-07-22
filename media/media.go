@@ -10,6 +10,7 @@ import (
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/output"
+	"github.com/missdeer/hannah/output/beep"
 )
 
 var (
@@ -18,7 +19,7 @@ var (
 	NextSong             = errors.New("play next song")
 	UnsupportedMediaType = errors.New("unsupported media type")
 	screenPanel          = output.NewScreenPanel()
-	audioSpeaker         = output.NewSpeaker()
+	audioSpeaker         = beep.NewSpeaker()
 	tcellEvents          = make(chan tcell.Event)
 )
 

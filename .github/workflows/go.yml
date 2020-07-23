@@ -20,7 +20,7 @@ jobs:
         
     - name: Build
       run: |
-        brew install mpg123
+        brew install pkg-config mpg123
         go build -o darwin-amd64/hannah -ldflags="-s -w" .
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 

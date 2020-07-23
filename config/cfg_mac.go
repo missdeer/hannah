@@ -1,3 +1,5 @@
+// +build mac
+
 package config
 
 var (

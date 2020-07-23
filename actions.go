@@ -92,7 +92,7 @@ func actionSearch(keywords []string) error {
 					cmd := exec.Command(config.Player, detail.URL)
 					cmd.Run()
 				} else {
-					log.Println(e, detail.URL)
+					log.Println(err, detail.URL)
 				}
 			default:
 			}

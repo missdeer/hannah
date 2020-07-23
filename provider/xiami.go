@@ -74,7 +74,7 @@ func (s xiamiListenFiles) Len() int {
 
 func (s xiamiListenFiles) Less(i, j int) bool {
 	if s[i].Format == s[j].Format && s[j].Format == `mp3` {
-		if s[i].Quality == `h` {
+		if s[i].Quality == `h` { // only first 2 minutes are available in `h` quality
 			return false
 		}
 		return true
@@ -295,9 +295,6 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 }
 
 func (p *xiami) SongDetail(song Song) (Song, error) {
-	if song.URL != "" {
-		return song, nil
-	}
 	u := fmt.Sprintf(`https://emumo.xiami.com/song/playlist/id/%s/object_name/default/object_id/0/cat/json`, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)

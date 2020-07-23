@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -57,6 +58,44 @@ type xiamiSongDetail struct {
 	} `json:"data"`
 }
 
+type xiamiListenFile struct {
+	DownloadFileSize string `json:"downloadFileSize"`
+	FileSize         string `json:"fileSize"`
+	Format           string `json:"format"`
+	ListenFile       string `json:"listenFile"`
+	PlayVolume       string `json:"playVolume"`
+	Quality          string `json:"quality"`
+}
+
+type xiamiListenFiles []xiamiListenFile
+
+func (s xiamiListenFiles) Len() int {
+	return len(s)
+}
+
+func (s xiamiListenFiles) Less(i, j int) bool {
+	if s[i].Format == s[j].Format && s[j].Format == `mp3` {
+		if s[i].Quality == `h` {
+			return false
+		}
+		return true
+	}
+	if s[i].Format == s[j].Format && s[j].Format == `m4a` {
+		if s[i].Quality == `f` {
+			return false
+		}
+		return true
+	}
+	if s[i].Format == `mp3` {
+		return false
+	}
+	return true
+}
+
+func (s xiamiListenFiles) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
 type xiamiSearchResult struct {
 	API  string `json:"api"`
 	Data struct {
@@ -68,26 +107,19 @@ type xiamiSearchResult struct {
 				Count    string `json:"count"`
 			} `json:"pagingVO"`
 			Songs []struct {
-				SongID        string `json:"songId"`
-				SongStringID  string `json:"songStringId"`
-				SongName      string `json:"songName"`
-				AlbumID       string `json:"albumId"`
-				AlbumStringID string `json:"albumStringId"`
-				AlbumLogo     string `json:"albumLogo"`
-				AlbumLogoS    string `json:"albumLogoS"`
-				AlbumName     string `json:"albumName"`
-				ArtistID      string `json:"artistId"`
-				ArtistName    string `json:"artistName"`
-				ArtistLogo    string `json:"artistLogo"`
-				Singers       string `json:"singers"`
-				ListenFiles   []struct {
-					DownloadFileSize string `json:"downloadFileSize"`
-					FileSize         string `json:"fileSize"`
-					Format           string `json:"format"`
-					ListenFile       string `json:"listenFile"`
-					PlayVolume       string `json:"playVolume"`
-					Quality          string `json:"quality"`
-				} `json:"listenFiles"`
+				SongID        string           `json:"songId"`
+				SongStringID  string           `json:"songStringId"`
+				SongName      string           `json:"songName"`
+				AlbumID       string           `json:"albumId"`
+				AlbumStringID string           `json:"albumStringId"`
+				AlbumLogo     string           `json:"albumLogo"`
+				AlbumLogoS    string           `json:"albumLogoS"`
+				AlbumName     string           `json:"albumName"`
+				ArtistID      string           `json:"artistId"`
+				ArtistName    string           `json:"artistName"`
+				ArtistLogo    string           `json:"artistLogo"`
+				Singers       string           `json:"singers"`
+				ListenFiles   xiamiListenFiles `json:"listenFiles"`
 			} `json:"songs"`
 		} `json:"data"`
 	} `json:"data"`
@@ -246,18 +278,17 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 
 	var songs SearchResult
 	for _, s := range sr.Data.Data.Songs {
-		for _, f := range s.ListenFiles {
-			if f.Format == "mp3" {
-				songs = append(songs, Song{
-					ID:       s.SongID,
-					URL:      f.ListenFile,
-					Title:    s.SongName,
-					Image:    s.AlbumLogo,
-					Artist:   s.ArtistName,
-					Provider: "xiami",
-				})
-				break
-			}
+		listenFiles := s.ListenFiles
+		if len(listenFiles) > 0 {
+			sort.Sort(sort.Reverse(listenFiles))
+			songs = append(songs, Song{
+				ID:       s.SongID,
+				URL:      listenFiles[0].ListenFile,
+				Title:    s.SongName,
+				Image:    s.AlbumLogo,
+				Artist:   s.ArtistName,
+				Provider: "xiami",
+			})
 		}
 	}
 

@@ -2,6 +2,7 @@ package provider
 
 import (
 	"log"
+	"sort"
 	"testing"
 )
 
@@ -65,5 +66,27 @@ func TestXiami_Name(t *testing.T) {
 	}
 	if p.Name() != "xiami" {
 		t.Error("provider name mismatched")
+	}
+}
+
+func TestListenFiles_Sort(t *testing.T) {
+	lfs := xiamiListenFiles{
+		{Quality: "h", Format: "mp3"},
+		{Quality: "e", Format: "m4a"},
+		{Quality: "l", Format: "mp3"},
+		{Quality: "f", Format: "m4a"},
+	}
+	sort.Sort(sort.Reverse(lfs))
+	if lfs[0].Format != `mp3` || lfs[0].Quality != `h` {
+		t.Error(`lfs[0]!={Quality: "h", Format: "mp3"},`)
+	}
+	if lfs[1].Format != `mp3` || lfs[1].Quality != `l` {
+		t.Error(`lfs[1]!={Quality: "l", Format: "mp3"},`)
+	}
+	if lfs[2].Format != `m4a` || lfs[2].Quality != `f` {
+		t.Error(`lfs[2]!={Quality: "f", Format: "m4a"},`)
+	}
+	if lfs[3].Format != `m4a` || lfs[3].Quality != `e` {
+		t.Error(`lfs[3]!={Quality: "e", Format: "m4a"},`)
 	}
 }

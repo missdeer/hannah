@@ -47,7 +47,7 @@ func TestMusictool_Search(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	songs, err := p.Search("backstreet", 0, 25)
+	songs, err := p.Search("backstreet", 1, 25)
 	if err != nil {
 		t.Error(err)
 	}

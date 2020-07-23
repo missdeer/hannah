@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"log"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ func TestXiami_Search(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	songs, err := p.Search("backstreet", 0, 25)
+	songs, err := p.Search("backstreet", 1, 25)
 	if err != nil {
 		t.Error(err)
 	}
@@ -50,6 +51,11 @@ func TestXiami_SongDetail(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	s, err := p.SongDetail(Song{ID: "1769262490"})
+	if err != nil {
+		t.Error(err)
+	}
+	log.Println(s.URL)
 }
 
 func TestXiami_Name(t *testing.T) {

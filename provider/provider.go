@@ -2,6 +2,8 @@ package provider
 
 import (
 	"errors"
+
+	"github.com/missdeer/hannah/util"
 )
 
 type Song struct {
@@ -42,7 +44,7 @@ var (
 
 	providerCreatorMap = map[string]providerGetter{
 		"netease":   func() IProvider { return &netease{} },
-		"xiami":     func() IProvider { return &xiami{} },
+		"xiami":     func() IProvider { return &xiami{client: util.GetHttpClient()} },
 		"qq":        func() IProvider { return &qq{} },
 		"kugou":     func() IProvider { return &kugou{} },
 		"kuwo":      func() IProvider { return &kuwo{} },

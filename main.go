@@ -88,7 +88,7 @@ func main() {
 	}
 
 	showHelpMessage := false
-	flag.IntVarP(&config.Page, "page", "", config.Page, "page number of search result")
+	flag.IntVarP(&config.Page, "page", "", config.Page, "page number of search result, start from 1")
 	flag.IntVarP(&config.Limit, "limit", "l", config.Limit, "max count of search result")
 	flag.BoolVarP(&config.Shuffle, "shuffle", "f", config.Shuffle, "shuffle play list order")
 	flag.BoolVarP(&config.Repeat, "repeat", "r", config.Repeat, "repeat playing")

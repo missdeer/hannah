@@ -16,7 +16,7 @@ var (
 	Action      = "play"
 	Provider    = "netease"
 	Limit       = 25
-	Page        = 0
+	Page        = 1
 	Engine      = "builtin"
 	Mpg123      = true
 )

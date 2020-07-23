@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,12 +15,24 @@ import (
 	"github.com/missdeer/hannah/util"
 )
 
+const (
+	xiamiAppKey    = "23649156"
+	xiamiApiSearch = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
+)
+
 var (
+	ErrTokenNotFound      = errors.New("xiami token not found")
 	ErrCodeFieldNotExists = errors.New("code field does not exist")
+	reqHeader             = map[string]interface{}{
+		"appId":      200,
+		"platformId": "h5",
+	}
 )
 
 type xiami struct {
+	token   string
 	cookies []*http.Cookie
+	client  *http.Client
 }
 
 type xiamiSongDetail struct {
@@ -45,38 +58,103 @@ type xiamiSongDetail struct {
 }
 
 type xiamiSearchResult struct {
-	Code   string `json:"code"`
-	Result struct {
-		Status string `json:"status"`
-		Data   struct {
+	API  string `json:"api"`
+	Data struct {
+		Data struct {
 			PagingVO struct {
-				Page     int `json:"page"`
-				PageSize int `json:"pageSize"`
-				Pages    int `json:"pages"`
-				Count    int `json:"count"`
+				Page     string `json:"page"`
+				PageSize string `json:"pageSize"`
+				Pages    string `json:"pages"`
+				Count    string `json:"count"`
 			} `json:"pagingVO"`
 			Songs []struct {
-				SongID        int    `json:"songId"`
+				SongID        string `json:"songId"`
 				SongStringID  string `json:"songStringId"`
 				SongName      string `json:"songName"`
-				AlbumID       int    `json:"albumId"`
+				AlbumID       string `json:"albumId"`
 				AlbumStringID string `json:"albumStringId"`
 				AlbumLogo     string `json:"albumLogo"`
 				AlbumLogoS    string `json:"albumLogoS"`
 				AlbumName     string `json:"albumName"`
-				AlbumSubName  string `json:"albumSubName"`
-				ArtistID      int    `json:"artistId"`
+				ArtistID      string `json:"artistId"`
 				ArtistName    string `json:"artistName"`
 				ArtistLogo    string `json:"artistLogo"`
 				Singers       string `json:"singers"`
-				PinYin        string `json:"pinyin"`
+				ListenFiles   []struct {
+					DownloadFileSize string `json:"downloadFileSize"`
+					FileSize         string `json:"fileSize"`
+					Format           string `json:"format"`
+					ListenFile       string `json:"listenFile"`
+					PlayVolume       string `json:"playVolume"`
+					Quality          string `json:"quality"`
+				} `json:"listenFiles"`
 			} `json:"songs"`
 		} `json:"data"`
-	} `json:"result"`
+	} `json:"data"`
+}
+
+func (p *xiami) getToken(u string) (string, error) {
+	if p.token != "" {
+		return p.token, nil
+	}
+	parsedURL, _ := url.Parse(u)
+	c := p.client.Jar.Cookies(parsedURL)
+	const XiaMiToken = "_m_h5_tk"
+	if c == nil || len(c) == 0 {
+		req, err := http.NewRequest("GET", u, nil)
+		if err != nil {
+			return "", err
+		}
+
+		resp, err := p.client.Do(req)
+		if err != nil {
+			return "", err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			return "", ErrStatusNotOK
+		}
+
+		c = resp.Cookies()
+	}
+	for _, cookie := range c {
+		if cookie.Name == XiaMiToken {
+			return strings.Split(cookie.Value, "_")[0], nil
+		}
+	}
+	return "", ErrTokenNotFound
+}
+
+func signPayload(token string, model interface{}) (map[string]string, error) {
+	payload := map[string]interface{}{
+		"header": reqHeader,
+		"model":  model,
+	}
+	r, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	data := map[string]string{
+		"requestStr": string(r),
+	}
+	r, err = json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	t := time.Now().UnixNano() / (1e6)
+	signStr := fmt.Sprintf("%s&%d&%s&%s", token, t, xiamiAppKey, string(r))
+	sign := fmt.Sprintf("%x", md5.Sum([]byte(signStr)))
+
+	return map[string]string{
+		"t":    strconv.FormatInt(t, 10),
+		"sign": sign,
+		"data": string(r),
+	}, nil
 }
 
 func caesar(location string) (string, error) {
-	// caesar(location)
 	// https://github.com/listen1/listen1_chrome_extension/blob/f2e1b4376d3770333816668d98808ae90f796217/js/provider/xiami.js#L5
 	num := int(location[0] - '0')
 	avgLen := (len(location) - 1) / num
@@ -115,51 +193,38 @@ func caesar(location string) (string, error) {
 }
 
 func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error) {
-start:
-	// curl 'https://www.xiami.com/api/search/searchSongs?_q=%7B%22pagingVO%22:%7B%22page%22:%221%22,%22pageSize%22:60%7D,%22key%22:%22jay%22%7D&_s=366bc6054c0f94e3561642d06e651017'
-	// -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0'
-	// -H 'Accept: application/json, text/plain, */*'
-	// -H 'Accept-Language: zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2'
-	// --compressed
-	// -H 'Connection: keep-alive'
-	// -H 'Cookie: gid=151166315123687; xmgid=723ac295-e03a-4109-9c53-22b49371aea8; _uab_collina=157266137909801636000205; _xm_cf_=qltiVwysrtKMw3W0p_Z0fQ-U; xm_sg_tk=628da31835e19e3d3a65c49ea6a0f9f9_1595162817446; xm_sg_tk.sig=m58QVuGn8hcLNcuaWO3vHOlZXZaC-Mjp0O1oJzy1gG4'
-	// -H 'Referer: https://www.xiami.com/search?key=jay'
-	// -H 'Pragma: no-cache'
-	// -H 'Cache-Control: no-cache'
-
-	// curl 'https://www.xiami.com/api/search/searchSongs?_q=%7B%22pagingVO%22:%7B%22page%22:%221%22,%22pageSize%22:60%7D,%22key%22:%22jay%22%7D&_s=e5c324f991fea3ce9f904f49505d6499'
-	// -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0'
-	// -H 'Accept: application/json, text/plain, */*'
-	// -H 'Accept-Language: zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2'
-	// --compressed
-	// -H 'Connection: keep-alive'
-	// -H 'Cookie: gid=151166315123687; xmgid=723ac295-e03a-4109-9c53-22b49371aea8; _uab_collina=157266137909801636000205; _xm_cf_=qltiVwysrtKMw3W0p_Z0fQ-U; xm_sg_tk=e787be0b681f0ef5339f53186085eca3_1595253790619; xm_sg_tk.sig=DmgnD-KBRRnABMEpKGTiA61CEB-3qDXzDMVpjRa9Yhc'
-	// -H 'Referer: https://www.xiami.com/search?key=jay'
-	// -H 'Pragma: no-cache' -H 'Cache-Control: no-cache'
-	// -H 'TE: Trailers'
-	v := url.Values{}
-	v.Add("_q", fmt.Sprintf(`{"pagingVO":{"page":"%d", "pageSize":"%d"},"key":"%s"}`, page, limit, keyword))
-	v.Add("_s", strconv.FormatInt(time.Now().UnixNano(), 10))
-	u := "https://www.xiami.com/api/search/searchSongs?" + v.Encode()
-	req, err := http.NewRequest("GET", u, nil)
+	token, err := p.getToken(xiamiApiSearch)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, c := range p.cookies {
-		req.AddCookie(c)
+	model := map[string]interface{}{
+		"key": keyword,
+		"pagingVO": map[string]int{
+			"page":     page,
+			"pageSize": limit,
+		},
 	}
+	params, err := signPayload(token, model)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", xiamiApiSearch, nil)
+	if err != nil {
+		return nil, err
+	}
+	query := req.URL.Query()
+	for k, vs := range params {
+		query[k] = []string{vs}
+	}
+	req.URL.RawQuery = query.Encode()
+
+	req.Header.Set("Origin", "https://h.xiami.com")
+	req.Header.Set("Referer", "https://h.xiami.com")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", fmt.Sprintf("https://www.xiami.com/search?key=%s", url.QueryEscape(keyword)))
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
-	req.Header.Set("TE", "Trailers")
 
-	client := util.GetHttpClient()
-
-	resp, err := client.Do(req)
+	resp, err := p.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -174,51 +239,35 @@ start:
 		return nil, err
 	}
 
-	var simpleResp map[string]interface{}
-	if err = json.Unmarshal(content, &simpleResp); err != nil {
-		return nil, err
-	}
-
-	code, ok := simpleResp["code"]
-	if !ok {
-		return nil, ErrCodeFieldNotExists
-	}
-	codeStr, ok := code.(string)
-	if !ok {
-		return nil, err
-	}
-	switch codeStr {
-	case "SG_TOKEN_EXPIRED", "SG_TOKEN_EMPTY", "SG_INVALID":
-		// extract cookies
-		p.cookies = resp.Cookies()
-		goto start
-	case "SUCCESS":
-	default:
-		return nil, errors.New(codeStr)
-	}
-
-	p.cookies = resp.Cookies()
-
 	var sr xiamiSearchResult
 	if err = json.Unmarshal(content, &sr); err != nil {
 		return nil, err
 	}
 
 	var songs SearchResult
-	for _, s := range sr.Result.Data.Songs {
-		songs = append(songs, Song{
-			ID:       strconv.Itoa(s.SongID),
-			Title:    s.SongName,
-			Image:    s.AlbumLogo,
-			Artist:   s.ArtistName,
-			Provider: "xiami",
-		})
+	for _, s := range sr.Data.Data.Songs {
+		for _, f := range s.ListenFiles {
+			if f.Format == "mp3" {
+				songs = append(songs, Song{
+					ID:       s.SongID,
+					URL:      f.ListenFile,
+					Title:    s.SongName,
+					Image:    s.AlbumLogo,
+					Artist:   s.ArtistName,
+					Provider: "xiami",
+				})
+				break
+			}
+		}
 	}
 
 	return songs, nil
 }
 
 func (p *xiami) SongDetail(song Song) (Song, error) {
+	if song.URL != "" {
+		return song, nil
+	}
 	u := fmt.Sprintf(`https://emumo.xiami.com/song/playlist/id/%s/object_name/default/object_id/0/cat/json`, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)
@@ -237,9 +286,7 @@ func (p *xiami) SongDetail(song Song) (Song, error) {
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 	req.Header.Set("TE", "Trailers")
 
-	client := util.GetHttpClient()
-
-	resp, err := client.Do(req)
+	resp, err := p.client.Do(req)
 	if err != nil {
 		return song, err
 	}
@@ -260,7 +307,8 @@ func (p *xiami) SongDetail(song Song) (Song, error) {
 		return song, err
 	}
 
-	song.URL, err = caesar(sd.Data.TrackList[0].Location)
+	u, err = caesar(sd.Data.TrackList[0].Location)
+	song.URL = "https:" + u
 	return song, err
 }
 

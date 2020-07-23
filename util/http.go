@@ -11,11 +11,14 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"golang.org/x/net/proxy"
+	"golang.org/x/net/publicsuffix"
 
 	"github.com/missdeer/hannah/config"
 )
@@ -49,8 +52,15 @@ func socks5ProxyTransport(addr string) *http.Transport {
 	}
 }
 
-func GetHttpClient() http.Client {
-	client := http.Client{}
+func GetHttpClient() *http.Client {
+	jar, _ := cookiejar.New(&cookiejar.Options{
+		PublicSuffixList: publicsuffix.List,
+	})
+	client := &http.Client{
+		Transport: http.DefaultTransport,
+		Jar:       jar,
+		Timeout:   120 * time.Second,
+	}
 	httpProxy := os.Getenv("HTTP_PROXY")
 	if config.HttpProxy != "" {
 		httpProxy = config.HttpProxy

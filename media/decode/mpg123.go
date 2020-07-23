@@ -1,11 +1,8 @@
-// +build !windows
-
 // Package mpg123 provides an easy to use wrapper around mpg123 library
 // for decoding mp3 to audio samples
 package decode
 
 /*
-#cgo pkg-config: libmpg123
 #include <mpg123.h>
 */
 import "C"

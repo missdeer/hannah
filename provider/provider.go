@@ -3,6 +3,8 @@ package provider
 import (
 	"errors"
 
+	jsoniter "github.com/json-iterator/go"
+
 	"github.com/missdeer/hannah/util"
 )
 
@@ -40,6 +42,7 @@ type IProvider interface {
 type providerGetter func() IProvider
 
 var (
+	json           = jsoniter.ConfigCompatibleWithStandardLibrary
 	ErrStatusNotOK = errors.New("status != 200")
 
 	providerCreatorMap = map[string]providerGetter{

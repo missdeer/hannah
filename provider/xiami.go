@@ -2,7 +2,6 @@ package provider
 
 import (
 	"crypto/md5"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"

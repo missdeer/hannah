@@ -1,6 +1,6 @@
 // +build windows
 
-package decode
+package mpg123
 
 /*
 #cgo LDFLAGS: -lmpg123-0.dll

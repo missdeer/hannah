@@ -9,14 +9,22 @@ import (
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/vorbis"
 	"github.com/faiface/beep/wav"
+
+	"github.com/missdeer/hannah/config"
 )
 
 type builtinDecoder func(io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error)
 
 var (
 	builtinDecoderMap = map[string]builtinDecoder{
-		".mp3":  mp3.Decode,
-		".ogg":  vorbis.Decode,
+		".mp3": func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) {
+			if config.Mpg123 {
+				return Mpg123Decode(r)
+			} else {
+				return mp3.Decode(r)
+			}
+		},
+		".ogg":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return vorbis.Decode(r) },
 		".flac": func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return flac.Decode(r) },
 		".wav":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return wav.Decode(r) },
 	}

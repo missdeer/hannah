@@ -8,6 +8,7 @@ require (
 	github.com/jamesnetherton/m3u v0.3.0
 	github.com/json-iterator/go v1.1.10
 	github.com/missdeer/golib v1.0.3
+	github.com/pkg/errors v0.8.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381

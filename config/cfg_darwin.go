@@ -1,4 +1,4 @@
-// +build mac
+// +build darwin
 
 package config
 

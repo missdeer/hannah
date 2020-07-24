@@ -3,22 +3,24 @@ package config
 import (
 	"log"
 	"os"
+	"time"
 
 	"gopkg.in/ini.v1"
 )
 
 var (
-	Shuffle     bool
-	Repeat      bool
-	Socks5Proxy string
-	HttpProxy   string
-	Player      string
-	Action      = "play"
-	Provider    = "netease"
-	Limit       = 25
-	Page        = 1
-	Engine      = "builtin"
-	Mpg123      = true
+	Shuffle        bool
+	Repeat         bool
+	Socks5Proxy    string
+	HttpProxy      string
+	Player         string
+	Action                       = "play"
+	Provider                     = "netease"
+	Limit                        = 25
+	Page                         = 1
+	Engine                       = "builtin"
+	Mpg123                       = true
+	NetworkTimeout time.Duration = 30
 )
 
 func LoadConfigurationFromFile(fn string) error {

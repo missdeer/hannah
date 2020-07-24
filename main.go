@@ -16,9 +16,24 @@ import (
 
 	"github.com/jamesnetherton/m3u"
 
+	"github.com/missdeer/hannah/action"
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/media/decode"
+)
+
+var (
+	supportedSchema = map[string]struct{}{
+		"http://":     {},
+		"https://":    {},
+		"netease://":  {},
+		"qq://":       {},
+		"xiami://":    {},
+		"bilibili://": {},
+		"kugou://":    {},
+		"kuwo://":     {},
+		"migu://":     {},
+	}
 )
 
 func scanSongsInDirectory(dir string) (res []string) {
@@ -51,7 +66,14 @@ func scanSongsInDirectory(dir string) (res []string) {
 
 func scanSongs(songs []string) (res []string) {
 	for _, song := range songs {
-		if strings.HasPrefix(song, "http://") || strings.HasPrefix(song, "https://") {
+		notLocalFile := false
+		for k, _ := range supportedSchema {
+			if strings.HasPrefix(song, k) {
+				notLocalFile = true
+				break
+			}
+		}
+		if notLocalFile {
 			res = append(res, song)
 			continue
 		}
@@ -118,8 +140,8 @@ func main() {
 	}
 	rand.Seed(time.Now().UnixNano())
 
-	handler, ok := actionHandlerMap[config.Action]
-	if ok {
+	handler := action.GetActionHandler(config.Action)
+	if handler != nil {
 		if err := media.Initialize(); err != nil {
 			log.Fatal(err)
 		}

@@ -59,7 +59,7 @@ func GetHttpClient() *http.Client {
 	client := &http.Client{
 		Transport: http.DefaultTransport,
 		Jar:       jar,
-		Timeout:   120 * time.Second,
+		Timeout:   config.NetworkTimeout * time.Second,
 	}
 	httpProxy := os.Getenv("HTTP_PROXY")
 	if config.HttpProxy != "" {

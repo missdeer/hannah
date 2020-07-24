@@ -11,6 +11,10 @@ import (
 	"github.com/missdeer/hannah/util"
 )
 
+var (
+	client = util.GetHttpClient()
+)
+
 func openLocalFile(filename string) (io.ReadCloser, error) {
 	return os.Open(filename)
 }
@@ -21,10 +25,7 @@ func openRemoteSource(u string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	client := util.GetHttpClient()
-
-	r, err := url.Parse(u)
-	if err == nil {
+	if r, err := url.Parse(u); err == nil {
 		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}
 

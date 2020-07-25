@@ -34,7 +34,10 @@ func Initialize() error {
 
 	go func() {
 		tcellEvents = make(chan tcell.Event)
-		for {
+		defer func() {
+			close(tcellEvents)
+		}()
+		for ; !screenPanel.Quit(); {
 			tcellEvents <- screenPanel.PollScreenEvent()
 		}
 	}()

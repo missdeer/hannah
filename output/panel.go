@@ -3,6 +3,7 @@ package output
 import (
 	"fmt"
 	"strings"
+	"sync/atomic"
 	"time"
 	"unicode"
 	"unicode/utf8"
@@ -49,14 +50,21 @@ type ScreenPanel struct {
 	artist   string
 	title    string
 	message  string
+	quit     atomic.Value
 }
 
 func NewScreenPanel() *ScreenPanel {
-	return &ScreenPanel{}
+	sp := &ScreenPanel{}
+	sp.quit.Store(false)
+	return sp
 }
 
 func (sp *ScreenPanel) PollScreenEvent() tcell.Event {
 	return sp.screen.PollEvent()
+}
+
+func (sp *ScreenPanel) Quit() bool {
+	return sp.quit.Load().(bool)
 }
 
 func (sp *ScreenPanel) Initialize() error {
@@ -77,6 +85,7 @@ func (sp *ScreenPanel) Initialize() error {
 }
 
 func (sp *ScreenPanel) Finalize() {
+	sp.quit.Store(true)
 	if sp.screen != nil {
 		sp.screen.Fini()
 		sp.screen = nil

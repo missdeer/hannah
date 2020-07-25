@@ -1,6 +1,7 @@
 package action
 
 import (
+	"bufio"
 	"log"
 	"math/rand"
 	"os"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
+	"github.com/missdeer/hannah/media/decode/mpg123"
 	"github.com/missdeer/hannah/provider"
 )
 
@@ -31,14 +33,40 @@ var (
 )
 
 func resolve(song string) provider.Song {
-	if _, err := os.Stat(song); os.IsExist(err) {
-		return provider.Song{URL: song}
+	// local filesystem
+	if _, err := os.Stat(song); !os.IsNotExist(err) {
+		f, err := os.Open(song)
+		if err != nil {
+			return provider.Song{
+				URL:      song,
+				Provider: "local filesystem",
+			}
+		}
+		defer f.Close()
+
+		r := mpg123.NewReaderConfig(bufio.NewReader(f), mpg123.ReaderConfig{
+			OutputFormat: &mpg123.OutputFormat{
+				Channels: 2,
+				Rate:     44100,
+				Encoding: mpg123.EncodingInt16,
+			},
+		})
+
+		r.Read(nil)
+		return provider.Song{
+			URL:      song,
+			Artist:   r.Meta().ID3v2.Artist,
+			Title:    r.Meta().ID3v2.Title,
+			Provider: "local filesystem",
+		}
 	}
+	// http/https
 	for k, _ := range supportedRemote {
 		if strings.HasPrefix(song, k) {
 			return provider.Song{URL: song}
 		}
 	}
+	// services
 	ss := strings.Split(song, "://")
 	if len(ss) == 2 {
 		schema := ss[0]

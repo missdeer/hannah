@@ -53,10 +53,16 @@ func resolve(song string) provider.Song {
 		})
 
 		r.Read(nil)
+		if r.Meta().ID3v2 != nil {
+			return provider.Song{
+				URL:      song,
+				Artist:   r.Meta().ID3v2.Artist,
+				Title:    r.Meta().ID3v2.Title,
+				Provider: "local filesystem",
+			}
+		}
 		return provider.Song{
 			URL:      song,
-			Artist:   r.Meta().ID3v2.Artist,
-			Title:    r.Meta().ID3v2.Title,
 			Provider: "local filesystem",
 		}
 	}

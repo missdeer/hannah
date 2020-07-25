@@ -79,6 +79,7 @@ func (sp *ScreenPanel) Initialize() error {
 func (sp *ScreenPanel) Finalize() {
 	if sp.screen != nil {
 		sp.screen.Fini()
+		sp.screen = nil
 	}
 }
 

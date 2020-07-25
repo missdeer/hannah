@@ -1,14 +1,77 @@
 package provider
 
 import (
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/missdeer/hannah/util"
+	"github.com/missdeer/hannah/util/cryptography"
 )
+
+const (
+	Base62                             = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	neteasePresetKey                   = "0CoJUm6Qyw8W8jud"
+	neteaseIV                          = "0102030405060708"
+	neteaseLinuxAPIKey                 = "rFgB&h#%2?^eDg:Q"
+	neteaseEAPIKey                     = "e82ckenh8dichen8"
+	neteaseDefaultRSAPublicKeyModulus  = "e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7"
+	neteaseDefaultRSAPublicKeyExponent = 0x10001
+	neteaseAPIGetSongsURL              = "https://music.163.com/weapi/song/enhance/player/url/v1?csrf_token="
+	neteaseAPISearch                   = `http://music.163.com/api/search/pc`
+)
+
+func weapi(origData interface{}) map[string]interface{} {
+	plainText, _ := json.Marshal(origData)
+	params := base64.StdEncoding.EncodeToString(cryptography.AESCBCEncrypt(plainText, []byte(neteasePresetKey), []byte(neteaseIV)))
+	secKey := createSecretKey(16, Base62)
+	params = base64.StdEncoding.EncodeToString(cryptography.AESCBCEncrypt([]byte(params), secKey, []byte(neteaseIV)))
+	return map[string]interface{}{
+		"params":    params,
+		"encSecKey": cryptography.RSAEncrypt(bytesReverse(secKey), neteaseDefaultRSAPublicKeyModulus, neteaseDefaultRSAPublicKeyExponent),
+	}
+}
+
+func linuxapi(origData interface{}) map[string]interface{} {
+	plainText, _ := json.Marshal(origData)
+	return map[string]interface{}{
+		"eparams": strings.ToUpper(hex.EncodeToString(cryptography.AESECBEncrypt(plainText, []byte(neteaseLinuxAPIKey)))),
+	}
+}
+
+func eapi(url string, origData interface{}) map[string]interface{} {
+	plainText, _ := json.Marshal(origData)
+	text := string(plainText)
+	message := fmt.Sprintf("nobody%suse%smd5forencrypt", url, text)
+	digest := fmt.Sprintf("%x", md5.Sum([]byte(message)))
+	data := fmt.Sprintf("%s-36cd479b6b5-%s-36cd479b6b5-%s", url, text, digest)
+	return map[string]interface{}{
+		"params": strings.ToUpper(hex.EncodeToString(cryptography.AESECBEncrypt([]byte(data), []byte(neteaseEAPIKey)))),
+	}
+}
+
+func createSecretKey(size int, charset string) []byte {
+	secKey, n := make([]byte, size), len(charset)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := range secKey {
+		secKey[i] = charset[r.Intn(n)]
+	}
+	return secKey
+}
+
+func bytesReverse(b []byte) []byte {
+	for i, j := 0, len(b)-1; i < j; i, j = i+1, j-1 {
+		b[i], b[j] = b[j], b[i]
+	}
+	return b
+}
 
 type netease struct {
 }
@@ -62,10 +125,22 @@ type neteaseSearchResult struct {
 	Code int `json:"code"`
 }
 
+type neteaseSongDetail struct {
+	Code int `json:"code"`
+	Data []struct {
+		ID         int    `json:"id"`
+		URL        string `json:"url"`
+		BR         int    `json:"br"`
+		Size       int    `json:"size"`
+		Type       string `json:"type"`
+		Level      string `json:"level"`
+		EncodeType string `json:"encodeType"`
+	} `json:"data"`
+}
+
 func (p *netease) Search(keyword string, page int, limit int) (SearchResult, error) {
-	u := `http://music.163.com/api/search/pc`
-	body := fmt.Sprintf("limit=%d&offset=%d&s=%s&type=1", limit, page*limit, url.QueryEscape(keyword))
-	req, err := http.NewRequest("POST", u, strings.NewReader(body))
+	body := fmt.Sprintf("limit=%d&offset=%d&s=%s&type=1", limit, (page-1)*limit, url.QueryEscape(keyword))
+	req, err := http.NewRequest("POST", neteaseAPISearch, strings.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
@@ -78,9 +153,7 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 
-	client := util.GetHttpClient()
-
-	resp, err := client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +193,57 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 }
 
 func (p *netease) SongDetail(song Song) (Song, error) {
-	song.URL = fmt.Sprintf(`http://music.163.com/song/media/outer/url?id=%s.mp3`, song.ID)
+	data := map[string]interface{}{
+		"ids":        fmt.Sprintf("[%s]", song.ID),
+		"level":      "standard",
+		"encodeType": "aac",
+		"csrf_token": "",
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", neteaseAPIGetSongsURL, strings.NewReader(postBody))
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	var songDetail neteaseSongDetail
+	if err = json.Unmarshal(content, &songDetail); err != nil {
+		return song, err
+	}
+
+	if len(songDetail.Data) == 0 || songDetail.Data[0].URL == "" {
+		return song, err
+	}
+
+	song.URL = songDetail.Data[0].URL
 	return song, nil
 }
 

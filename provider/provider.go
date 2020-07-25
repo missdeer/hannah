@@ -45,16 +45,17 @@ var (
 	json           = jsoniter.ConfigCompatibleWithStandardLibrary
 	ErrStatusNotOK = errors.New("status != 200")
 
+	httpClient         = util.GetHttpClient()
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },
-		"xiami":    func() IProvider { return &xiami{client: util.GetHttpClient()} },
+		"xiami":    func() IProvider { return &xiami{client: httpClient} },
 		"qq":       func() IProvider { return &qq{} },
 		"kugou":    func() IProvider { return &kugou{} },
 		"kuwo":     func() IProvider { return &kuwo{} },
 		"bilibili": func() IProvider { return &bilibili{} },
 		"migu":     func() IProvider { return &migu{} },
 		"ne":       func() IProvider { return &netease{} },
-		"xm":       func() IProvider { return &xiami{client: util.GetHttpClient()} },
+		"xm":       func() IProvider { return &xiami{client: httpClient} },
 		"kg":       func() IProvider { return &kugou{} },
 		"wu":       func() IProvider { return &kuwo{} },
 		"b":        func() IProvider { return &bilibili{} },

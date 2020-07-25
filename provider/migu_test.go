@@ -37,7 +37,15 @@ func TestMigu_Search(t *testing.T) {
 
 }
 
-func TestMigu_SongDetail(t *testing.T) {
+func TestMigu_ResolveSongURL(t *testing.T) {
+	p := GetProvider("migu")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+}
+
+func TestMigu_ResolveSongLyric(t *testing.T) {
 	p := GetProvider("migu")
 	if p == nil {
 		t.Error("can't get provider")

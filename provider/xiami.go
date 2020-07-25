@@ -294,7 +294,7 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 	return songs, nil
 }
 
-func (p *xiami) SongDetail(song Song) (Song, error) {
+func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 	u := fmt.Sprintf(`https://emumo.xiami.com/song/playlist/id/%s/object_name/default/object_id/0/cat/json`, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)
@@ -337,6 +337,10 @@ func (p *xiami) SongDetail(song Song) (Song, error) {
 	u, err = caesar(sd.Data.TrackList[0].Location)
 	song.URL = "https:" + u
 	return song, err
+}
+
+func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
+	return song, nil
 }
 
 func (p *xiami) HotPlaylist(page int) (Playlists, error) {

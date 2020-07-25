@@ -78,7 +78,7 @@ func resolve(song string) provider.Song {
 		schema := ss[0]
 		if _, ok := supportedService[schema]; ok {
 			p := provider.GetProvider(schema)
-			if s, err := p.SongDetail(provider.Song{ID: ss[1]}); err == nil {
+			if s, err := p.ResolveSongURL(provider.Song{ID: ss[1]}); err == nil {
 				return s
 			}
 		}

@@ -193,7 +193,7 @@ func (p *netease) Search(keyword string, page int, limit int) (SearchResult, err
 	return res, nil
 }
 
-func (p *netease) SongDetail(song Song) (Song, error) {
+func (p *netease) ResolveSongURL(song Song) (Song, error) {
 	data := map[string]interface{}{
 		"ids":        fmt.Sprintf("[%s]", song.ID),
 		"level":      "standard",
@@ -245,6 +245,10 @@ func (p *netease) SongDetail(song Song) (Song, error) {
 	}
 
 	song.URL = songDetail.Data[0].URL
+	return song, nil
+}
+
+func (p *netease) ResolveSongLyric(song Song) (Song, error){
 	return song, nil
 }
 

@@ -37,7 +37,15 @@ func TestKugou_Search(t *testing.T) {
 
 }
 
-func TestKugou_SongDetail(t *testing.T) {
+func TestKugou_ResolveSongURL(t *testing.T) {
+	p := GetProvider("kugou")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+}
+
+func TestKugou_ResolveSongLyric(t *testing.T) {
 	p := GetProvider("kugou")
 	if p == nil {
 		t.Error("can't get provider")

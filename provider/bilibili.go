@@ -7,7 +7,11 @@ func (p *bilibili) Search(keyword string, page int, limit int) (SearchResult, er
 	return nil, nil
 }
 
-func (p *bilibili) SongDetail(song Song) (Song, error) {
+func (p *bilibili) ResolveSongURL(song Song) (Song, error) {
+	return song, nil
+}
+
+func (p *bilibili) ResolveSongLyric(song Song) (Song, error){
 	return song, nil
 }
 

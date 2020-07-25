@@ -46,17 +46,25 @@ func TestXiami_Search(t *testing.T) {
 	}
 }
 
-func TestXiami_SongDetail(t *testing.T) {
+func TestXiami_ResolveSongURL(t *testing.T) {
 	p := GetProvider("xiami")
 	if p == nil {
 		t.Error("can't get provider")
 	}
 
-	s, err := p.SongDetail(Song{ID: "1769262490"})
+	s, err := p.ResolveSongURL(Song{ID: "1769262490"})
 	if err != nil {
 		t.Error(err)
 	}
 	log.Println(s.URL)
+}
+
+func TestXiami_ResolveSongLyric(t *testing.T) {
+	p := GetProvider("xiami")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
 }
 
 func TestXiami_Name(t *testing.T) {

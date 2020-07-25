@@ -12,7 +12,11 @@ func (p *musictool) Search(keyword string, page int, limit int) (SearchResult, e
 	return nil, nil
 }
 
-func (p *musictool) SongDetail(song Song) (Song, error) {
+func (p *musictool) ResolveSongURL(song Song) (Song, error) {
+	return song, nil
+}
+
+func (p *musictool) ResolveSongLyric(song Song) (Song, error){
 	return song, nil
 }
 

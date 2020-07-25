@@ -58,7 +58,15 @@ func TestMusictool_Search(t *testing.T) {
 
 }
 
-func TestMusictool_SongDetail(t *testing.T) {
+func TestMusictool_ResolveSongURL(t *testing.T) {
+	p := GetProvider("musictool")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+}
+
+func TestMusictool_ResolveSongLyric(t *testing.T) {
 	p := GetProvider("musictool")
 	if p == nil {
 		t.Error("can't get provider")

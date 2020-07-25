@@ -38,13 +38,13 @@ func TestQq_Search(t *testing.T) {
 	}
 }
 
-func TestQq_SongDetail(t *testing.T) {
+func TestQq_ResolveSongURL(t *testing.T) {
 	p := GetProvider("qq")
 	if p == nil {
 		t.Error("can't get provider")
 	}
 
-	u, err := p.SongDetail(Song{ID: "003VQrF72a0DGb"})
+	u, err := p.ResolveSongURL(Song{ID: "003VQrF72a0DGb"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -56,6 +56,14 @@ func TestQq_SongDetail(t *testing.T) {
 	if filepath.Base(parsedURL.Path) == ".m4a" {
 		t.Error("incorrect song URL")
 	}
+}
+
+func TestQq_ResolveSongLyric(t *testing.T) {
+	p := GetProvider("qq")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
 }
 
 func TestQq_Name(t *testing.T) {

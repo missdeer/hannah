@@ -32,13 +32,12 @@ func search(keywords []string) error {
 			rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
 		}
 		for i := 0; i < len(songs); i++ {
-			song := songs[i]
-			detail, err := p.SongDetail(song)
+			song, err := p.ResolveSongURL(songs[i])
 			if err != nil {
 				log.Println(err)
 				continue
 			}
-			err = media.PlayMedia(detail.URL, i+1, len(songs), song.Artist, song.Title)
+			err = media.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title)
 			switch err {
 			case media.ShouldQuit:
 				return err
@@ -48,11 +47,11 @@ func search(keywords []string) error {
 				// auto next
 			case media.UnsupportedMediaType:
 				if b, e := fsutil.FileExists(config.Player); e == nil && b {
-					log.Println(err, detail.URL, ", try to use external player", config.Player)
-					cmd := exec.Command(config.Player, detail.URL)
+					log.Println(err, song.URL, ", try to use external player", config.Player)
+					cmd := exec.Command(config.Player, song.URL)
 					cmd.Run()
 				} else {
-					log.Println(err, detail.URL)
+					log.Println(err, song.URL)
 				}
 			default:
 			}

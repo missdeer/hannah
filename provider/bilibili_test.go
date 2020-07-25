@@ -37,7 +37,15 @@ func TestBilibili_Search(t *testing.T) {
 
 }
 
-func TestBilibili_SongDetail(t *testing.T) {
+func TestBilibili_ResolveSongURL(t *testing.T) {
+	p := GetProvider("bilibili")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+}
+
+func TestBilibili_ResolveSongLyric(t *testing.T) {
 	p := GetProvider("bilibili")
 	if p == nil {
 		t.Error("can't get provider")

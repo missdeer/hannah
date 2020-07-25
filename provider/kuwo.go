@@ -7,7 +7,11 @@ func (p *kuwo) Search(keyword string, page int, limit int) (SearchResult, error)
 	return nil, nil
 }
 
-func (p *kuwo) SongDetail(song Song) (Song, error) {
+func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
+	return song, nil
+}
+
+func (p *kuwo) ResolveSongLyric(song Song) (Song, error){
 	return song, nil
 }
 

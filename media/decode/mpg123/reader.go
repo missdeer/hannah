@@ -29,8 +29,6 @@ type ReaderConfig struct {
 	OutputFormat *OutputFormat
 	// Internal buffer size
 	BufferSize int
-	// Total length in byte
-	TotalBytes int64
 }
 
 var DefaultConfig = ReaderConfig{
@@ -54,7 +52,6 @@ func NewReaderConfig(r io.Reader, config ReaderConfig) *Reader {
 	h.OpenFeed()
 	return &Reader{
 		input:       r,
-		totalBytes:  config.TotalBytes,
 		h:           h,
 		maxBadBytes: 4096,
 		feedBuf:     make([]byte, config.BufferSize),
@@ -65,11 +62,6 @@ func NewReaderConfig(r io.Reader, config ReaderConfig) *Reader {
 // configured with the supplied config
 func NewReader(r io.Reader) *Reader {
 	return NewReaderConfig(r, ReaderConfig{})
-}
-
-// TotalBytes returns bytes count had been read
-func (r *Reader) TotalBytes() int64 {
-	return r.totalBytes
 }
 
 // Offset returns current stream offset

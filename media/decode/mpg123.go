@@ -1,9 +1,11 @@
 package decode
 
 import (
-	"bufio"
+	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 
 	"github.com/faiface/beep"
 	"github.com/pkg/errors"
@@ -29,7 +31,12 @@ func Mpg123Decode(rc io.ReadCloser) (s beep.StreamSeekCloser, format beep.Format
 		}
 	}()
 
-	r := mpg123.NewReaderConfig(bufio.NewReader(rc), mpg123.ReaderConfig{
+	b, err := ioutil.ReadAll(rc)
+	if err != nil {
+		log.Fatal(err)
+		return nil, beep.Format{}, err
+	}
+	r := mpg123.NewReaderConfig(bytes.NewReader(b), mpg123.ReaderConfig{
 		OutputFormat: &mpg123.OutputFormat{
 			Channels: 2,
 			Rate:     44100,
@@ -43,7 +50,20 @@ func Mpg123Decode(rc io.ReadCloser) (s beep.StreamSeekCloser, format beep.Format
 		NumChannels: gomp3NumChannels,
 		Precision:   gomp3Precision,
 	}
-	return &decoder{rc, r, format, 0, nil}, format, nil
+	d, err := ioutil.ReadAll(r)
+	length := 0
+
+	if err == nil {
+		length = len(d)
+	}
+	r = mpg123.NewReaderConfig(bytes.NewReader(b), mpg123.ReaderConfig{
+		OutputFormat: &mpg123.OutputFormat{
+			Channels: 2,
+			Rate:     44100,
+			Encoding: mpg123.EncodingInt16,
+		},
+	})
+	return &decoder{rc, r, format, 0, length, nil}, format, nil
 }
 
 type decoder struct {
@@ -51,6 +71,7 @@ type decoder struct {
 	r      *mpg123.Reader
 	f      beep.Format
 	pos    int
+	length int
 	err    error
 }
 
@@ -83,7 +104,7 @@ func (d *decoder) Err() error {
 }
 
 func (d *decoder) Len() int {
-	return int(d.r.TotalBytes() / gomp3BytesPerFrame)
+	return int(d.length / gomp3BytesPerFrame)
 }
 
 func (d *decoder) Position() int {

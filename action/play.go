@@ -1,18 +1,17 @@
 package action
 
 import (
-	"bufio"
 	"log"
 	"math/rand"
 	"os"
 	"os/exec"
 	"strings"
 
+	"github.com/bogem/id3v2"
 	"github.com/missdeer/golib/fsutil"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
-	"github.com/missdeer/hannah/media/decode/mpg123"
 	"github.com/missdeer/hannah/provider"
 )
 
@@ -35,32 +34,17 @@ var (
 func resolve(song string) provider.Song {
 	// local filesystem
 	if _, err := os.Stat(song); !os.IsNotExist(err) {
-		f, err := os.Open(song)
-		if err != nil {
+		tag, err := id3v2.Open(song, id3v2.Options{Parse: true})
+		if err == nil {
+			defer tag.Close()
 			return provider.Song{
 				URL:      song,
+				Artist:   tag.Artist(),
+				Title:    tag.Title(),
 				Provider: "local filesystem",
 			}
 		}
-		defer f.Close()
 
-		r := mpg123.NewReaderConfig(bufio.NewReader(f), mpg123.ReaderConfig{
-			OutputFormat: &mpg123.OutputFormat{
-				Channels: 2,
-				Rate:     44100,
-				Encoding: mpg123.EncodingInt16,
-			},
-		})
-
-		r.Read(nil)
-		if r.Meta().ID3v2 != nil {
-			return provider.Song{
-				URL:      song,
-				Artist:   r.Meta().ID3v2.Artist,
-				Title:    r.Meta().ID3v2.Title,
-				Provider: "local filesystem",
-			}
-		}
 		return provider.Song{
 			URL:      song,
 			Provider: "local filesystem",

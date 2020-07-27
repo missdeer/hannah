@@ -33,9 +33,9 @@ CHECKS:=go.mod go.sum \
     output/beep/speaker.go \
     output/panel.go \
     output/speaker.go \
-    bass/bass_darwin.go \
-    bass/bass_windows.go \
-    bass/bass.go \
+    output/bass/bass_darwin.go \
+    output/bass/bass_windows.go \
+    output/bass/bass.go \
     action/action.go \
     action/play.go \
     action/action_test.go \
@@ -55,7 +55,7 @@ all: $(BINARY)
 
 $(BINARY): $(CHECKS)
 	env CGO_ENABLED=1 go build -ldflags="-s -w" -o $(BINARY)
-	install_name_tool -change @loader_path/libbass.dylib @executable_path/bass/macOS/lib/libbass.dylib hannah
+	install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/macOS/lib/libbass.dylib hannah
 	go mod tidy
 
 .PHONY: clean

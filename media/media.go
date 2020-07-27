@@ -8,11 +8,11 @@ import (
 
 	"github.com/gdamore/tcell"
 
-	"github.com/missdeer/hannah/bass"
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/output"
+	"github.com/missdeer/hannah/output/bass"
 )
 
 type play func(string, int, int, string, string) error

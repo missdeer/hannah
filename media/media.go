@@ -3,10 +3,12 @@ package media
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gdamore/tcell"
 
+	"github.com/missdeer/hannah/bass"
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/media/decode"
@@ -25,6 +27,11 @@ var (
 )
 
 func Initialize() error {
+	switch strings.ToLower(config.Engine) {
+	case "builtin":
+	case "bass":
+		bass.Init()
+	}
 	audioSpeaker = beep.NewSpeaker()
 
 	screenPanel = output.NewScreenPanel()

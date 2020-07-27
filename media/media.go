@@ -55,6 +55,70 @@ func Initialize() error {
 }
 
 func bassPlayMedia(uri string, index int, total int, artist string, title string) error {
+	if !audioSpeaker.IsNil() {
+		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
+		pos, length, vol, speed := audioSpeaker.Status()
+		screenPanel.Draw(pos, length, vol, speed)
+	}
+
+	defer audioSpeaker.Shutdown()
+
+	done := make(chan struct{})
+	audioSpeaker.UpdateURI(uri, done)
+
+	screenPanel.Update(uri, index, total, artist, title)
+
+	screenPanel.SetMessage("")
+	pos, length, vol, speed := audioSpeaker.Status()
+	screenPanel.Draw(pos, length, vol, speed)
+
+	audioSpeaker.Play()
+
+	seconds := time.Tick(time.Second)
+	for {
+		select {
+		case event := <-tcellEvents:
+			changed, action := screenPanel.Handle(event)
+			switch action {
+			case output.HandleActionQUIT:
+				return ShouldQuit
+			case output.HandleActionNEXT:
+				return NextSong
+			case output.HandleActionPREVIOUS:
+				return PreviousSong
+			case output.HandleActionRepeat:
+				config.Repeat = !config.Repeat
+			case output.HandleActionShuffle:
+				config.Shuffle = !config.Shuffle
+			case output.HandleActionPauseResume:
+				audioSpeaker.PauseResume()
+			case output.HandleActionBackward:
+				audioSpeaker.Backward()
+			case output.HandleActionForward:
+				audioSpeaker.Forward()
+			case output.HandleActionDecreaseVolume:
+				audioSpeaker.DecreaseVolume()
+			case output.HandleActionIncreaseVolume:
+				audioSpeaker.IncreaseVolume()
+			case output.HandleActionSlowdown:
+				audioSpeaker.Slowdown()
+			case output.HandleActionSpeedup:
+				audioSpeaker.Speedup()
+			default:
+			}
+			if changed {
+				pos, length, vol, speed := audioSpeaker.Status()
+				screenPanel.Draw(pos, length, vol, speed)
+			}
+		case <-seconds:
+			if !audioSpeaker.IsPaused() {
+				pos, length, vol, speed := audioSpeaker.Status()
+				screenPanel.Draw(pos, length, vol, speed)
+			}
+		case <-done:
+			return NextSong
+		}
+	}
 	return nil
 }
 

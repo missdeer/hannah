@@ -24,7 +24,7 @@ type ISpeaker interface {
 	Speedup()
 	Status() (time.Duration, time.Duration, float64, float64)
 	IsNil() bool
-	UpdateURI(int, string, chan struct{})
+	UpdateURI(string, chan struct{})
 	UpdateStream(int, interface{}, chan struct{})
 }
 

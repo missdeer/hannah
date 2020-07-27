@@ -14,7 +14,7 @@ var (
 )
 
 func plugins() (res []string) {
-	dirs := []string{"plugins", "bass/plugins", "bass/macOS/plugins"}
+	dirs := []string{"plugins", "bass/plugins", "bass/macOS/lib/plugins"}
 	for _, dir := range dirs {
 		fi, err := ioutil.ReadDir(dir)
 		if err != nil {

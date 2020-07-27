@@ -30,7 +30,7 @@ func (s *Speaker) Finalize() {
 
 }
 
-func (s *Speaker) UpdateURI(sampleRate int, uri string, done chan struct{}) {
+func (s *Speaker) UpdateURI(uri string, done chan struct{}) {
 
 }
 
@@ -57,10 +57,6 @@ func (s *Speaker) Play() {
 
 func (s *Speaker) PrePlay(sampleRete int, bufferSize int) {
 	speaker.Init(beep.SampleRate(sampleRete), bufferSize)
-}
-
-func (s *Speaker) InitializeSpeaker(sampleRate beep.SampleRate, bufferSize int) {
-	speaker.Init(sampleRate, bufferSize)
 }
 
 func (s *Speaker) Shutdown() {

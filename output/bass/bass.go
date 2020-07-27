@@ -264,13 +264,13 @@ func PluginLoad(file string) int {
 	result := int(C.BASS_PluginLoad(C.CString(file), C.uint(0)))
 	switch result {
 	case BASS_ERROR_FILEOPEN:
-		log.Println("err:", "BASS_ERROR_FILEOPEN")
+		log.Println(file, "err: BASS_ERROR_FILEOPEN")
 		break
 	case BASS_ERROR_FILEFORM:
-		log.Println("err:", "BASS_ERROR_FILEFORM")
+		log.Println(file, "err: BASS_ERROR_FILEFORM")
 		break
 	case BASS_ERROR_VERSION:
-		log.Println("err:", "BASS_ERROR_VERSION")
+		log.Println(file, "err: BASS_ERROR_VERSION")
 		break
 	}
 	return result

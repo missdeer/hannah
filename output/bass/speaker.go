@@ -3,8 +3,6 @@ package bass
 import (
 	"strings"
 	"time"
-
-	"github.com/faiface/beep"
 )
 
 var (
@@ -37,7 +35,7 @@ func (s *Speaker) Finalize() {
 	Free()
 }
 
-func (s *Speaker) UpdateURI(sampleRate int, uri string, done chan struct{}) {
+func (s *Speaker) UpdateURI(uri string, done chan struct{}) {
 	s.done = done
 	if strings.HasPrefix(uri, "http://") || strings.HasPrefix(uri, "https://") {
 		// http/https
@@ -62,9 +60,6 @@ func (s *Speaker) Play() {
 func (s *Speaker) PrePlay(sampleRete int, bufferSize int) {
 }
 
-func (s *Speaker) InitializeSpeaker(sampleRate beep.SampleRate, bufferSize int) {
-}
-
 func (s *Speaker) Shutdown() {
 	ChannelStop(s.handle)
 	StreamFree(s.handle)
@@ -80,15 +75,32 @@ func (s *Speaker) PauseResume() {
 }
 
 func (s *Speaker) Backward() {
+	pos := ChannelGetPosition(s.handle, BASS_POS_BYTE)
+	pos -= 10
+	if pos < 0 {
+		pos = 0
+	}
+	ChannelSetPosition(s.handle, BASS_POS_BYTE, pos)
 }
 
 func (s *Speaker) Forward() {
+	pos := ChannelGetPosition(s.handle, BASS_POS_BYTE)
+	pos += 10
+	length := ChannelGetLength(s.handle, BASS_POS_BYTE)
+	if pos > length {
+		pos = length
+	}
+	ChannelSetPosition(s.handle, BASS_POS_BYTE, pos)
 }
 
 func (s *Speaker) IncreaseVolume() {
+	vol := GetChanVol(s.handle)
+	SetChanVol(s.handle, uint(float64(vol)*1.1))
 }
 
 func (s *Speaker) DecreaseVolume() {
+	vol := GetChanVol(s.handle)
+	SetChanVol(s.handle, uint(float64(vol)*0.9))
 }
 
 func (s *Speaker) Slowdown() {
@@ -98,7 +110,10 @@ func (s *Speaker) Speedup() {
 }
 
 func (s *Speaker) Status() (time.Duration, time.Duration, float64, float64) {
-	return 0, 0, 0, 0
+	return time.Duration(ChannelGetPosition(s.handle, BASS_POS_BYTE)),
+		time.Duration(ChannelGetLength(s.handle, BASS_POS_BYTE)),
+		float64(GetVolume()),
+		0
 }
 
 func (s *Speaker) IsNil() bool {

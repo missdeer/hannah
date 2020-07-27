@@ -1,15 +1,11 @@
 package output
 
 import (
+	"strings"
 	"time"
-)
 
-type SpeakerStatus struct {
-	Position time.Duration
-	Length   time.Duration
-	Volume   float64
-	Speed    float64
-}
+	"github.com/missdeer/hannah/output/beep"
+)
 
 type ISpeaker interface {
 	IsPaused() bool
@@ -23,6 +19,18 @@ type ISpeaker interface {
 	DecreaseVolume()
 	Slowdown()
 	Speedup()
-	Status() *SpeakerStatus
+	Status() (time.Duration, time.Duration, float64, float64)
 	IsNil() bool
+	UpdateURI(int, string, chan struct{})
+	UpdateStream(int, interface{}, chan struct{})
+}
+
+func NewSpeaker(engine string) ISpeaker {
+	switch strings.ToLower(engine) {
+	case "builtin":
+		return beep.NewSpeaker()
+	case "bass":
+		return nil
+	}
+	return nil
 }

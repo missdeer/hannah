@@ -18,21 +18,18 @@ type Speaker struct {
 	done       chan struct{}
 }
 
-type SpeakerStatus struct {
-	Position time.Duration
-	Length   time.Duration
-	Volume   float64
-	Speed    float64
-}
-
 func NewSpeaker() *Speaker {
 	return &Speaker{}
 }
 
-func (s *Speaker) Update(sampleRate beep.SampleRate, streamer beep.StreamSeeker, done chan struct{}) {
-	s.sampleRate = sampleRate
-	s.streamer = streamer
-	s.ctrl = &beep.Ctrl{Streamer: beep.Loop(1, streamer)}
+func (s *Speaker) UpdateURI(sampleRate int, uri string, done chan struct{}) {
+
+}
+
+func (s *Speaker) UpdateStream(sampleRate int, streamer interface{}, done chan struct{}) {
+	s.sampleRate = beep.SampleRate(sampleRate)
+	s.streamer = streamer.(beep.StreamSeeker)
+	s.ctrl = &beep.Ctrl{Streamer: beep.Loop(1, s.streamer)}
 	s.resampler = beep.ResampleRatio(4, 1, s.ctrl)
 	s.volume = &effects.Volume{Streamer: s.resampler, Base: 2}
 	s.done = done
@@ -48,6 +45,10 @@ func (s *Speaker) Play() {
 	speaker.Play(beep.Seq(s.volume, beep.Callback(func() {
 		s.done <- struct{}{}
 	})))
+}
+
+func (s *Speaker) Init(sampleRete int, bufferSize int) {
+	speaker.Init(beep.SampleRate(sampleRete), bufferSize)
 }
 
 func (s *Speaker) InitializeSpeaker(sampleRate beep.SampleRate, bufferSize int) {
@@ -119,15 +120,13 @@ func (s *Speaker) Speedup() {
 	speaker.Unlock()
 }
 
-func (s *Speaker) Status() *SpeakerStatus {
+func (s *Speaker) Status() (time.Duration, time.Duration, float64, float64) {
 	speaker.Lock()
 	defer speaker.Unlock()
-	return &SpeakerStatus{
-		Position: s.sampleRate.D(s.streamer.Position()),
-		Length:   s.sampleRate.D(s.streamer.Len()),
-		Volume:   s.volume.Volume,
-		Speed:    s.resampler.Ratio(),
-	}
+	return s.sampleRate.D(s.streamer.Position()),
+		s.sampleRate.D(s.streamer.Len()),
+		s.volume.Volume,
+		s.resampler.Ratio()
 }
 func (s *Speaker) IsNil() bool {
 	return s.streamer == nil

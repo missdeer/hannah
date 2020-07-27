@@ -13,8 +13,9 @@ import (
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/output"
-	"github.com/missdeer/hannah/output/beep"
 )
+
+type play func(string, int, int, string, string) error
 
 var (
 	ShouldQuit           = errors.New("should quit application now")
@@ -22,17 +23,20 @@ var (
 	NextSong             = errors.New("play next song")
 	UnsupportedMediaType = errors.New("unsupported media type")
 	screenPanel          *output.ScreenPanel
-	audioSpeaker         *beep.Speaker
+	audioSpeaker         output.ISpeaker
 	tcellEvents          chan tcell.Event
+	PlayMedia            play = builtinPlayMedia
 )
 
 func Initialize() error {
 	switch strings.ToLower(config.Engine) {
 	case "builtin":
+		PlayMedia = builtinPlayMedia
 	case "bass":
 		bass.Init()
+		PlayMedia = bassPlayMedia
 	}
-	audioSpeaker = beep.NewSpeaker()
+	audioSpeaker = output.NewSpeaker(config.Engine)
 
 	screenPanel = output.NewScreenPanel()
 	if err := screenPanel.Initialize(); err != nil {
@@ -51,11 +55,15 @@ func Initialize() error {
 	return nil
 }
 
-func PlayMedia(uri string, index int, total int, artist string, title string) error {
+func bassPlayMedia(uri string, index int, total int, artist string, title string) error {
+	return nil
+}
+
+func builtinPlayMedia(uri string, index int, total int, artist string, title string) error {
 	if !audioSpeaker.IsNil() {
 		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
-		status := audioSpeaker.Status()
-		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
+		pos, length, vol, speed := audioSpeaker.Status()
+		screenPanel.Draw(pos, length, vol, speed)
 	}
 
 	r, err := input.OpenSource(uri)
@@ -66,8 +74,8 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 
 	if !audioSpeaker.IsNil() {
 		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
-		status := audioSpeaker.Status()
-		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
+		pos, length, vol, speed := audioSpeaker.Status()
+		screenPanel.Draw(pos, length, vol, speed)
 	}
 
 	decoder := decode.GetBuiltinDecoder(uri)
@@ -82,21 +90,21 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 
 	if !audioSpeaker.IsNil() {
 		screenPanel.SetMessage("Initializing speaker...")
-		status := audioSpeaker.Status()
-		screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
+		pos, length, vol, speed := audioSpeaker.Status()
+		screenPanel.Draw(pos, length, vol, speed)
 	}
 
-	audioSpeaker.InitializeSpeaker(format.SampleRate, format.SampleRate.N(time.Second/10))
+	audioSpeaker.Init(int(format.SampleRate), format.SampleRate.N(time.Second/10))
 	defer audioSpeaker.Shutdown()
 
 	done := make(chan struct{})
-	audioSpeaker.Update(format.SampleRate, streamer, done)
+	audioSpeaker.UpdateStream(int(format.SampleRate), streamer, done)
 
 	screenPanel.Update(uri, index, total, artist, title)
 
 	screenPanel.SetMessage("")
-	status := audioSpeaker.Status()
-	screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
+	pos, length, vol, speed := audioSpeaker.Status()
+	screenPanel.Draw(pos, length, vol, speed)
 
 	audioSpeaker.Play()
 
@@ -133,13 +141,13 @@ func PlayMedia(uri string, index int, total int, artist string, title string) er
 			default:
 			}
 			if changed {
-				status := audioSpeaker.Status()
-				screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
+				pos, length, vol, speed := audioSpeaker.Status()
+				screenPanel.Draw(pos, length, vol, speed)
 			}
 		case <-seconds:
 			if !audioSpeaker.IsPaused() {
-				status := audioSpeaker.Status()
-				screenPanel.Draw(status.Position, status.Length, status.Volume, status.Speed)
+				pos, length, vol, speed := audioSpeaker.Status()
+				screenPanel.Draw(pos, length, vol, speed)
 			}
 		case <-done:
 			return NextSong

@@ -13,7 +13,7 @@ var (
 	fnRegexp = regexp.MustCompile(`^libbass[^\.]+.dylib$`)
 )
 
-func LoadAllPlugins() {
+func plugins() (res []string) {
 	dirs := []string{"plugins", "bass/plugins", "bass/macOS/plugins"}
 	for _, dir := range dirs {
 		fi, err := ioutil.ReadDir(dir)
@@ -29,7 +29,8 @@ func LoadAllPlugins() {
 				continue
 			}
 			fn := filepath.Join(dir, f.Name())
-			PluginLoad(fn)
+			res = append(res, fn)
 		}
 	}
+	return
 }

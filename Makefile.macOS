@@ -36,6 +36,7 @@ CHECKS:=go.mod go.sum \
     output/bass/bass_darwin.go \
     output/bass/bass_windows.go \
     output/bass/bass.go \
+    output/bass/speaker.go \
     action/action.go \
     action/play.go \
     action/action_test.go \

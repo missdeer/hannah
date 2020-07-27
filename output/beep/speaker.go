@@ -22,6 +22,14 @@ func NewSpeaker() *Speaker {
 	return &Speaker{}
 }
 
+func (s *Speaker) Initialize() {
+
+}
+
+func (s *Speaker) Finalize() {
+
+}
+
 func (s *Speaker) UpdateURI(sampleRate int, uri string, done chan struct{}) {
 
 }
@@ -47,7 +55,7 @@ func (s *Speaker) Play() {
 	})))
 }
 
-func (s *Speaker) Init(sampleRete int, bufferSize int) {
+func (s *Speaker) PrePlay(sampleRete int, bufferSize int) {
 	speaker.Init(beep.SampleRate(sampleRete), bufferSize)
 }
 

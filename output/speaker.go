@@ -4,13 +4,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/missdeer/hannah/output/bass"
 	"github.com/missdeer/hannah/output/beep"
 )
 
 type ISpeaker interface {
+	Initialize()
+	Finalize()
 	IsPaused() bool
 	Play()
-	Init(int, int)
+	PrePlay(int, int)
 	Shutdown()
 	PauseResume()
 	Backward()
@@ -30,7 +33,7 @@ func NewSpeaker(engine string) ISpeaker {
 	case "builtin":
 		return beep.NewSpeaker()
 	case "bass":
-		return nil
+		return bass.NewSpeaker()
 	}
 	return nil
 }

@@ -12,7 +12,6 @@ import (
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/output"
-	"github.com/missdeer/hannah/output/bass"
 )
 
 type play func(string, int, int, string, string) error
@@ -33,10 +32,10 @@ func Initialize() error {
 	case "builtin":
 		PlayMedia = builtinPlayMedia
 	case "bass":
-		bass.Init()
 		PlayMedia = bassPlayMedia
 	}
 	audioSpeaker = output.NewSpeaker(config.Engine)
+	audioSpeaker.Initialize()
 
 	screenPanel = output.NewScreenPanel()
 	if err := screenPanel.Initialize(); err != nil {
@@ -94,7 +93,7 @@ func builtinPlayMedia(uri string, index int, total int, artist string, title str
 		screenPanel.Draw(pos, length, vol, speed)
 	}
 
-	audioSpeaker.Init(int(format.SampleRate), format.SampleRate.N(time.Second/10))
+	audioSpeaker.PrePlay(int(format.SampleRate), format.SampleRate.N(time.Second/10))
 	defer audioSpeaker.Shutdown()
 
 	done := make(chan struct{})
@@ -158,4 +157,5 @@ func builtinPlayMedia(uri string, index int, total int, artist string, title str
 
 func Finalize() {
 	screenPanel.Finalize()
+	audioSpeaker.Finalize()
 }

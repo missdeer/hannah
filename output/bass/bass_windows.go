@@ -14,7 +14,7 @@ var (
 	fnRegexp = regexp.MustCompile(`^bass[^\.]+.dll`)
 )
 
-func LoadAllPlugins() {
+func plugins() (res []string) {
 	dirs := []string{"plugins", path.Join("bass", "plugins"), path.Join("bass", "windows", "plugins")}
 	for _, dir := range dirs {
 		fi, err := ioutil.ReadDir(dir)
@@ -30,7 +30,8 @@ func LoadAllPlugins() {
 				continue
 			}
 			fn := filepath.Join(dir, f.Name())
-			PluginLoad(fn)
+			res = append(res, fn)
 		}
 	}
+	return
 }

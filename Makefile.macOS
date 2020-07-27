@@ -1,0 +1,68 @@
+BINARY:=hannah
+CHECKS:=go.mod go.sum \
+	util/cryptography/ecb.go \
+    util/cryptography/cryptography.go \
+    util/conv_test.go \
+    util/http.go \
+    util/conv.go \
+    config/config.go \
+    config/cfg_darwin.go \
+    config/cfg_linux.go \
+    config/config_test.go \
+    config/cfg_windows.go \
+    config/cfg_bsd.go \
+    input/source.go \
+    provider/provider.go \
+    provider/kuwo.go \
+    provider/provider_test.go \
+    provider/xiami_test.go \
+    provider/migu_test.go \
+    provider/xiami.go \
+    provider/musictool.go \
+    provider/qq.go \
+    provider/kuwo_test.go \
+    provider/migu.go \
+    provider/bilibili.go \
+    provider/bilibili_test.go \
+    provider/netease.go \
+    provider/netease_test.go \
+    provider/kugou.go \
+    provider/kugou_test.go \
+    provider/qq_test.go \
+    provider/musictool_test.go \
+    output/beep/speaker.go \
+    output/panel.go \
+    output/speaker.go \
+    bass/bass_darwin.go \
+    bass/bass_windows.go \
+    bass/bass.go \
+    action/action.go \
+    action/play.go \
+    action/action_test.go \
+    action/search.go \
+    main.go \
+    media/media.go \
+    media/decode/mpg123/mpg123_nix.go \
+    media/decode/mpg123/reader.go \
+    media/decode/mpg123/mpg123.go \
+    media/decode/mpg123/mpg123_windows.go \
+    media/decode/builtin_test.go \
+    media/decode/mpg123.go \
+    media/decode/builtin.go 
+
+.PHONY: all
+all: $(BINARY)
+
+$(BINARY): $(CHECKS)
+	env CGO_ENABLED=1 go build -ldflags="-s -w" -o $(BINARY)
+	install_name_tool -change @loader_path/libbass.dylib @executable_path/bass/macOS/lib/libbass.dylib hannah
+	go mod tidy
+
+.PHONY: clean
+clean:
+	env CGO_ENABLED=1 go clean
+	rm -f $(BINARY)
+
+.PHONY: test 
+test:
+	go test ...

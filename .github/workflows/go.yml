@@ -20,8 +20,8 @@ jobs:
         
     - name: Build
       run: |
-        brew install pkg-config mpg123
-        go build -o darwin-amd64/hannah -ldflags="-s -w" .
+        brew install pkg-config mpg123 portaudio
+        make -f Makefile.macOS
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
     - name: Upload artifact hannah-darwin-amd64

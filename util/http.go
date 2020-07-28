@@ -24,6 +24,46 @@ import (
 	"github.com/missdeer/hannah/config"
 )
 
+var (
+	errorNotIP    = errors.New("addr is not an IP")
+	resolveResult = make(map[string][]string)
+)
+
+func patchAddress(addr string) (string, error) {
+	host, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return addr, err
+	}
+	ip := net.ParseIP(host)
+	if ip.To4() != nil || ip.To16() != nil {
+		return addr, errorNotIP
+	}
+	// resolve it via http://119.29.29.29/d?dn=api.baidu.com
+	client := GetHttpClient()
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://119.29.29.29/d?dn=%s", host), nil)
+	if err != nil {
+		log.Println(err)
+		return addr, err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+		return addr, err
+	}
+	defer resp.Body.Close()
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return addr, err
+	}
+	ips := string(content)
+	ss := strings.Split(ips, ";")
+	if len(ss) == 0 {
+		return addr, err
+	}
+	return net.JoinHostPort(ss[0], port), nil
+}
+
 type dialer struct {
 	addr   string
 	socks5 proxy.Dialer
@@ -43,25 +83,7 @@ func (d *dialer) socks5Dial(network, addr string) (net.Conn, error) {
 		}
 	}
 
-	if host, port, err := net.SplitHostPort(addr); err == nil {
-		ip := net.ParseIP(host)
-		if ip.To4() != nil || ip.To16() != nil {
-			return d.socks5.Dial(network, addr)
-		}
-		// resolve it via http://119.29.29.29/d?dn=api.baidu.com
-		resp, err := http.Get(fmt.Sprintf("http://119.29.29.29/d?dn=%s", host))
-		if err != nil {
-			log.Println(err)
-			return d.socks5.Dial(network, addr)
-		}
-		defer resp.Body.Close()
-		content, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Println(err)
-			return d.socks5.Dial(network, addr)
-		}
-		addr = net.JoinHostPort(string(content), port)
-	}
+	addr, _ = patchAddress(addr)
 	return d.socks5.Dial(network, addr)
 }
 
@@ -98,6 +120,18 @@ func GetHttpClient() *http.Client {
 		client.Transport = socks5ProxyTransport(socks5Proxy)
 	}
 	return client
+}
+
+func SetupProxy() {
+	dialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+		DualStack: true,
+	}
+	http.DefaultTransport.(*http.Transport).DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+		addr, _ = patchAddress(addr)
+		return dialer.DialContext(ctx, network, addr)
+	}
 }
 
 func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {

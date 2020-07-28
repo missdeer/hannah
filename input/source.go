@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	httpClient = util.GetHttpClient()
+	httpClient *http.Client
 )
 
 func openLocalFile(filename string) (io.ReadCloser, error) {
@@ -28,7 +28,9 @@ func openRemoteSource(u string) (io.ReadCloser, error) {
 	if r, err := url.Parse(u); err == nil {
 		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}
-
+	if httpClient == nil {
+		httpClient = util.GetHttpClient()
+	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err

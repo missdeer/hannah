@@ -2,6 +2,7 @@ package provider
 
 import (
 	"errors"
+	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
 
@@ -43,10 +44,9 @@ type IProvider interface {
 type providerGetter func() IProvider
 
 var (
-	json           = jsoniter.ConfigCompatibleWithStandardLibrary
-	ErrStatusNotOK = errors.New("status != 200")
-
-	httpClient         = util.GetHttpClient()
+	httpClient         *http.Client
+	json               = jsoniter.ConfigCompatibleWithStandardLibrary
+	ErrStatusNotOK     = errors.New("status != 200")
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },
 		"xiami":    func() IProvider { return &xiami{client: httpClient} },
@@ -68,6 +68,9 @@ var (
 
 // GetProvider return the specified provider
 func GetProvider(provider string) IProvider {
+	if httpClient == nil {
+		httpClient = util.GetHttpClient()
+	}
 	if p, ok := providers[provider]; ok {
 		return p
 	}

@@ -25,7 +25,7 @@ func NewSpeaker() *Speaker {
 
 func (s *Speaker) Initialize() {
 	Init()
-	
+
 	dirs, reg := pluginsPattern()
 	for _, dir := range dirs {
 		if stat, err := os.Stat(dir); os.IsNotExist(err) || !stat.IsDir() {

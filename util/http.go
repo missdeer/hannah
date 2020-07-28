@@ -10,12 +10,14 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/net/proxy"
@@ -26,7 +28,7 @@ import (
 
 var (
 	errorNotIP    = errors.New("addr is not an IP")
-	resolveResult = make(map[string][]string)
+	resolveResult = sync.Map{}
 )
 
 func patchAddress(addr string) (string, error) {
@@ -37,6 +39,13 @@ func patchAddress(addr string) (string, error) {
 	ip := net.ParseIP(host)
 	if ip.To4() != nil || ip.To16() != nil {
 		return addr, errorNotIP
+	}
+	// query from cache
+	if rr, ok := resolveResult.Load(host); ok {
+		ips := rr.([]string)
+		if len(ips) > 0 {
+			return net.JoinHostPort(ips[rand.Intn(len(ips))], port), nil
+		}
 	}
 	// resolve it via http://119.29.29.29/d?dn=api.baidu.com
 	client := GetHttpClient()
@@ -61,6 +70,7 @@ func patchAddress(addr string) (string, error) {
 	if len(ss) == 0 {
 		return addr, err
 	}
+	resolveResult.Store(host, ss)
 	return net.JoinHostPort(ss[0], port), nil
 }
 
@@ -120,18 +130,6 @@ func GetHttpClient() *http.Client {
 		client.Transport = socks5ProxyTransport(socks5Proxy)
 	}
 	return client
-}
-
-func SetupProxy() {
-	dialer := &net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: 30 * time.Second,
-		DualStack: true,
-	}
-	http.DefaultTransport.(*http.Transport).DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
-		addr, _ = patchAddress(addr)
-		return dialer.DialContext(ctx, network, addr)
-	}
 }
 
 func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {

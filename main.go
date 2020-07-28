@@ -20,7 +20,6 @@ import (
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/media/decode"
-	"github.com/missdeer/hannah/util"
 )
 
 var (
@@ -130,8 +129,6 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
-
-	util.SetupProxy()
 
 	songs := flag.Args()
 	if config.Action == "play" {

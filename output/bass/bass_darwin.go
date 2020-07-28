@@ -1,6 +1,6 @@
 package bass
 
-// #cgo LDFLAGS: -L/usr/local/lib/bass -lbass
+// #cgo LDFLAGS: -LmacOS/lib -lbass
 import "C"
 import (
 	"regexp"

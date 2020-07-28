@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -28,12 +29,12 @@ type dialer struct {
 	socks5 proxy.Dialer
 }
 
-func (d *dialer) DialContext(ctx context.Context, network, addr string) (net.Conn, error) {
-	// TODO: golang.org/x/net/proxy need to add DialContext
-	return d.Dial(network, addr)
+func (d *dialer) socks5DialContext(ctx context.Context, network, addr string) (net.Conn, error) {
+	// TODO: golang.org/x/net/proxy need to add socks5DialContext
+	return d.socks5Dial(network, addr)
 }
 
-func (d *dialer) Dial(network, addr string) (net.Conn, error) {
+func (d *dialer) socks5Dial(network, addr string) (net.Conn, error) {
 	var err error
 	if d.socks5 == nil {
 		d.socks5, err = proxy.SOCKS5("tcp", d.addr, nil, proxy.Direct)
@@ -41,14 +42,34 @@ func (d *dialer) Dial(network, addr string) (net.Conn, error) {
 			return nil, err
 		}
 	}
+
+	if host, port, err := net.SplitHostPort(addr); err == nil {
+		ip := net.ParseIP(host)
+		if ip.To4() != nil || ip.To16() != nil {
+			return d.socks5.Dial(network, addr)
+		}
+		// resolve it via http://119.29.29.29/d?dn=api.baidu.com
+		resp, err := http.Get(fmt.Sprintf("http://119.29.29.29/d?dn=%s", host))
+		if err != nil {
+			log.Println(err)
+			return d.socks5.Dial(network, addr)
+		}
+		defer resp.Body.Close()
+		content, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println(err)
+			return d.socks5.Dial(network, addr)
+		}
+		addr = net.JoinHostPort(string(content), port)
+	}
 	return d.socks5.Dial(network, addr)
 }
 
 func socks5ProxyTransport(addr string) *http.Transport {
 	d := &dialer{addr: addr}
 	return &http.Transport{
-		DialContext: d.DialContext,
-		Dial:        d.Dial,
+		DialContext: d.socks5DialContext,
+		Dial:        d.socks5Dial,
 	}
 }
 

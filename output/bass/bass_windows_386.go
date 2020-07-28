@@ -1,3 +1,7 @@
+// package bass link against bass.dll
+// generate import lib for MinGW
+// gendef.exe bass.dll
+// dlltool.exe --no-leading-underscore -d bass.def -D bass.dll -l libbass.dll.a
 package bass
 
 // #cgo LDFLAGS: -Llib/windows/x86 -lbass.dll

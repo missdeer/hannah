@@ -276,8 +276,8 @@ func ChannelGetLength(handle uint, mode int) int {
 }
 
 // ChannelSetSync set sync callback for a channel
-func ChannelSetSync(handle uint, syncType uint, param uint64, proc *C.SYNCPROC, user unsafe.Pointer) int {
-	return int(C.BASS_ChannelSetSync(C.uint(handle), C.uint(syncType), C.ulonglong(param), proc, user))
+func ChannelSetSync(handle uint, syncType uint, param uint64, proc *C.SYNCPROC, user unsafe.Pointer) uint {
+	return uint(C.BASS_ChannelSetSync(C.DWORD(handle), C.DWORD(syncType), C.QWORD(param), proc, user))
 }
 
 // ---------------------------------------

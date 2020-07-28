@@ -1,6 +1,10 @@
 package bass
 
 import (
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -21,10 +25,28 @@ func NewSpeaker() *Speaker {
 
 func (s *Speaker) Initialize() {
 	Init()
-	ps := plugins()
-	for _, plugin := range ps {
-		h := PluginLoad(plugin)
-		pluginHandles = append(pluginHandles, h)
+	
+	dirs, reg := pluginsPattern()
+	for _, dir := range dirs {
+		if stat, err := os.Stat(dir); os.IsNotExist(err) || !stat.IsDir() {
+			continue
+		}
+		fi, err := ioutil.ReadDir(dir)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		for _, f := range fi {
+			if f.IsDir() {
+				continue
+			}
+			if !reg.MatchString(f.Name()) {
+				continue
+			}
+			fn := filepath.Join(dir, f.Name())
+			h := PluginLoad(fn)
+			pluginHandles = append(pluginHandles, h)
+		}
 	}
 }
 

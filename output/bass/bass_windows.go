@@ -1,6 +1,6 @@
 package bass
 
-// #cgo LDFLAGS: -Lwindows/lib -lbass
+// #cgo LDFLAGS: -Llib/windows -lbass.dll
 import "C"
 import (
 	"path"
@@ -11,7 +11,7 @@ func pluginsPattern() ([]string, *regexp.Regexp) {
 	return []string{
 			"plugins",
 			path.Join("bass", "plugins"),
-			path.Join("bass", "windows", "plugins"),
+			path.Join("output", "bass", "lib", "windows", "plugins"),
 		},
 		regexp.MustCompile(`^bass[^\.]+.dll`)
 }

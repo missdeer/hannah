@@ -1,6 +1,6 @@
 package bass
 
-// #cgo LDFLAGS: -LmacOS/lib -lbass
+// #cgo LDFLAGS: -Llib/macOS -lbass
 import "C"
 import (
 	"regexp"
@@ -10,7 +10,7 @@ func pluginsPattern() ([]string, *regexp.Regexp) {
 	return []string{
 			"plugins",
 			"bass/plugins",
-			"bass/macOS/lib/plugins",
+			"bass/lib/macOS/plugins",
 		},
 		regexp.MustCompile(`^libbass[^\.]+.dylib$`)
 }

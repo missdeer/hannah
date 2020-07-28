@@ -111,7 +111,7 @@ func GetVersion() int {
 	return int(C.BASS_GetVersion())
 }
 
-// GetVolume Retrieves the current master volume level.
+// GetVolume Retrieves the current master volumeBase level.
 func GetVolume() float32 {
 	return float32(C.BASS_GetVolume())
 }

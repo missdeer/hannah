@@ -1,5 +1,6 @@
 package bass
 
+import "C"
 import (
 	"io/ioutil"
 	"log"
@@ -14,13 +15,17 @@ var (
 )
 
 type Speaker struct {
-	handle uint
-	paused bool
-	done   chan struct{}
+	volumeRate float64
+	volumeBase float64
+	speedRate  float64
+	freqBase   float64
+	handle     uint
+	paused     bool
+	done       chan struct{}
 }
 
 func NewSpeaker() *Speaker {
-	return &Speaker{}
+	return &Speaker{volumeRate: 100.0, speedRate: 100.0}
 }
 
 func (s *Speaker) Initialize() {
@@ -51,6 +56,8 @@ func (s *Speaker) Initialize() {
 }
 
 func (s *Speaker) Finalize() {
+	ChannelStop(s.handle)
+	Free()
 	for _, h := range pluginHandles {
 		PluginFree(h)
 	}
@@ -66,6 +73,8 @@ func (s *Speaker) UpdateURI(uri string, done chan struct{}) {
 		// local file system
 		s.handle = StreamCreateFile(0, uri, 0, 0)
 	}
+	s.freqBase = float64(GetChanAttr(s.handle, BASS_ATTRIB_FREQ))
+	s.volumeBase = float64(GetChanAttr(s.handle, BASS_ATTRIB_VOL))
 }
 
 func (s *Speaker) UpdateStream(sampleRate int, streamer interface{}, done chan struct{}) {
@@ -97,45 +106,81 @@ func (s *Speaker) PauseResume() {
 }
 
 func (s *Speaker) Backward() {
-	pos := ChannelGetPosition(s.handle, BASS_POS_BYTE)
-	pos -= 10
+	pos := s.getCurrentPosition()
+	pos -= 5 * time.Second
 	if pos < 0 {
 		pos = 0
 	}
-	ChannelSetPosition(s.handle, BASS_POS_BYTE, pos)
+	ChannelSetPosition(s.handle, BASS_POS_BYTE, ChannelSeconds2Bytes(s.handle, int(pos/time.Millisecond)))
 }
 
 func (s *Speaker) Forward() {
-	pos := ChannelGetPosition(s.handle, BASS_POS_BYTE)
-	pos += 10
-	length := ChannelGetLength(s.handle, BASS_POS_BYTE)
+	pos := s.getCurrentPosition()
+	pos += 5 * time.Second
+	length := s.getSongLength()
 	if pos > length {
 		pos = length
 	}
-	ChannelSetPosition(s.handle, BASS_POS_BYTE, pos)
+	ChannelSetPosition(s.handle, BASS_POS_BYTE, ChannelSeconds2Bytes(s.handle, int(pos/time.Millisecond)))
 }
 
 func (s *Speaker) IncreaseVolume() {
-	vol := GetChanVol(s.handle)
-	SetChanVol(s.handle, uint(float64(vol)*1.1))
+	s.volumeRate = s.volumeRate * 1.1
+	if s.volumeRate > 400 {
+		s.volumeRate = 400
+	}
+	ChannelSetAttribute(s.handle, BASS_ATTRIB_VOL, C.float(s.volumeRate*s.volumeBase/100))
 }
 
 func (s *Speaker) DecreaseVolume() {
-	vol := GetChanVol(s.handle)
-	SetChanVol(s.handle, uint(float64(vol)*0.9))
+	s.volumeRate = s.volumeRate * 0.9
+	if s.volumeRate < 10 {
+		s.volumeRate = 10
+	}
+	ChannelSetAttribute(s.handle, BASS_ATTRIB_VOL, C.float(s.volumeRate*s.volumeBase/100))
 }
 
 func (s *Speaker) Slowdown() {
+	s.speedRate *= 1.0 - 0.0594631
+	if s.speedRate < 10 {
+		s.speedRate = 10
+	}
+	ChannelSetAttribute(s.handle, BASS_ATTRIB_FREQ, C.float(s.speedRate*s.freqBase/100))
 }
 
 func (s *Speaker) Speedup() {
+	s.speedRate *= 1.0594631 // 加速一次频率变为原来的(2的1/12次方=1.0594631)倍，即使单调提高一个半音，减速时同理
+	if s.speedRate > 400 {
+		s.speedRate = 400
+	}
+	ChannelSetAttribute(s.handle, BASS_ATTRIB_FREQ, C.float(s.speedRate*s.freqBase/100))
+}
+
+func (s *Speaker) getCurrentPosition() time.Duration {
+	posInBytes := ChannelGetPosition(s.handle, BASS_POS_BYTE)
+	posInSeconds := ChannelBytes2Seconds(s.handle, posInBytes)
+	currentPosition := int(posInSeconds * 1000)
+	if currentPosition == -1000 {
+		currentPosition = 0
+	}
+	return time.Duration(currentPosition) * time.Microsecond
+}
+
+func (s *Speaker) getSongLength() time.Duration {
+	lengthBytes := ChannelGetLength(s.handle, BASS_POS_BYTE)
+	lengthSeconds := ChannelBytes2Seconds(s.handle, lengthBytes)
+	songLength := int(lengthSeconds * 1000)
+	if songLength == -1000 {
+		songLength = 0
+	}
+	return time.Duration(songLength) * time.Microsecond
 }
 
 func (s *Speaker) Status() (time.Duration, time.Duration, float64, float64) {
-	return time.Duration(ChannelGetPosition(s.handle, BASS_POS_BYTE)),
-		time.Duration(ChannelGetLength(s.handle, BASS_POS_BYTE)),
-		float64(GetVolume()),
-		0
+	return s.getCurrentPosition(),
+		s.getSongLength(),
+		s.volumeRate / 100,
+		s.speedRate / 100
 }
 
 func (s *Speaker) IsNil() bool {

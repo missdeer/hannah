@@ -123,8 +123,19 @@ func GetHttpClient() *http.Client {
 		socks5Proxy = config.Socks5Proxy
 	}
 	if httpProxy != "" {
-		if proxyUrl, err := url.Parse(httpProxy); err == nil {
-			client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+		if proxyURL, err := url.Parse(httpProxy); err == nil {
+			transport := &http.Transport{
+				Proxy: http.ProxyURL(proxyURL),
+			}
+			transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+				addr, _ = patchAddress(addr)
+				return transport.DialContext(ctx, network, addr)
+			}
+			transport.Dial = func(network, addr string) (net.Conn, error) {
+				addr, _ = patchAddress(addr)
+				return transport.Dial(network, addr)
+			}
+			client.Transport = transport
 		}
 	} else if socks5Proxy != "" {
 		client.Transport = socks5ProxyTransport(socks5Proxy)

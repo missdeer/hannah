@@ -141,7 +141,7 @@ func (s *Speaker) DecreaseVolume() {
 }
 
 func (s *Speaker) Slowdown() {
-	s.speedRate *= 1.0 - 0.0594631
+	s.speedRate = s.speedRate * 15 / 16
 	if s.speedRate < 10 {
 		s.speedRate = 10
 	}
@@ -149,7 +149,7 @@ func (s *Speaker) Slowdown() {
 }
 
 func (s *Speaker) Speedup() {
-	s.speedRate *= 1.0594631 // 加速一次频率变为原来的(2的1/12次方=1.0594631)倍，即使单调提高一个半音，减速时同理
+	s.speedRate = s.speedRate * 16 / 15
 	if s.speedRate > 400 {
 		s.speedRate = 400
 	}

@@ -1,5 +1,14 @@
 package bass
 
+// #cgo CPPFLAGS: -Iinclude
+// #cgo CXXFLAGS: -Iinclude
+// #include "bass.h"
+/*
+void cgoOnSyncEnd(HSYNC handle, DWORD channel, DWORD data, void *user) {
+	onSyncEnd(handle, channel, data, user);
+}
+ */
+
 import "C"
 import (
 	"io/ioutil"
@@ -8,6 +17,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 var (
@@ -26,6 +36,11 @@ type Speaker struct {
 
 func NewSpeaker() *Speaker {
 	return &Speaker{volumeRate: 100.0, speedRate: 100.0}
+}
+
+//export onSyncEnd
+func onSyncEnd(handle uint, channel uint, data uint, user unsafe.Pointer) {
+
 }
 
 func (s *Speaker) Initialize() {
@@ -75,6 +90,8 @@ func (s *Speaker) UpdateURI(uri string, done chan struct{}) {
 	}
 	s.freqBase = float64(GetChanAttr(s.handle, BASS_ATTRIB_FREQ))
 	s.volumeBase = float64(GetChanAttr(s.handle, BASS_ATTRIB_VOL))
+
+	//ChannelSetSync(s.handle, BASS_SYNC_END, 0, (*C.SYNCPROC)(unsafe.Pointer(C.cgoOnSyncEnd)), nil)
 }
 
 func (s *Speaker) UpdateStream(sampleRate int, streamer interface{}, done chan struct{}) {

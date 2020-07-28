@@ -93,6 +93,27 @@ const (
 	BASS_ERROR_UNKNOWN  = -1 // some other mystery problem
 )
 
+// Sync type
+const (
+	BASS_SYNC_POS        = C.BASS_SYNC_POS
+	BASS_SYNC_END        = C.BASS_SYNC_END
+	BASS_SYNC_META       = C.BASS_SYNC_META
+	BASS_SYNC_SLIDE      = C.BASS_SYNC_SLIDE
+	BASS_SYNC_STALL      = C.BASS_SYNC_STALL
+	BASS_SYNC_DOWNLOAD   = C.BASS_SYNC_DOWNLOAD
+	BASS_SYNC_FREE       = C.BASS_SYNC_FREE
+	BASS_SYNC_SETPOS     = C.BASS_SYNC_SETPOS
+	BASS_SYNC_MUSICPOS   = C.BASS_SYNC_MUSICPOS
+	BASS_SYNC_MUSICINST  = C.BASS_SYNC_MUSICINST
+	BASS_SYNC_MUSICFX    = C.BASS_SYNC_MUSICFX
+	BASS_SYNC_OGG_CHANGE = C.BASS_SYNC_OGG_CHANGE
+	BASS_SYNC_DEV_FAIL   = C.BASS_SYNC_DEV_FAIL
+	BASS_SYNC_DEV_FORMAT = C.BASS_SYNC_DEV_FORMAT
+	BASS_SYNC_THREAD     = C.BASS_SYNC_THREAD
+	BASS_SYNC_MIXTIME    = C.BASS_SYNC_MIXTIME
+	BASS_SYNC_ONETIME    = C.BASS_SYNC_ONETIME
+)
+
 type ulong C.ulong
 
 // ------Initialization,into,tec..
@@ -252,6 +273,11 @@ func ChannelUpdate(handle uint, length C.uint) int {
 // ChannelGetLength Retrieves the playback length of a channel.
 func ChannelGetLength(handle uint, mode int) int {
 	return int(C.BASS_ChannelGetLength(C.DWORD(handle), C.DWORD(mode)))
+}
+
+// ChannelSetSync set sync callback for a channel
+func ChannelSetSync(handle uint, syncType uint, param uint64, proc *C.SYNCPROC, user unsafe.Pointer) int {
+	return int(C.BASS_ChannelSetSync(C.uint(handle), C.uint(syncType), C.ulonglong(param), proc, user))
 }
 
 // ---------------------------------------

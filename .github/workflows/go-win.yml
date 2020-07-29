@@ -1,4 +1,4 @@
-name: Go
+name: Go Windows
 on: [push]
 jobs:
 
@@ -18,12 +18,12 @@ jobs:
             GOARCH: 386
 
     steps:
-      - uses: numworks/setup-msys2@v1
+      - uses: msys2/setup-msys2@v2
         with:
           update: true
           msystem: ${{ matrix.mingw_arch }}
-
-      - run: msys2do pacman --noconfirm -S ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
+          path-type: inherit
+          install: ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
 
       - name: Set up Go 1.14
         uses: actions/setup-go@v1
@@ -38,6 +38,7 @@ jobs:
 
       - name: Build
         run: |
+          set MSYSTEM=${{ matrix.mingw_arch }}
           set PATH=%PATH%;D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}\bin
           set CGO_EANBLED=1
           set GOARCH=${{ matrix.GOARCH }}

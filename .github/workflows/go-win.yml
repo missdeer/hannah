@@ -1,0 +1,45 @@
+name: Go
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - mingw_arch: MINGW64
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            GOARCH: amd64
+          - mingw_arch: MINGW32
+            mingw_prefix: mingw-w64-i686
+            toolchains: gcc
+            GOARCH: 386
+
+    steps:
+      - uses: numworks/setup-msys2@v1
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+
+      - run: msys2do pacman --noconfirm -S ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
+
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Build
+        run: |
+          set PATH=%PATH%;D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}\bin
+          set CGO_EANBLED=1
+          set GOARCH=${{ matrix.GOARCH }}
+          set GOOS=windows
+          go build -ldflags="-s -w"

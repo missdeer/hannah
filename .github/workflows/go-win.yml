@@ -37,6 +37,7 @@ jobs:
           ref: master
 
       - name: Build
+        shell: cmd
         run: |
           set MSYSTEM=${{ matrix.mingw_arch }}
           set PATH=%PATH%;D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}\bin

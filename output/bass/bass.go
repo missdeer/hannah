@@ -127,6 +127,11 @@ func Free() int {
 	return int(C.BASS_Free())
 }
 
+// ErrorGetCode Retrieves the error code for the most recent BASS function call in the current thread.
+func ErrorGetCode() int {
+	return int(C.BASS_ErrorGetCode())
+}
+
 // GetVersion Retrieves the version of BASS that is loaded.
 func GetVersion() int {
 	return int(C.BASS_GetVersion())

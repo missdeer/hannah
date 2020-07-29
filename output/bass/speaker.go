@@ -132,7 +132,7 @@ func (s *Speaker) Backward() {
 	if pos < 0 {
 		pos = 0
 	}
-	ChannelSetPosition(s.handle, BASS_POS_BYTE, ChannelSeconds2Bytes(s.handle, int(pos/time.Millisecond)))
+	ChannelSetPosition(s.handle, BASS_POS_BYTE, ChannelSeconds2Bytes(s.handle, int(pos/time.Second)))
 }
 
 func (s *Speaker) Forward() {
@@ -142,7 +142,7 @@ func (s *Speaker) Forward() {
 	if pos > length {
 		pos = length
 	}
-	ChannelSetPosition(s.handle, BASS_POS_BYTE, ChannelSeconds2Bytes(s.handle, int(pos/time.Millisecond)))
+	ChannelSetPosition(s.handle, BASS_POS_BYTE, ChannelSeconds2Bytes(s.handle, int(pos/time.Second)))
 }
 
 func (s *Speaker) IncreaseVolume() {
@@ -179,22 +179,33 @@ func (s *Speaker) Speedup() {
 
 func (s *Speaker) getCurrentPosition() time.Duration {
 	posInBytes := ChannelGetPosition(s.handle, BASS_POS_BYTE)
-	posInSeconds := ChannelBytes2Seconds(s.handle, posInBytes)
-	currentPosition := int(posInSeconds * 1000)
-	if currentPosition == -1000 {
-		currentPosition = 0
+	if posInBytes == -1 {
+		errorCode := ErrorGetCode()
+		log.Println(errorCode)
 	}
-	return time.Duration(currentPosition) * time.Microsecond
+	posInSeconds := ChannelBytes2Seconds(s.handle, posInBytes)
+	currentPosition := int(posInSeconds)
+	if currentPosition < 0 {
+		return 0
+	}
+	if time.Duration(currentPosition)*time.Second > s.getSongLength() {
+		return s.getSongLength()
+	}
+	return time.Duration(currentPosition) * time.Second
 }
 
 func (s *Speaker) getSongLength() time.Duration {
 	lengthBytes := ChannelGetLength(s.handle, BASS_POS_BYTE)
+	if lengthBytes == -1 {
+		errorCode := ErrorGetCode()
+		log.Println(errorCode)
+	}
 	lengthSeconds := ChannelBytes2Seconds(s.handle, lengthBytes)
-	songLength := int(lengthSeconds * 1000)
-	if songLength == -1000 {
+	songLength := int(lengthSeconds)
+	if songLength < 0 {
 		songLength = 0
 	}
-	return time.Duration(songLength) * time.Microsecond
+	return time.Duration(songLength) * time.Second
 }
 
 func (s *Speaker) Status() (time.Duration, time.Duration, float64, float64) {

@@ -8,6 +8,7 @@ require (
 	github.com/gdamore/tcell v1.3.0
 	github.com/jamesnetherton/m3u v0.3.0
 	github.com/json-iterator/go v1.1.10
+	github.com/mattn/go-pointer v0.0.1
 	github.com/missdeer/golib v1.0.3
 	github.com/pkg/errors v0.8.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect

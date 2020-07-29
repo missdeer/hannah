@@ -15,6 +15,8 @@ import (
 	"strings"
 	"time"
 	"unsafe"
+
+	pointer "github.com/mattn/go-pointer"
 )
 
 var (
@@ -29,15 +31,18 @@ type Speaker struct {
 	handle     uint
 	paused     bool
 	done       chan struct{}
+	self       unsafe.Pointer
 }
 
 func NewSpeaker() *Speaker {
-	return &Speaker{volumeRate: 100.0, speedRate: 100.0}
+	s := &Speaker{volumeRate: 100.0, speedRate: 100.0}
+	s.self = pointer.Save(s)
+	return s
 }
 
 //export onBASSSyncEnd
 func onBASSSyncEnd(handle uint, channel uint, data uint, user unsafe.Pointer) {
-	s := (*Speaker)(user)
+	s := pointer.Restore(user).(*Speaker)
 	s.done <- struct{}{}
 }
 
@@ -75,6 +80,7 @@ func (s *Speaker) Finalize() {
 		PluginFree(h)
 	}
 	Free()
+	pointer.Unref(s.self)
 }
 
 func (s *Speaker) UpdateURI(uri string, done chan struct{}) {
@@ -89,7 +95,7 @@ func (s *Speaker) UpdateURI(uri string, done chan struct{}) {
 	s.freqBase = float64(GetChanAttr(s.handle, BASS_ATTRIB_FREQ))
 	s.volumeBase = float64(GetChanAttr(s.handle, BASS_ATTRIB_VOL))
 
-	ChannelSetSync(s.handle, BASS_SYNC_END, 0, (*C.SYNCPROC)(C.cgoOnBASSSyncEnd), unsafe.Pointer(s))
+	ChannelSetSync(s.handle, BASS_SYNC_END, 0, (*C.SYNCPROC)(C.cgoOnBASSSyncEnd), s.self)
 }
 
 func (s *Speaker) UpdateStream(sampleRate int, streamer interface{}, done chan struct{}) {

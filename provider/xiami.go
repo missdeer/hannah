@@ -21,6 +21,7 @@ const (
 )
 
 var (
+	ErrEmptyTrackList     = errors.New("empty track list")
 	ErrTokenNotFound      = errors.New("xiami token not found")
 	ErrCodeFieldNotExists = errors.New("code field does not exist")
 	reqHeader             = map[string]interface{}{
@@ -334,6 +335,9 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 		return song, err
 	}
 
+	if len(sd.Data.TrackList) == 0 {
+		return song, ErrEmptyTrackList
+	}
 	u, err = caesar(sd.Data.TrackList[0].Location)
 	song.URL = "https:" + u
 	return song, err

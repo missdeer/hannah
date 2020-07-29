@@ -14,7 +14,7 @@ import (
 	"github.com/missdeer/hannah/provider"
 )
 
-func search(keywords []string) error {
+func search(keywords ...string) error {
 	if config.Provider == "" {
 		return errors.New("set the provider parameter to search")
 	}

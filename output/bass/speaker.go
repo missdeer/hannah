@@ -180,8 +180,7 @@ func (s *Speaker) Speedup() {
 func (s *Speaker) getCurrentPosition() time.Duration {
 	posInBytes := ChannelGetPosition(s.handle, BASS_POS_BYTE)
 	if posInBytes == -1 {
-		errorCode := ErrorGetCode()
-		log.Println(errorCode)
+		return 0
 	}
 	posInSeconds := ChannelBytes2Seconds(s.handle, posInBytes)
 	currentPosition := int(posInSeconds)
@@ -197,8 +196,7 @@ func (s *Speaker) getCurrentPosition() time.Duration {
 func (s *Speaker) getSongLength() time.Duration {
 	lengthBytes := ChannelGetLength(s.handle, BASS_POS_BYTE)
 	if lengthBytes == -1 {
-		errorCode := ErrorGetCode()
-		log.Println(errorCode)
+		return 0
 	}
 	lengthSeconds := ChannelBytes2Seconds(s.handle, lengthBytes)
 	songLength := int(lengthSeconds)

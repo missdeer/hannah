@@ -33,7 +33,6 @@ var (
 type xiami struct {
 	token   string
 	cookies []*http.Cookie
-	client  *http.Client
 }
 
 type xiamiSongDetail struct {
@@ -130,7 +129,7 @@ func (p *xiami) getToken(u string) (string, error) {
 		return p.token, nil
 	}
 	parsedURL, _ := url.Parse(u)
-	c := p.client.Jar.Cookies(parsedURL)
+	c := httpClient.Jar.Cookies(parsedURL)
 	const XiaMiToken = "_m_h5_tk"
 	if c == nil || len(c) == 0 {
 		req, err := http.NewRequest("GET", u, nil)
@@ -138,7 +137,7 @@ func (p *xiami) getToken(u string) (string, error) {
 			return "", err
 		}
 
-		resp, err := p.client.Do(req)
+		resp, err := httpClient.Do(req)
 		if err != nil {
 			return "", err
 		}
@@ -256,7 +255,7 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 	req.Header.Set("Referer", "https://h.xiami.com")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 
-	resp, err := p.client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -314,7 +313,7 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 	req.Header.Set("TE", "Trailers")
 
-	resp, err := p.client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return song, err
 	}

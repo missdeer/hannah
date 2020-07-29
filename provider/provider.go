@@ -49,14 +49,14 @@ var (
 	ErrStatusNotOK     = errors.New("status != 200")
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },
-		"xiami":    func() IProvider { return &xiami{client: httpClient} },
+		"xiami":    func() IProvider { return &xiami{} },
 		"qq":       func() IProvider { return &qq{} },
 		"kugou":    func() IProvider { return &kugou{} },
 		"kuwo":     func() IProvider { return &kuwo{} },
 		"bilibili": func() IProvider { return &bilibili{} },
 		"migu":     func() IProvider { return &migu{} },
 		"ne":       func() IProvider { return &netease{} },
-		"xm":       func() IProvider { return &xiami{client: httpClient} },
+		"xm":       func() IProvider { return &xiami{} },
 		"kg":       func() IProvider { return &kugou{} },
 		"wu":       func() IProvider { return &kuwo{} },
 		"b":        func() IProvider { return &bilibili{} },

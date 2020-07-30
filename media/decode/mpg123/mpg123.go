@@ -3,6 +3,7 @@
 package mpg123
 
 /*
+#cgo pkg-config: libmpg123
 #include <mpg123.h>
 */
 import "C"

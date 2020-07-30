@@ -38,8 +38,9 @@ jobs:
         shell: cmd
         run: |
           set MSYSTEM=${{ matrix.mingw_arch }}
-          set PATH=D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}\bin;%PATH%
+          set PATH=${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin;%PATH%
           set CGO_ENABLED=1
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=windows
+          path
           go build -ldflags="-s -w"

@@ -69,6 +69,12 @@ func (s *Speaker) Initialize() {
 			fn := filepath.Join(dir, f.Name())
 			h := PluginLoad(fn)
 			pluginHandles = append(pluginHandles, h)
+			// update supported file
+			formats := PluginGetFormats(h)
+			fs := strings.Split(formats, ";")
+			for _, ext := range fs {
+				AddSupportedFileType(strings.Replace(ext, "*", "", -1))
+			}
 		}
 	}
 }

@@ -32,6 +32,9 @@ var (
 )
 
 func Initialize() error {
+	audioSpeaker = output.NewSpeaker(config.Engine)
+	audioSpeaker.Initialize()
+
 	switch strings.ToLower(config.Engine) {
 	case "builtin":
 		PlayMedia = builtinPlayMedia
@@ -40,8 +43,6 @@ func Initialize() error {
 		PlayMedia = bassPlayMedia
 		IsSupportedFileType = bass.SupportedFileType
 	}
-	audioSpeaker = output.NewSpeaker(config.Engine)
-	audioSpeaker.Initialize()
 
 	screenPanel = output.NewScreenPanel()
 	if err := screenPanel.Initialize(); err != nil {

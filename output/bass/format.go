@@ -7,20 +7,23 @@ import (
 var (
 	bassSupportedExtensions = map[string]struct{}{
 		".mp3":  {},
-		".flac": {},
+		".mp2":  {},
+		".mp1":  {},
+		".aiff": {},
 		".wav":  {},
 		".ogg":  {},
 		".m3u":  {},
-		".m4a":  {},
-		".aac":  {},
-		".wma":  {},
-		".ape":  {},
-		".ac3":  {},
-		".webm": {},
 	}
 )
 
 func SupportedFileType(ext string) bool {
 	_, ok := bassSupportedExtensions[strings.ToLower(ext)]
 	return ok
+}
+
+func AddSupportedFileType(ext string) {
+	e := strings.TrimSpace(ext)
+	if e != "" {
+		bassSupportedExtensions[e] = struct{}{}
+	}
 }

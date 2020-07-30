@@ -315,3 +315,11 @@ func PluginFree(handle int) bool {
 	}
 	return true
 }
+
+func PluginGetFormats(handle int) string {
+	info := C.BASS_PluginGetInfo(C.HPLUGIN(handle))
+	if info != nil && info.formats != nil {
+		return C.GoString(info.formats.exts)
+	}
+	return ""
+}

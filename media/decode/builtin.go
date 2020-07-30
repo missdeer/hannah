@@ -28,14 +28,6 @@ var (
 		".flac": func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return flac.Decode(r) },
 		".wav":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return wav.Decode(r) },
 	}
-
-	builtinSupportedExtensions = map[string]struct{}{
-		".mp3":  {},
-		".flac": {},
-		".wav":  {},
-		".ogg":  {},
-		".m3u":  {},
-	}
 )
 
 func GetBuiltinDecoder(uri string) builtinDecoder {
@@ -51,9 +43,4 @@ func GetBuiltinDecoder(uri string) builtinDecoder {
 		}
 	}
 	return nil
-}
-
-func BuiltinSupportedFileType(ext string) bool {
-	_, ok := builtinSupportedExtensions[strings.ToLower(ext)]
-	return ok
 }

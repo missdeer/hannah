@@ -12,9 +12,12 @@ import (
 	"github.com/missdeer/hannah/input"
 	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/output"
+	"github.com/missdeer/hannah/output/bass"
+	"github.com/missdeer/hannah/output/beep"
 )
 
 type play func(string, int, int, string, string) error
+type supportedFileType func(string) bool
 
 var (
 	ShouldQuit           = errors.New("should quit application now")
@@ -24,15 +27,18 @@ var (
 	screenPanel          *output.ScreenPanel
 	audioSpeaker         output.ISpeaker
 	tcellEvents          chan tcell.Event
-	PlayMedia            play = builtinPlayMedia
+	PlayMedia            play              = builtinPlayMedia
+	IsSupportedFileType  supportedFileType = beep.SupportedFileType
 )
 
 func Initialize() error {
 	switch strings.ToLower(config.Engine) {
 	case "builtin":
 		PlayMedia = builtinPlayMedia
+		IsSupportedFileType = beep.SupportedFileType
 	case "bass":
 		PlayMedia = bassPlayMedia
+		IsSupportedFileType = bass.SupportedFileType
 	}
 	audioSpeaker = output.NewSpeaker(config.Engine)
 	audioSpeaker.Initialize()

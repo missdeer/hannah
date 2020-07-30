@@ -18,12 +18,11 @@ import (
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
-	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/provider"
 )
 
 var (
-	ErrEmptyArgs    = errors.New("empty arguements")
+	ErrEmptyArgs    = errors.New("empty arguments")
 	supportedRemote = map[string]struct{}{
 		"http://":  {},
 		"https://": {},
@@ -63,7 +62,7 @@ func scanSongsInDirectory(dir string) (res []string) {
 				res = append(res, scanSongsInDirectory(path.Join(dir, item.Name()))...)
 			}
 		} else {
-			if decode.BuiltinSupportedFileType(filepath.Ext(item.Name())) {
+			if media.IsSupportedFileType(filepath.Ext(item.Name())) {
 				if strings.ToLower(filepath.Ext(item.Name())) == ".m3u" {
 					if playlist, err := m3u.Parse(filepath.Join(dir, item.Name())); err == nil {
 						for _, track := range playlist.Tracks {
@@ -100,7 +99,7 @@ func scanSongs(songs []string) (res []string) {
 		if fi.IsDir() {
 			res = append(res, scanSongsInDirectory(song)...)
 		} else {
-			if decode.BuiltinSupportedFileType(filepath.Ext(song)) {
+			if media.IsSupportedFileType(filepath.Ext(song)) {
 				if strings.ToLower(filepath.Ext(song)) == ".m3u" {
 					if playlist, err := m3u.Parse(song); err == nil {
 						for _, track := range playlist.Tracks {

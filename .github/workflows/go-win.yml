@@ -44,4 +44,6 @@ jobs:
           set CGO_ENABLED=1
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=windows
+          dir D:\a\_temp\
+          dir D:\a\_temp\msys
           go build -ldflags="-s -w"

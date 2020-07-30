@@ -40,11 +40,13 @@ jobs:
         shell: cmd
         run: |
           set MSYSTEM=${{ matrix.mingw_arch }}
-          set PATH=D:\a\_temp\msys\${{ matrix.mingw_arch }}\bin;%PATH%
+          set PATH=D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}\bin;%PATH%
           set CGO_ENABLED=1
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=windows
           dir D:\a\_temp\
           dir D:\a\_temp\msys
           dir D:\a\_temp\msys\msys64
+          dir D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}
+          dir D:\a\_temp\msys\msys64\${{ matrix.mingw_arch }}\bin
           go build -ldflags="-s -w"

@@ -46,4 +46,5 @@ jobs:
           set GOOS=windows
           dir D:\a\_temp\
           dir D:\a\_temp\msys
+          dir D:\a\_temp\msys\msys64
           go build -ldflags="-s -w"

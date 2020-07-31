@@ -8,6 +8,10 @@
 // This is because some Winamp DSPs might change the FloatingPointUnit state and raise a stupid exception.
 // Simply call before using/loading this library: 
 // "_control87(-1,_MCW_EM);"
+#ifndef BASS_WADSP_H
+#define BASS_WADSP_H
+
+#include <bass.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,4 +70,6 @@ LPTSTR BASSDSPDEF(BASS_WADSP_PluginInfoGetModuleName)(DWORD module);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

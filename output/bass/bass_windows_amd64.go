@@ -2,7 +2,7 @@
 // copy official bass.lib to libbass.dll.a
 package bass
 
-// #cgo LDFLAGS: -Llib/windows -lbass.dll
+// #cgo LDFLAGS: -Llib/windows -lbass.dll -lbassasio.dll -lbassmix.dll -lbasswasapi.dll
 import "C"
 import (
 	"path"

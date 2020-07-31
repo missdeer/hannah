@@ -8,9 +8,10 @@ import (
 
 func pluginsPattern() ([]string, *regexp.Regexp) {
 	return []string{
+			".",
 			"plugins",
 			"bass/plugins",
 			"bass/lib/macOS/plugins",
 		},
-		regexp.MustCompile(`^libbass[^\.]+.dylib$`)
+		regexp.MustCompile(`^libbass[0-9A-Za-z_]+.dylib$`)
 }

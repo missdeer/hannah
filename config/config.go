@@ -70,6 +70,9 @@ func LoadConfigurationFromFile(fn string) error {
 	if i, err := cfg.Section("").Key("page").Int(); err == nil {
 		Page = i
 	}
+	if i, err := cfg.Section("").Key("network-timeout").Int(); err == nil {
+		NetworkTimeout = time.Duration(i)
+	}
 
 	return nil
 }

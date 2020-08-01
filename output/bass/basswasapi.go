@@ -6,6 +6,9 @@ package bass
 // #cgo CXXFLAGS: -Iinclude
 // #include "basswasapi.h"
 import "C"
+import (
+	"unsafe"
+)
 
 // Additional error codes returned by BASS_ErrorGetCode
 const (
@@ -86,6 +89,11 @@ const (
 	BASS_WASAPI_VOL_SESSION   = C.BASS_WASAPI_VOL_SESSION
 )
 
+const (
+	WASAPIPROC_PUSH = 0
+	WASAPIPROC_BASS = -1
+)
+
 // Device notifications
 const (
 	BASS_WASAPI_NOTIFY_ENABLED   = C.BASS_WASAPI_NOTIFY_ENABLED
@@ -94,3 +102,80 @@ const (
 	BASS_WASAPI_NOTIFY_DEFINPUT  = C.BASS_WASAPI_NOTIFY_DEFINPUT
 	BASS_WASAPI_NOTIFY_FAIL      = C.BASS_WASAPI_NOTIFY_FAIL
 )
+
+func BASS_WASAPI_GetVersion() uint {
+	return uint(C.BASS_WASAPI_GetVersion())
+}
+
+func BASS_WASAPI_SetNotify(proc *C.WASAPINOTIFYPROC, user unsafe.Pointer) bool {
+	return C.BASS_WASAPI_SetNotify(proc, user) != 0
+}
+
+func BASS_WASAPI_GetDeviceLevel(device uint, channel int) float32 {
+	return float32(C.BASS_WASAPI_GetDeviceLevel(C.DWORD(device), C.int(channel)))
+}
+
+func BASS_WASAPI_SetDevice(device uint) bool {
+	return C.BASS_WASAPI_SetDevice(C.DWORD(device)) != 0
+}
+
+func BASS_WASAPI_GetDevice() uint {
+	return uint(C.BASS_WASAPI_GetDevice())
+}
+
+func BASS_WASAPI_CheckFormat(device uint, freq uint, chans uint, flags uint) uint {
+	return uint(C.BASS_WASAPI_CheckFormat(C.DWORD(device), C.DWORD(freq), C.DWORD(chans), C.DWORD(flags)))
+}
+
+func BASS_WASAPI_Init(device int, freq uint, chans uint, flags uint, buffer float32, period float32, proc *C.WASAPIPROC, user unsafe.Pointer) bool {
+	return C.BASS_WASAPI_Init(C.int(device), C.DWORD(freq), C.DWORD(chans), C.DWORD(flags), C.float(buffer), C.float(period), proc, user) != 0
+}
+
+func BASS_WASAPI_Free() bool {
+	return C.BASS_WASAPI_Free() != 0
+}
+
+func BASS_WASAPI_GetCPU() float32 {
+	return float32(C.BASS_WASAPI_GetCPU())
+}
+
+func BASS_WASAPI_Lock(lock bool) bool {
+	if lock {
+		return C.BASS_WASAPI_Lock(1) != 0
+	}
+	return C.BASS_WASAPI_Lock(0) != 0
+}
+
+func BASS_WASAPI_Start() bool {
+	return C.BASS_WASAPI_Start() != 0
+}
+
+func BASS_WASAPI_Stop(reset bool) bool {
+	if reset {
+		return C.BASS_WASAPI_Stop(1) != 0
+	}
+	return C.BASS_WASAPI_Stop(0) != 0
+}
+
+func BASS_WASAPI_IsStarted() bool {
+	return C.BASS_WASAPI_IsStarted() != 0
+}
+
+func BASS_WASAPI_SetVolume(mode uint, volume float32) bool {
+	return C.BASS_WASAPI_SetVolume(C.DWORD(mode), C.float(volume)) != 0
+}
+
+func BASS_WASAPI_GetVolume(mode uint) float32 {
+	return float32(C.BASS_WASAPI_GetVolume(C.DWORD(mode)))
+}
+
+func BASS_WASAPI_SetMute(mode uint, mute bool) bool {
+	if mute {
+		return C.BASS_WASAPI_SetMute(C.DWORD(mode), 1) != 0
+	}
+	return C.BASS_WASAPI_SetMute(C.DWORD(mode), 0) != 0
+}
+
+func BASS_WASAPI_GetMute(mode uint) bool {
+	return C.BASS_WASAPI_GetMute(C.DWORD(mode)) != 0
+}

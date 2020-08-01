@@ -50,7 +50,7 @@ jobs:
           go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}\hannah.exe
           copy ${{ matrix.bass_path }}/bass.dll ${{ matrix.mingw_prefix }}\
           copy ${{ matrix.bass_path }}/plugins/*.dll ${{ matrix.mingw_prefix }}\
-          copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin/ligmpg123-0.dll ${{ matrix.mingw_prefix }}\
+          copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin\ligmpg123-0.dll ${{ matrix.mingw_prefix }}\
 
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0

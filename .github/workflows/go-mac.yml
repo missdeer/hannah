@@ -26,7 +26,7 @@ jobs:
         mv hannah darwin-amd64/
         cp output/bass/lib/macOS/libbass.dylib darwin-amd64/
         cp output/bass/lib/macOS/plugins/*.dylib darwin-amd64/
-        cp /usr/local/lib/ligmpg123.dylib darwin-amd64/
+        cp /usr/local/lib/libmpg123.dylib darwin-amd64/
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
     - name: Upload artifact hannah-darwin-amd64

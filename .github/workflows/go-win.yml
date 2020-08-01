@@ -12,10 +12,12 @@ jobs:
             mingw_prefix: mingw-w64-x86_64
             GOARCH: amd64
             GOOS: windows
+            bass_path: output/bass/lib/windows
           - mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             GOARCH: 386
             GOOS: windows
+            bass_path: output/bass/lib/windows/x86
 
     steps:
       - uses: msys2/setup-msys2@v2
@@ -45,4 +47,15 @@ jobs:
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=${{ matrix.GOOS }}
           path
-          go build -ldflags="-s -w"
+          go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}\hannah.exe
+          copy ${{ matrix.bass_path }}/bass.dll ${{ matrix.mingw_prefix }}\
+          copy ${{ matrix.bass_path }}/plugins/*.dll ${{ matrix.mingw_prefix }}\
+          copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin/ligmpg123-0.dll ${{ matrix.mingw_prefix }}\
+
+      - name: Upload artifact hannah-{{ matrix.mingw_prefix }}
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          # Artifact name
+          name: hannah-{{ matrix.mingw_prefix }}
+          # Directory containing files to upload
+          path: {{ matrix.mingw_prefix }}

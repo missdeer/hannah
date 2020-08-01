@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 	"os"
-	"time"
+	"reflect"
 
 	"gopkg.in/ini.v1"
 )
@@ -15,13 +15,30 @@ var (
 	Socks5Proxy      string
 	HttpProxy        string
 	Player           string
-	Action                         = "play"
-	Provider                       = "netease"
-	Limit                          = 25
-	Page                           = 1
-	Engine                         = "builtin"
-	Mpg123                         = true
-	NetworkTimeout   time.Duration = 30
+	Action           = "play"
+	Provider         = "netease"
+	Limit            = 25
+	Page             = 1
+	Engine           = "builtin"
+	Mpg123           = true
+	NetworkTimeout   = 30
+
+	m = map[string]interface{}{
+		"mpg123":             &Mpg123,
+		"shuffle":            &Shuffle,
+		"repeat":             &Repeat,
+		"by-external-player": &ByExternalPlayer,
+		"driver":             &AudioDriver,
+		"action":             &Action,
+		"provider":           &Provider,
+		"socks5":             &Socks5Proxy,
+		"http-proxy":         &HttpProxy,
+		"player":             &Player,
+		"engine":             &Engine,
+		"limit":              &Limit,
+		"page":               &Page,
+		"network-timeout":    &NetworkTimeout,
+	}
 )
 
 func LoadConfigurationFromFile(fn string) error {
@@ -31,47 +48,26 @@ func LoadConfigurationFromFile(fn string) error {
 		os.Exit(1)
 	}
 
-	if b, err := cfg.Section("").Key("mpg123").Bool(); err == nil {
-		Mpg123 = b
-	}
-	if b, err := cfg.Section("").Key("shuffle").Bool(); err == nil {
-		Shuffle = b
-	}
-	if b, err := cfg.Section("").Key("repeat").Bool(); err == nil {
-		Repeat = b
-	}
-	if b, err := cfg.Section("").Key("by-external-player").Bool(); err == nil {
-		Repeat = b
-	}
-	if s := cfg.Section("").Key("driver").String(); s != "" {
-		AudioDriver = s
-	}
-	if s := cfg.Section("").Key("action").String(); s != "" {
-		Action = s
-	}
-	if s := cfg.Section("").Key("provider").String(); s != "" {
-		Provider = s
-	}
-	if s := cfg.Section("").Key("socks5").String(); s != "" {
-		Socks5Proxy = s
-	}
-	if s := cfg.Section("").Key("http-proxy").String(); s != "" {
-		HttpProxy = s
-	}
-	if s := cfg.Section("").Key("player").String(); s != "" {
-		Player = s
-	}
-	if s := cfg.Section("").Key("engine").String(); s != "" {
-		Engine = s
-	}
-	if i, err := cfg.Section("").Key("limit").Int(); err == nil {
-		Limit = i
-	}
-	if i, err := cfg.Section("").Key("page").Int(); err == nil {
-		Page = i
-	}
-	if i, err := cfg.Section("").Key("network-timeout").Int(); err == nil {
-		NetworkTimeout = time.Duration(i)
+	for key, variable := range m {
+		if !cfg.Section("").HasKey(key) {
+			continue
+		}
+		switch v := reflect.Indirect(reflect.ValueOf(variable)); v.Kind() {
+		case reflect.Int:
+			if b, err := cfg.Section("").Key(key).Int(); err == nil {
+				*(variable.(*int)) = b
+			}
+		case reflect.String:
+			if b := cfg.Section("").Key(key).String(); b != "" {
+				*(variable.(*string)) = b
+			}
+		case reflect.Bool:
+			if b, err := cfg.Section("").Key(key).Bool(); err == nil {
+				*(variable.(*bool)) = b
+			}
+		default:
+			log.Fatalf("unsupported type:%s,%s\n", key, v.String())
+		}
 	}
 
 	return nil

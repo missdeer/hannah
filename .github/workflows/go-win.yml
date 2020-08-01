@@ -11,9 +11,11 @@ jobs:
           - mingw_arch: MINGW64
             mingw_prefix: mingw-w64-x86_64
             GOARCH: amd64
+            GOOS: windows
           - mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             GOARCH: 386
+            GOOS: windows
 
     steps:
       - uses: msys2/setup-msys2@v2
@@ -41,6 +43,6 @@ jobs:
           set PATH=${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin;%PATH%
           set CGO_ENABLED=1
           set GOARCH=${{ matrix.GOARCH }}
-          set GOOS=windows
+          set GOOS=${{ matrix.GOOS }}
           path
           go build -ldflags="-s -w"

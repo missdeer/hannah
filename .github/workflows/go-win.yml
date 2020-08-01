@@ -52,10 +52,10 @@ jobs:
           copy ${{ matrix.bass_path }}/plugins/*.dll ${{ matrix.mingw_prefix }}\
           copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin/ligmpg123-0.dll ${{ matrix.mingw_prefix }}\
 
-      - name: Upload artifact hannah-{{ matrix.mingw_prefix }}
+      - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0
         with:
           # Artifact name
-          name: hannah-{{ matrix.mingw_prefix }}
+          name: hannah-${{ matrix.mingw_prefix }}
           # Directory containing files to upload
-          path: {{ matrix.mingw_prefix }}
+          path: ${{ matrix.mingw_prefix }}

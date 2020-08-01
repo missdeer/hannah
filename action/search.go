@@ -4,14 +4,12 @@ import (
 	"errors"
 	"log"
 	"math/rand"
-	"os/exec"
 	"strings"
-
-	"github.com/missdeer/golib/fsutil"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 func search(keywords ...string) error {
@@ -37,6 +35,10 @@ func search(keywords ...string) error {
 				log.Println(err)
 				continue
 			}
+			if config.ByExternalPlayer {
+				util.ExternalPlay(song.URL)
+				continue
+			}
 			err = media.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title)
 			switch err {
 			case media.ShouldQuit:
@@ -46,11 +48,8 @@ func search(keywords ...string) error {
 			case media.NextSong:
 				// auto next
 			case media.UnsupportedMediaType:
-				if b, e := fsutil.FileExists(config.Player); e == nil && b {
-					log.Println(err, song.URL, ", try to use external player", config.Player)
-					cmd := exec.Command(config.Player, song.URL)
-					cmd.Run()
-				} else {
+				log.Println(err, song.URL, ", try to use external player", config.Player)
+				if e := util.ExternalPlay(song.URL); e != nil {
 					log.Println(err, song.URL)
 				}
 			default:

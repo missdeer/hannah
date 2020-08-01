@@ -7,18 +7,17 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/bogem/id3v2"
 	"github.com/jamesnetherton/m3u"
-	"github.com/missdeer/golib/fsutil"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 var (
@@ -167,6 +166,10 @@ func play(args ...string) error {
 		}
 		for i := 0; i < len(songs); i++ {
 			song := resolve(songs[i])
+			if config.ByExternalPlayer {
+				util.ExternalPlay(song.URL)
+				continue
+			}
 			err := media.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title) // TODO: extract from file name or ID3v1/v2 tag
 			switch err {
 			case media.ShouldQuit:
@@ -176,12 +179,9 @@ func play(args ...string) error {
 			case media.NextSong:
 			// auto next
 			case media.UnsupportedMediaType:
-				if b, e := fsutil.FileExists(config.Player); e == nil && b {
-					log.Println(err, song, ", try to use external player", config.Player)
-					cmd := exec.Command(config.Player, song.URL)
-					cmd.Run()
-				} else {
-					log.Println(e, song)
+				log.Println(err, song.URL, ", try to use external player", config.Player)
+				if e := util.ExternalPlay(song.URL); e != nil {
+					log.Println(err, song.URL)
 				}
 			default:
 				log.Println(err)

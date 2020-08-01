@@ -31,7 +31,7 @@ var (
 	IsSupportedFileType  supportedFileType = beep.SupportedFileType
 )
 
-func Initialize() error {
+func Initialize(screenPanelEnabled bool) error {
 	audioSpeaker = output.NewSpeaker(config.Engine)
 	audioSpeaker.Initialize()
 
@@ -43,21 +43,22 @@ func Initialize() error {
 		PlayMedia = bassPlayMedia
 		IsSupportedFileType = bass.SupportedFileType
 	}
-
-	screenPanel = output.NewScreenPanel()
-	if err := screenPanel.Initialize(); err != nil {
-		return err
-	}
-
-	go func() {
-		tcellEvents = make(chan tcell.Event)
-		defer func() {
-			close(tcellEvents)
-		}()
-		for ; !screenPanel.Quit(); {
-			tcellEvents <- screenPanel.PollScreenEvent()
+	if screenPanelEnabled {
+		screenPanel = output.NewScreenPanel()
+		if err := screenPanel.Initialize(); err != nil {
+			return err
 		}
-	}()
+
+		go func() {
+			tcellEvents = make(chan tcell.Event)
+			defer func() {
+				close(tcellEvents)
+			}()
+			for ; !screenPanel.Quit(); {
+				tcellEvents <- screenPanel.PollScreenEvent()
+			}
+		}()
+	}
 	return nil
 }
 
@@ -226,7 +227,9 @@ func builtinPlayMedia(uri string, index int, total int, artist string, title str
 	return nil
 }
 
-func Finalize() {
-	screenPanel.Finalize()
+func Finalize(screenPanelEnabled bool) {
+	if screenPanelEnabled {
+		screenPanel.Finalize()
+	}
 	audioSpeaker.Finalize()
 }

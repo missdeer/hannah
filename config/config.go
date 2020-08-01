@@ -9,18 +9,19 @@ import (
 )
 
 var (
-	Shuffle        bool
-	Repeat         bool
-	Socks5Proxy    string
-	HttpProxy      string
-	Player         string
-	Action                       = "play"
-	Provider                     = "netease"
-	Limit                        = 25
-	Page                         = 1
-	Engine                       = "builtin"
-	Mpg123                       = true
-	NetworkTimeout time.Duration = 30
+	Shuffle          bool
+	Repeat           bool
+	ByExternalPlayer bool
+	Socks5Proxy      string
+	HttpProxy        string
+	Player           string
+	Action                         = "play"
+	Provider                       = "netease"
+	Limit                          = 25
+	Page                           = 1
+	Engine                         = "builtin"
+	Mpg123                         = true
+	NetworkTimeout   time.Duration = 30
 )
 
 func LoadConfigurationFromFile(fn string) error {
@@ -37,6 +38,9 @@ func LoadConfigurationFromFile(fn string) error {
 		Shuffle = b
 	}
 	if b, err := cfg.Section("").Key("repeat").Bool(); err == nil {
+		Repeat = b
+	}
+	if b, err := cfg.Section("").Key("by-external-player").Bool(); err == nil {
 		Repeat = b
 	}
 	if s := cfg.Section("").Key("driver").String(); s != "" {

@@ -16,7 +16,6 @@ import (
 	"github.com/missdeer/hannah/media"
 )
 
-
 func main() {
 	if homeDir, err := os.UserHomeDir(); err == nil {
 		conf := filepath.Join(homeDir, ".hannah.conf")
@@ -38,6 +37,7 @@ func main() {
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "s", config.Socks5Proxy, "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "t", config.HttpProxy, "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
 	flag.StringVarP(&config.Player, "player", "", config.Player, "specify external player path, use it when the media type is not supported by builtin decoders")
+	flag.BoolVarP(&config.ByExternalPlayer, "by-external-player", "y", config.ByExternalPlayer, "play by external player")
 	flag.BoolVarP(&showHelpMessage, "help", "h", false, "show this help message")
 	flag.Parse()
 
@@ -51,10 +51,10 @@ func main() {
 
 	handler := action.GetActionHandler(config.Action)
 	if handler != nil {
-		if err := media.Initialize(); err != nil {
+		if err := media.Initialize(!config.ByExternalPlayer); err != nil {
 			log.Fatal(err)
 		}
-		defer media.Finalize()
+		defer media.Finalize(!config.ByExternalPlayer)
 		if err := handler(args...); err != nil {
 			log.Println(err)
 		}

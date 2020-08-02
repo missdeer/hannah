@@ -128,7 +128,7 @@ func (s *Speaker) PauseResume() {
 	if s.paused {
 		ChannelPause(s.handle)
 	} else {
-		ChannelPlay(s.handle, 1)
+		ChannelPlay(s.handle, 0)
 	}
 }
 

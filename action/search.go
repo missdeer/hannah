@@ -1,7 +1,6 @@
 package action
 
 import (
-	"math/rand"
 	"strings"
 
 	"github.com/missdeer/hannah/config"
@@ -20,14 +19,5 @@ func search(keywords ...string) error {
 	if err != nil {
 		return err
 	}
-
-	for played := false; !played || config.Repeat; played = true {
-		if config.Shuffle {
-			rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
-		}
-		if err = playSongs(provider.Songs(songs), p.ResolveSongURL); err != nil {
-			return err
-		}
-	}
-	return nil
+	return shuffleRepeatPlaySongs(provider.Songs(songs), p.ResolveSongURL)
 }

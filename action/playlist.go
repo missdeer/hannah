@@ -22,21 +22,14 @@ func playlist(ids ...string) error {
 			rand.Shuffle(len(ids), func(i, j int) { ids[i], ids[j] = ids[j], ids[i] })
 		}
 		for i := 0; i < len(ids); i++ {
-			playlistID := ids[i]
-			pl := provider.Playlist{ID: playlistID}
-			songs, err := p.PlaylistDetail(pl)
+			songs, err := p.PlaylistDetail(provider.Playlist{ID: ids[i]})
 			if err != nil {
 				log.Println(err)
 				continue
 			}
 
-			for played := false; !played || config.Repeat; played = true {
-				if config.Shuffle {
-					rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
-				}
-				if err = playSongs(songs, p.ResolveSongURL); err != nil {
-					return err
-				}
+			if err = shuffleRepeatPlaySongs(songs, resolve); err != nil {
+				return err
 			}
 		}
 	}

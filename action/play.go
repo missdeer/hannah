@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,7 +13,6 @@ import (
 	"github.com/bogem/id3v2"
 	"github.com/jamesnetherton/m3u"
 
-	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
 )
@@ -158,14 +156,5 @@ func play(args ...string) error {
 	for _, media := range medias {
 		songs = append(songs, provider.Song{URL: media})
 	}
-
-	for played := false; !played || config.Repeat; played = true {
-		if config.Shuffle {
-			rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
-		}
-		if err := playSongs(songs, resolve); err != nil {
-			return err
-		}
-	}
-	return nil
+	return shuffleRepeatPlaySongs(songs, resolve)
 }

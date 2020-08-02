@@ -3,6 +3,7 @@ package action
 import (
 	"errors"
 	"log"
+	"math/rand"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
@@ -35,6 +36,18 @@ func GetActionHandler(action string) (actionHandler, bool) {
 		return nil, false
 	}
 	return s.h, s.needScreenPanel
+}
+
+func shuffleRepeatPlaySongs(songs provider.Songs, r songResolver) error {
+	for played := false; !played || config.Repeat; played = true {
+		if config.Shuffle {
+			rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
+		}
+		if err := playSongs(songs, r); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func playSongs(songs provider.Songs, r songResolver) error {

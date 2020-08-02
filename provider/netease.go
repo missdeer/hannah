@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"bufio"
+	"bytes"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
@@ -8,10 +10,12 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -27,6 +31,8 @@ const (
 	neteaseAPIGetSongsURL              = "http://music.163.com/weapi/song/enhance/player/url/v1?csrf_token="
 	neteaseAPISearch                   = `http://music.163.com/api/search/pc`
 	neteaseAPIGetLyric                 = `http://music.163.com/weapi/song/lyric?csrf_token=`
+	neteaseAPIHot                      = `http://music.163.com/discover/playlist/?order=hot&limit=%d&offset=%d`
+	neteaseAPIPlaylistDetail           = `http://music.163.com/weapi/v3/playlist/detail`
 )
 
 func weapi(origData interface{}) map[string]interface{} {
@@ -248,16 +254,133 @@ func (p *netease) ResolveSongURL(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *netease) ResolveSongLyric(song Song) (Song, error){
+func (p *netease) ResolveSongLyric(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *netease) HotPlaylist(page int) (Playlists, error) {
-	return nil, nil
+func (p *netease) HotPlaylist(page int) (res Playlists, err error) {
+	u := fmt.Sprintf(neteaseAPIHot, config.Limit, (page-1)*config.Limit)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return res, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return
+	}
+
+	reg := regexp.MustCompile(`^<a\stitle="([^"]+)"\shref="\/playlist\?id=(\d+)"\sclass="msk"><\/a>$`)
+	scanner := bufio.NewScanner(bytes.NewReader(content))
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		line := scanner.Text()
+		ss := reg.FindAllStringSubmatch(line, -1)
+		if len(ss) == 1 && len(ss[0]) == 3 {
+			res = append(res, Playlist{
+				ID:       ss[0][2],
+				Title:    ss[0][1],
+				Provider: "netease",
+				URL:      fmt.Sprintf(`https://music.163.com/#/playlist?id=%s`, ss[0][2]),
+			})
+		}
+	}
+	return
 }
 
-func (p *netease) PlaylistDetail(pl Playlist) (Songs, error) {
-	return nil, nil
+type neteasePlaylistDetail struct {
+	Code     int `json:"code"`
+	Playlist struct {
+		Tracks []struct {
+			Name string `json:"name"`
+			ID   int    `json:"id"`
+		} `json:"tracks"`
+		TrackIDs []struct {
+			ID int `json:"id"`
+		} `json:"trackIds"`
+	} `json:"playlist"`
+}
+
+func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
+	data := map[string]interface{}{
+		"id":         pl.ID,
+		"csrf_token": "",
+		"offset":     0,
+		"total":      true,
+		"limit":      1000,
+		"n":          1000,
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", neteaseAPIPlaylistDetail, strings.NewReader(postBody))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return res, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return
+	}
+
+	var plds neteasePlaylistDetail
+	if err = json.Unmarshal(content, &plds); err != nil {
+		return
+	}
+	for _, pld := range plds.Playlist.TrackIDs {
+		song := Song{
+			ID: strconv.Itoa(pld.ID),
+		}
+		for _, track := range plds.Playlist.Tracks {
+			if track.ID == pld.ID {
+				song.Title = track.Name
+				break
+			}
+		}
+		res = append(res, song)
+	}
+
+	return
 }
 
 func (p *netease) Name() string {

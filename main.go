@@ -49,12 +49,12 @@ func main() {
 	args := flag.Args()
 	rand.Seed(time.Now().UnixNano())
 
-	handler := action.GetActionHandler(config.Action)
+	handler, needScreenPanel := action.GetActionHandler(config.Action)
 	if handler != nil {
-		if err := media.Initialize(!config.ByExternalPlayer); err != nil {
+		if err := media.Initialize(!config.ByExternalPlayer && needScreenPanel); err != nil {
 			log.Fatal(err)
 		}
-		defer media.Finalize(!config.ByExternalPlayer)
+		defer media.Finalize(!config.ByExternalPlayer && needScreenPanel)
 		if err := handler(args...); err != nil {
 			log.Println(err)
 		}

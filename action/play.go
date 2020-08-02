@@ -17,7 +17,6 @@ import (
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
-	"github.com/missdeer/hannah/util"
 )
 
 var (
@@ -114,81 +113,58 @@ func scanSongs(songs []string) (res []string) {
 	return
 }
 
-func resolve(song string) provider.Song {
+func resolve(song provider.Song) (provider.Song, error) {
 	// local filesystem
-	if _, err := os.Stat(song); !os.IsNotExist(err) {
-		tag, err := id3v2.Open(song, id3v2.Options{Parse: true})
+	if _, err := os.Stat(song.URL); !os.IsNotExist(err) {
+		tag, err := id3v2.Open(song.URL, id3v2.Options{Parse: true})
+		song.Provider = "local filesystem"
 		if err == nil {
 			defer tag.Close()
-			return provider.Song{
-				URL:      song,
-				Artist:   tag.Artist(),
-				Title:    tag.Title(),
-				Provider: "local filesystem",
-			}
+			song.Artist = tag.Artist()
+			song.Title = tag.Title()
+			return song, nil
 		}
 
-		return provider.Song{
-			URL:      song,
-			Provider: "local filesystem",
-		}
+		return song, err
 	}
 	// http/https
 	for k, _ := range supportedRemote {
-		if strings.HasPrefix(song, k) {
-			return provider.Song{URL: song}
+		if strings.HasPrefix(song.URL, k) {
+			return song, nil
 		}
 	}
 	// services
-	ss := strings.Split(song, "://")
+	ss := strings.Split(song.URL, "://")
 	if len(ss) == 2 {
 		schema := ss[0]
 		if _, ok := supportedService[schema]; ok {
 			p := provider.GetProvider(schema)
 			if s, err := p.ResolveSongURL(provider.Song{ID: ss[1]}); err == nil {
-				return s
+				return s, nil
 			}
 		}
 	}
-	return provider.Song{URL: song}
+	return song, nil
 }
 
 func play(args ...string) error {
-	songs := scanSongs(args)
-	if len(songs) == 0 {
+	medias := scanSongs(args)
+	if len(medias) == 0 {
 		return ErrEmptyArgs
 	}
-	fmt.Printf("Found %d songs.\n", len(songs))
+	fmt.Printf("Found %d songs.\n", len(medias))
+
+	var songs provider.Songs
+	for _, media := range medias {
+		songs = append(songs, provider.Song{URL: media})
+	}
 
 	for played := false; !played || config.Repeat; played = true {
 		if config.Shuffle {
 			rand.Shuffle(len(songs), func(i, j int) { songs[i], songs[j] = songs[j], songs[i] })
 		}
-		for i := 0; i < len(songs); i++ {
-			song := resolve(songs[i])
-			if song.URL == "" {
-				continue
-			}
-			if config.ByExternalPlayer {
-				util.ExternalPlay(song.URL)
-				continue
-			}
-			err := media.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title) // TODO: extract from file name or ID3v1/v2 tag
-			switch err {
-			case media.ShouldQuit:
-				return err
-			case media.PreviousSong:
-				i -= 2
-			case media.NextSong:
-			// auto next
-			case media.UnsupportedMediaType:
-				log.Println(err, song.URL, ", try to use external player", config.Player)
-				if e := util.ExternalPlay(song.URL); e != nil {
-					log.Println(err, song.URL)
-				}
-			default:
-				log.Println(err)
-			}
+		if err := playSongs(songs, resolve); err != nil {
+			return err
 		}
 	}
 	return nil

@@ -35,6 +35,9 @@ func search(keywords ...string) error {
 				log.Println(err)
 				continue
 			}
+			if song.URL == "" {
+				continue
+			}
 			if config.ByExternalPlayer {
 				util.ExternalPlay(song.URL)
 				continue

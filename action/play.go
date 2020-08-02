@@ -166,6 +166,9 @@ func play(args ...string) error {
 		}
 		for i := 0; i < len(songs); i++ {
 			song := resolve(songs[i])
+			if song.URL == "" {
+				continue
+			}
 			if config.ByExternalPlayer {
 				util.ExternalPlay(song.URL)
 				continue

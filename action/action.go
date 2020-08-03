@@ -52,7 +52,7 @@ func shuffleRepeatPlaySongs(songs provider.Songs, r songResolver) error {
 }
 
 func playSongs(songs provider.Songs, r songResolver) error {
-	for j, inputSong := range songs {
+	for _, inputSong := range songs {
 		ss, err := r(inputSong)
 		if err != nil {
 			log.Println(err)

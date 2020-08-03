@@ -19,5 +19,11 @@ func search(keywords ...string) error {
 	if err != nil {
 		return err
 	}
-	return shuffleRepeatPlaySongs(provider.Songs(songs), p.ResolveSongURL)
+	return shuffleRepeatPlaySongs(provider.Songs(songs), func(song provider.Song) (provider.Songs, error) {
+		s, err := p.ResolveSongURL(song)
+		if err != nil {
+			return nil, err
+		}
+		return provider.Songs{s}, err
+	})
 }

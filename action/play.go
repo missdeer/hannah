@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -111,7 +112,7 @@ func scanSongs(songs []string) (res []string) {
 	return
 }
 
-func resolve(song provider.Song) (provider.Song, error) {
+func resolve(song provider.Song) (provider.Songs, error) {
 	// local filesystem
 	if _, err := os.Stat(song.URL); !os.IsNotExist(err) {
 		tag, err := id3v2.Open(song.URL, id3v2.Options{Parse: true})
@@ -120,29 +121,48 @@ func resolve(song provider.Song) (provider.Song, error) {
 			defer tag.Close()
 			song.Artist = tag.Artist()
 			song.Title = tag.Title()
-			return song, nil
+			return provider.Songs{song}, nil
 		}
 
-		return song, err
+		return provider.Songs{song}, err
 	}
 	// http/https
 	for k, _ := range supportedRemote {
 		if strings.HasPrefix(song.URL, k) {
-			return song, nil
+			return provider.Songs{song}, nil
 		}
 	}
 	// services
-	ss := strings.Split(song.URL, "://")
-	if len(ss) == 2 {
-		schema := ss[0]
-		if _, ok := supportedService[schema]; ok {
-			p := provider.GetProvider(schema)
-			if s, err := p.ResolveSongURL(provider.Song{ID: ss[1]}); err == nil {
-				return s, nil
+	u, err := url.Parse(song.URL)
+	if err != nil {
+		return provider.Songs{song}, err
+	}
+	values, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		return provider.Songs{song}, err
+	}
+
+	linkType := `song`
+	if t, ok := values[`type`]; ok && len(t) > 0 {
+		linkType = t[0]
+	}
+	scheme := u.Scheme
+	if _, ok := supportedService[scheme]; ok {
+		p := provider.GetProvider(scheme)
+		switch linkType {
+		case "song":
+			if s, err := p.ResolveSongURL(provider.Song{ID: u.Host}); err == nil {
+				return provider.Songs{s}, nil
 			}
+		case "playlist":
+			if songs, err := p.PlaylistDetail(provider.Playlist{ID: u.Host}); err == nil {
+				return songs, nil
+			}
+		default:
 		}
 	}
-	return song, nil
+
+	return provider.Songs{song}, nil
 }
 
 func play(args ...string) error {

@@ -27,8 +27,14 @@ func playlist(ids ...string) error {
 				log.Println(err)
 				continue
 			}
-
-			if err = shuffleRepeatPlaySongs(songs, p.ResolveSongURL); err != nil {
+			err = shuffleRepeatPlaySongs(songs, func(song provider.Song) (provider.Songs, error) {
+				s, err := p.ResolveSongURL(song)
+				if err != nil {
+					return nil, err
+				}
+				return provider.Songs{s}, err
+			})
+			if err != nil {
 				return err
 			}
 		}

@@ -83,7 +83,7 @@ func playSongs(songs provider.Songs, r songResolver) error {
 				}
 				song.URL = s.URL
 			}
-			err = media.PlayMedia(song.URL, j*len(songs)+i+1, len(ss)*len(songs), song.Artist, song.Title)
+			err = media.PlayMedia(song.URL, i+1, len(ss), song.Artist, song.Title)
 			switch err {
 			case media.ShouldQuit:
 				return err

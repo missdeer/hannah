@@ -33,6 +33,7 @@ const (
 	neteaseAPIGetLyric                 = `http://music.163.com/weapi/song/lyric?csrf_token=`
 	neteaseAPIHot                      = `http://music.163.com/discover/playlist/?order=hot&limit=%d&offset=%d`
 	neteaseAPIPlaylistDetail           = `http://music.163.com/weapi/v3/playlist/detail`
+	neteaseAPISongDetail               = `http://music.163.com/weapi/v3/song/detail`
 )
 
 func weapi(origData interface{}) map[string]interface{} {
@@ -132,7 +133,7 @@ type neteaseSearchResult struct {
 	Code int `json:"code"`
 }
 
-type neteaseSongDetail struct {
+type neteaseSongInfo struct {
 	Code int `json:"code"`
 	Data []struct {
 		ID         int    `json:"id"`
@@ -241,20 +242,78 @@ func (p *netease) ResolveSongURL(song Song) (Song, error) {
 		return song, err
 	}
 
-	var songDetail neteaseSongDetail
-	if err = json.Unmarshal(content, &songDetail); err != nil {
+	var songInfo neteaseSongInfo
+	if err = json.Unmarshal(content, &songInfo); err != nil {
 		return song, err
 	}
 
-	if len(songDetail.Data) == 0 || songDetail.Data[0].URL == "" {
+	if len(songInfo.Data) == 0 || songInfo.Data[0].URL == "" {
 		return song, err
 	}
 
-	song.URL = songDetail.Data[0].URL
+	song.URL = songInfo.Data[0].URL
 	return song, nil
 }
 
+type neteaseLyricDetail struct {
+	SGC bool `json:"sgc"`
+	SFY bool `json:"sfy"`
+	QFY bool `json:"qfy"`
+	LRC struct {
+		Version int    `json:"version"`
+		Lyric   string `json:"lyric"`
+	} `json:"lrc"`
+	Code int `json:"code"`
+}
+
 func (p *netease) ResolveSongLyric(song Song) (Song, error) {
+	data := map[string]interface{}{
+		"id":         song.ID,
+		"lv":         -1,
+		"tv":         -1,
+		"csrf_token": "",
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", neteaseAPIGetLyric, strings.NewReader(postBody))
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	var lyric neteaseLyricDetail
+	if err = json.Unmarshal(content, &lyric); err != nil {
+		return song, nil
+	}
+
+	song.Lyric = lyric.LRC.Lyric
 	return song, nil
 }
 
@@ -312,11 +371,32 @@ type neteasePlaylistDetail struct {
 		Tracks []struct {
 			Name string `json:"name"`
 			ID   int    `json:"id"`
+			AL   struct {
+				Name   string `json:"name"`
+				PicURL string `json:"picUrl"`
+			} `json:"al"`
+			AR []struct {
+				Name string `json:"name"`
+			} `json:"ar"`
 		} `json:"tracks"`
 		TrackIDs []struct {
 			ID int `json:"id"`
 		} `json:"trackIds"`
 	} `json:"playlist"`
+}
+
+type neteaseSongDetail struct {
+	Songs []struct {
+		Name string `json:"name"`
+		ID   int    `json:"id"`
+		AL   struct {
+			Name   string `json:"name"`
+			PicURL string `json:"picUrl"`
+		} `json:"al"`
+		AR []struct {
+			Name string `json:"name"`
+		} `json:"ar"`
+	} `json:"songs"`
 }
 
 func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
@@ -367,17 +447,67 @@ func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
 	if err = json.Unmarshal(content, &plds); err != nil {
 		return
 	}
+
+	var ids []string
+	var c []string
 	for _, pld := range plds.Playlist.TrackIDs {
-		song := Song{
-			ID: strconv.Itoa(pld.ID),
-		}
-		for _, track := range plds.Playlist.Tracks {
-			if track.ID == pld.ID {
-				song.Title = track.Name
-				break
-			}
-		}
-		res = append(res, song)
+		ids = append(ids, strconv.Itoa(pld.ID))
+		c = append(c, fmt.Sprintf(`{"id":%d}`, pld.ID))
+	}
+
+	// song detail
+	data = map[string]interface{}{
+		"ids": fmt.Sprintf(`[%s]`, strings.Join(ids, ",")),
+		"c":   fmt.Sprintf(`[%s]`, strings.Join(c, ",")),
+	}
+
+	params = weapi(data)
+	values = url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody = values.Encode()
+	req, err = http.NewRequest("POST", neteaseAPISongDetail, strings.NewReader(postBody))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err = httpClient.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return res, ErrStatusNotOK
+	}
+
+	content, err = util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return
+	}
+
+	var sd neteaseSongDetail
+	if err = json.Unmarshal(content, &sd); err != nil {
+		return
+	}
+
+	for _, d := range sd.Songs {
+		res = append(res, Song{
+			ID:       strconv.Itoa(d.ID),
+			Title:    d.Name,
+			Image:    d.AL.PicURL,
+			Provider: "netease",
+			Artist:   d.AR[0].Name,
+		})
 	}
 
 	return

@@ -72,6 +72,8 @@ func playMedia(uri string, index int, total int, artist string, title string, do
 	audioSpeaker.Play()
 
 	seconds := time.Tick(time.Second)
+	lastPos := pos
+	tickCount := 0
 	for {
 		select {
 		case event := <-tcellEvents:
@@ -106,11 +108,24 @@ func playMedia(uri string, index int, total int, artist string, title string, do
 			if changed {
 				pos, length, vol, speed := audioSpeaker.Status()
 				screenPanel.Draw(pos, length, vol, speed)
+				if lastPos != pos {
+					tickCount = 0
+					lastPos = pos
+				}
 			}
 		case <-seconds:
 			if !audioSpeaker.IsPaused() {
 				pos, length, vol, speed := audioSpeaker.Status()
 				screenPanel.Draw(pos, length, vol, speed)
+				if lastPos != pos {
+					tickCount = 0
+					lastPos = pos
+				} else {
+					tickCount++
+					if tickCount > 10 { // doesn't play in 10 seconds, switch to next song
+						return NextSong
+					}
+				}
 			}
 		case <-done:
 			return NextSong

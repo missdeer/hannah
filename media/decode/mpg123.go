@@ -63,10 +63,10 @@ func Mpg123Decode(rc io.ReadCloser) (s beep.StreamSeekCloser, format beep.Format
 			Encoding: mpg123.EncodingInt16,
 		},
 	})
-	return &decoder{rc, r, format, 0, length, nil}, format, nil
+	return &mpg123decoder{rc, r, format, 0, length, nil}, format, nil
 }
 
-type decoder struct {
+type mpg123decoder struct {
 	closer io.Closer
 	r      *mpg123.Reader
 	f      beep.Format
@@ -75,7 +75,7 @@ type decoder struct {
 	err    error
 }
 
-func (d *decoder) Stream(samples [][2]float64) (n int, ok bool) {
+func (d *mpg123decoder) Stream(samples [][2]float64) (n int, ok bool) {
 	if d.err != nil {
 		return 0, false
 	}
@@ -99,19 +99,19 @@ func (d *decoder) Stream(samples [][2]float64) (n int, ok bool) {
 	return n, ok
 }
 
-func (d *decoder) Err() error {
+func (d *mpg123decoder) Err() error {
 	return d.err
 }
 
-func (d *decoder) Len() int {
+func (d *mpg123decoder) Len() int {
 	return int(d.length / gomp3BytesPerFrame)
 }
 
-func (d *decoder) Position() int {
+func (d *mpg123decoder) Position() int {
 	return d.pos / gomp3BytesPerFrame
 }
 
-func (d *decoder) Seek(p int) error {
+func (d *mpg123decoder) Seek(p int) error {
 	if p < 0 || d.Len() < p {
 		return fmt.Errorf("mp3: seek position %v out of range [%v, %v]", p, 0, d.Len())
 	}
@@ -123,7 +123,7 @@ func (d *decoder) Seek(p int) error {
 	return nil
 }
 
-func (d *decoder) Close() error {
+func (d *mpg123decoder) Close() error {
 	err := d.closer.Close()
 	if err != nil {
 		return errors.Wrap(err, "mp3")

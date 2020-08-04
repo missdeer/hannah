@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 
 	"gopkg.in/ini.v1"
@@ -44,6 +45,11 @@ var (
 )
 
 func LoadConfigurationFromFile(fn string) error {
+	if pwd, err := os.Getwd(); err == nil {
+		DownloadDir = pwd
+		M3UFileName = filepath.Join(pwd, "hannah.m3u")
+	}
+
 	cfg, err := ini.Load(fn)
 	if err != nil {
 		log.Println(err)

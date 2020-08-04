@@ -29,7 +29,6 @@ func main() {
 	flag.IntVarP(&config.Limit, "limit", "l", config.Limit, "max count of search result")
 	flag.BoolVarP(&config.Shuffle, "shuffle", "f", config.Shuffle, "shuffle play list order")
 	flag.BoolVarP(&config.Repeat, "repeat", "r", config.Repeat, "repeat playing")
-	flag.BoolVarP(&config.Mpg123, "mpg123", "m", config.Mpg123, "use mpg123 decoder if it is available")
 	flag.StringVarP(&config.AudioDriver, "driver", "d", config.AudioDriver, "set audio deriver, values: "+strings.Join(config.AudioDriverList, ", "))
 	flag.StringVarP(&config.Engine, "engine", "e", config.Engine, "specify audio engine, values: builtin, bass")
 	flag.StringVarP(&config.Action, "action", "a", config.Action, "play, search(search and play), m3u(search and save as m3u file), download(search and download media files), hot(get hot playlists), playlist(play args in the specified playlist)")

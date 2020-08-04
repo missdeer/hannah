@@ -22,13 +22,11 @@ var (
 	Limit            = 35
 	Page             = 1
 	Engine           = "bass"
-	Mpg123           = true
 	NetworkTimeout   = 60
 
 	m = map[string]interface{}{
 		"dir":                &DownloadDir,
 		"m3u":                &M3UFileName,
-		"mpg123":             &Mpg123,
 		"shuffle":            &Shuffle,
 		"repeat":             &Repeat,
 		"by-external-player": &ByExternalPlayer,

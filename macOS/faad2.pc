@@ -1,0 +1,12 @@
+prefix=/usr/local/Cellar/faad2/2.8.8
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: faad2
+Description: Freeware Advanced Audio (AAC) Decoder including SBR decoding
+Requires: 
+Version: 2.8.8
+Libs: -L${libdir} -lfaad
+Libs.private:  
+Cflags: -I${includedir} 

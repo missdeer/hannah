@@ -41,6 +41,13 @@ func TestNetease_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	u, err := p.ResolveSongLyric(Song{ID: "864450284"})
+	if err != nil {
+		t.Error(err)
+	}
+	if u.Lyric == `` {
+		t.Error("incorrect song lyric")
+	}
 }
 
 func TestNetease_HotPlaylist(t *testing.T) {
@@ -49,6 +56,13 @@ func TestNetease_HotPlaylist(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	pl, err := p.HotPlaylist(1)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(pl) == 0 {
+		t.Error("can't get hot playlist")
+	}
 }
 
 func TestNetease_PlaylistDetail(t *testing.T) {
@@ -57,6 +71,14 @@ func TestNetease_PlaylistDetail(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	songs, err := p.PlaylistDetail(Playlist{ID: `5038176324`})
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't get playlist detail")
+	}
 }
 
 func TestNetease_Name(t *testing.T) {

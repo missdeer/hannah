@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"math/rand"
+	"net/url"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
@@ -12,7 +13,7 @@ import (
 )
 
 type actionHandler func(...string) error
-type songResolver func(provider.Song) (provider.Song, error)
+type songResolver func(provider.Song) (provider.Songs, error)
 
 var (
 	actionHandlerMap = map[string]struct {
@@ -51,33 +52,59 @@ func shuffleRepeatPlaySongs(songs provider.Songs, r songResolver) error {
 }
 
 func playSongs(songs provider.Songs, r songResolver) error {
-	for i := 0; i < len(songs); i++ {
-		song, err := r(songs[i])
+	for j, inputSong := range songs {
+		ss, err := r(inputSong)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-		if song.URL == "" {
+		if len(ss) == 0 {
 			continue
 		}
-		if config.ByExternalPlayer {
-			util.ExternalPlay(song.URL)
-			continue
+		if config.Shuffle {
+			rand.Shuffle(len(ss), func(i, j int) { ss[i], ss[j] = ss[j], ss[i] })
 		}
-		err = media.PlayMedia(song.URL, i+1, len(songs), song.Artist, song.Title)
-		switch err {
-		case media.ShouldQuit:
-			return err
-		case media.PreviousSong:
-			i -= 2
-		case media.NextSong:
-			// auto next
-		case media.UnsupportedMediaType:
-			log.Println(err, song.URL, ", try to use external player", config.Player)
-			if e := util.ExternalPlay(song.URL); e != nil {
-				log.Println(err, song.URL)
+		u, err := url.Parse(inputSong.URL)
+		var p provider.IProvider
+		if err == nil {
+			p = provider.GetProvider(u.Scheme)
+		}
+		index := j + 1
+		count := len(songs)
+		for i, song := range ss {
+			if config.ByExternalPlayer {
+				util.ExternalPlay(song.URL)
+				continue
 			}
-		default:
+			if song.URL == "" && p != nil {
+				// from playlist, only song ID exists, get the song URL now
+				s, err := p.ResolveSongURL(song)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				song.URL = s.URL
+				count = len(ss)
+				index = i + 1
+			}
+			if song.URL == "" {
+				continue
+			}
+			err = media.PlayMedia(song.URL, index, count, song.Artist, song.Title)
+			switch err {
+			case media.ShouldQuit:
+				return err
+			case media.PreviousSong:
+				i -= 2
+			case media.NextSong:
+				// auto next
+			case media.UnsupportedMediaType:
+				log.Println(err, song.URL, ", try to use external player", config.Player)
+				if e := util.ExternalPlay(song.URL); e != nil {
+					log.Println(err, song.URL)
+				}
+			default:
+			}
 		}
 	}
 	return nil

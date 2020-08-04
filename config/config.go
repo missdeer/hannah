@@ -19,11 +19,11 @@ var (
 	M3UFileName      = "hannah.m3u"
 	Action           = "play"
 	Provider         = "netease"
-	Limit            = 25
+	Limit            = 35
 	Page             = 1
-	Engine           = "builtin"
+	Engine           = "bass"
 	Mpg123           = true
-	NetworkTimeout   = 30
+	NetworkTimeout   = 60
 
 	m = map[string]interface{}{
 		"dir":                &DownloadDir,

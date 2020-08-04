@@ -15,6 +15,8 @@ var (
 	Socks5Proxy      string
 	HttpProxy        string
 	Player           string
+	DownloadDir      = "."
+	M3UFileName      = "hannah.m3u"
 	Action           = "play"
 	Provider         = "netease"
 	Limit            = 25
@@ -24,6 +26,8 @@ var (
 	NetworkTimeout   = 30
 
 	m = map[string]interface{}{
+		"dir":                &DownloadDir,
+		"m3u":                &M3UFileName,
 		"mpg123":             &Mpg123,
 		"shuffle":            &Shuffle,
 		"repeat":             &Repeat,

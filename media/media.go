@@ -112,6 +112,8 @@ func bassPlayMedia(uri string, index int, total int, artist string, title string
 				audioSpeaker.Slowdown()
 			case output.HandleActionSpeedup:
 				audioSpeaker.Speedup()
+			case output.HandleActionM3U:
+			case output.HandleActionDownload:
 			default:
 			}
 			if changed {
@@ -209,6 +211,8 @@ func builtinPlayMedia(uri string, index int, total int, artist string, title str
 				audioSpeaker.Slowdown()
 			case output.HandleActionSpeedup:
 				audioSpeaker.Speedup()
+			case output.HandleActionM3U:
+			case output.HandleActionDownload:
 			default:
 			}
 			if changed {

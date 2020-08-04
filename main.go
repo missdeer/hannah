@@ -38,6 +38,8 @@ func main() {
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "t", config.HttpProxy, "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
 	flag.StringVarP(&config.Player, "player", "", config.Player, "specify external player path, use it when the media type is not supported by builtin decoders")
 	flag.BoolVarP(&config.ByExternalPlayer, "by-external-player", "y", config.ByExternalPlayer, "play by external player")
+	flag.StringVarP(&config.DownloadDir, "dir", "", config.DownloadDir, "set directory to save download files")
+	flag.StringVarP(&config.M3UFileName, "m3u", "", config.M3UFileName, "set m3u file name to save play list")
 	flag.BoolVarP(&showHelpMessage, "help", "h", false, "show this help message")
 	flag.Parse()
 

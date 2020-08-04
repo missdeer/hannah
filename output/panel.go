@@ -28,6 +28,8 @@ const (
 	HandleActionDecreaseVolume
 	HandleActionRepeat
 	HandleActionShuffle
+	HandleActionDownload
+	HandleActionM3U
 )
 
 func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
@@ -156,6 +158,10 @@ func (sp *ScreenPanel) Draw(position time.Duration, length time.Duration, volume
 	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("%s/%s", util.Bool2Str(config.Repeat), util.Bool2Str(config.Shuffle)), statusStyle)
 	row++
 
+	drawTextLine(sp.screen, 0, row, "Download/M3U"+strings.Repeat(" ", len(s)-len(`Download/M3U(D/V):`))+"(D/V):", mainStyle)
+	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Download current song to %s/Add current song to %s", config.DownloadDir, config.M3UFileName), statusStyle)
+	row++
+
 	if sp.message != "" {
 		drawTextLine(sp.screen, 0, row+1, sp.message, mainStyle)
 	}
@@ -186,6 +192,8 @@ func (sp *ScreenPanel) Handle(event tcell.Event) (changed bool, action int) {
 			'n': HandleActionNEXT,
 			'r': HandleActionRepeat,
 			'f': HandleActionShuffle,
+			'd': HandleActionDownload,
+			'v': HandleActionM3U,
 		}
 		if action, ok := cmdMap[unicode.ToLower(event.Rune())]; ok {
 			return true, action

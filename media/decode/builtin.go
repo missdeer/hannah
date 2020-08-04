@@ -27,6 +27,8 @@ var (
 		".ogg":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return vorbis.Decode(r) },
 		".flac": func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return flac.Decode(r) },
 		".wav":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return wav.Decode(r) },
+		".m4a":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return FAADDecode(r) },
+		".aac":  func(r io.ReadCloser) (beep.StreamSeekCloser, beep.Format, error) { return FAADDecode(r) },
 	}
 )
 

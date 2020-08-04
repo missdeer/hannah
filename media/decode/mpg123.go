@@ -20,7 +20,7 @@ const (
 )
 
 // Decode takes a ReadCloser containing audio data in MP3 format and returns a StreamSeekCloser,
-// which streams that audio. The Seek method will panic if rc is not io.Seeker.
+// which streams that audio. The Seek method will panic if inData is not io.Seeker.
 //
 // Do not close the supplied ReadSeekCloser, instead, use the Close method of the returned
 // StreamSeekCloser when you want to release the resources.

@@ -25,7 +25,7 @@ jobs:
           update: true
           msystem: ${{ matrix.mingw_arch }}
           path-type: inherit
-          install: ${{ matrix.mingw_prefix }}-toolchain ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd ${{ matrix.mingw_prefix }}-mpg123 ${{ matrix.mingw_prefix }}-portaudio
+          install: ${{ matrix.mingw_prefix }}-toolchain ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd ${{ matrix.mingw_prefix }}-mpg123 ${{ matrix.mingw_prefix }}-portaudio ${{ matrix.mingw_prefix }}-faad2
 
       - name: Set up Go 1.14
         uses: actions/setup-go@v1

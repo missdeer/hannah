@@ -46,6 +46,9 @@ CHECKS:=go.mod go.sum \
     media/decode/mpg123/mpg123.go \
     media/decode/builtin_test.go \
     media/decode/mpg123.go \
+    media/decode/faad/faad.go \
+    media/decode/faad/faacdecoder.h \
+    media/decode/faad/faacdecoder.c \
     media/decode/builtin.go 
 
 .PHONY: all

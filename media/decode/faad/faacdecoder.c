@@ -13,10 +13,20 @@ typedef struct {
     int bit_rate;
 }FAADContext;
 
+uint32_t pri_ntohl(uint32_t const net) {
+    uint8_t data[4] = {};
+    memcpy(&data, &net, sizeof(data));
+
+    return ((uint32_t) data[3] << 0)
+         | ((uint32_t) data[2] << 8)
+         | ((uint32_t) data[1] << 16)
+         | ((uint32_t) data[0] << 24);
+}
+
 uint32_t _get_frame_length(const unsigned char *aac_header)
 {
     uint32_t len = *(uint32_t *)(aac_header + 3);
-    len = ntohl(len); //Little Endian
+    len = pri_ntohl(len); //Little Endian
     len = len << 6;
     len = len >> 19;
     return len;
@@ -96,7 +106,7 @@ int faad_decode_frame(void *pParam, unsigned char *pData, int nLen, unsigned cha
     NeAACDecHandle handle = pCtx->handle;
     long res = NeAACDecInit(handle, pData, nLen, (unsigned long*)&pCtx->sample_rate, (unsigned char*)&pCtx->channels);
     if (res < 0) {
-        printf("NeAACDecInit failed, %d\n", res);
+        printf("NeAACDecInit failed, %ld\n", res);
         NeAACDecClose(handle);
         return -1;
     }

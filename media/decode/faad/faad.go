@@ -1,6 +1,7 @@
 package faad
 
 // #cgo pkg-config: faad2
+// #cgo windows LDFLAGS: -lws2_32
 // #include "neaacdec.h"
 // #include "faacdecoder.h"
 import "C"

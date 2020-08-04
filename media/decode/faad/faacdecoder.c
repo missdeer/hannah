@@ -6,10 +6,6 @@
 #include <string.h>
 #include "neaacdec.h"
 
-#ifdef WIN32
-#pragma comment(lib, "Ws2_32.lib")
-#endif
-
 typedef struct {
     NeAACDecHandle handle;
     int sample_rate;

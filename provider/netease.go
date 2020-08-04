@@ -347,12 +347,14 @@ func (p *netease) HotPlaylist(page int) (res Playlists, err error) {
 		return
 	}
 
-	reg := regexp.MustCompile(`^<a\stitle="([^"]+)"\shref="\/playlist\?id=(\d+)"\sclass="msk"><\/a>$`)
+	regPlaylistInfo := regexp.MustCompile(`^<a\stitle="([^"]+)"\shref="\/playlist\?id=(\d+)"\sclass="msk"><\/a>$`)
+	regPlaylistImage := regexp.MustCompile(`^\<img\sclass="j\-flag"\ssrc="([^"]+)"\/\>$`)
+	var images []string
 	scanner := bufio.NewScanner(bytes.NewReader(content))
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		line := scanner.Text()
-		ss := reg.FindAllStringSubmatch(line, -1)
+		ss := regPlaylistInfo.FindAllStringSubmatch(line, -1)
 		if len(ss) == 1 && len(ss[0]) == 3 {
 			res = append(res, Playlist{
 				ID:       ss[0][2],
@@ -361,6 +363,13 @@ func (p *netease) HotPlaylist(page int) (res Playlists, err error) {
 				URL:      fmt.Sprintf(`https://music.163.com/#/playlist?id=%s`, ss[0][2]),
 			})
 		}
+		ss = regPlaylistImage.FindAllStringSubmatch(line, -1)
+		if len(ss) == 1 && len(ss[0]) == 2 {
+			images = append(images, ss[0][1])
+		}
+	}
+	for i := 0; i < len(res) && i < len(images); i++ {
+		res[i].Image = images[i]
 	}
 	return
 }

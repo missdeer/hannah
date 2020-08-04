@@ -14,10 +14,8 @@ import (
 	"github.com/missdeer/hannah/output"
 	"github.com/missdeer/hannah/output/bass"
 	"github.com/missdeer/hannah/output/beep"
+	"github.com/missdeer/hannah/provider"
 )
-
-type play func(string, int, int, string, string) error
-type supportedFileType func(string) bool
 
 var (
 	ShouldQuit           = errors.New("should quit application now")
@@ -27,8 +25,8 @@ var (
 	screenPanel          *output.ScreenPanel
 	audioSpeaker         output.ISpeaker
 	tcellEvents          chan tcell.Event
-	PlayMedia            play              = builtinPlayMedia
-	IsSupportedFileType  supportedFileType = beep.SupportedFileType
+	PlayMedia            = builtinPlayMedia
+	IsSupportedFileType  = beep.SupportedFileType
 )
 
 func Initialize(screenPanelEnabled bool) error {
@@ -62,8 +60,8 @@ func Initialize(screenPanelEnabled bool) error {
 	return nil
 }
 
-func playMedia(uri string, index int, total int, artist string, title string, done chan struct{}) error {
-	screenPanel.Update(uri, index, total, artist, title)
+func playMedia(song provider.Song, index int, total int, done chan struct{}) error {
+	screenPanel.Update(song, index, total)
 
 	screenPanel.SetMessage("")
 	pos, length, vol, speed := audioSpeaker.Status()
@@ -104,7 +102,9 @@ func playMedia(uri string, index int, total int, artist string, title string, do
 			case output.HandleActionSpeedup:
 				audioSpeaker.Speedup()
 			case output.HandleActionM3U:
+				insertToM3U(song)
 			case output.HandleActionDownload:
+				downloadSong(song)
 			default:
 			}
 			if changed {
@@ -136,9 +136,9 @@ func playMedia(uri string, index int, total int, artist string, title string, do
 	return nil
 }
 
-func bassPlayMedia(uri string, index int, total int, artist string, title string) error {
+func bassPlayMedia(song provider.Song, index int, total int) error {
 	if !audioSpeaker.IsNil() {
-		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
+		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", song.URL))
 		pos, length, vol, speed := audioSpeaker.Status()
 		screenPanel.Draw(pos, length, vol, speed)
 	}
@@ -146,31 +146,31 @@ func bassPlayMedia(uri string, index int, total int, artist string, title string
 	defer audioSpeaker.Shutdown()
 
 	done := make(chan struct{})
-	audioSpeaker.UpdateURI(uri, done)
+	audioSpeaker.UpdateURI(song.URL, done)
 
-	return playMedia(uri, index, total, artist, title, done)
+	return playMedia(song, index, total, done)
 }
 
-func builtinPlayMedia(uri string, index int, total int, artist string, title string) error {
+func builtinPlayMedia(song provider.Song, index int, total int) error {
 	if !audioSpeaker.IsNil() {
-		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", uri))
+		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", song.URL))
 		pos, length, vol, speed := audioSpeaker.Status()
 		screenPanel.Draw(pos, length, vol, speed)
 	}
 
-	r, err := input.OpenSource(uri)
+	r, err := input.OpenSource(song.URL)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
 	if !audioSpeaker.IsNil() {
-		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", uri))
+		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", song.URL))
 		pos, length, vol, speed := audioSpeaker.Status()
 		screenPanel.Draw(pos, length, vol, speed)
 	}
 
-	decoder := decode.GetBuiltinDecoder(uri)
+	decoder := decode.GetBuiltinDecoder(song.URL)
 	if decoder == nil {
 		return UnsupportedMediaType
 	}
@@ -192,7 +192,7 @@ func builtinPlayMedia(uri string, index int, total int, artist string, title str
 	done := make(chan struct{})
 	audioSpeaker.UpdateStream(int(format.SampleRate), streamer, done)
 
-	return playMedia(uri, index, total, artist, title, done)
+	return playMedia(song, index, total, done)
 }
 
 func Finalize(screenPanelEnabled bool) {

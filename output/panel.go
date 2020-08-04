@@ -11,6 +11,7 @@ import (
 	"github.com/gdamore/tcell"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/provider"
 	"github.com/missdeer/hannah/util"
 )
 
@@ -94,12 +95,12 @@ func (sp *ScreenPanel) Finalize() {
 	}
 }
 
-func (sp *ScreenPanel) Update(uri string, index int, total int, artist string, title string) {
-	sp.mediaURI = uri
+func (sp *ScreenPanel) Update(song provider.Song, index int, total int) {
+	sp.mediaURI = song.URL
 	sp.index = index
 	sp.total = total
-	sp.artist = artist
-	sp.title = title
+	sp.artist = song.Artist
+	sp.title = song.Title
 }
 
 func (sp *ScreenPanel) SetMessage(message string) {
@@ -158,8 +159,12 @@ func (sp *ScreenPanel) Draw(position time.Duration, length time.Duration, volume
 	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("%s/%s", util.Bool2Str(config.Repeat), util.Bool2Str(config.Shuffle)), statusStyle)
 	row++
 
-	drawTextLine(sp.screen, 0, row, "Download/M3U"+strings.Repeat(" ", len(s)-len(`Download/M3U(D/V):`))+"(D/V):", mainStyle)
-	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Download current song to %s/Add current song to %s", config.DownloadDir, config.M3UFileName), statusStyle)
+	drawTextLine(sp.screen, 0, row, "Download"+strings.Repeat(" ", len(s)-len(`Download(D):`))+"(D):", mainStyle)
+	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Download current song to %s", config.DownloadDir), statusStyle)
+	row++
+
+	drawTextLine(sp.screen, 0, row, "Save To M3U"+strings.Repeat(" ", len(s)-len(`Save To M3U(V):`))+"(V):", mainStyle)
+	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Append current song to %s", config.M3UFileName), statusStyle)
 	row++
 
 	if sp.message != "" {

@@ -129,6 +129,7 @@ func resolve(song provider.Song) (provider.Songs, error) {
 	// http/https
 	for k, _ := range supportedRemote {
 		if strings.HasPrefix(song.URL, k) {
+			song.Provider = "http(s)"
 			return provider.Songs{song}, nil
 		}
 	}

@@ -90,7 +90,7 @@ func playSongs(songs provider.Songs, r songResolver) error {
 			if song.URL == "" {
 				continue
 			}
-			err = media.PlayMedia(song.URL, index, count, song.Artist, song.Title)
+			err = media.PlayMedia(song, index, count)
 			switch err {
 			case media.ShouldQuit:
 				return err

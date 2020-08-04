@@ -13,6 +13,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/spf13/pflag v1.0.5
+	github.com/ushis/m3u v0.0.0-20150127162843-94396b784733
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	gopkg.in/ini.v1 v1.57.0
 )

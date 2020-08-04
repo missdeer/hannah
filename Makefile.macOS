@@ -42,6 +42,8 @@ CHECKS:=go.mod go.sum \
     action/search.go \
     main.go \
     media/media.go \
+    media/download.go \
+    media/m3u.go \
     media/decode/mpg123/reader.go \
     media/decode/mpg123/mpg123.go \
     media/decode/builtin_test.go \

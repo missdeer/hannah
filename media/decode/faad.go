@@ -64,9 +64,14 @@ func (d *faaddecoder) Stream(samples [][2]float64) (n int, ok bool) {
 			d.err = errors.Wrap(err, "m4a")
 			break
 		}
+		var frame [2048]byte
+		var frameLen int
+		if faad.FaadGetOneADTSFrame(inData[:], dn, frame[:], &frameLen) != 0 {
+			break
+		}
 		var outData [4096]byte
 		var outLen int
-		faad.FaadDecodeFrame(d.context, inData[:], dn, outData[:], &outLen)
+		faad.FaadDecodeFrame(d.context, frame[:], frameLen, outData[:], &outLen)
 		if outLen == len(outData) {
 			samples[i], _ = d.format.DecodeSigned(outData[:])
 			d.pos += outLen

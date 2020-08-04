@@ -22,6 +22,44 @@ uint32_t _get_frame_length(const unsigned char *aac_header)
     return len;
 }
 
+int get_one_ADTS_frame(unsigned char* buffer, size_t buf_size, unsigned char* data ,size_t* data_size)
+{
+    size_t size = 0;
+
+    if(!buffer || !data || !data_size )
+    {
+        return -1;
+    }
+
+    while(1)
+    {
+        if(buf_size  < 7 )
+        {
+            return -1;
+        }
+
+        if((buffer[0] == 0xff) && ((buffer[1] & 0xf0) == 0xf0) )
+        {
+            size |= ((buffer[3] & 0x03) <<11);     //high 2 bit
+            size |= buffer[4]<<3;                //middle 8 bit
+            size |= ((buffer[5] & 0xe0)>>5);        //low 3bit
+            break;
+        }
+        --buf_size;
+        ++buffer;
+    }
+
+    if(buf_size < size)
+    {
+        return -1;
+    }
+
+    memcpy(data, buffer, size);
+    *data_size = size;
+
+    return 0;
+}
+
 void* faad_decoder_create(int sample_rate, int channels, int bit_rate)
 {
     NeAACDecHandle handle = NeAACDecOpen();
@@ -58,7 +96,7 @@ int faad_decode_frame(void *pParam, unsigned char *pData, int nLen, unsigned cha
     NeAACDecHandle handle = pCtx->handle;
     long res = NeAACDecInit(handle, pData, nLen, (unsigned long*)&pCtx->sample_rate, (unsigned char*)&pCtx->channels);
     if (res < 0) {
-        printf("NeAACDecInit failed\n");
+        printf("NeAACDecInit failed, %d\n", res);
         NeAACDecClose(handle);
         return -1;
     }
@@ -95,11 +133,11 @@ int faad_decode_frame(void *pParam, unsigned char *pData, int nLen, unsigned cha
             }
             *outLen = (unsigned int)info.samples;
         }
-    } else {
-        printf("NeAACDecDecode failed\n");
-        return -1;
+        return 0;
     }
-    return 0;
+
+    printf("NeAACDecDecode failed: %s\n", NeAACDecGetErrorMessage(info.error));
+    return -1;
 }
 
 void faad_decode_close(void *pParam)

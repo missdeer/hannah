@@ -27,16 +27,21 @@ void* faad_decoder_create(int sample_rate, int channels, int bit_rate)
     NeAACDecHandle handle = NeAACDecOpen();
     if(!handle){
         printf("NeAACDecOpen failed\n");
-        goto error;
+        return NULL;
     }
     NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration(handle);
     if(!conf){
         printf("NeAACDecGetCurrentConfiguration failed\n");
-        goto error;
+        NeAACDecClose(handle);
+        return NULL;
     }
     conf->defSampleRate = sample_rate;
     conf->outputFormat = FAAD_FMT_16BIT;
     conf->dontUpSampleImplicitSBR = 1;
+    conf->defObjectType	= LC;
+    conf->downMatrix = 0;
+    conf->useOldADTSFormat = 0;
+
     NeAACDecSetConfiguration(handle, conf);
 
     FAADContext* ctx = malloc(sizeof(FAADContext));
@@ -45,12 +50,6 @@ void* faad_decoder_create(int sample_rate, int channels, int bit_rate)
     ctx->channels = channels;
     ctx->bit_rate = bit_rate;
     return ctx;
-
-error:
-    if(handle){
-        NeAACDecClose(handle);
-    }
-    return NULL;
 }
 
 int faad_decode_frame(void *pParam, unsigned char *pData, int nLen, unsigned char *pPCM, unsigned int *outLen)
@@ -60,6 +59,7 @@ int faad_decode_frame(void *pParam, unsigned char *pData, int nLen, unsigned cha
     long res = NeAACDecInit(handle, pData, nLen, (unsigned long*)&pCtx->sample_rate, (unsigned char*)&pCtx->channels);
     if (res < 0) {
         printf("NeAACDecInit failed\n");
+        NeAACDecClose(handle);
         return -1;
     }
     NeAACDecFrameInfo info;

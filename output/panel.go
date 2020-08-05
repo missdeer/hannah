@@ -30,7 +30,8 @@ const (
 	HandleActionRepeat
 	HandleActionShuffle
 	HandleActionDownload
-	HandleActionM3U
+	HandleActionOriginM3U
+	HandleActionFinalM3U
 )
 
 func drawTextLine(screen tcell.Screen, x, y int, s string, style tcell.Style) {
@@ -159,12 +160,12 @@ func (sp *ScreenPanel) Draw(position time.Duration, length time.Duration, volume
 	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("%s/%s", util.Bool2Str(config.Repeat), util.Bool2Str(config.Shuffle)), statusStyle)
 	row++
 
-	drawTextLine(sp.screen, 0, row, "Download"+strings.Repeat(" ", len(s)-len(`Download(D):`))+"(D):", mainStyle)
-	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Download current song to %s", config.DownloadDir), statusStyle)
+	drawTextLine(sp.screen, 0, row, "Save To M3U"+strings.Repeat(" ", len(s)-len(`Save To M3U(G/V):`))+"(G/V):", mainStyle)
+	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Append current song's origin URI/final URI to %s", config.M3UFileName), statusStyle)
 	row++
 
-	drawTextLine(sp.screen, 0, row, "Save To M3U"+strings.Repeat(" ", len(s)-len(`Save To M3U(V):`))+"(V):", mainStyle)
-	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Append current song to %s", config.M3UFileName), statusStyle)
+	drawTextLine(sp.screen, 0, row, "Download"+strings.Repeat(" ", len(s)-len(`Download(D):`))+"(D):", mainStyle)
+	drawTextLine(sp.screen, len(s), row, fmt.Sprintf("Download current song to %s", config.DownloadDir), statusStyle)
 	row++
 
 	if sp.message != "" {
@@ -198,7 +199,8 @@ func (sp *ScreenPanel) Handle(event tcell.Event) (changed bool, action int) {
 			'r': HandleActionRepeat,
 			'f': HandleActionShuffle,
 			'd': HandleActionDownload,
-			'v': HandleActionM3U,
+			'g': HandleActionOriginM3U,
+			'v': HandleActionFinalM3U,
 		}
 		if action, ok := cmdMap[unicode.ToLower(event.Rune())]; ok {
 			return true, action

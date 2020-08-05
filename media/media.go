@@ -69,8 +69,8 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 
 	audioSpeaker.Play()
 
-	downloaded := make(chan struct{})
-	saved := make(chan struct{})
+	downloaded := make(chan string)
+	appendedToM3U := make(chan string)
 	seconds := time.Tick(time.Second)
 	lastPos := pos
 	tickCount := 0
@@ -114,8 +114,10 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 				audioSpeaker.Slowdown()
 			case output.HandleActionSpeedup:
 				audioSpeaker.Speedup()
-			case output.HandleActionM3U:
-				go insertToM3U(song, saved)
+			case output.HandleActionOriginM3U:
+				go appendToM3U(song, true, appendedToM3U)
+			case output.HandleActionFinalM3U:
+				go appendToM3U(song, false, appendedToM3U)
 			case output.HandleActionDownload:
 				go downloadSong(song, downloaded)
 			default:
@@ -134,11 +136,11 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 			}
 		case <-done:
 			return NextSong
-		case <-downloaded:
-			screenPanel.SetMessage(fmt.Sprintf("%s-%s%s is save to %s", song.Title, song.Artist, decode.GetExtName(song.URL), config.DownloadDir))
+		case f := <-downloaded:
+			screenPanel.SetMessage(fmt.Sprintf(`'%s' is save to '%s'`, f, config.DownloadDir))
 			updateStatus()
-		case <-saved:
-			screenPanel.SetMessage(fmt.Sprintf("%s://%s is appended to %s", song.Provider, song.ID, config.M3UFileName))
+		case f := <-appendedToM3U:
+			screenPanel.SetMessage(fmt.Sprintf(`'%s' is appended to '%s'`, f, config.M3UFileName))
 			updateStatus()
 		}
 	}

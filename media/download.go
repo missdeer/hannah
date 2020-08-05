@@ -19,7 +19,7 @@ var (
 	ErrFileExists = errors.New("file exists")
 )
 
-func downloadSong(song provider.Song, done chan struct{}) error {
+func downloadSong(song provider.Song, done chan string) error {
 	stat, err := os.Stat(config.DownloadDir)
 	if os.IsNotExist(err) {
 		if err = os.MkdirAll(config.DownloadDir, 0755); err != nil {
@@ -62,7 +62,7 @@ func downloadSong(song provider.Song, done chan struct{}) error {
 
 	defer func() {
 		f.Close()
-		done <- struct{}{}
+		done <- filename
 	}()
 	return util.CopyHttpResponseBody(resp, f)
 }

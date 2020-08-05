@@ -37,3 +37,18 @@ func GetBuiltinDecoder(uri string) builtinDecoder {
 	}
 	return nil
 }
+
+func GetExtName(uri string) string {
+	for k := range builtinDecoderMap {
+		if strings.HasPrefix(uri, "http://") || strings.HasPrefix(uri, "https://") {
+			if strings.Contains(uri, k) {
+				return k
+			}
+		} else {
+			if strings.HasSuffix(uri, k) {
+				return k
+			}
+		}
+	}
+	return ""
+}

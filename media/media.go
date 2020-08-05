@@ -102,9 +102,9 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 			case output.HandleActionSpeedup:
 				audioSpeaker.Speedup()
 			case output.HandleActionM3U:
-				insertToM3U(song)
+				go insertToM3U(song)
 			case output.HandleActionDownload:
-				downloadSong(song)
+				go downloadSong(song)
 			default:
 			}
 			if changed {

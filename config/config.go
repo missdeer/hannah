@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 
@@ -16,8 +17,8 @@ var (
 	Socks5Proxy      string
 	HttpProxy        string
 	Player           string
-	DownloadDir      = "."
-	M3UFileName      = "hannah.m3u"
+	DownloadDir      string
+	M3UFileName      string
 	Action           = "play"
 	Provider         = "netease"
 	Limit            = 35
@@ -46,7 +47,7 @@ var (
 
 func LoadConfigurationFromFile(fn string) error {
 	if pwd, err := os.Getwd(); err == nil {
-		DownloadDir = pwd
+		DownloadDir = path.Join(pwd, "download")
 		M3UFileName = filepath.Join(pwd, "hannah.m3u")
 	}
 

@@ -4,6 +4,7 @@ CHECKS:=go.mod go.sum \
     util/cryptography/cryptography.go \
     util/conv_test.go \
     util/http.go \
+    util/player.go \
     util/conv.go \
     config/config.go \
     config/cfg_darwin.go \
@@ -40,6 +41,8 @@ CHECKS:=go.mod go.sum \
     action/play.go \
     action/action_test.go \
     action/search.go \
+    action/hot.go \
+    action/playlist.go \
     main.go \
     media/media.go \
     media/download.go \

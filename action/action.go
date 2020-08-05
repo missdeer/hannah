@@ -22,8 +22,6 @@ var (
 	}{
 		"play":     {play, true},
 		"search":   {search, true},
-		"m3u":      {save, false},
-		"download": {download, false},
 		"hot":      {hot, false},
 		"playlist": {playlist, true},
 	}

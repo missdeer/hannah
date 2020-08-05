@@ -12,9 +12,11 @@ import (
 )
 
 const (
-	faadNumChannels   = 2
-	faadPrecision     = 2
-	faadBytesPerFrame = faadNumChannels * faadPrecision
+	faadFrameMaxLength  = 5 * 1024
+	faadBufferMaxLength = 1024 * 1024
+	faadNumChannels     = 2
+	faadPrecision       = 2
+	faadBytesPerFrame   = faadNumChannels * faadPrecision
 )
 
 func FAADDecode(rc io.ReadCloser) (s beep.StreamSeekCloser, format beep.Format, err error) {
@@ -52,26 +54,59 @@ type faaddecoder struct {
 	err     error
 }
 
+func (d *faaddecoder) getOneADTSFrame() (res []byte, err error) {
+	var size int16 = 0
+	var header []byte
+
+	for {
+		var h [7]byte
+		n, err := io.ReadFull(d.inData, h[:])
+		if err != nil || n != 7 {
+			return nil, err
+		}
+		header = h[:]
+		for len(header) >= 2 {
+			if header[0] == 0xff && (header[1]&0xf0) == 0xf0 {
+				if len(header) < 6 {
+					data := make([]byte, 6-len(header))
+					n, err := io.ReadFull(d.inData, data[:])
+					if err != nil || n != 6-len(header) {
+						return nil, err
+					}
+					header = append(header, data...)
+				}
+				size |= (int16(header[3]) & 0x03) << 11
+				size |= int16(header[4]) << 3
+				size |= (int16(header[5]) & 0xe0) >> 5
+				goto gotSize
+			}
+			header = header[1:]
+		}
+	}
+gotSize:
+	data := make([]byte, int(size)-len(header))
+	n, err := io.ReadFull(d.inData, data[:])
+	if err != nil || n != int(size)-len(header) {
+		return nil, err
+	}
+	res = append(header, data...)
+	return res, nil
+}
+
 func (d *faaddecoder) Stream(samples [][2]float64) (n int, ok bool) {
 	if d.err != nil {
 		return 0, false
 	}
 
 	for i := range samples {
-		var inData [2048]byte
-		dn, err := io.ReadFull(d.inData, inData[:])
+		frame, err := d.getOneADTSFrame()
 		if err != nil {
 			d.err = errors.Wrap(err, "m4a")
 			break
 		}
-		var frame [2048]byte
-		var frameLen int
-		if faad.FaadGetOneADTSFrame(inData[:], dn, frame[:], &frameLen) != 0 {
-			break
-		}
 		var outData [4096]byte
 		var outLen int
-		faad.FaadDecodeFrame(d.context, frame[:], frameLen, outData[:], &outLen)
+		faad.FaadDecodeFrame(d.context, frame, len(frame), outData[:], &outLen)
 		if outLen == len(outData) {
 			samples[i], _ = d.format.DecodeSigned(outData[:])
 			d.pos += outLen

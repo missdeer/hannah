@@ -31,7 +31,7 @@ func main() {
 	flag.BoolVarP(&config.Repeat, "repeat", "r", config.Repeat, "repeat playing")
 	flag.StringVarP(&config.AudioDriver, "driver", "d", config.AudioDriver, "set audio deriver, values: "+strings.Join(config.AudioDriverList, ", "))
 	flag.StringVarP(&config.Engine, "engine", "e", config.Engine, "specify audio engine, values: builtin, bass")
-	flag.StringVarP(&config.Action, "action", "a", config.Action, "play, search(search and play), m3u(search and save as m3u file), download(search and download media files), hot(get hot playlists), playlist(play args in the specified playlist)")
+	flag.StringVarP(&config.Action, "action", "a", config.Action, "play(play songs in file/playlist), search(search songs and play), hot(get hot playlists), playlist(play songs in the specified playlist)")
 	flag.StringVarP(&config.Provider, "provider", "p", config.Provider, "netease, xiami, qq, kugou, kuwo, bilibili, migu")
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "s", config.Socks5Proxy, "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "t", config.HttpProxy, "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")

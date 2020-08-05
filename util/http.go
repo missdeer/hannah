@@ -143,34 +143,48 @@ func GetHttpClient() *http.Client {
 	return client
 }
 
-func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {
-	var (
-		header string
-		reader io.Reader
-	)
-	defer r.Body.Close()
-	header = strings.ToLower(r.Header.Get("Content-Encoding"))
+func uncompressReader(r *http.Response) (io.ReadCloser, error) {
+	header := strings.ToLower(r.Header.Get("Content-Encoding"))
 	switch header {
 	case "":
-		reader = r.Body
+		return r.Body, nil
 	case "gzip":
-		if reader, err = gzip.NewReader(r.Body); err != nil {
-			log.Fatalln("creating gzip reader failed:", err)
-			return
+		rc, err := gzip.NewReader(r.Body)
+		if err != nil {
+			log.Println("creating gzip reader failed:", err)
+			return nil, err
 		}
+		return rc, nil
 	case "deflate":
-		content, e := ioutil.ReadAll(r.Body)
-		if e != nil {
-			log.Fatalln("reading inflate failed:", e)
-			return []byte{}, e
+		content, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println("reading inflate failed:", err)
+			return nil, err
 		}
-
-		if reader = flate.NewReader(bytes.NewReader(content[2:])); reader == nil {
-			log.Fatalln("creating deflate reader failed")
-			return []byte{}, errors.New("creating deflate reader failed")
+		rc := flate.NewReader(bytes.NewReader(content[2:]))
+		if rc == nil {
+			log.Println("creating deflate reader failed")
+			return nil, errors.New("creating deflate reader failed")
 		}
+		return rc, nil
 	}
+	return nil, errors.New("unexpected encoding type")
+}
 
-	b, err = ioutil.ReadAll(reader)
-	return
+func CopyHttpResponseBody(r *http.Response, w io.Writer) error {
+	reader, err := uncompressReader(r)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(w, reader)
+	return err
+}
+
+func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {
+	reader, err := uncompressReader(r)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+	return ioutil.ReadAll(reader)
 }

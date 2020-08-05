@@ -51,6 +51,7 @@ jobs:
           copy ${{ matrix.bass_path }}\bass.dll ${{ matrix.mingw_prefix }}\
           copy ${{ matrix.bass_path }}\plugins\*.dll ${{ matrix.mingw_prefix }}\
           copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin\libmpg123-0.dll ${{ matrix.mingw_prefix }}\
+          copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin\libfaad-2.dll ${{ matrix.mingw_prefix }}\
 
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0

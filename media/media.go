@@ -74,6 +74,17 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 	seconds := time.Tick(time.Second)
 	lastPos := pos
 	tickCount := 0
+
+	updateStatus := func() bool {
+		pos, length, vol, speed := audioSpeaker.Status()
+		screenPanel.Draw(pos, length, vol, speed)
+		if lastPos != pos {
+			tickCount = 0
+			lastPos = pos
+			return true
+		}
+		return false
+	}
 	for {
 		select {
 		case event := <-tcellEvents:
@@ -110,21 +121,11 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 			default:
 			}
 			if changed {
-				pos, length, vol, speed := audioSpeaker.Status()
-				screenPanel.Draw(pos, length, vol, speed)
-				if lastPos != pos {
-					tickCount = 0
-					lastPos = pos
-				}
+				updateStatus()
 			}
 		case <-seconds:
 			if !audioSpeaker.IsPaused() {
-				pos, length, vol, speed := audioSpeaker.Status()
-				screenPanel.Draw(pos, length, vol, speed)
-				if lastPos != pos {
-					tickCount = 0
-					lastPos = pos
-				} else {
+				if !updateStatus() {
 					tickCount++
 					if tickCount > 10 { // doesn't play in 10 seconds, switch to next song
 						return NextSong
@@ -135,20 +136,10 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 			return NextSong
 		case <-downloaded:
 			screenPanel.SetMessage(fmt.Sprintf("%s-%s%s is save to %s", song.Title, song.Artist, decode.GetExtName(song.URL), config.DownloadDir))
-			pos, length, vol, speed := audioSpeaker.Status()
-			screenPanel.Draw(pos, length, vol, speed)
-			if lastPos != pos {
-				tickCount = 0
-				lastPos = pos
-			}
+			updateStatus()
 		case <-saved:
 			screenPanel.SetMessage(fmt.Sprintf("%s://%s is appended to %s", song.Provider, song.ID, config.M3UFileName))
-			pos, length, vol, speed := audioSpeaker.Status()
-			screenPanel.Draw(pos, length, vol, speed)
-			if lastPos != pos {
-				tickCount = 0
-				lastPos = pos
-			}
+			updateStatus()
 		}
 	}
 	return nil

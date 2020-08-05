@@ -152,6 +152,7 @@ func resolve(song provider.Song) (provider.Songs, error) {
 		p := provider.GetProvider(scheme)
 		switch linkType {
 		case "song":
+			// TODO extract song title & artist
 			if s, err := p.ResolveSongURL(provider.Song{ID: u.Host}); err == nil {
 				return provider.Songs{s}, nil
 			}

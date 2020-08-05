@@ -3,18 +3,12 @@ package provider
 import (
 	"bufio"
 	"bytes"
-	"crypto/aes"
-	"crypto/rand"
-	"encoding/base64"
-	"encoding/hex"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/missdeer/hannah/util"
-	"github.com/missdeer/hannah/util/cryptography"
 )
 
 const (
@@ -26,7 +20,7 @@ var (
 	miguAPISearch         = `http://m.music.migu.cn/migu/remoting/scr_search_tag?type=2&keyword=%s&pgc=%d&rows=%d`
 	miguAPIHot            = `https://music.migu.cn/v3/music/playlist?page=%d`
 	miguAPIPlaylistDetail = `https://music.migu.cn/v3/music/playlist/%s`
-	miguAPIGetPlayInfo    = `https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?dataType=2&data=%s&secKey=%s`
+	miguAPIGetPlayInfo    = `https://m.music.migu.cn/migu/remoting/cms_detail_tag?cpid=%s`
 	miguAPILyric          = `https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId=%s`
 
 	regPlaylist       = regexp.MustCompile(`data\-share='([^']+)'`)
@@ -111,10 +105,13 @@ func (p *migu) Search(keyword string, page int, limit int) (SearchResult, error)
 }
 
 type miguSongInfo struct {
-	ReturnCode string `json:"returncode"`
-	Msg        string `json:"msg"`
-	Data       struct {
-		PlayURL string `json:"playUrl"`
+	Data struct {
+		ListenURL  string   `json:"listenUrl"`
+		Lyric      string   `json:"lyricLrc"`
+		SongName   string   `json:"songName"`
+		SingerName []string `json:"singerName"`
+		SongID     string   `json:"songId"`
+		PicL       string   `json:"picL"`
 	} `json:"data"`
 }
 
@@ -122,27 +119,8 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	if song.URL != "" {
 		return song, nil
 	}
-	aesInput := fmt.Sprintf(`{"copyrightId":"%s","type":2,"auditionsFlag":0}`, song.ID)
-	aesKey, _ := hex.DecodeString(miguAESPassphrase)
-	plaintext := []byte(aesInput)
 
-	iv := make([]byte, aes.BlockSize)
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return song, err
-	}
-	cipherText := cryptography.AESCBCEncrypt(plaintext, aesKey, iv)
-	// TODO https://github.com/listen1/listen1_chrome_extension/blob/6c66da63e0e6f77de047392f2cc1d4cf9fc85951/js/provider/migu.js#L128
-	aesResult := base64.StdEncoding.EncodeToString(append(iv, cipherText...))
-
-	rsaPubKey, err := cryptography.BytesToPublicKey([]byte(miguRSAPublicKey))
-	if err != nil {
-		return song, err
-	}
-	secKey, err := cryptography.EncryptWithPublicKey(aesKey, rsaPubKey)
-	if err != nil {
-		return song, err
-	}
-	u := fmt.Sprintf(miguAPIGetPlayInfo, aesResult, url.QueryEscape(string(secKey)))
+	u := fmt.Sprintf(miguAPIGetPlayInfo, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -176,7 +154,10 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	if err = json.Unmarshal(content, &si); err != nil {
 		return song, err
 	}
-	song.URL = si.Data.PlayURL
+	song.URL = si.Data.ListenURL
+	song.Title = si.Data.SongName
+	song.Artist = strings.Join(si.Data.SingerName, "/")
+	song.Image = si.Data.PicL
 
 	return song, nil
 }
@@ -188,6 +169,9 @@ type miguLyric struct {
 }
 
 func (p *migu) ResolveSongLyric(song Song) (Song, error) {
+	if song.Lyric != "" {
+		return song, nil
+	}
 	u := fmt.Sprintf(miguAPILyric, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)

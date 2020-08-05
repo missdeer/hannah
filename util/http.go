@@ -185,6 +185,5 @@ func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
-	defer reader.Close()
 	return ioutil.ReadAll(reader)
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/missdeer/hannah/provider"
 )
 
-func insertToM3U(song provider.Song) error {
+func insertToM3U(song provider.Song, done chan struct{}) error {
 	if _, err := os.Stat(config.M3UFileName); os.IsNotExist(err) {
 		f, err := os.Create(config.M3UFileName)
 		if err != nil {
@@ -52,5 +52,6 @@ func insertToM3U(song provider.Song) error {
 		return err
 	}
 
+	defer func() { done <- struct{}{} }()
 	return nil
 }

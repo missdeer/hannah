@@ -34,7 +34,7 @@ CHECKS:=go.mod go.sum \
     output/beep/speaker.go \
     output/panel.go \
     output/speaker.go \
-    output/bass/bass_darwin.go \
+    output/bass/bassplugins.go \
     output/bass/bass.go \
     output/bass/speaker.go \
     action/action.go \

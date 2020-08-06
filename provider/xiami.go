@@ -16,8 +16,10 @@ import (
 )
 
 const (
-	xiamiAppKey    = "23649156"
-	xiamiApiSearch = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
+	xiamiAppKey            = "23649156"
+	xiamiAPISearch         = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
+	xiamiAPIHot            = `https://www.xiami.com/api/list/collect`
+	xiamiAPIPlaylistDetail = `https://www.xiami.com/api/collect/initialize`
 )
 
 var (
@@ -224,7 +226,7 @@ func caesar(location string) (string, error) {
 }
 
 func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error) {
-	token, err := p.getToken(xiamiApiSearch)
+	token, err := p.getToken(xiamiAPISearch)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +243,7 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", xiamiApiSearch, nil)
+	req, err := http.NewRequest("GET", xiamiAPISearch, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -346,12 +348,141 @@ func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *xiami) HotPlaylist(page int) (Playlists, error) {
-	return nil, nil
+type xiamiHot struct {
+	Code   string `json:"code"`
+	Result struct {
+		Status string `json:"status"`
+		Data   struct {
+			Collects []struct {
+				ListID      int    `json:"listId"`
+				CollectLogo string `json:"collectLogo"`
+				CollectName string `json:"collectName"`
+			} `json:"collects"`
+			PagingVO struct {
+				Page     int `json:"page"`
+				PageSize int `json:"pageSize"`
+				Pages    int `json:"pages"`
+				Count    int `json:"count"`
+			}
+		} `json:"data"`
+	} `json:"result"`
+}
+
+func (p *xiami) HotPlaylist(page int, limit int) (Playlists, error) {
+	values := url.Values{
+		"_q": []string{fmt.Sprintf(`{"pagingVO":{"page":%d,"pageSize":%d},"dataType":"system"}`, page, limit)},
+		"_s": []string{strconv.FormatInt(time.Now().UnixNano(), 10)},
+	}
+	req, err := http.NewRequest("GET", xiamiAPIHot+"?"+values.Encode(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Origin", "https://h.xiami.com")
+	req.Header.Set("Referer", "https://h.xiami.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var hot xiamiHot
+	if err = json.Unmarshal(content, &hot); err != nil {
+		return nil, err
+	}
+
+	var pls Playlists
+	for _, pl := range hot.Result.Data.Collects {
+		pls = append(pls, Playlist{
+			ID:       strconv.Itoa(pl.ListID),
+			Title:    pl.CollectName,
+			Image:    pl.CollectLogo,
+			Provider: "xiami",
+		})
+	}
+
+	return pls, nil
+}
+
+type xiamiPlaylistDetail struct {
+	Code   string `json:"code"`
+	Result struct {
+		Status string `json:"status"`
+		Data   struct {
+			CollectSongs []struct {
+				SongID        int    `json:"songId"`
+				SongStringID  string `json:"songStringId"`
+				SongName      string `json:"songName"`
+				AlbumID       int    `json:"albumId"`
+				AlbumStringID string `json:"albumStringId"`
+				AlbumLogo     string `json:"albumLogo"`
+				AlbumName     string `json:"albumName"`
+				ArtistID      int    `json:"artistId"`
+				ArtistName    string `json:"artistName"`
+				ArtistLogo    string `json:"artistLogo"`
+				Singers       string `json:"singers"`
+			} `json:"collectSongs"`
+		} `json:"data"`
+	} `json:"result"`
 }
 
 func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
-	return nil, nil
+	values := url.Values{
+		"_q": []string{fmt.Sprintf(`{"listId":%s}`, pl.ID)},
+		"_s": []string{strconv.FormatInt(time.Now().UnixNano(), 10)},
+	}
+	req, err := http.NewRequest("GET", xiamiAPIPlaylistDetail+"?"+values.Encode(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Origin", "https://h.xiami.com")
+	req.Header.Set("Referer", "https://h.xiami.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var pld xiamiPlaylistDetail
+	if err = json.Unmarshal(content, &pld); err != nil {
+		return nil, err
+	}
+
+	var songs Songs
+	for _, pl := range pld.Result.Data.CollectSongs {
+		songs = append(songs, Song{
+			ID:       strconv.Itoa(pl.SongID),
+			Title:    pl.SongName,
+			Artist:   pl.Singers,
+			Image:    pl.AlbumLogo,
+			Provider: "xiami",
+		})
+	}
+
+	return songs, nil
 }
 
 func (p *xiami) Name() string {

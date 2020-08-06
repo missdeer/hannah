@@ -11,11 +11,11 @@ func (p *bilibili) ResolveSongURL(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *bilibili) ResolveSongLyric(song Song) (Song, error){
+func (p *bilibili) ResolveSongLyric(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *bilibili) HotPlaylist(page int) (Playlists, error) {
+func (p *bilibili) HotPlaylist(page int, limit int) (Playlists, error) {
 	return nil, nil
 }
 

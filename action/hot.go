@@ -16,7 +16,7 @@ func hot(args ...string) error {
 		return ErrUnsupportedProvider
 	}
 
-	pls, err := p.HotPlaylist(config.Page)
+	pls, err := p.HotPlaylist(config.Page,config.Limit)
 	if err != nil {
 		return err
 	}

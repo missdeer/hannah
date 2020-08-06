@@ -20,7 +20,7 @@ func (p *musictool) ResolveSongLyric(song Song) (Song, error){
 	return song, nil
 }
 
-func (p *musictool) HotPlaylist(page int) (Playlists, error) {
+func (p *musictool) HotPlaylist(page int, limit int) (Playlists, error) {
 	return nil, nil
 }
 

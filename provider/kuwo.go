@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 )
 
@@ -190,8 +189,8 @@ type kuwoHotPlaylists struct {
 	Status int    `json:"status"`
 }
 
-func (p *kuwo) HotPlaylist(page int) (res Playlists, err error) {
-	u := fmt.Sprintf(kuwoAPIHot, (page-1)*config.Limit+1, config.Limit)
+func (p *kuwo) HotPlaylist(page int, limit int) (res Playlists, err error) {
+	u := fmt.Sprintf(kuwoAPIHot, (page-1)*limit+1, limit)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err

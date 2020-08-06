@@ -218,7 +218,7 @@ type miguPlaylist struct {
 	ImgURL  string `json:"imgUrl"`
 }
 
-func (p *migu) HotPlaylist(page int) (res Playlists, err error) {
+func (p *migu) HotPlaylist(page int, limit int) (res Playlists, err error) {
 	u := fmt.Sprintf(miguAPIHot, page)
 
 	req, err := http.NewRequest("GET", u, nil)

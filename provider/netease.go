@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -317,8 +316,8 @@ func (p *netease) ResolveSongLyric(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *netease) HotPlaylist(page int) (res Playlists, err error) {
-	u := fmt.Sprintf(neteaseAPIHot, config.Limit, (page-1)*config.Limit)
+func (p *netease) HotPlaylist(page int, limit int) (res Playlists, err error) {
+	u := fmt.Sprintf(neteaseAPIHot, limit, (page-1)*limit)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return

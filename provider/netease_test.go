@@ -56,7 +56,7 @@ func TestNetease_HotPlaylist(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	pl, err := p.HotPlaylist(1)
+	pl, err := p.HotPlaylist(1, 50)
 	if err != nil {
 		t.Error(err)
 	}

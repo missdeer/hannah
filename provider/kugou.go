@@ -166,7 +166,7 @@ type kugouHotPlaylist struct {
 	PageSize int `json:"pagesize"`
 }
 
-func (p *kugou) HotPlaylist(page int) (Playlists, error) {
+func (p *kugou) HotPlaylist(page int, limit int) (Playlists, error) {
 	u := fmt.Sprintf(kugouAPIHot, (page-1)*32)
 
 	req, err := http.NewRequest("GET", u, nil)

@@ -195,7 +195,6 @@ func signPlaylistPayload(token string, model interface{}, api string) (string, e
 }
 
 func caesar(location string) (string, error) {
-	// https://github.com/listen1/listen1_chrome_extension/blob/f2e1b4376d3770333816668d98808ae90f796217/js/provider/xiami.js#L5
 	num := int(location[0] - '0')
 	avgLen := (len(location) - 1) / num
 	remainder := (len(location) - 1) % num

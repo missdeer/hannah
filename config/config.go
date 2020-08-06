@@ -3,7 +3,6 @@ package config
 import (
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"reflect"
 
@@ -45,12 +44,16 @@ var (
 	}
 )
 
-func LoadConfigurationFromFile(fn string) error {
-	if pwd, err := os.Getwd(); err == nil {
-		DownloadDir = path.Join(pwd, "download")
-		M3UFileName = filepath.Join(pwd, "hannah.m3u")
+func init() {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
 	}
+	DownloadDir = filepath.Join(pwd, "download")
+	M3UFileName = filepath.Join(pwd, "hannah.m3u")
+}
 
+func LoadConfigurationFromFile(fn string) error {
 	cfg, err := ini.Load(fn)
 	if err != nil {
 		log.Println(err)

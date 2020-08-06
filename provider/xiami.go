@@ -18,8 +18,9 @@ import (
 const (
 	xiamiAppKey            = "23649156"
 	xiamiAPISearch         = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
-	xiamiAPIHot            = `https://www.xiami.com/api/list/collect`
-	xiamiAPIPlaylistDetail = `https://www.xiami.com/api/collect/initialize`
+	xiamiBaseURL           = `https://www.xiami.com`
+	xiamiAPIHot            = `/api/list/collect`
+	xiamiAPIPlaylistDetail = `/api/collect/initialize`
 )
 
 var (
@@ -126,13 +127,9 @@ type xiamiSearchResult struct {
 	} `json:"data"`
 }
 
-func (p *xiami) getToken(u string) (string, error) {
-	if p.token != "" {
-		return p.token, nil
-	}
+func (p *xiami) getToken(u string, tokenKey string) (string, error) {
 	parsedURL, _ := url.Parse(u)
 	c := httpClient.Jar.Cookies(parsedURL)
-	const XiaMiToken = "_m_h5_tk"
 	if c == nil || len(c) == 0 {
 		req, err := http.NewRequest("GET", u, nil)
 		if err != nil {
@@ -152,14 +149,14 @@ func (p *xiami) getToken(u string) (string, error) {
 		c = resp.Cookies()
 	}
 	for _, cookie := range c {
-		if cookie.Name == XiaMiToken {
+		if cookie.Name == tokenKey {
 			return strings.Split(cookie.Value, "_")[0], nil
 		}
 	}
 	return "", ErrTokenNotFound
 }
 
-func signPayload(token string, model interface{}) (map[string]string, error) {
+func signSearchPayload(token string, model interface{}) (map[string]string, error) {
 	payload := map[string]interface{}{
 		"header": reqHeader,
 		"model":  model,
@@ -185,6 +182,16 @@ func signPayload(token string, model interface{}) (map[string]string, error) {
 		"sign": sign,
 		"data": string(r),
 	}, nil
+}
+
+func signPlaylistPayload(token string, model interface{}, api string) (string, error) {
+	r, err := json.Marshal(model)
+	if err != nil {
+		return "", err
+	}
+	origin := fmt.Sprintf(`%s_xmMain_%s_%s`, strings.Split(token, "_")[0], api, string(r))
+	sign := fmt.Sprintf("%x", md5.Sum([]byte(origin)))
+	return fmt.Sprintf(`https://www.xiami.com%s?_q=%s&_s=%s`, api, url.QueryEscape(string(r)), sign), nil
 }
 
 func caesar(location string) (string, error) {
@@ -226,7 +233,7 @@ func caesar(location string) (string, error) {
 }
 
 func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error) {
-	token, err := p.getToken(xiamiAPISearch)
+	token, err := p.getToken(xiamiAPISearch, "_m_h5_tk")
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +245,7 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 			"pageSize": limit,
 		},
 	}
-	params, err := signPayload(token, model)
+	params, err := signSearchPayload(token, model)
 	if err != nil {
 		return nil, err
 	}
@@ -369,11 +376,23 @@ type xiamiHot struct {
 }
 
 func (p *xiami) HotPlaylist(page int, limit int) (Playlists, error) {
-	values := url.Values{
-		"_q": []string{fmt.Sprintf(`{"pagingVO":{"page":%d,"pageSize":%d},"dataType":"system"}`, page, limit)},
-		"_s": []string{strconv.FormatInt(time.Now().UnixNano(), 10)},
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIHot, `xm_sg_tk`)
+	if err != nil {
+		return nil, err
 	}
-	req, err := http.NewRequest("GET", xiamiAPIHot+"?"+values.Encode(), nil)
+
+	model := map[string]interface{}{
+		"pagingVO": map[string]int{
+			"page":     page,
+			"pageSize": limit,
+		},
+		"dataType": "system",
+	}
+	u, err := signPlaylistPayload(token, model, xiamiAPIHot)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -438,11 +457,19 @@ type xiamiPlaylistDetail struct {
 }
 
 func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
-	values := url.Values{
-		"_q": []string{fmt.Sprintf(`{"listId":%s}`, pl.ID)},
-		"_s": []string{strconv.FormatInt(time.Now().UnixNano(), 10)},
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIPlaylistDetail, `xm_sg_tk`)
+	if err != nil {
+		return nil, err
 	}
-	req, err := http.NewRequest("GET", xiamiAPIPlaylistDetail+"?"+values.Encode(), nil)
+
+	model := map[string]interface{}{
+		"listId": pl.ID,
+	}
+	u, err := signPlaylistPayload(token, model, xiamiAPIPlaylistDetail)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}

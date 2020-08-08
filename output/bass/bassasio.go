@@ -65,14 +65,27 @@ func BASS_ASIO_GetVersion() uint {
 }
 
 func BASS_ASIO_SetUnicode(unicode bool) bool {
-	if unicode {
-		return C.BASS_ASIO_SetUnicode(1) != 0
-	}
-	return C.BASS_ASIO_SetUnicode(0) != 0
+	return C.BASS_ASIO_SetUnicode(bool2Cint(unicode)) != 0
 }
 
 func BASS_ASIO_ErrorGetCode() uint {
 	return uint(C.BASS_ASIO_ErrorGetCode())
+}
+
+type BassASIODeviceInfo struct {
+	Name   string
+	Driver string
+}
+
+func BASS_ASIO_GetDeviceInfo(device uint, info *BassASIODeviceInfo) bool {
+	i := (*C.BASS_ASIO_DEVICEINFO)(C.malloc(C.sizeof_BASS_ASIO_DEVICEINFO))
+	defer C.free(unsafe.Pointer(i))
+	res := C.BASS_ASIO_GetDeviceInfo(C.DWORD(device), i) != 0
+	if res {
+		info.Driver = C.GoString(i.driver)
+		info.Name = C.GoString(i.name)
+	}
+	return res
 }
 
 func BASS_ASIO_SetDevice(device uint) bool {
@@ -92,10 +105,7 @@ func BASS_ASIO_Free() bool {
 }
 
 func BASS_ASIO_Lock(lock bool) bool {
-	if lock {
-		return C.BASS_ASIO_Lock(1) != 0
-	}
-	return C.BASS_ASIO_Lock(0) != 0
+	return C.BASS_ASIO_Lock(bool2Cint(lock)) != 0
 }
 
 func BASS_ASIO_SetNotify(proc *C.ASIONOTIFYPROC, user unsafe.Pointer) bool {
@@ -104,6 +114,37 @@ func BASS_ASIO_SetNotify(proc *C.ASIONOTIFYPROC, user unsafe.Pointer) bool {
 
 func BASS_ASIO_ControlPanel() bool {
 	return C.BASS_ASIO_ControlPanel() != 0
+}
+
+type BassASIOInfo struct {
+	Name      string
+	Version   uint
+	Inputs    uint
+	Outputs   uint
+	BufMin    uint
+	BufMax    uint
+	BufPref   uint
+	BufGran   int
+	InitFlags uint
+}
+
+func BASS_ASIO_GetInfo(info *BassASIOInfo) bool {
+	i := (*C.BASS_ASIO_INFO)(C.malloc(C.sizeof_BASS_ASIO_INFO))
+	defer C.free(unsafe.Pointer(i))
+	res := C.BASS_ASIO_GetInfo(i) != 0
+	if res {
+		info.InitFlags = uint(i.initflags)
+		info.Version = uint(i.version)
+		info.Inputs = uint(i.inputs)
+		info.Outputs = uint(i.outputs)
+		info.BufMin = uint(i.bufmin)
+		info.BufMax = uint(i.bufmax)
+		info.BufPref = uint(i.bufpref)
+		info.InitFlags = uint(i.initflags)
+		info.BufGran = int(i.bufgran)
+		info.Name = C.GoStringN(&i.name[0], 32)
+	}
+	return res
 }
 
 func BASS_ASIO_CheckRate(rate float64) bool {
@@ -131,10 +172,7 @@ func BASS_ASIO_IsStarted() bool {
 }
 
 func BASS_ASIO_GetLatency(input bool) uint {
-	if input {
-		return uint(C.BASS_ASIO_GetLatency(1))
-	}
-	return uint(C.BASS_ASIO_GetLatency(0))
+	return uint(C.BASS_ASIO_GetLatency(bool2Cint(input)))
 }
 
 func BASS_ASIO_GetCPU() float32 {
@@ -146,115 +184,83 @@ func BASS_ASIO_Monitor(input int, output uint, gain uint, state uint, pan uint) 
 }
 
 func BASS_ASIO_SetDSD(dsd bool) bool {
-	if dsd {
-		return C.BASS_ASIO_SetDSD(1) != 0
-	}
-	return C.BASS_ASIO_SetDSD(0) != 0
+	return C.BASS_ASIO_SetDSD(bool2Cint(dsd)) != 0
 }
 
 func BASS_ASIO_Future(selector uint, param unsafe.Pointer) bool {
 	return C.BASS_ASIO_Future(C.DWORD(selector), param) != 0
 }
 
-func BASS_ASIO_ChannelReset(input bool, channel int, flags uint) bool {
-	if input {
-		return C.BASS_ASIO_ChannelReset(1, C.int(channel), C.DWORD(flags)) != 0
+type BassASIOChannelInfo struct {
+	Group  uint
+	Format uint
+	Name   string
+}
+
+func BASS_ASIO_ChannelGetInfo(input bool, channel uint, info *BassASIOChannelInfo) bool {
+	i := (*C.BASS_ASIO_CHANNELINFO)(C.malloc(C.sizeof_BASS_ASIO_CHANNELINFO))
+	defer C.free(unsafe.Pointer(i))
+	res := C.BASS_ASIO_ChannelGetInfo(bool2Cint(input), C.DWORD(channel), i) != 0
+	if res {
+		info.Group = uint(i.group)
+		info.Format = uint(i.format)
+		info.Name = C.GoStringN(&i.name[0], 32)
 	}
-	return C.BASS_ASIO_ChannelReset(0, C.int(channel), C.DWORD(flags)) != 0
+	return res
+}
+
+func BASS_ASIO_ChannelReset(input bool, channel int, flags uint) bool {
+	return C.BASS_ASIO_ChannelReset(bool2Cint(input), C.int(channel), C.DWORD(flags)) != 0
 }
 
 func BASS_ASIO_ChannelEnable(input bool, channel uint, proc *C.ASIOPROC, user unsafe.Pointer) bool {
-	if input {
-		return C.BASS_ASIO_ChannelEnable(1, C.DWORD(channel), proc, user) != 0
-	}
-	return C.BASS_ASIO_ChannelEnable(0, C.DWORD(channel), proc, user) != 0
+	return C.BASS_ASIO_ChannelEnable(bool2Cint(input), C.DWORD(channel), proc, user) != 0
 }
 
 func BASS_ASIO_ChannelEnableMirror(channel uint, input2 bool, channel2 uint) bool {
-	if input2 {
-		return C.BASS_ASIO_ChannelEnableMirror(C.DWORD(channel), 1, C.DWORD(channel2)) != 0
-	}
-	return C.BASS_ASIO_ChannelEnableMirror(C.DWORD(channel), 0, C.DWORD(channel2)) != 0
+	return C.BASS_ASIO_ChannelEnableMirror(C.DWORD(channel), bool2Cint(input2), C.DWORD(channel2)) != 0
 }
 
 func BASS_ASIO_ChannelEnableBASS(input bool, channel uint, handle uint, join bool) bool {
-	i := 0
-	if input {
-		i = 1
-	}
-	j := 0
-	if join {
-		j = 1
-	}
-	return C.BASS_ASIO_ChannelEnableBASS(C.int(i), C.DWORD(channel), C.DWORD(handle), C.int(j)) != 0
+	return C.BASS_ASIO_ChannelEnableBASS(bool2Cint(input), C.DWORD(channel), C.DWORD(handle), bool2Cint(join)) != 0
 }
 
 func BASS_ASIO_ChannelJoin(input bool, channel uint, channel2 int) bool {
-	if input {
-		return C.BASS_ASIO_ChannelJoin(1, C.DWORD(channel), C.int(channel2)) != 0
-	}
-	return C.BASS_ASIO_ChannelJoin(0, C.DWORD(channel), C.int(channel2)) != 0
+	return C.BASS_ASIO_ChannelJoin(bool2Cint(input), C.DWORD(channel), C.int(channel2)) != 0
 }
 
 func BASS_ASIO_ChannelPause(input bool, channel uint) bool {
-	if input {
-		return C.BASS_ASIO_ChannelPause(1, C.DWORD(channel)) != 0
-	}
-	return C.BASS_ASIO_ChannelPause(0, C.DWORD(channel)) != 0
+	return C.BASS_ASIO_ChannelPause(bool2Cint(input), C.DWORD(channel)) != 0
 }
 
 func BASS_ASIO_ChannelIsActive(input bool, channel uint) uint {
-	if input {
-		return uint(C.BASS_ASIO_ChannelIsActive(1, C.DWORD(channel)))
-	}
-	return uint(C.BASS_ASIO_ChannelIsActive(0, C.DWORD(channel)))
+	return uint(C.BASS_ASIO_ChannelIsActive(bool2Cint(input), C.DWORD(channel)))
 }
 
 func BASS_ASIO_ChannelSetFormat(input bool, channel uint, format uint) bool {
-	if input {
-		return C.BASS_ASIO_ChannelSetFormat(1, C.DWORD(channel), C.DWORD(format)) != 0
-	}
-	return C.BASS_ASIO_ChannelSetFormat(0, C.DWORD(channel), C.DWORD(format)) != 0
+	return C.BASS_ASIO_ChannelSetFormat(bool2Cint(input), C.DWORD(channel), C.DWORD(format)) != 0
 }
 
 func BASS_ASIO_ChannelGetFormat(input bool, channel uint) uint {
-	if input {
-		return uint(C.BASS_ASIO_ChannelGetFormat(1, C.DWORD(channel)))
-	}
-	return uint(C.BASS_ASIO_ChannelGetFormat(0, C.DWORD(channel)))
+	return uint(C.BASS_ASIO_ChannelGetFormat(bool2Cint(input), C.DWORD(channel)))
 }
 
 func BASS_ASIO_ChannelSetRate(input bool, channel uint, rate float64) bool {
-	if input {
-		return C.BASS_ASIO_ChannelSetRate(1, C.DWORD(channel), C.double(rate)) != 0
-	}
-	return C.BASS_ASIO_ChannelSetRate(0, C.DWORD(channel), C.double(rate)) != 0
+	return C.BASS_ASIO_ChannelSetRate(bool2Cint(input), C.DWORD(channel), C.double(rate)) != 0
 }
 
 func BASS_ASIO_ChannelGetRate(input bool, channel uint) float64 {
-	if input {
-		return float64(C.BASS_ASIO_ChannelGetRate(1, C.DWORD(channel)))
-	}
-	return float64(C.BASS_ASIO_ChannelGetRate(0, C.DWORD(channel)))
+	return float64(C.BASS_ASIO_ChannelGetRate(bool2Cint(input), C.DWORD(channel)))
 }
 
 func BASS_ASIO_ChannelSetVolume(input bool, channel int, volume float32) bool {
-	if input {
-		return C.BASS_ASIO_ChannelSetVolume(1, C.int(channel), C.float(volume)) != 0
-	}
-	return C.BASS_ASIO_ChannelSetVolume(0, C.int(channel), C.float(volume)) != 0
+	return C.BASS_ASIO_ChannelSetVolume(bool2Cint(input), C.int(channel), C.float(volume)) != 0
 }
 
 func BASS_ASIO_ChannelGetVolume(input bool, channel int) float32 {
-	if input {
-		return float32(C.BASS_ASIO_ChannelGetVolume(1, C.int(channel)))
-	}
-	return float32(C.BASS_ASIO_ChannelGetVolume(0, C.int(channel)))
+	return float32(C.BASS_ASIO_ChannelGetVolume(bool2Cint(input), C.int(channel)))
 }
 
 func BASS_ASIO_ChannelGetLevel(input bool, channel uint) float32 {
-	if input {
-		return float32(C.BASS_ASIO_ChannelGetLevel(1, C.DWORD(channel)))
-	}
-	return float32(C.BASS_ASIO_ChannelGetLevel(0, C.DWORD(channel)))
+	return float32(C.BASS_ASIO_ChannelGetLevel(bool2Cint(input), C.DWORD(channel)))
 }

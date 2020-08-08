@@ -1,4 +1,4 @@
-name: Go macOS
+name: Go darwin
 on: [push]
 jobs:
 
@@ -28,8 +28,8 @@ jobs:
         install_name_tool -change /usr/local/opt/faad2/lib/libfaad.2.dylib @executable_path/libfaad.dylib hannah
         mkdir darwin-amd64
         mv hannah darwin-amd64/
-        cp output/bass/lib/macOS/libbass.dylib darwin-amd64/
-        cp output/bass/lib/macOS/plugins/*.dylib darwin-amd64/
+        cp output/bass/lib/macOS/amd64/libbass.dylib darwin-amd64/
+        cp output/bass/lib/macOS/amd64/plugins/*.dylib darwin-amd64/
         cp /usr/local/lib/libmpg123.dylib darwin-amd64/
         cp /usr/local/lib/libfaad.dylib darwin-amd64/
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil

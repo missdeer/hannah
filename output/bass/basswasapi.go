@@ -89,7 +89,7 @@ const (
 	BASS_WASAPI_VOL_SESSION   = C.BASS_WASAPI_VOL_SESSION
 )
 
-const (
+var (
 	WASAPIPROC_PUSH = 0
 	WASAPIPROC_BASS = -1
 )
@@ -109,6 +109,34 @@ func BASS_WASAPI_GetVersion() uint {
 
 func BASS_WASAPI_SetNotify(proc *C.WASAPINOTIFYPROC, user unsafe.Pointer) bool {
 	return C.BASS_WASAPI_SetNotify(proc, user) != 0
+}
+
+type BassWasapiDeviceInfo struct {
+	Name      string
+	ID        string
+	Type      uint
+	Flags     uint
+	MinPeriod float32
+	DefPeriod float32
+	MixFreq   uint
+	MixChans  uint
+}
+
+func BASS_WASAPI_GetDeviceInfo(device uint, info *BassWasapiDeviceInfo) bool {
+	i := (*C.BASS_WASAPI_DEVICEINFO)(C.malloc(C.sizeof_BASS_WASAPI_DEVICEINFO))
+	defer C.free(unsafe.Pointer(i))
+	res := C.BASS_WASAPI_GetDeviceInfo(C.DWORD(device), i) != 0
+	if res {
+		info.ID = C.GoString(i.id)
+		info.Name = C.GoString(i.name)
+		info.Type = uint(i.deviceType)
+		info.Flags = uint(i.flags)
+		info.MinPeriod = float32(i.minperiod)
+		info.DefPeriod = float32(i.defperiod)
+		info.MixFreq = uint(i.mixfreq)
+		info.MixChans = uint(i.mixchans)
+	}
+	return res
 }
 
 func BASS_WASAPI_GetDeviceLevel(device uint, channel int) float32 {
@@ -131,8 +159,40 @@ func BASS_WASAPI_Init(device int, freq uint, chans uint, flags uint, buffer floa
 	return C.BASS_WASAPI_Init(C.int(device), C.DWORD(freq), C.DWORD(chans), C.DWORD(flags), C.float(buffer), C.float(period), proc, user) != 0
 }
 
+func BASS_WASAPI_Init_Special(device int, freq uint, chans uint, flags uint, buffer float32, period float32, proc int, user unsafe.Pointer) bool {
+	return C.BASS_WASAPI_Init_Special(C.int(device), C.DWORD(freq), C.DWORD(chans), C.DWORD(flags), C.float(buffer), C.float(period), (C.int)(proc), user) != 0
+}
+
 func BASS_WASAPI_Free() bool {
 	return C.BASS_WASAPI_Free() != 0
+}
+
+type BassWasapiInfo struct {
+	InitFlags uint
+	Freq      uint
+	Chans     uint
+	Format    uint
+	BufLen    uint
+	VolMax    float32
+	VolMin    float32
+	VolStep   float32
+}
+
+func BASS_WASAPI_GetInfo(info *BassWasapiInfo) bool {
+	i := (*C.BASS_WASAPI_INFO)(C.malloc(C.sizeof_BASS_WASAPI_INFO))
+	defer C.free(unsafe.Pointer(i))
+	res := C.BASS_WASAPI_GetInfo(i) != 0
+	if res {
+		info.InitFlags = uint(i.initflags)
+		info.Freq = uint(i.freq)
+		info.Chans = uint(i.chans)
+		info.Format = uint(i.format)
+		info.BufLen = uint(i.buflen)
+		info.VolMax = float32(i.volmax)
+		info.VolMin = float32(i.volmin)
+		info.VolStep = float32(i.volstep)
+	}
+	return res
 }
 
 func BASS_WASAPI_GetCPU() float32 {
@@ -140,10 +200,7 @@ func BASS_WASAPI_GetCPU() float32 {
 }
 
 func BASS_WASAPI_Lock(lock bool) bool {
-	if lock {
-		return C.BASS_WASAPI_Lock(1) != 0
-	}
-	return C.BASS_WASAPI_Lock(0) != 0
+	return C.BASS_WASAPI_Lock(bool2Cint(lock)) != 0
 }
 
 func BASS_WASAPI_Start() bool {
@@ -151,10 +208,7 @@ func BASS_WASAPI_Start() bool {
 }
 
 func BASS_WASAPI_Stop(reset bool) bool {
-	if reset {
-		return C.BASS_WASAPI_Stop(1) != 0
-	}
-	return C.BASS_WASAPI_Stop(0) != 0
+	return C.BASS_WASAPI_Stop(bool2Cint(reset)) != 0
 }
 
 func BASS_WASAPI_IsStarted() bool {
@@ -170,10 +224,7 @@ func BASS_WASAPI_GetVolume(mode uint) float32 {
 }
 
 func BASS_WASAPI_SetMute(mode uint, mute bool) bool {
-	if mute {
-		return C.BASS_WASAPI_SetMute(C.DWORD(mode), 1) != 0
-	}
-	return C.BASS_WASAPI_SetMute(C.DWORD(mode), 0) != 0
+	return C.BASS_WASAPI_SetMute(C.DWORD(mode), bool2Cint(mute)) != 0
 }
 
 func BASS_WASAPI_GetMute(mode uint) bool {

@@ -11,3 +11,10 @@ void cgoOnBASSSyncEnd(HSYNC handle, DWORD channel, DWORD data, void *user) {
 }
 */
 import "C"
+
+func bool2Cint(b bool) C.int {
+	if b {
+		return C.int(1)
+	}
+	return C.int(0)
+}

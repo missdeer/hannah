@@ -61,7 +61,7 @@ all: $(BINARY)
 
 $(BINARY): $(CHECKS)
 	env CGO_ENABLED=1 go build -ldflags="-s -w" -o $(BINARY)
-	install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/macOS/libbass.dylib hannah
+	install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib hannah
 	go mod tidy
 
 .PHONY: clean

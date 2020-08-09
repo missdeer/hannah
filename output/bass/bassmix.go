@@ -170,3 +170,92 @@ func BASS_Mixer_ChannelSetMatrix(handle uint, matrix unsafe.Pointer) bool {
 func BASS_Mixer_ChannelSetMatrixEx(handle uint, matrix unsafe.Pointer, time float32) bool {
 	return C.BASS_Mixer_ChannelSetMatrixEx(C.DWORD(handle), matrix, C.float(time)) != 0
 }
+
+func BASS_Mixer_ChannelGetMatrix(handle uint) (m []float32) {
+	matrix := C.malloc(8 * C.sizeof_float)
+	defer C.free(matrix)
+	res := C.BASS_Mixer_ChannelGetMatrix(C.DWORD(handle), matrix)
+	if res == 0 {
+		return nil
+	}
+	var p *C.float = (*C.float)(matrix)
+	for i := 0; i < 8; i++ {
+		m = append(m, float32(*p))
+		p = (*C.float)(unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Sizeof(*p)))
+	}
+	return m
+}
+
+type BassMixerNode struct {
+	Pos uint64
+	Val float32
+}
+
+func BASS_Mixer_ChannelSetEnvelope(handle uint, typ uint, nodes []BassMixerNode, count uint) bool {
+	n := C.malloc(C.size_t(count * C.sizeof_BASS_MIXER_NODE))
+	defer C.free(n)
+	var p *C.BASS_MIXER_NODE = (*C.BASS_MIXER_NODE)(n)
+	for i := 0; i < 8; i++ {
+		(*p).pos = C.QWORD(nodes[i].Pos)
+		(*p).value = C.float(nodes[i].Val)
+		p = (*C.BASS_MIXER_NODE)(unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Sizeof(*p)))
+	}
+	return C.BASS_Mixer_ChannelSetEnvelope(C.DWORD(handle), C.DWORD(typ), (*C.BASS_MIXER_NODE)(n), C.DWORD(count)) != 0
+}
+
+func BASS_Mixer_ChannelSetEnvelopePos(handle uint, typ uint, pos uint64) bool {
+	return C.BASS_Mixer_ChannelSetEnvelopePos(C.DWORD(handle), C.DWORD(typ), C.QWORD(pos)) != 0
+}
+
+func BASS_Mixer_ChannelGetEnvelopePos(handle uint, typ uint) (value float32, pos int64) {
+	v := C.malloc(C.sizeof_float)
+	defer C.free(v)
+	pos = int64(C.BASS_Mixer_ChannelGetEnvelopePos(C.DWORD(handle), C.DWORD(typ), (*C.float)(v)))
+	if pos != -1 {
+		value = float32(*(*C.float)(v))
+	}
+	return value, pos
+}
+
+func BASS_Split_StreamCreate(handle uint, flags uint, chanmap []int) uint {
+	c := len(chanmap)
+	cm := C.malloc(C.size_t(c * C.sizeof_int))
+	defer C.free(cm)
+	var p *C.int = (*C.int)(cm)
+	for i := 0; i < c; i++ {
+		*p = C.int(chanmap[i])
+		p = (*C.int)(unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Sizeof(*p)))
+	}
+	return uint(C.BASS_Split_StreamCreate(C.DWORD(handle), C.DWORD(flags), (*C.int)(cm)))
+}
+
+func BASS_Split_StreamGetSource(handle uint) uint {
+	return uint(C.BASS_Split_StreamGetSource(C.HSTREAM(handle)))
+}
+
+func BASS_Split_StreamGetSplits(handle uint) (splits []uint) {
+	c := C.BASS_Split_StreamGetSplits(C.DWORD(handle), nil, 0)
+	s := C.malloc(C.size_t(c * C.sizeof_HSTREAM))
+	defer C.free(s)
+	res := C.BASS_Split_StreamGetSplits(C.DWORD(handle), (*C.HSTREAM)(s), C.DWORD(c))
+	if res > 0 {
+		var p *C.HSTREAM = (*C.HSTREAM)(s)
+		for i := 0; i < int(res); i++ {
+			splits = append(splits, uint(*p))
+			p = (*C.HSTREAM)(unsafe.Pointer(uintptr(unsafe.Pointer(p)) + unsafe.Sizeof(*p)))
+		}
+	}
+	return splits
+}
+
+func BASS_Split_StreamReset(handle uint) bool {
+	return C.BASS_Split_StreamReset(C.DWORD(handle)) != 0
+}
+
+func BASS_Split_StreamResetEx(handle uint, offset uint) bool {
+	return C.BASS_Split_StreamResetEx(C.DWORD(handle), C.DWORD(offset)) != 0
+}
+
+func BASS_Split_StreamGetAvailable(handle uint) uint {
+	return uint(C.BASS_Split_StreamGetAvailable(C.DWORD(handle)))
+}

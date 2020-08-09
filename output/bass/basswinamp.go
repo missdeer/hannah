@@ -2,9 +2,8 @@
 
 package bass
 
-// #cgo CPPFLAGS: -Iinclude
-// #cgo CXXFLAGS: -Iinclude
-// #cgo LDFLAGS: -Llib/windows/x86 -lbass_winamp.dll
+// #cgo CFLAGS: -Iinclude
+// #cgo LDFLAGS: -Llib/windows/386 -lbass_winamp.dll
 // #include "BassWinamp.h"
 import "C"
 

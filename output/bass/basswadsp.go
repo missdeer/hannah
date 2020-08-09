@@ -2,9 +2,8 @@
 
 package bass
 
-// #cgo CPPFLAGS: -Iinclude
-// #cgo CXXFLAGS: -Iinclude
-// #cgo LDFLAGS: -Llib/windows/x86 -lBASS_WADSP.dll
+// #cgo CFLAGS: -Iinclude
+// #cgo LDFLAGS: -Llib/windows/386 -lBASS_WADSP.dll
 // #include "BASS_WADSP.h"
 import "C"
 import (

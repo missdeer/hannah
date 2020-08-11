@@ -1,15 +1,15 @@
-name: Go darwin
+name: Go Linux
 on: [push]
 jobs:
 
   build:
     name: Build
     runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          include:
-            - GOARCH: amd64
-              GOOS: linux
+    strategy:
+      matrix:
+        include:
+          - GOARCH: amd64
+            GOOS: linux
 
     steps:
 

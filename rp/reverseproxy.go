@@ -36,6 +36,7 @@ func getSongInfo(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	req.Header = c.Request.Header
 
 	client := util.GetHttpClient()
 	resp, err := client.Do(req)
@@ -44,7 +45,7 @@ func getSongInfo(c *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
-	data,err := ioutil.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		c.Abort()
 		return
@@ -81,6 +82,7 @@ func getSong(c *gin.Context) {
 		return
 	}
 
+	req.Header = c.Request.Header
 	if r, err := url.Parse(song.URL); err == nil {
 		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}

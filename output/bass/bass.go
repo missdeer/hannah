@@ -204,7 +204,7 @@ func StreamCreate(freq uint, proc *C.STREAMPROC, user unsafe.Pointer) uint {
 
 // StreamCreateFile Creates a sample stream from an MP3, MP2, MP1, OGG, WAV, AIFF or plugin supported file.
 func StreamCreateFile(mem int, file string, offset uint64, length uint64) uint {
-	return uint(C.BASS_StreamCreateFile(C.int(mem), unsafe.Pointer(C.CString(file)), C.ulonglong(offset), C.ulonglong(length), C.DWORD(C.BASS_SAMPLE_FLOAT)))
+	return uint(C.BASS_StreamCreateFile(C.int(mem), unsafe.Pointer(C.CString(file)), C.QWORD(offset), C.QWORD(length), C.DWORD(C.BASS_SAMPLE_FLOAT)))
 }
 
 // StreamCreateURL ates a sample stream from an MP3, MP2, MP1, OGG, WAV, AIFF or plugin supported file on the internet, optionally receiving the downloaded data in a callback function.
@@ -242,7 +242,7 @@ func ChannelStop(handle uint) int {
 
 // ChannelBytes2Seconds Translates a byte position into time (seconds), based on a channel's format.
 func ChannelBytes2Seconds(handle uint, pos int) int {
-	return int(C.BASS_ChannelBytes2Seconds(C.DWORD(handle), C.ulonglong(pos)))
+	return int(C.BASS_ChannelBytes2Seconds(C.DWORD(handle), C.QWORD(pos)))
 }
 
 // ChannelSeconds2Bytes Translates a time (seconds) position into bytes, based on a channel's format.
@@ -262,7 +262,7 @@ func ChannelGetPosition(handle uint, mode int) int {
 
 // ChannelSetPosition Sets the playback position of a sample, MOD music, or stream.
 func ChannelSetPosition(handle uint, pos int, mode int) int {
-	return int(C.BASS_ChannelSetPosition(C.DWORD(handle), C.ulonglong(pos), C.DWORD(mode)))
+	return int(C.BASS_ChannelSetPosition(C.DWORD(handle), C.QWORD(pos), C.DWORD(mode)))
 }
 
 // ChannelSetAttribute Sets the value of a channel's attribute.

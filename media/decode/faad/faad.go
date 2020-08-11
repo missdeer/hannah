@@ -1,6 +1,7 @@
 package faad
 
 // #cgo darwin windows pkg-config: faad2
+// #cgo linux LDFLAGS: -lfaad
 // #include "neaacdec.h"
 // #include "faacdecoder.h"
 import "C"

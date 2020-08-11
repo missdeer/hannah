@@ -1,6 +1,6 @@
 package faad
 
-// #cgo pkg-config: faad2
+// #cgo darwin windows pkg-config: faad2
 // #include "neaacdec.h"
 // #include "faacdecoder.h"
 import "C"

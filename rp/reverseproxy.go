@@ -14,6 +14,10 @@ import (
 	"github.com/missdeer/hannah/util"
 )
 
+var (
+	client *http.Client
+)
+
 func getSongInfo(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
@@ -38,7 +42,6 @@ func getSongInfo(c *gin.Context) {
 	}
 	req.Header = c.Request.Header
 
-	client := util.GetHttpClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		c.Abort()
@@ -87,7 +90,6 @@ func getSong(c *gin.Context) {
 		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}
 
-	client := util.GetHttpClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		c.Abort()
@@ -105,6 +107,8 @@ func getSong(c *gin.Context) {
 }
 
 func StartReverseProxy(addr string) {
+	client = util.GetHttpClient()
+
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.GET("/:provider/:id/:filename", getSong)

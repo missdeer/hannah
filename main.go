@@ -51,6 +51,7 @@ func main() {
 	}
 
 	if config.ReverseProxyEnabled {
+		config.NetworkTimeout = 0 // no timeout, streaming costs much time
 		go rp.StartReverseProxy(config.ReverseProxy)
 	}
 

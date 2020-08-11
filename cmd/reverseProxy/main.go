@@ -34,5 +34,6 @@ func main() {
 		return
 	}
 
+	config.NetworkTimeout = 0 // no timeout, streaming costs much time
 	rp.StartReverseProxy(addr)
 }

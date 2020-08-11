@@ -65,9 +65,9 @@ func main() {
 		}
 		defer media.Finalize(!config.ByExternalPlayer && needScreenPanel)
 		if err := handler(args...); err != nil {
-			log.Println(err)
+			log.Fatal(err)
 		}
 	} else {
-		log.Println("unsupoorted action")
+		log.Fatal("unsupoorted action")
 	}
 }

@@ -32,6 +32,7 @@ jobs:
         cp output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
         cp /usr/local/lib/libmpg123.dylib darwin-amd64/
         cp /usr/local/lib/libfaad.dylib darwin-amd64/
+        cp cmd/reverseProxy/rp darwin-amd64/
         env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
     - name: Upload artifact hannah-darwin-amd64

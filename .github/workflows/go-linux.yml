@@ -1,0 +1,45 @@
+name: Go darwin
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          include:
+            - GOARCH: amd64
+              GOOS: linux
+
+    steps:
+
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Build
+        run: |
+          apt-get install pkg-config libmpg123-dev libportaudio-dev libfaad-dev
+          cp macOS/faad2.pc /usr/local/lib/pkgconfig/
+          env CGO_ENABLED=1 GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -ldflags="-s -w" -o ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/hannah
+          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp /usr/local/lib/libmpg123.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp /usr/local/lib/libfaad.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cd cmd/reverseProxy
+          env CGO_ENABLED=1 go build -ldflags="-s -w" -o ../../${{ matrix.GOOS }}-${{ matrix.GOARCH }}/rp
+
+      - name: Upload artifact hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          # Artifact name
+          name: hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          # Directory containing files to upload
+          path: ${{ matrix.GOOS }}-${{ matrix.GOARCH }}

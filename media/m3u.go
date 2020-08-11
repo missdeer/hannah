@@ -87,7 +87,11 @@ func AppendSongsToM3U(songs provider.Songs, origin bool) error {
 			Title: song.Title,
 		}
 		if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
-			track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
+			if config.ReverseProxyEnabled {
+				track.Path = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, song.Provider, song.ID)
+			} else {
+				track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
+			}
 		}
 
 		for _, t := range pl {

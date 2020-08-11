@@ -26,7 +26,7 @@ jobs:
 
       - name: Build
         run: |
-          apt-get install pkg-config libmpg123-dev libportaudio-dev libfaad-dev
+          sudo apt-get install pkg-config libmpg123-dev libportaudio-dev libfaad-dev
           cp macOS/faad2.pc /usr/local/lib/pkgconfig/
           env CGO_ENABLED=1 GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -ldflags="-s -w" -o ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/hannah
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
@@ -34,7 +34,7 @@ jobs:
           cp /usr/local/lib/libmpg123.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp /usr/local/lib/libfaad.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cd cmd/reverseProxy
-          env CGO_ENABLED=1 go build -ldflags="-s -w" -o ../../${{ matrix.GOOS }}-${{ matrix.GOARCH }}/rp
+          env CGO_ENABLED=1 GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -ldflags="-s -w" -o ../../${{ matrix.GOOS }}-${{ matrix.GOARCH }}/rp
 
       - name: Upload artifact hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
         uses: actions/upload-artifact@v1.0.0

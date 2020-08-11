@@ -27,3 +27,18 @@ func search(keywords ...string) error {
 		return provider.Songs{s}, err
 	})
 }
+
+func searchSave(keywords ...string) error {
+	if config.Provider == "" {
+		return ErrMissingProvider
+	}
+	p := provider.GetProvider(config.Provider)
+	if p == nil {
+		return ErrUnsupportedProvider
+	}
+	songs, err := p.Search(strings.Join(keywords, " "), config.Page, config.Limit)
+	if err != nil {
+		return err
+	}
+	return saveSongsAsM3U(provider.Songs(songs))
+}

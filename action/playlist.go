@@ -45,3 +45,27 @@ func playlist(ids ...string) error {
 	}
 	return nil
 }
+
+func playlistSave(ids ...string) error {
+	if config.Provider == "" {
+		return ErrMissingProvider
+	}
+	p := provider.GetProvider(config.Provider)
+	if p == nil {
+		return ErrUnsupportedProvider
+	}
+
+	for i := 0; i < len(ids); i++ {
+		songs, err := p.PlaylistDetail(provider.Playlist{ID: ids[i]})
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		if err = saveSongsAsM3U(songs); err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+	return nil
+}

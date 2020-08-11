@@ -115,9 +115,9 @@ func playMedia(song provider.Song, index int, total int, done chan struct{}) err
 			case output.HandleActionSpeedup:
 				audioSpeaker.Speedup()
 			case output.HandleActionOriginM3U:
-				go appendToM3U(song, true, appendedToM3U)
+				go AppendSongToM3U(song, true, appendedToM3U)
 			case output.HandleActionFinalM3U:
-				go appendToM3U(song, false, appendedToM3U)
+				go AppendSongToM3U(song, false, appendedToM3U)
 			case output.HandleActionDownload:
 				go downloadSong(song, downloaded)
 			default:

@@ -21,10 +21,12 @@ var (
 		h               actionHandler
 		needScreenPanel bool
 	}{
-		"play":     {play, true},
-		"search":   {search, true},
-		"hot":      {hot, false},
-		"playlist": {playlist, true},
+		"play":          {play, true},
+		"search":        {search, true},
+		"search-save":   {searchSave, false},
+		"hot":           {hot, false},
+		"playlist":      {playlist, true},
+		"playlist-save": {playlistSave, false},
 	}
 	ErrMissingProvider     = errors.New("set the provider parameter to search")
 	ErrUnsupportedProvider = errors.New("unsupported provider")
@@ -111,4 +113,8 @@ func playSongs(songs provider.Songs, r songResolver) error {
 		}
 	}
 	return nil
+}
+
+func saveSongsAsM3U(songs provider.Songs) error {
+	return media.AppendSongsToM3U(songs, true)
 }

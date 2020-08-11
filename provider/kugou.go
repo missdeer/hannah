@@ -69,6 +69,7 @@ func (p *kugou) Search(keyword string, page int, limit int) (SearchResult, error
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -118,6 +119,7 @@ func (p *kugou) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return song, err
@@ -182,6 +184,7 @@ func (p *kugou) HotPlaylist(page int, limit int) (Playlists, error) {
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -245,6 +248,7 @@ func (p *kugou) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 		req.Header.Set("Accept-Encoding", "gzip, deflate")
 
+		httpClient := util.GetHttpClient()
 		resp, err := httpClient.Do(req)
 		if err != nil {
 			return nil, err

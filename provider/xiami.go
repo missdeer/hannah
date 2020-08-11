@@ -129,6 +129,7 @@ type xiamiSearchResult struct {
 
 func (p *xiami) getToken(u string, tokenKey string) (string, error) {
 	parsedURL, _ := url.Parse(u)
+	httpClient := util.GetHttpClient()
 	c := httpClient.Jar.Cookies(parsedURL)
 	if c == nil || len(c) == 0 {
 		req, err := http.NewRequest("GET", u, nil)
@@ -263,6 +264,7 @@ func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error
 	req.Header.Set("Referer", "https://h.xiami.com")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -321,6 +323,7 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
 	req.Header.Set("TE", "Trailers")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return song, err
@@ -400,6 +403,7 @@ func (p *xiami) HotPlaylist(page int, limit int) (Playlists, error) {
 	req.Header.Set("Referer", "https://h.xiami.com")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -477,6 +481,7 @@ func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
 	req.Header.Set("Referer", "https://h.xiami.com")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err

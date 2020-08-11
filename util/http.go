@@ -29,6 +29,8 @@ import (
 var (
 	errorNotIP    = errors.New("addr is not an IP")
 	resolveResult = sync.Map{}
+	once          = sync.Once{}
+	globalClient  *http.Client
 )
 
 func patchAddress(addr string) (string, error) {
@@ -105,7 +107,7 @@ func socks5ProxyTransport(addr string) *http.Transport {
 	}
 }
 
-func GetHttpClient() *http.Client {
+func createHttpClient() *http.Client {
 	jar, _ := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
@@ -141,6 +143,11 @@ func GetHttpClient() *http.Client {
 		client.Transport = socks5ProxyTransport(socks5Proxy)
 	}
 	return client
+}
+
+func GetHttpClient() *http.Client {
+	once.Do(func() { globalClient = createHttpClient() })
+	return globalClient
 }
 
 func uncompressReader(r *http.Response) (io.ReadCloser, error) {

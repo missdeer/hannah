@@ -2,12 +2,9 @@ package provider
 
 import (
 	"errors"
-	"net/http"
 	"sync"
 
 	jsoniter "github.com/json-iterator/go"
-
-	"github.com/missdeer/hannah/util"
 )
 
 type Song struct {
@@ -70,9 +67,9 @@ func (p *providerMap) add(provider string) IProvider {
 }
 
 var (
-	httpClient         *http.Client
 	json               = jsoniter.ConfigCompatibleWithStandardLibrary
 	ErrStatusNotOK     = errors.New("status != 200")
+	providers          = providerMap{m: make(map[string]IProvider)}
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },
 		"xiami":    func() IProvider { return &xiami{} },
@@ -89,20 +86,10 @@ var (
 		"mg":       func() IProvider { return &migu{} },
 		"mt":       func() IProvider { return &musictool{} },
 	}
-	providers = providerMap{
-		m: make(map[string]IProvider),
-	}
-	once = sync.Once{}
 )
 
 // GetProvider return the specified provider
 func GetProvider(provider string) IProvider {
-	once.Do(func() {
-		if httpClient == nil {
-			httpClient = util.GetHttpClient()
-		}
-	})
-
 	if p := providers.get(provider); p != nil {
 		return p
 	}

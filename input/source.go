@@ -11,10 +11,6 @@ import (
 	"github.com/missdeer/hannah/util"
 )
 
-var (
-	httpClient *http.Client
-)
-
 func openLocalFile(filename string) (io.ReadCloser, error) {
 	return os.Open(filename)
 }
@@ -28,9 +24,7 @@ func openRemoteSource(u string) (io.ReadCloser, error) {
 	if r, err := url.Parse(u); err == nil {
 		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}
-	if httpClient == nil {
-		httpClient = util.GetHttpClient()
-	}
+	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err

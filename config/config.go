@@ -18,6 +18,7 @@ var (
 	Player              string
 	DownloadDir         string
 	M3UFileName         string
+	RedirectURL         bool
 	ReverseProxyEnabled bool
 	ReverseProxy        = "127.0.0.1:8123"
 	Action              = "play"
@@ -28,6 +29,7 @@ var (
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
+		"redirect":              &RedirectURL,
 		"reverse-proxy-enabled": &ReverseProxyEnabled,
 		"reverse-proxy":         &ReverseProxy,
 		"dir":                   &DownloadDir,

@@ -26,6 +26,7 @@ func main() {
 	}
 
 	showHelpMessage := false
+	flag.BoolVarP(&config.RedirectURL, "redirect", "", config.RedirectURL, "redirect song URL, dont' forward stream by reverse proxy")
 	flag.BoolVarP(&config.ReverseProxyEnabled, "reverse-proxy-enabled", "", config.ReverseProxyEnabled, "reverse proxy enabled")
 	flag.StringVarP(&config.ReverseProxy, "reverse-proxy", "", config.ReverseProxy, "set reverse proxy address")
 	flag.IntVarP(&config.Page, "page", "", config.Page, "page number of search result, start from 1")

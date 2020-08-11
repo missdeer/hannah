@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
 	"github.com/missdeer/hannah/util"
 )
@@ -74,6 +75,11 @@ func getSong(c *gin.Context) {
 	song, err := p.ResolveSongURL(provider.Song{ID: id})
 	if err != nil {
 		c.Abort()
+		return
+	}
+
+	if config.RedirectURL {
+		c.Redirect(http.StatusFound, song.URL)
 		return
 	}
 

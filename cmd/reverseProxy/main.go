@@ -24,6 +24,7 @@ func main() {
 	}
 	showHelpMessage := false
 	flag.StringVarP(&addr, "bind-addr", "b", addr, "set bind address")
+	flag.BoolVarP(&config.RedirectURL, "redirect", "", config.RedirectURL, "redirect song URL, dont' forward stream by reverse proxy")
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "s", config.Socks5Proxy, "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "t", config.HttpProxy, "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
 	flag.BoolVarP(&showHelpMessage, "help", "h", false, "show this help message")

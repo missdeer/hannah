@@ -10,37 +10,41 @@ import (
 )
 
 var (
-	Shuffle          bool
-	Repeat           bool
-	ByExternalPlayer bool
-	Socks5Proxy      string
-	HttpProxy        string
-	Player           string
-	DownloadDir      string
-	M3UFileName      string
-	Action           = "play"
-	Provider         = "netease"
-	Limit            = 35
-	Page             = 1
-	Engine           = "bass"
-	NetworkTimeout   = 60
+	Shuffle             bool
+	Repeat              bool
+	ByExternalPlayer    bool
+	Socks5Proxy         string
+	HttpProxy           string
+	Player              string
+	DownloadDir         string
+	M3UFileName         string
+	ReverseProxyEnabled bool
+	ReverseProxy        = "127.0.0.1:8123"
+	Action              = "play"
+	Provider            = "netease"
+	Limit               = 35
+	Page                = 1
+	Engine              = "bass"
+	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
-		"dir":                &DownloadDir,
-		"m3u":                &M3UFileName,
-		"shuffle":            &Shuffle,
-		"repeat":             &Repeat,
-		"by-external-player": &ByExternalPlayer,
-		"driver":             &AudioDriver,
-		"action":             &Action,
-		"provider":           &Provider,
-		"socks5":             &Socks5Proxy,
-		"http-proxy":         &HttpProxy,
-		"player":             &Player,
-		"engine":             &Engine,
-		"limit":              &Limit,
-		"page":               &Page,
-		"network-timeout":    &NetworkTimeout,
+		"reverse-proxy-enabled": &ReverseProxyEnabled,
+		"reverse-proxy":         &ReverseProxy,
+		"dir":                   &DownloadDir,
+		"m3u":                   &M3UFileName,
+		"shuffle":               &Shuffle,
+		"repeat":                &Repeat,
+		"by-external-player":    &ByExternalPlayer,
+		"driver":                &AudioDriver,
+		"action":                &Action,
+		"provider":              &Provider,
+		"socks5":                &Socks5Proxy,
+		"http-proxy":            &HttpProxy,
+		"player":                &Player,
+		"engine":                &Engine,
+		"limit":                 &Limit,
+		"page":                  &Page,
+		"network-timeout":       &NetworkTimeout,
 	}
 )
 

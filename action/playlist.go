@@ -1,6 +1,7 @@
 package action
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 
@@ -31,6 +32,9 @@ func playlist(ids ...string) error {
 				s, err := p.ResolveSongURL(song)
 				if err != nil {
 					return nil, err
+				}
+				if config.ReverseProxyEnabled {
+					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
 				}
 				return provider.Songs{s}, err
 			})

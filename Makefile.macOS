@@ -1,4 +1,6 @@
-BINARY:=hannah
+HANNAH:=hannah
+RP=rp
+RPFULLPATH:=cmd/reverseProxy/$(RP)
 CHECKS:=go.mod go.sum \
 	util/cryptography/ecb.go \
     util/cryptography/cryptography.go \
@@ -44,6 +46,7 @@ CHECKS:=go.mod go.sum \
     action/hot.go \
     action/playlist.go \
     main.go \
+    rp/reverseproxy.go \
     media/media.go \
     media/download.go \
     media/m3u.go \
@@ -57,17 +60,20 @@ CHECKS:=go.mod go.sum \
     media/decode/builtin.go 
 
 .PHONY: all
-all: $(BINARY)
+all: $(HANNAH) $(RPFULLPATH)
 
-$(BINARY): $(CHECKS)
-	env CGO_ENABLED=1 go build -ldflags="-s -w" -o $(BINARY)
+$(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
+	cd cmd/reverseProxy && go build -ldflags="-s -w" -o $(RP)
+
+$(HANNAH): $(CHECKS)
+	env CGO_ENABLED=1 go build -ldflags="-s -w" -o $(HANNAH)
 	install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib hannah
 	go mod tidy
 
 .PHONY: clean
 clean:
 	env CGO_ENABLED=1 go clean
-	rm -f $(BINARY)
+	rm -f $(HANNAH) $(RPFULLPATH)
 
 .PHONY: test 
 test:

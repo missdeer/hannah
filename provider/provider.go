@@ -3,6 +3,7 @@ package provider
 import (
 	"errors"
 	"net/http"
+	"sync"
 
 	jsoniter "github.com/json-iterator/go"
 
@@ -43,6 +44,31 @@ type IProvider interface {
 
 type providerGetter func() IProvider
 
+type providerMap struct {
+	sync.RWMutex
+	m map[string]IProvider
+}
+
+func (p *providerMap) get(provider string) IProvider {
+	p.RLock()
+	defer p.RUnlock()
+	if res, ok := p.m[provider]; ok {
+		return res
+	}
+	return nil
+}
+
+func (p *providerMap) add(provider string) IProvider {
+	p.Lock()
+	defer p.Unlock()
+	if c, ok := providerCreatorMap[provider]; ok {
+		i := c()
+		p.m[provider] = i
+		return i
+	}
+	return nil
+}
+
 var (
 	httpClient         *http.Client
 	json               = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -63,21 +89,25 @@ var (
 		"mg":       func() IProvider { return &migu{} },
 		"mt":       func() IProvider { return &musictool{} },
 	}
-	providers = make(map[string]IProvider)
+	providers = providerMap{
+		m: make(map[string]IProvider),
+	}
+	once = sync.Once{}
 )
 
 // GetProvider return the specified provider
 func GetProvider(provider string) IProvider {
-	if httpClient == nil {
-		httpClient = util.GetHttpClient()
-	}
-	if p, ok := providers[provider]; ok {
+	once.Do(func() {
+		if httpClient == nil {
+			httpClient = util.GetHttpClient()
+		}
+	})
+
+	if p := providers.get(provider); p != nil {
 		return p
 	}
 
-	if c, ok := providerCreatorMap[provider]; ok {
-		p := c()
-		providers[provider] = p
+	if p := providers.add(provider); p != nil {
 		return p
 	}
 	return nil

@@ -2,6 +2,7 @@ package action
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/url"
@@ -80,6 +81,10 @@ func playSongs(songs provider.Songs, r songResolver) error {
 				if err != nil {
 					log.Println(err)
 					continue
+				}
+
+				if config.ReverseProxyEnabled {
+					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
 				}
 				song.URL = s.URL
 				count = len(ss)

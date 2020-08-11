@@ -14,6 +14,7 @@ import (
 	"github.com/missdeer/hannah/action"
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
+	"github.com/missdeer/hannah/rp"
 )
 
 func main() {
@@ -25,6 +26,8 @@ func main() {
 	}
 
 	showHelpMessage := false
+	flag.BoolVarP(&config.ReverseProxyEnabled, "reverse-proxy-enabled", "", config.ReverseProxyEnabled, "reverse proxy enabled")
+	flag.StringVarP(&config.ReverseProxy, "reverse-proxy", "", config.ReverseProxy, "set reverse proxy address")
 	flag.IntVarP(&config.Page, "page", "", config.Page, "page number of search result, start from 1")
 	flag.IntVarP(&config.Limit, "limit", "l", config.Limit, "max count of search result")
 	flag.BoolVarP(&config.Shuffle, "shuffle", "f", config.Shuffle, "shuffle play list order")
@@ -45,6 +48,10 @@ func main() {
 	if showHelpMessage {
 		flag.PrintDefaults()
 		return
+	}
+
+	if config.ReverseProxyEnabled {
+		go rp.StartReverseProxy(config.ReverseProxy)
 	}
 
 	args := flag.Args()

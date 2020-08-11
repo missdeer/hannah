@@ -14,6 +14,7 @@ import (
 	"github.com/bogem/id3v2"
 	"github.com/jamesnetherton/m3u"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
 )
@@ -154,6 +155,9 @@ func resolve(song provider.Song) (provider.Songs, error) {
 		case "song":
 			// TODO extract song title & artist
 			if s, err := p.ResolveSongURL(provider.Song{ID: u.Host}); err == nil {
+				if config.ReverseProxyEnabled {
+					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
+				}
 				return provider.Songs{s}, nil
 			}
 		case "playlist":

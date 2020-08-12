@@ -173,10 +173,13 @@ func Init(addr string) error {
 	return err
 }
 
-func Start(addr string) {
+func Start(addr string, limit string) {
 	r := gin.New()
 	if gin.Mode() != gin.ReleaseMode {
 		r.Use(gin.Logger())
+	}
+	if limit != "" {
+		r.Use(CIDR(limit))
 	}
 	r.Use(gin.Recovery())
 	r.GET("/:provider/:id/:filename", getSong)

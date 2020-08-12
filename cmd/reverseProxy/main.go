@@ -23,7 +23,9 @@ func main() {
 		addr = b
 	}
 	showHelpMessage := false
+	limit := ""
 	flag.StringVarP(&addr, "bind-addr", "b", addr, "set bind address")
+	flag.StringVarP(&limit, "access-limit", "l", limit, "access limit, CDIR list separated by comma, for example: 172.18.0.0/16, 127.0.0.1/32")
 	flag.BoolVarP(&config.CacheEnabled, "cache", "c", config.CacheEnabled, "cache song resolving result in Redis")
 	flag.StringVarP(&config.CacheAddr, "cache-addr", "", config.CacheAddr, "set cache(Redis) service address")
 	flag.BoolVarP(&config.RedirectURL, "redirect", "", config.RedirectURL, "redirect song URL, dont' forward stream by reverse proxy")
@@ -39,5 +41,5 @@ func main() {
 
 	config.NetworkTimeout = 0 // no timeout, streaming costs much time
 	rp.Init(config.CacheAddr)
-	rp.Start(addr)
+	rp.Start(addr, limit)
 }

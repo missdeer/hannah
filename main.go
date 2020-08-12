@@ -63,7 +63,7 @@ func main() {
 			if err := rp.Init(config.CacheAddr); err != nil {
 				log.Println(err)
 			}
-			go rp.Start(config.ReverseProxy)
+			go rp.Start(config.ReverseProxy, "")
 		}
 		if err := media.Initialize(!config.ByExternalPlayer && holdOn); err != nil {
 			log.Fatal(err)

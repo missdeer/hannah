@@ -48,6 +48,7 @@ CHECKS:=go.mod go.sum \
     cache/redis.go \
     main.go \
     rp/reverseproxy.go \
+    rp/limit.go \
     media/media.go \
     media/download.go \
     media/m3u.go \

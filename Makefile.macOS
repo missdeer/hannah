@@ -45,6 +45,7 @@ CHECKS:=go.mod go.sum \
     action/search.go \
     action/hot.go \
     action/playlist.go \
+    cache/redis.go \
     main.go \
     rp/reverseproxy.go \
     media/media.go \

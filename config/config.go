@@ -13,13 +13,15 @@ var (
 	Shuffle             bool
 	Repeat              bool
 	ByExternalPlayer    bool
+	CacheEnabled        bool
+	RedirectURL         bool
+	ReverseProxyEnabled bool
 	Socks5Proxy         string
 	HttpProxy           string
 	Player              string
 	DownloadDir         string
 	M3UFileName         string
-	RedirectURL         bool
-	ReverseProxyEnabled bool
+	CacheAddr           = "127.0.0.1:6379"
 	ReverseProxy        = "127.0.0.1:8123"
 	Action              = "play"
 	Provider            = "netease"
@@ -29,6 +31,8 @@ var (
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
+		"cache":                 &CacheEnabled,
+		"cache-addr":            &CacheAddr,
 		"redirect":              &RedirectURL,
 		"reverse-proxy-enabled": &ReverseProxyEnabled,
 		"reverse-proxy":         &ReverseProxy,

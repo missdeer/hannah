@@ -26,6 +26,8 @@ func main() {
 	}
 
 	showHelpMessage := false
+	flag.BoolVarP(&config.CacheEnabled, "cache", "c", config.CacheEnabled, "cache song resolving result in Redis")
+	flag.StringVarP(&config.CacheAddr, "cache-addr", "", config.CacheAddr, "set cache(Redis) service address")
 	flag.BoolVarP(&config.RedirectURL, "redirect", "", config.RedirectURL, "redirect song URL, dont' forward stream by reverse proxy")
 	flag.BoolVarP(&config.ReverseProxyEnabled, "reverse-proxy-enabled", "", config.ReverseProxyEnabled, "reverse proxy enabled")
 	flag.StringVarP(&config.ReverseProxy, "reverse-proxy", "", config.ReverseProxy, "set reverse proxy address")
@@ -53,7 +55,8 @@ func main() {
 
 	if config.ReverseProxyEnabled {
 		config.NetworkTimeout = 0 // no timeout, streaming costs much time
-		go rp.StartReverseProxy(config.ReverseProxy)
+		rp.Init(config.CacheAddr)
+		go rp.Start(config.ReverseProxy)
 	}
 
 	args := flag.Args()

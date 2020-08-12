@@ -7,22 +7,42 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/missdeer/hannah/cache"
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
 	"github.com/missdeer/hannah/util"
 )
 
+const (
+	cacheTimeout = 4 * time.Hour
+)
+
 var (
 	client *http.Client
+	redis  *cache.RedisCache
 )
 
 func getSongInfo(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
-	// TODO check cache first
+
+	// check cache first
+	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
+	if config.CacheEnabled {
+		if h, err := redis.Get(headerKey); err == nil {
+			if header, ok := h.(http.Header); ok {
+				for k, v := range header {
+					c.Writer.Header().Set(k, v[0])
+				}
+				c.Data(http.StatusOK, header["Content-Type"][0], []byte{})
+				return
+			}
+		}
+	}
 
 	// resolve URL now
 	p := provider.GetProvider(providerName)
@@ -55,6 +75,11 @@ func getSongInfo(c *gin.Context) {
 		return
 	}
 
+	// cache the info
+	if redis != nil {
+		redis.PutWithTimeout(headerKey, resp.Header, cacheTimeout)
+	}
+
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
 	}
@@ -64,7 +89,24 @@ func getSongInfo(c *gin.Context) {
 func getSong(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
-	// TODO check cache first
+
+	// check cache first
+	urlKey := fmt.Sprintf("%s:%s:url", providerName, id)
+	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
+	if config.CacheEnabled && config.RedirectURL {
+		if h, err := redis.Get(headerKey); err == nil {
+			if header, ok := h.(http.Header); ok {
+				for k, v := range header {
+					c.Writer.Header().Set(k, v[0])
+				}
+			}
+		}
+
+		if songURL, err := redis.GetString(urlKey); err == nil {
+			c.Redirect(http.StatusFound, songURL)
+			return
+		}
+	}
 
 	// resolve URL now
 	p := provider.GetProvider(providerName)
@@ -83,7 +125,10 @@ func getSong(c *gin.Context) {
 		return
 	}
 
-	// TODO cache the resolved result for 30m ~ 60m
+	// cache the resolved result
+	if redis != nil {
+		redis.PutWithTimeout(urlKey, song.URL, cacheTimeout)
+	}
 
 	req, err := http.NewRequest("GET", song.URL, nil)
 	if err != nil {
@@ -94,6 +139,7 @@ func getSong(c *gin.Context) {
 	req.Header = c.Request.Header
 	if r, err := url.Parse(song.URL); err == nil {
 		req.Header.Set("Referer", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
+		req.Header.Set("Origin", fmt.Sprintf("%s://%s", r.Scheme, r.Hostname()))
 	}
 
 	resp, err := client.Do(req)
@@ -102,6 +148,11 @@ func getSong(c *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
+
+	// cache the info
+	if redis != nil {
+		redis.PutWithTimeout(headerKey, resp.Header, cacheTimeout)
+	}
 
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
@@ -112,9 +163,14 @@ func getSong(c *gin.Context) {
 	})
 }
 
-func StartReverseProxy(addr string) {
+func Init(addr string) {
 	client = util.GetHttpClient()
+	if config.CacheEnabled {
+		redis = cache.RedisInit(addr)
+	}
+}
 
+func Start(addr string) {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.GET("/:provider/:id/:filename", getSong)

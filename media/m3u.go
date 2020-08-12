@@ -12,6 +12,30 @@ import (
 	"github.com/missdeer/hannah/provider"
 )
 
+func composeTrack(pl m3u.Playlist, song provider.Song, origin bool) *m3u.Track {
+	track := &m3u.Track{
+		Path:  song.URL,
+		Title: song.Title,
+	}
+	if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
+		if config.ReverseProxyEnabled {
+			track.Path = fmt.Sprintf("http://%s/%s/%s/%s",
+				config.ReverseProxy, song.Provider, song.ID,
+				url.PathEscape(strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)))
+		} else {
+			track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
+		}
+	}
+
+	for _, t := range pl {
+		if t.Path == track.Path {
+			return nil
+		}
+	}
+
+	return track
+}
+
 // AppendSongToM3U append song to M3U
 // song song info struct
 // origin origin URI or final URI, netease://12345 or https://music.163.com/12345.mp3
@@ -37,27 +61,12 @@ func AppendSongToM3U(song provider.Song, origin bool, done chan string) error {
 		return err
 	}
 
-	track := m3u.Track{
-		Path:  song.URL,
-		Title: song.Title,
-	}
-	if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
-		if config.ReverseProxyEnabled {
-			track.Path = fmt.Sprintf("http://%s/%s/%s/%s",
-				config.ReverseProxy, song.Provider, song.ID,
-				url.PathEscape(strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)))
-		} else {
-			track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
-		}
+	track := composeTrack(pl, song, origin)
+	if track == nil {
+		return nil
 	}
 
-	for _, t := range pl {
-		if t.Path == track.Path {
-			return nil
-		}
-	}
-
-	pl = append(pl, track)
+	pl = append(pl, *track)
 
 	f.Seek(0, 0)
 	if _, err := pl.WriteTo(f); err != nil {
@@ -90,28 +99,9 @@ func AppendSongsToM3U(songs provider.Songs, origin bool) error {
 	}
 
 	for _, song := range songs {
-		track := m3u.Track{
-			Path:  song.URL,
-			Title: song.Title,
+		if track := composeTrack(pl, song, origin); track != nil {
+			pl = append(pl, *track)
 		}
-		if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
-			if config.ReverseProxyEnabled {
-				track.Path = fmt.Sprintf("http://%s/%s/%s/%s",
-					config.ReverseProxy, song.Provider, song.ID,
-					url.PathEscape(strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)))
-			} else {
-				track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
-			}
-		}
-
-		for _, t := range pl {
-			if t.Path == track.Path {
-				goto next
-			}
-		}
-
-		pl = append(pl, track)
-	next:
 	}
 	f.Seek(0, 0)
 	if _, err := pl.WriteTo(f); err != nil {

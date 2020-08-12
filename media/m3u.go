@@ -19,9 +19,15 @@ func composeTrack(pl m3u.Playlist, song provider.Song, origin bool) *m3u.Track {
 	}
 	if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
 		if config.ReverseProxyEnabled {
-			track.Path = fmt.Sprintf("http://%s/%s/%s/%s",
-				config.ReverseProxy, song.Provider, song.ID,
-				url.PathEscape(strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)))
+			scheme := `http`
+			host := config.ReverseProxy
+			if u, err := url.Parse(config.ReverseProxy); err == nil {
+				scheme = u.Scheme
+				host = u.Host
+			}
+			filename := strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)
+			track.Path = fmt.Sprintf("%s://%s/%s/%s/%s",
+				scheme, host, song.Provider, song.ID, url.PathEscape(filename))
 		} else {
 			track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
 		}

@@ -15,6 +15,7 @@ var (
 	ByExternalPlayer    bool
 	CacheEnabled        bool
 	RedirectURL         bool
+	AutoRedirectURL     bool
 	ReverseProxyEnabled bool
 	Socks5Proxy         string
 	HttpProxy           string
@@ -34,6 +35,7 @@ var (
 		"cache":                 &CacheEnabled,
 		"cache-addr":            &CacheAddr,
 		"redirect":              &RedirectURL,
+		"auto-redirect":         &AutoRedirectURL,
 		"reverse-proxy-enabled": &ReverseProxyEnabled,
 		"reverse-proxy":         &ReverseProxy,
 		"dir":                   &DownloadDir,

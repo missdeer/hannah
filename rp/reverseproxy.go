@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -85,6 +86,15 @@ func getSongInfo(c *gin.Context) {
 	c.Data(http.StatusOK, resp.Header.Get("Content-Type"), data)
 }
 
+func originIPInChina(c *gin.Context) bool {
+	remoteAddr, _, err := net.SplitHostPort(c.Request.RemoteAddr)
+	if err != nil {
+		return false
+	}
+
+	return InChina(remoteAddr)
+}
+
 func getSong(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
@@ -119,7 +129,8 @@ func getSong(c *gin.Context) {
 		return
 	}
 
-	if config.RedirectURL {
+	if config.RedirectURL ||
+		(!config.RedirectURL && config.AutoRedirectURL && originIPInChina(c)) {
 		c.Redirect(http.StatusFound, song.URL)
 		return
 	}
@@ -165,7 +176,11 @@ func getSong(c *gin.Context) {
 func Init(addr string) error {
 	client = util.GetHttpClient()
 
-	var err error
+	err := LoadChinaIPList()
+	if err != nil {
+		return err
+	}
+
 	if config.CacheEnabled {
 		redis, err = cache.RedisInit(addr)
 	}

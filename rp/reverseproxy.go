@@ -174,8 +174,11 @@ func Init(addr string) error {
 }
 
 func Start(addr string) {
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.Default()
+	r := gin.New()
+	if gin.Mode() != gin.ReleaseMode {
+		r.Use(gin.Logger())
+	}
+	r.Use(gin.Recovery())
 	r.GET("/:provider/:id/:filename", getSong)
 	r.HEAD("/:provider/:id/:filename", getSongInfo)
 	r.GET("/:provider/:id", getSong)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 
@@ -40,6 +41,8 @@ func main() {
 	}
 
 	config.NetworkTimeout = 0 // no timeout, streaming costs much time
-	rp.Init(config.CacheAddr)
-	rp.Start(addr, limit)
+	if err := rp.Init(config.CacheAddr); err != nil {
+		log.Println(err)
+	}
+	log.Fatal(rp.Start(addr, limit))
 }

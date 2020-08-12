@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -173,7 +172,7 @@ func Init(addr string) error {
 	return err
 }
 
-func Start(addr string, limit string) {
+func Start(addr string, limit string) error {
 	r := gin.New()
 	if gin.Mode() != gin.ReleaseMode {
 		r.Use(gin.Logger())
@@ -186,5 +185,5 @@ func Start(addr string, limit string) {
 	r.HEAD("/:provider/:id/:filename", getSongInfo)
 	r.GET("/:provider/:id", getSong)
 	r.HEAD("/:provider/:id", getSongInfo)
-	log.Fatal(r.Run(addr))
+	return r.Run(addr)
 }

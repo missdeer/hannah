@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -16,12 +15,12 @@ const (
 	defaultRedisKey = "hannah_cache_service"
 )
 
-func RedisInit(redisServer string) *RedisCache {
+func RedisInit(redisServer string) (*RedisCache, error) {
 	rd := newRedisCache()
 	if err := rd.StartAndGC(fmt.Sprintf("{\"conn\" : \"%s\"}", redisServer)); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return rd
+	return rd, nil
 }
 
 // Redis cache adapter.

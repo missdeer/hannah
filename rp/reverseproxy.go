@@ -163,11 +163,14 @@ func getSong(c *gin.Context) {
 	})
 }
 
-func Init(addr string) {
+func Init(addr string) error {
 	client = util.GetHttpClient()
+
+	var err error
 	if config.CacheEnabled {
-		redis = cache.RedisInit(addr)
+		redis, err = cache.RedisInit(addr)
 	}
+	return err
 }
 
 func Start(addr string) {

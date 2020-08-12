@@ -18,8 +18,8 @@ type songResolver func(provider.Song) (provider.Songs, error)
 
 var (
 	actionHandlerMap = map[string]struct {
-		h               actionHandler
-		needScreenPanel bool
+		h      actionHandler
+		holdOn bool // false - will exit application in a short time, true - player will play songs, application is hold on
 	}{
 		"play":          {play, true},
 		"search":        {search, true},
@@ -32,12 +32,12 @@ var (
 	ErrUnsupportedProvider = errors.New("unsupported provider")
 )
 
-func GetActionHandler(action string) (actionHandler, bool) {
+func GetActionHandler(action string) (h actionHandler, holdOn bool) {
 	s, ok := actionHandlerMap[config.Action]
 	if !ok {
 		return nil, false
 	}
-	return s.h, s.needScreenPanel
+	return s.h, s.holdOn
 }
 
 func shuffleRepeatPlaySongs(songs provider.Songs, r songResolver) error {

@@ -53,21 +53,22 @@ func main() {
 		return
 	}
 
-	if config.ReverseProxyEnabled {
-		config.NetworkTimeout = 0 // no timeout, streaming costs much time
-		rp.Init(config.CacheAddr)
-		go rp.Start(config.ReverseProxy)
-	}
-
 	args := flag.Args()
 	rand.Seed(time.Now().UnixNano())
 
-	handler, needScreenPanel := action.GetActionHandler(config.Action)
+	handler, holdOn := action.GetActionHandler(config.Action)
 	if handler != nil {
-		if err := media.Initialize(!config.ByExternalPlayer && needScreenPanel); err != nil {
+		if config.ReverseProxyEnabled && holdOn {
+			config.NetworkTimeout = 0 // no timeout, streaming costs much time
+			if err := rp.Init(config.CacheAddr); err != nil {
+				log.Println(err)
+			}
+			go rp.Start(config.ReverseProxy)
+		}
+		if err := media.Initialize(!config.ByExternalPlayer && holdOn); err != nil {
 			log.Fatal(err)
 		}
-		defer media.Finalize(!config.ByExternalPlayer && needScreenPanel)
+		defer media.Finalize(!config.ByExternalPlayer && holdOn)
 		if err := handler(args...); err != nil {
 			log.Fatal(err)
 		}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/ushis/m3u"
 
@@ -43,7 +44,8 @@ func AppendSongToM3U(song provider.Song, origin bool, done chan string) error {
 	if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
 		if config.ReverseProxyEnabled {
 			track.Path = fmt.Sprintf("http://%s/%s/%s/%s",
-				config.ReverseProxy, song.Provider, song.ID, url.PathEscape(fmt.Sprintf("%s - %s", song.Title, song.Artist)))
+				config.ReverseProxy, song.Provider, song.ID,
+				url.PathEscape(strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)))
 		} else {
 			track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
 		}
@@ -95,7 +97,8 @@ func AppendSongsToM3U(songs provider.Songs, origin bool) error {
 		if song.Provider != "local filesystem" && song.Provider != "http(s)" && origin {
 			if config.ReverseProxyEnabled {
 				track.Path = fmt.Sprintf("http://%s/%s/%s/%s",
-					config.ReverseProxy, song.Provider, song.ID, url.PathEscape(fmt.Sprintf("%s - %s", song.Title, song.Artist)))
+					config.ReverseProxy, song.Provider, song.ID,
+					url.PathEscape(strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)))
 			} else {
 				track.Path = fmt.Sprintf("%s://%s", song.Provider, song.ID)
 			}

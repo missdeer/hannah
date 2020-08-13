@@ -1,15 +1,20 @@
 package rp
 
 import (
+	"bufio"
+	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
+	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
+	"github.com/ushis/m3u"
 
 	"github.com/missdeer/hannah/cache"
 	"github.com/missdeer/hannah/config"
@@ -22,9 +27,23 @@ const (
 )
 
 var (
-	client *http.Client
-	redis  *cache.RedisCache
+	client                   *http.Client
+	redis                    *cache.RedisCache
+	errUnsupportedProvider   = errors.New("unsupported provider")
+	playerSupportRedirectURL = map[string]bool{
+		"foobar2000": true,
+		"libmpv":     false,
+	}
 )
+
+func supportRedirectURL(userAgent string) bool {
+	for k, v := range playerSupportRedirectURL {
+		if strings.Contains(userAgent, k) {
+			return v
+		}
+	}
+	return true
+}
 
 func getSongInfo(c *gin.Context) {
 	providerName := c.Param("provider")
@@ -47,31 +66,31 @@ func getSongInfo(c *gin.Context) {
 	// resolve URL now
 	p := provider.GetProvider(providerName)
 	if p == nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
 		return
 	}
 	song, err := p.ResolveSongURL(provider.Song{ID: id})
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
 	req, err := http.NewRequest("HEAD", song.URL, nil)
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 	req.Header = c.Request.Header
 
 	resp, err := client.Do(req)
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -86,23 +105,73 @@ func getSongInfo(c *gin.Context) {
 	c.Data(http.StatusOK, resp.Header.Get("Content-Type"), data)
 }
 
-func originIPInChina(c *gin.Context) bool {
-	remoteAddr, _, err := net.SplitHostPort(c.Request.RemoteAddr)
-	if err != nil {
-		return false
+func getPlaylist(c *gin.Context) {
+	providerName := c.Param("provider")
+	id := c.Param("id")
+	refresh := c.Query("refresh")
+
+	urlKey := fmt.Sprintf("%s:%s:playlist", providerName, id)
+	if config.CacheEnabled && refresh != "1" {
+		b, err := redis.GetBytes(urlKey)
+		if err == nil {
+			c.Data(http.StatusOK, "audio/x-mpegurl", b)
+			return
+		}
 	}
 
-	return InChina(remoteAddr)
+	// resolve playlist
+	p := provider.GetProvider(providerName)
+	if p == nil {
+		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
+		return
+	}
+
+	pld, err := p.PlaylistDetail(provider.Playlist{ID: id})
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	playlist := m3u.Playlist{}
+	baseURL := config.BaseURL
+	if baseURL == "" {
+		scheme := c.Request.Header.Get("X-Forwarded-Proto")
+		if scheme == "" {
+			originURL := location.Get(c)
+			scheme = originURL.Scheme
+		}
+		baseURL = fmt.Sprintf("%s://%s", scheme, c.Request.Host)
+	}
+	for _, song := range pld {
+		filename := strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)
+		playlist = append(playlist, m3u.Track{
+			Path:  fmt.Sprintf("%s/%s/%s/%s", baseURL, song.Provider, song.ID, url.PathEscape(filename)),
+			Title: song.Title,
+		})
+	}
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+	_, err = playlist.WriteTo(w)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	if config.CacheEnabled {
+		redis.Put(urlKey, b.Bytes())
+	}
+
+	c.Data(http.StatusOK, "audio/x-mpegurl", b.Bytes())
 }
 
 func getSong(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
-
+	canRedirect := supportRedirectURL(c.Request.UserAgent())
 	// check cache first
 	urlKey := fmt.Sprintf("%s:%s:url", providerName, id)
 	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
-	if config.CacheEnabled && config.RedirectURL {
+	if config.CacheEnabled && config.RedirectURL && canRedirect {
 		if h, err := redis.Get(headerKey); err == nil {
 			if header, ok := h.(http.Header); ok {
 				for k, v := range header {
@@ -120,17 +189,18 @@ func getSong(c *gin.Context) {
 	// resolve URL now
 	p := provider.GetProvider(providerName)
 	if p == nil {
-		c.Abort()
+		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 	song, err := p.ResolveSongURL(provider.Song{ID: id})
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	if config.RedirectURL ||
-		(!config.RedirectURL && config.AutoRedirectURL && originIPInChina(c)) {
+	if canRedirect &&
+		(config.RedirectURL ||
+		(!config.RedirectURL && config.AutoRedirectURL && InChina(c.ClientIP()))) {
 		c.Redirect(http.StatusFound, song.URL)
 		return
 	}
@@ -142,7 +212,7 @@ func getSong(c *gin.Context) {
 
 	req, err := http.NewRequest("GET", song.URL, nil)
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -154,7 +224,7 @@ func getSong(c *gin.Context) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		c.Abort()
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 	defer resp.Body.Close()
@@ -171,6 +241,15 @@ func getSong(c *gin.Context) {
 		_, e := io.Copy(w, resp.Body)
 		return e == nil
 	})
+}
+
+func getSongPlaylist(c *gin.Context) {
+	requestType := c.Query("type")
+	if requestType == "playlist" {
+		getPlaylist(c)
+	} else {
+		getSong(c)
+	}
 }
 
 func Init(addr string) error {
@@ -195,10 +274,15 @@ func Start(addr string, limit string) error {
 	if limit != "" {
 		r.Use(CIDR(limit))
 	}
+	r.Use(location.Default())
 	r.Use(gin.Recovery())
-	r.GET("/:provider/:id/:filename", getSong)
+	r.GET("/:provider/:id/:filename", getSongPlaylist)
 	r.HEAD("/:provider/:id/:filename", getSongInfo)
-	r.GET("/:provider/:id", getSong)
+	r.GET("/:provider/:id", getSongPlaylist)
 	r.HEAD("/:provider/:id", getSongInfo)
+
+	r.NoRoute(func(c *gin.Context) {
+		c.Data(http.StatusNotFound, "text/html; charset=UTF-8", []byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
+	})
 	return r.Run(addr)
 }

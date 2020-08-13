@@ -22,6 +22,7 @@ var (
 	Player              string
 	DownloadDir         string
 	M3UFileName         string
+	BaseURL             string
 	CacheAddr           = "127.0.0.1:6379"
 	ReverseProxy        = "127.0.0.1:8123"
 	Action              = "play"
@@ -32,6 +33,7 @@ var (
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
+		"baseurl":               &BaseURL,
 		"cache":                 &CacheEnabled,
 		"cache-addr":            &CacheAddr,
 		"redirect":              &RedirectURL,

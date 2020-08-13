@@ -6,6 +6,7 @@ require (
 	github.com/bogem/id3v2 v1.2.0
 	github.com/faiface/beep v1.0.2
 	github.com/gdamore/tcell v1.3.0
+	github.com/gin-contrib/location v0.0.2
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gomodule/redigo v1.8.2
 	github.com/jamesnetherton/m3u v0.3.0

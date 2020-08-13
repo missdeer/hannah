@@ -68,6 +68,10 @@ func (rc *RedisCache) GetString(key string) (string, error) {
 	return redis.String(rc.do("GET", key))
 }
 
+func (rc *RedisCache) GetBytes(key string) ([]byte, error) {
+	return redis.Bytes(rc.do("GET", key))
+}
+
 // GetMulti get cache from redis.
 func (rc *RedisCache) GetMulti(keys []string) []interface{} {
 	size := len(keys)

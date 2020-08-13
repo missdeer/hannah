@@ -26,6 +26,7 @@ func main() {
 	}
 
 	showHelpMessage := false
+	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")
 	flag.BoolVarP(&config.CacheEnabled, "cache", "c", config.CacheEnabled, "cache song resolving result in Redis")
 	flag.StringVarP(&config.CacheAddr, "cache-addr", "", config.CacheAddr, "set cache(Redis) service address")
 	flag.BoolVarP(&config.AutoRedirectURL, "auto-redirect", "", config.AutoRedirectURL, "auto detect origin IP, redirect song URL if origin IP is in China")

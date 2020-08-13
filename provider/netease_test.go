@@ -26,7 +26,7 @@ func TestNetease_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	u, err := p.ResolveSongURL(Song{ID: "864450284"})
+	u, err := p.ResolveSongURL(Song{ID: "1426649237"})
 	if err != nil {
 		t.Error(err)
 	}

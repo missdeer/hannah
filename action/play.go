@@ -115,7 +115,7 @@ func scanSongs(songs []string) (res []string) {
 
 func resolve(song provider.Song) (provider.Songs, error) {
 	// local filesystem
-	if _, err := os.Stat(song.URL); !os.IsNotExist(err) {
+	if stat, err := os.Stat(song.URL); os.IsExist(err) && !stat.IsDir() {
 		tag, err := id3v2.Open(song.URL, id3v2.Options{Parse: true})
 		song.Provider = "local filesystem"
 		if err == nil {
@@ -148,16 +148,28 @@ func resolve(song provider.Song) (provider.Songs, error) {
 	if t, ok := values[`type`]; ok && len(t) > 0 {
 		linkType = t[0]
 	}
-	scheme := u.Scheme
-	if _, ok := supportedService[scheme]; ok {
-		p := provider.GetProvider(scheme)
+	providerName := u.Scheme
+	if _, ok := supportedService[providerName]; ok {
+		p := provider.GetProvider(providerName)
 		switch linkType {
 		case "song":
+			if config.ReverseProxyEnabled {
+				scheme := `http`
+				host := config.ReverseProxy
+				if u, err := url.Parse(config.ReverseProxy); err == nil {
+					scheme = u.Scheme
+					host = u.Host
+				}
+				return provider.Songs{
+					provider.Song{
+						ID:       u.Host,
+						Provider: providerName,
+						URL:      fmt.Sprintf("%s://%s/%s/%s", scheme, host, providerName, u.Host),
+					},
+				}, nil
+			}
 			// TODO extract song title & artist
 			if s, err := p.ResolveSongURL(provider.Song{ID: u.Host}); err == nil {
-				if config.ReverseProxyEnabled {
-					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
-				}
 				return provider.Songs{s}, nil
 			}
 		case "playlist":

@@ -30,6 +30,7 @@ var (
 	client                   *http.Client
 	redis                    *cache.RedisCache
 	errUnsupportedProvider   = errors.New("unsupported provider")
+	errInvalidSongID         = errors.New("invaild song ID")
 	playerSupportRedirectURL = map[string]bool{
 		"foobar2000": true,
 		"libmpv":     false,
@@ -168,6 +169,15 @@ func getSong(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
 	canRedirect := supportRedirectURL(c.Request.UserAgent())
+	r := provider.GetSongIDPattern(providerName)
+	if r == nil {
+		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
+		return
+	}
+	if !r.MatchString(id) {
+		c.AbortWithError(http.StatusNotFound, errInvalidSongID)
+		return
+	}
 	// check cache first
 	urlKey := fmt.Sprintf("%s:%s:url", providerName, id)
 	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
@@ -189,7 +199,7 @@ func getSong(c *gin.Context) {
 	// resolve URL now
 	p := provider.GetProvider(providerName)
 	if p == nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
 		return
 	}
 	song, err := p.ResolveSongURL(provider.Song{ID: id})
@@ -198,9 +208,7 @@ func getSong(c *gin.Context) {
 		return
 	}
 
-	if canRedirect &&
-		(config.RedirectURL ||
-		(!config.RedirectURL && config.AutoRedirectURL && InChina(c.ClientIP()))) {
+	if canRedirect && (config.RedirectURL || (!config.RedirectURL && config.AutoRedirectURL && InChina(c.ClientIP()))) {
 		c.Redirect(http.StatusFound, song.URL)
 		return
 	}

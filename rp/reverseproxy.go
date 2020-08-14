@@ -68,8 +68,8 @@ func Start(addr string, limit string) error {
 	r.Use(location.Default())
 	r.Use(gin.Recovery())
 	r.GET("/:provider/:id/:filename", getSongPlaylist)
-	r.HEAD("/:provider/:id/:filename", getSongInfo)
 	r.GET("/:provider/:id", getSongPlaylist)
+	r.HEAD("/:provider/:id/:filename", getSongInfo)
 	r.HEAD("/:provider/:id", getSongInfo)
 
 	r.NoRoute(func(c *gin.Context) {

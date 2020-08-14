@@ -36,6 +36,9 @@ func getSongInfo(c *gin.Context) {
 		return
 	}
 	song, err := p.ResolveSongURL(provider.Song{ID: id})
+	for i := 0; i < config.ReverseProxyRetries && err != nil; i++ {
+		song, err = p.ResolveSongURL(provider.Song{ID: id})
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

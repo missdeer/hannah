@@ -49,6 +49,9 @@ func searchSongs(c *gin.Context) {
 	}
 
 	sr, err := p.Search(keyword, pageNr, limitNr)
+	for i := 0; i < config.ReverseProxyRetries && err != nil; i++ {
+		sr, err = p.Search(keyword, pageNr, limitNr)
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

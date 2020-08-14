@@ -38,6 +38,9 @@ func getPlaylist(c *gin.Context) {
 	}
 
 	pld, err := p.PlaylistDetail(provider.Playlist{ID: id})
+	for i := 0; i < config.ReverseProxyRetries && err != nil; i++ {
+		pld, err = p.PlaylistDetail(provider.Playlist{ID: id})
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

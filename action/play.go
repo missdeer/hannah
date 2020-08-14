@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/bogem/id3v2"
-	"github.com/jamesnetherton/m3u"
+	"github.com/ushis/m3u"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
@@ -62,11 +62,16 @@ func scanSongsInDirectory(dir string) (res []string) {
 		} else {
 			if media.IsSupportedFileType(filepath.Ext(item.Name())) {
 				if strings.ToLower(filepath.Ext(item.Name())) == ".m3u" {
-					if playlist, err := m3u.Parse(filepath.Join(dir, item.Name())); err == nil {
-						for _, track := range playlist.Tracks {
-							res = append(res, track.URI)
+					fn := filepath.Join(dir, item.Name())
+					if f, err := os.OpenFile(fn, os.O_RDONLY, 0644); err == nil {
+						if playlist, err := m3u.Parse(f); err == nil {
+							for _, track := range playlist {
+								res = append(res, track.Path)
+							}
 						}
+						f.Close()
 					}
+
 				} else {
 					res = append(res, filepath.Join(dir, item.Name()))
 				}
@@ -99,10 +104,13 @@ func scanSongs(songs []string) (res []string) {
 		} else {
 			if media.IsSupportedFileType(filepath.Ext(song)) {
 				if strings.ToLower(filepath.Ext(song)) == ".m3u" {
-					if playlist, err := m3u.Parse(song); err == nil {
-						for _, track := range playlist.Tracks {
-							res = append(res, track.URI)
+					if f, err := os.OpenFile(song, os.O_RDONLY, 0644); err == nil {
+						if playlist, err := m3u.Parse(f); err == nil {
+							for _, track := range playlist {
+								res = append(res, track.Path)
+							}
 						}
+						f.Close()
 					}
 				} else {
 					res = append(res, song)

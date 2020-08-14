@@ -90,3 +90,25 @@ func TestNetease_Name(t *testing.T) {
 		t.Error("provider name mismatched")
 	}
 }
+
+func TestNetease_ArtistSongs(t *testing.T) {
+	p := &netease{}
+	r, err := p.ArtistSongs("10559")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}
+
+func TestNetease_AlbumSongs(t *testing.T) {
+	p := &netease{}
+	r, err := p.AlbumSongs("73315403")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}

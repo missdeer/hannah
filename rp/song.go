@@ -14,17 +14,15 @@ import (
 )
 
 var (
-	playerSupportRedirectURL = map[string]bool{
-		"foobar2000": true,
-		"libmpv":     false,
-		"BASS":       false,
+	playersNotSupportRedirectURL = []string{
+		"libmpv", "BASS",
 	}
 )
 
 func supportRedirectURL(userAgent string) bool {
-	for k, v := range playerSupportRedirectURL {
+	for _, k := range playersNotSupportRedirectURL {
 		if strings.Contains(userAgent, k) {
-			return v
+			return false
 		}
 	}
 	return true

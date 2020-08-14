@@ -76,7 +76,7 @@ func searchSongs(c *gin.Context) {
 	}
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)
-	_, err = playlist.WriteTo(w)
+	_, err = playlist.WriteSimpleTo(w)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

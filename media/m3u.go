@@ -75,7 +75,7 @@ func AppendSongToM3U(song provider.Song, origin bool, done chan string) error {
 	pl = append(pl, *track)
 
 	f.Seek(0, 0)
-	if _, err := pl.WriteTo(f); err != nil {
+	if _, err := pl.WriteSimpleTo(f); err != nil {
 		return err
 	}
 
@@ -110,7 +110,7 @@ func AppendSongsToM3U(songs provider.Songs, origin bool) error {
 		}
 	}
 	f.Seek(0, 0)
-	if _, err := pl.WriteTo(f); err != nil {
+	if _, err := pl.WriteSimpleTo(f); err != nil {
 		return err
 	}
 

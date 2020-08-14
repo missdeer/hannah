@@ -77,7 +77,7 @@ func makePlaylist(c *gin.Context, id string, providerName string) ([]byte, error
 	}
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)
-	_, err = playlist.WriteTo(w)
+	_, err = playlist.WriteSimpleTo(w)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return nil, err
@@ -98,7 +98,7 @@ func makeSongInM3U(songURL string, songTitle string) ([]byte, error) {
 	}}
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)
-	_, err := playlist.WriteTo(w)
+	_, err := playlist.WriteSimpleTo(w)
 	if err != nil {
 		return nil, err
 	}

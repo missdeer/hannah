@@ -247,7 +247,7 @@ func (p *netease) ResolveSongURL(song Song) (Song, error) {
 	}
 
 	if len(songInfo.Data) == 0 || songInfo.Data[0].URL == "" {
-		return song, err
+		return song, ErrEmptyPURL
 	}
 
 	song.URL = songInfo.Data[0].URL

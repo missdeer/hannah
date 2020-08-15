@@ -36,6 +36,7 @@ func searchSongs(c *gin.Context) {
 	if config.CacheEnabled && refresh != "1" {
 		b, err := redis.GetBytes(urlKey)
 		if err == nil {
+			c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
 			c.Data(http.StatusOK, "audio/x-mpegurl", b)
 			return
 		}
@@ -86,5 +87,6 @@ func searchSongs(c *gin.Context) {
 		redis.Put(urlKey, b.Bytes())
 	}
 
+	c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
 	c.Data(http.StatusOK, "audio/x-mpegurl", b.Bytes())
 }

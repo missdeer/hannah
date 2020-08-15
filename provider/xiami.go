@@ -516,6 +516,14 @@ func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
 	return songs, nil
 }
 
+func (p *xiami) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *xiami) Name() string {
 	return "xiami"
 }

@@ -92,7 +92,10 @@ func TestNetease_Name(t *testing.T) {
 }
 
 func TestNetease_ArtistSongs(t *testing.T) {
-	p := &netease{}
+	p := GetProvider("netease")
+	if p == nil {
+		t.Error("can't get provider")
+	}
 	r, err := p.ArtistSongs("10559")
 	if err != nil {
 		t.Error(err)
@@ -103,7 +106,10 @@ func TestNetease_ArtistSongs(t *testing.T) {
 }
 
 func TestNetease_AlbumSongs(t *testing.T) {
-	p := &netease{}
+	p := GetProvider("netease")
+	if p == nil {
+		t.Error("can't get provider")
+	}
 	r, err := p.AlbumSongs("73315403")
 	if err != nil {
 		t.Error(err)

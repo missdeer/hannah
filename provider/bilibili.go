@@ -210,6 +210,14 @@ func (p *bilibili) PlaylistDetail(pl Playlist) (Songs, error) {
 	return songs, nil
 }
 
+func (p *bilibili) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *bilibili) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *bilibili) Name() string {
 	return "bilibili"
 }

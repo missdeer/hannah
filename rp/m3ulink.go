@@ -148,6 +148,7 @@ func generateM3ULink(c *gin.Context) {
 					c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
 						[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
 				} else {
+					c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
 					c.Data(http.StatusOK, "audio/x-mpegurl", b)
 				}
 				return
@@ -163,6 +164,7 @@ func generateM3ULink(c *gin.Context) {
 					c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
 						[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
 				} else {
+					c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
 					c.Data(http.StatusOK, "audio/x-mpegurl", b)
 				}
 				return

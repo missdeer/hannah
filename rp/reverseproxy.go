@@ -36,6 +36,10 @@ func getSongPlaylist(c *gin.Context) {
 	switch strings.ToLower(requestType) {
 	case "playlist":
 		getPlaylist(c)
+	case "artist":
+		getArtistSongs(c)
+	case "album":
+		getAlbumSongs(c)
 	case "search":
 		searchSongs(c)
 	default:

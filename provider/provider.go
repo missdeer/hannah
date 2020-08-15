@@ -37,6 +37,8 @@ type IProvider interface {
 	ResolveSongLyric(song Song) (Song, error)
 	HotPlaylist(page int, limit int) (Playlists, error)
 	PlaylistDetail(pl Playlist) (Songs, error)
+	ArtistSongs(id string) (Songs, error)
+	AlbumSongs(id string) (Songs, error)
 	Name() string
 }
 

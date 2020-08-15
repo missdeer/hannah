@@ -82,6 +82,10 @@ func searchSongs(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
+	if err = w.Flush(); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
 	if config.CacheEnabled {
 		redis.Put(urlKey, b.Bytes())

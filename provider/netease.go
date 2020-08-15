@@ -33,6 +33,8 @@ const (
 	neteaseAPIHot                      = `http://music.163.com/discover/playlist/?order=hot&limit=%d&offset=%d`
 	neteaseAPIPlaylistDetail           = `http://music.163.com/weapi/v3/playlist/detail`
 	neteaseAPISongDetail               = `http://music.163.com/weapi/v3/song/detail`
+	neteaseAPIGetArtistSongs           = `http://music.163.com/weapi/v1/artist/%s`
+	neteaseAPIGetAlbumSongs            = `http://music.163.com/weapi/v1/album/%s`
 )
 
 func weapi(origData interface{}) map[string]interface{} {
@@ -247,7 +249,7 @@ func (p *netease) ResolveSongURL(song Song) (Song, error) {
 	}
 
 	if len(songInfo.Data) == 0 || songInfo.Data[0].URL == "" {
-		return song, err
+		return song, ErrEmptyPURL
 	}
 
 	song.URL = songInfo.Data[0].URL
@@ -522,6 +524,150 @@ func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
 	}
 
 	return
+}
+
+type neteaseArtistSongs struct {
+	Artist struct {
+		Name      string `json:"name"`
+		PicURL    string `json:"picUrl"`
+		Img1v1URL string `json:"img1v1Url"`
+	} `json:"artist"`
+	HotSongs []struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+	} `json:"hotSongs"`
+}
+
+func (p *netease) ArtistSongs(id string) (res Songs, err error) {
+	data := map[string]interface{}{
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	u := fmt.Sprintf(neteaseAPIGetArtistSongs, id)
+	req, err := http.NewRequest("POST", u, strings.NewReader(postBody))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return res, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var sd neteaseArtistSongs
+	if err = json.Unmarshal(content, &sd); err != nil {
+		return
+	}
+
+	for _, d := range sd.HotSongs {
+		res = append(res, Song{
+			ID:       strconv.Itoa(d.ID),
+			Title:    d.Name,
+			Image:    sd.Artist.PicURL,
+			Provider: "netease",
+			Artist:   sd.Artist.Name,
+		})
+	}
+	return res, nil
+}
+
+type neteaseAlbumSongs struct {
+	Code  int `json:"code"`
+	Songs []struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+		AL   struct {
+			PicURL string `json:"picUrl"`
+		} `json:"al"`
+		AR []struct {
+			Name string `json:"name"`
+		} `json:"ar"`
+	} `json:"songs"`
+}
+
+func (p *netease) AlbumSongs(id string) (res Songs, err error) {
+	data := map[string]interface{}{
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	u := fmt.Sprintf(neteaseAPIGetAlbumSongs, id)
+	req, err := http.NewRequest("POST", u, strings.NewReader(postBody))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return res, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var sd neteaseAlbumSongs
+	if err = json.Unmarshal(content, &sd); err != nil {
+		return
+	}
+
+	for _, d := range sd.Songs {
+		var artists []string
+		for _, a := range d.AR {
+			artists = append(artists, a.Name)
+		}
+		res = append(res, Song{
+			ID:       strconv.Itoa(d.ID),
+			Title:    d.Name,
+			Image:    d.AL.PicURL,
+			Provider: "netease",
+			Artist:   strings.Join(artists, "/"),
+		})
+	}
+	return res, nil
 }
 
 func (p *netease) Name() string {

@@ -26,7 +26,7 @@ func TestNetease_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	u, err := p.ResolveSongURL(Song{ID: "864450284"})
+	u, err := p.ResolveSongURL(Song{ID: "1426649237"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -41,7 +41,7 @@ func TestNetease_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	u, err := p.ResolveSongLyric(Song{ID: "864450284"})
+	u, err := p.ResolveSongLyric(Song{ID: "1426649237"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -88,5 +88,33 @@ func TestNetease_Name(t *testing.T) {
 	}
 	if p.Name() != "netease" {
 		t.Error("provider name mismatched")
+	}
+}
+
+func TestNetease_ArtistSongs(t *testing.T) {
+	p := GetProvider("netease")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+	r, err := p.ArtistSongs("10559")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}
+
+func TestNetease_AlbumSongs(t *testing.T) {
+	p := GetProvider("netease")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+	r, err := p.AlbumSongs("73315403")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
 	}
 }

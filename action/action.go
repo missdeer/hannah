@@ -86,7 +86,13 @@ func playSongs(songs provider.Songs, r songResolver) error {
 				}
 
 				if config.ReverseProxyEnabled {
-					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
+					scheme := `http`
+					host := config.ReverseProxy
+					if u, err := url.Parse(config.ReverseProxy); err == nil {
+						scheme = u.Scheme
+						host = u.Host
+					}
+					s.URL = fmt.Sprintf("%s://%s/%s/%s", scheme, host, s.Provider, s.ID)
 				}
 				song.URL = s.URL
 				count = len(ss)

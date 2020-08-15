@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net/url"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
@@ -34,7 +35,13 @@ func playlist(ids ...string) error {
 					return nil, err
 				}
 				if config.ReverseProxyEnabled {
-					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
+					scheme := `http`
+					host := config.ReverseProxy
+					if u, err := url.Parse(config.ReverseProxy); err == nil {
+						scheme = u.Scheme
+						host = u.Host
+					}
+					s.URL = fmt.Sprintf("%s://%s/%s/%s", scheme, host, s.Provider, s.ID)
 				}
 				return provider.Songs{s}, err
 			})

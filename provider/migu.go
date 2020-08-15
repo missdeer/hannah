@@ -328,6 +328,14 @@ func (p *migu) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 	return songs, nil
 }
 
+func (p *migu) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *migu) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *migu) Name() string {
 	return "migu"
 }

@@ -28,6 +28,14 @@ func (p *musictool) PlaylistDetail(pl Playlist) (Songs, error) {
 	return nil, nil
 }
 
+func (p *musictool) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *musictool) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *musictool) Name() string {
 	return "musictool"
 }

@@ -17,6 +17,9 @@ import (
 	"github.com/missdeer/hannah/provider"
 )
 
+type getterFunc func(provider.IProvider) (provider.Songs, error)
+type makeFunc func(*gin.Context, string, string) ([]byte, error)
+
 var (
 	playlistPatterns = map[*regexp.Regexp]string{
 		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/discover\/toplist\?id=([0-9]+)`):     "netease",
@@ -36,12 +39,17 @@ var (
 		regexp.MustCompile(`^http:\/\/kuwo.cn\/play_detail\/([0-9]+)`):               "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/song\/([0-9]+)`):   "migu",
 	}
+	artistPatterns = map[*regexp.Regexp]string{
+		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`): "netease",
+	}
+	albumPatterns = map[*regexp.Regexp]string{
+		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`): "netease",
+	}
 )
 
-func makePlaylist(c *gin.Context, id string, providerName string) ([]byte, error) {
-	urlKey := fmt.Sprintf("%s:%s:playlist", providerName, id)
+func makeSongs(c *gin.Context, providerName string, cacheKey string, getter getterFunc) ([]byte, error) {
 	if config.CacheEnabled {
-		b, err := redis.GetBytes(urlKey)
+		b, err := redis.GetBytes(cacheKey)
 		if err == nil {
 			return b, nil
 		}
@@ -53,7 +61,7 @@ func makePlaylist(c *gin.Context, id string, providerName string) ([]byte, error
 		return nil, errUnsupportedProvider
 	}
 
-	pld, err := p.PlaylistDetail(provider.Playlist{ID: id})
+	pld, err := getter(p)
 	if err != nil {
 		return nil, err
 	}
@@ -85,10 +93,43 @@ func makePlaylist(c *gin.Context, id string, providerName string) ([]byte, error
 	w.Flush()
 
 	if config.CacheEnabled {
-		redis.Put(urlKey, b.Bytes())
+		redis.Put(cacheKey, b.Bytes())
 	}
 
 	return b.Bytes(), nil
+}
+
+func makeArtistSongs(c *gin.Context, id string, providerName string) ([]byte, error) {
+	urlKey := fmt.Sprintf("%s:%s:artist", providerName, id)
+	return makeSongs(c, providerName, urlKey, func(p provider.IProvider) (provider.Songs, error) {
+		pld, err := p.ArtistSongs(id)
+		if err != nil {
+			return nil, err
+		}
+		return pld, nil
+	})
+}
+
+func makeAlbumSongs(c *gin.Context, id string, providerName string) ([]byte, error) {
+	urlKey := fmt.Sprintf("%s:%s:album", providerName, id)
+	return makeSongs(c, providerName, urlKey, func(p provider.IProvider) (provider.Songs, error) {
+		pld, err := p.AlbumSongs(id)
+		if err != nil {
+			return nil, err
+		}
+		return pld, nil
+	})
+}
+
+func makePlaylist(c *gin.Context, id string, providerName string) ([]byte, error) {
+	urlKey := fmt.Sprintf("%s:%s:playlist", providerName, id)
+	return makeSongs(c, providerName, urlKey, func(p provider.IProvider) (provider.Songs, error) {
+		pld, err := p.PlaylistDetail(provider.Playlist{ID: id})
+		if err != nil {
+			return nil, err
+		}
+		return pld, nil
+	})
 }
 
 func makeSongInM3U(songURL string, songTitle string) ([]byte, error) {
@@ -139,38 +180,33 @@ func generateM3ULink(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, errInvalidURL)
 		return
 	}
-	for pattern, providerName := range playlistPatterns {
-		if pattern.MatchString(u) {
-			ss := pattern.FindAllStringSubmatch(u, -1)
-			if len(ss) == 1 && len(ss[0]) == 2 {
-				b, err := makePlaylist(c, ss[0][1], providerName)
-				if err != nil {
-					c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
-						[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
-				} else {
-					c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
-					c.Data(http.StatusOK, "audio/x-mpegurl", b)
-				}
-				return
-			}
-		}
+	if makeM3U(c, u, playlistPatterns, makePlaylist) ||
+		makeM3U(c, u, albumPatterns, makeAlbumSongs) ||
+		makeM3U(c, u, artistPatterns, makeArtistSongs) ||
+		makeM3U(c, u, songPatterns, makeSong) {
+		return
 	}
-	for pattern, providerName := range songPatterns {
-		if pattern.MatchString(u) {
-			ss := pattern.FindAllStringSubmatch(u, -1)
-			if len(ss) == 1 && len(ss[0]) == 2 {
-				b, err := makeSong(c, ss[0][1], providerName)
-				if err != nil {
-					c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
-						[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
-				} else {
-					c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
-					c.Data(http.StatusOK, "audio/x-mpegurl", b)
-				}
-				return
-			}
-		}
-	}
+
 	c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
 		[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
+}
+
+func makeM3U(c *gin.Context, u string, patterns map[*regexp.Regexp]string, make makeFunc) bool {
+	for pattern, providerName := range patterns {
+		if pattern.MatchString(u) {
+			ss := pattern.FindAllStringSubmatch(u, -1)
+			if len(ss) == 1 && len(ss[0]) == 2 {
+				b, err := make(c, ss[0][1], providerName)
+				if err != nil {
+					c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
+						[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
+				} else {
+					c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
+					c.Data(http.StatusOK, "audio/x-mpegurl", b)
+				}
+				return true
+			}
+		}
+	}
+	return false
 }

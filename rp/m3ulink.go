@@ -40,10 +40,12 @@ var (
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/song\/([0-9]+)`):   "migu",
 	}
 	artistPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`): "netease",
+		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`):     "netease",
+		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/singer\/([0-9a-zA-Z]+)\.html`): "qq",
 	}
 	albumPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`): "netease",
+		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`):     "netease",
+		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/album\/([0-9a-zA-Z]+)\.html`): "qq",
 	}
 )
 

@@ -356,8 +356,89 @@ func (p *qq) ArtistSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+type qqAlbumSongs struct {
+	Code int `json:"code"`
+	Data struct {
+		SingerName   string `json:"singername"`
+		SingerMID    string `json:"singermid"`
+		ID           int    `json:"id"`
+		Total        int    `json:"total"`
+		TotalSongNum int    `json:"total_song_num"`
+		MID          string `json:"mid"`
+		List         []struct {
+			SongName  string `json:"songname"`
+			SongMID   string `json:"songmid"`
+			AlbumMID  string `json:"albummid"`
+			AlbumName string `json:"albumname"`
+			Singer    []struct {
+				MID  string `json:"mid"`
+				Name string `json:"name"`
+			} `json:"singer"`
+		} `json:"list"`
+	} `json:"data"`
+}
+
 func (p *qq) AlbumSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	// https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_info_cp.fcg?albummid=001IskfD3Vncxo&g_tk=1278911659&hostUin=0&format=jsonp&jsonpCallback=callback&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0
+	u := fmt.Sprintf(`https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_info_cp.fcg?albummid=%s&g_tk=1278911659&hostUin=0&format=jsonp&jsonpCallback=callback&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`, id)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://y.qq.com/")
+	req.Header.Set("Origin", "http://y.qq.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+	content = bytes.TrimSpace(content)
+	if bytes.HasPrefix(content, []byte(`callback(`)) && bytes.HasSuffix(content, []byte(`})`)) {
+		content = content[len(`callback(`):]
+		content = content[:len(content)-1]
+	}
+
+	var pld qqAlbumSongs
+	if err = json.Unmarshal(content, &pld); err != nil {
+		return nil, err
+	}
+
+	if len(pld.Data.List) == 0 {
+		return nil, errors.New("empty playlist")
+	}
+
+	var songs Songs
+	for _, pl := range pld.Data.List {
+		var singers []string
+		for _, s := range pl.Singer {
+			singers = append(singers, s.Name)
+		}
+		songs = append(songs, Song{
+			ID:       pl.SongMID,
+			Title:    pl.SongName,
+			Artist:   strings.Join(singers, "/"),
+			Provider: "qq",
+		})
+	}
+
+	return songs, nil
 }
 
 func (p *qq) Name() string {

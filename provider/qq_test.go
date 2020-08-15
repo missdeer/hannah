@@ -75,3 +75,18 @@ func TestQq_Name(t *testing.T) {
 		t.Error("provider name mismatched")
 	}
 }
+
+func TestQq_AlbumSongs(t *testing.T) {
+	p := GetProvider("qq")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	r, err := p.AlbumSongs("001IskfD3Vncxo")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}

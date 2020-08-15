@@ -21,6 +21,7 @@ const (
 	xiamiBaseURL           = `https://www.xiami.com`
 	xiamiAPIHot            = `/api/list/collect`
 	xiamiAPIPlaylistDetail = `/api/collect/initialize`
+	xiamiAPIAlbumDetail    = `/api/album/initialize`
 )
 
 var (
@@ -520,8 +521,91 @@ func (p *xiami) ArtistSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+type xiamiAlbumSongs struct {
+	Code   string `json:"code"`
+	Result struct {
+		Status string `json:"status"`
+		Data   struct {
+			AlbumDetail struct {
+				AlbumLogo  string `json:"albumLogo"`
+				ArtistName string `json:"artistName"`
+				Songs      []struct {
+					SongID       int    `json:"songId"`
+					SongStringId string `json:"songStringId"`
+					SongName     string `json:"songName"`
+					LyricInfo    struct {
+						LyricFile string `json:"lyricFile"`
+					} `json:"lyricInfo"`
+				} `json:"songs"`
+				Artists []struct {
+					ArtistName string `json:"artistName"`
+					ArtistLogo string `json:"artistLogo"`
+				} `json:"artists"`
+			} `json:"albumdetail"`
+		} `json:"data"`
+	} `json:"result"`
+}
+
 func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIAlbumDetail, `xm_sg_tk`)
+	if err != nil {
+		return nil, err
+	}
+
+	model := map[string]interface{}{
+		"albumId": id,
+	}
+	u, err := signPlaylistPayload(token, model, xiamiAPIAlbumDetail)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Origin", "https://h.xiami.com")
+	req.Header.Set("Referer", "https://h.xiami.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var pld xiamiAlbumSongs
+	if err = json.Unmarshal(content, &pld); err != nil {
+		return nil, err
+	}
+
+	var artists []string
+	for _, a := range pld.Result.Data.AlbumDetail.Artists {
+		artists = append(artists, a.ArtistName)
+	}
+	var songs Songs
+	for _, pl := range pld.Result.Data.AlbumDetail.Songs {
+		songs = append(songs, Song{
+			ID:       strconv.Itoa(pl.SongID),
+			Title:    pl.SongName,
+			Artist:   strings.Join(artists, "/"),
+			Image:    pld.Result.Data.AlbumDetail.AlbumLogo,
+			Lyric:    pl.LyricInfo.LyricFile,
+			Provider: "xiami",
+		})
+	}
+
+	return songs, nil
 }
 
 func (p *xiami) Name() string {

@@ -98,3 +98,17 @@ func TestListenFiles_Sort(t *testing.T) {
 		t.Error(`lfs[3]!={Quality: "e", Format: "m4a"},`)
 	}
 }
+
+func TestXiami_AlbumSongs(t *testing.T) {
+	p := GetProvider("xiami")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+	r, err := p.AlbumSongs("qy9LZw92bc7")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}

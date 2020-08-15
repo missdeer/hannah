@@ -2,6 +2,7 @@ package provider
 
 import (
 	"errors"
+	"regexp"
 	"sync"
 
 	jsoniter "github.com/json-iterator/go"
@@ -36,6 +37,8 @@ type IProvider interface {
 	ResolveSongLyric(song Song) (Song, error)
 	HotPlaylist(page int, limit int) (Playlists, error)
 	PlaylistDetail(pl Playlist) (Songs, error)
+	ArtistSongs(id string) (Songs, error)
+	AlbumSongs(id string) (Songs, error)
 	Name() string
 }
 
@@ -78,13 +81,15 @@ var (
 		"kuwo":     func() IProvider { return &kuwo{} },
 		"bilibili": func() IProvider { return &bilibili{} },
 		"migu":     func() IProvider { return &migu{} },
-		"ne":       func() IProvider { return &netease{} },
-		"xm":       func() IProvider { return &xiami{} },
-		"kg":       func() IProvider { return &kugou{} },
-		"wu":       func() IProvider { return &kuwo{} },
-		"b":        func() IProvider { return &bilibili{} },
-		"mg":       func() IProvider { return &migu{} },
-		"mt":       func() IProvider { return &musictool{} },
+	}
+	providerIDPatternMap = map[string]*regexp.Regexp{
+		"netease":  regexp.MustCompile(`^[0-9]+$`),
+		"xiami":    regexp.MustCompile(`^[0-9]+$`),
+		"qq":       regexp.MustCompile(`^[0-9a-zA-Z]+$`),
+		"kugou":    regexp.MustCompile(`^[0-9A-F]+$`),
+		"kuwo":     regexp.MustCompile(`^[0-9]+$`),
+		"bilibili": regexp.MustCompile(`^[0-9]+$`),
+		"migu":     regexp.MustCompile(`^[0-9]+$`),
 	}
 )
 
@@ -96,6 +101,14 @@ func GetProvider(provider string) IProvider {
 
 	if p := providers.add(provider); p != nil {
 		return p
+	}
+	return nil
+}
+
+func GetSongIDPattern(provider string) *regexp.Regexp {
+	r, ok := providerIDPatternMap[provider]
+	if ok {
+		return r
 	}
 	return nil
 }

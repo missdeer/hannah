@@ -352,6 +352,14 @@ func (p *qq) PlaylistDetail(pl Playlist) (Songs, error) {
 	return songs, nil
 }
 
+func (p *qq) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *qq) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *qq) Name() string {
 	return "qq"
 }

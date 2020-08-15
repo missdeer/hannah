@@ -17,6 +17,7 @@ var (
 	RedirectURL         bool
 	AutoRedirectURL     bool
 	ReverseProxyEnabled bool
+	ReverseProxyRetries int
 	Socks5Proxy         string
 	HttpProxy           string
 	Player              string
@@ -40,6 +41,7 @@ var (
 		"auto-redirect":         &AutoRedirectURL,
 		"reverse-proxy-enabled": &ReverseProxyEnabled,
 		"reverse-proxy":         &ReverseProxy,
+		"reverse-proxy-retries": &ReverseProxyRetries,
 		"dir":                   &DownloadDir,
 		"m3u":                   &M3UFileName,
 		"shuffle":               &Shuffle,

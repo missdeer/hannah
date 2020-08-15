@@ -308,6 +308,14 @@ func (p *kuwo) PlaylistDetail(pl Playlist) (Songs, error) {
 	return songs, nil
 }
 
+func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *kuwo) Name() string {
 	return "kuwo"
 }

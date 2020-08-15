@@ -49,6 +49,14 @@ CHECKS:=go.mod go.sum \
     main.go \
     rp/reverseproxy.go \
     rp/limit.go \
+    rp/album.go \
+    rp/artist.go \
+    rp/inchina.go \
+    rp/info.go \
+    rp/m3ulink.go \
+    rp/playlist.go \
+    rp/search.go \
+    rp/song.go \
     media/media.go \
     media/download.go \
     media/m3u.go \

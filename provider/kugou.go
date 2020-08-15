@@ -281,6 +281,14 @@ func (p *kugou) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 	return songs, nil
 }
 
+func (p *kugou) ArtistSongs(id string) (res Songs, err error) {
+	return
+}
+
+func (p *kugou) AlbumSongs(id string) (res Songs, err error) {
+	return
+}
+
 func (p *kugou) Name() string {
 	return "kugou"
 }

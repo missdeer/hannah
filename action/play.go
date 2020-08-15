@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/bogem/id3v2"
-	"github.com/jamesnetherton/m3u"
+	"github.com/ushis/m3u"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
@@ -62,11 +62,16 @@ func scanSongsInDirectory(dir string) (res []string) {
 		} else {
 			if media.IsSupportedFileType(filepath.Ext(item.Name())) {
 				if strings.ToLower(filepath.Ext(item.Name())) == ".m3u" {
-					if playlist, err := m3u.Parse(filepath.Join(dir, item.Name())); err == nil {
-						for _, track := range playlist.Tracks {
-							res = append(res, track.URI)
+					fn := filepath.Join(dir, item.Name())
+					if f, err := os.OpenFile(fn, os.O_RDONLY, 0644); err == nil {
+						if playlist, err := m3u.Parse(f); err == nil {
+							for _, track := range playlist {
+								res = append(res, track.Path)
+							}
 						}
+						f.Close()
 					}
+
 				} else {
 					res = append(res, filepath.Join(dir, item.Name()))
 				}
@@ -99,10 +104,13 @@ func scanSongs(songs []string) (res []string) {
 		} else {
 			if media.IsSupportedFileType(filepath.Ext(song)) {
 				if strings.ToLower(filepath.Ext(song)) == ".m3u" {
-					if playlist, err := m3u.Parse(song); err == nil {
-						for _, track := range playlist.Tracks {
-							res = append(res, track.URI)
+					if f, err := os.OpenFile(song, os.O_RDONLY, 0644); err == nil {
+						if playlist, err := m3u.Parse(f); err == nil {
+							for _, track := range playlist {
+								res = append(res, track.Path)
+							}
 						}
+						f.Close()
 					}
 				} else {
 					res = append(res, song)
@@ -115,7 +123,7 @@ func scanSongs(songs []string) (res []string) {
 
 func resolve(song provider.Song) (provider.Songs, error) {
 	// local filesystem
-	if _, err := os.Stat(song.URL); !os.IsNotExist(err) {
+	if stat, err := os.Stat(song.URL); os.IsExist(err) && !stat.IsDir() {
 		tag, err := id3v2.Open(song.URL, id3v2.Options{Parse: true})
 		song.Provider = "local filesystem"
 		if err == nil {
@@ -148,16 +156,28 @@ func resolve(song provider.Song) (provider.Songs, error) {
 	if t, ok := values[`type`]; ok && len(t) > 0 {
 		linkType = t[0]
 	}
-	scheme := u.Scheme
-	if _, ok := supportedService[scheme]; ok {
-		p := provider.GetProvider(scheme)
+	providerName := u.Scheme
+	if _, ok := supportedService[providerName]; ok {
+		p := provider.GetProvider(providerName)
 		switch linkType {
 		case "song":
+			if config.ReverseProxyEnabled {
+				scheme := `http`
+				host := config.ReverseProxy
+				if u, err := url.Parse(config.ReverseProxy); err == nil {
+					scheme = u.Scheme
+					host = u.Host
+				}
+				return provider.Songs{
+					provider.Song{
+						ID:       u.Host,
+						Provider: providerName,
+						URL:      fmt.Sprintf("%s://%s/%s/%s", scheme, host, providerName, u.Host),
+					},
+				}, nil
+			}
 			// TODO extract song title & artist
 			if s, err := p.ResolveSongURL(provider.Song{ID: u.Host}); err == nil {
-				if config.ReverseProxyEnabled {
-					s.URL = fmt.Sprintf("http://%s/%s/%s", config.ReverseProxy, s.Provider, s.ID)
-				}
 				return provider.Songs{s}, nil
 			}
 		case "playlist":

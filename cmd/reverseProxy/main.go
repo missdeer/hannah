@@ -25,6 +25,7 @@ func main() {
 	}
 	showHelpMessage := false
 	limit := ""
+	flag.IntVarP(&config.ReverseProxyRetries, "retry", "", config.ReverseProxyRetries, "reverse proxy retries count")
 	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")
 	flag.StringVarP(&addr, "bind-addr", "b", addr, "set bind address")
 	flag.StringVarP(&limit, "access-limit", "l", limit, "access limit, CDIR list separated by comma, for example: 172.18.0.0/16, 127.0.0.1/32")

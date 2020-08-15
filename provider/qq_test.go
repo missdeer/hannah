@@ -20,6 +20,14 @@ func TestQq_PlaylistDetail(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	songs, err := p.PlaylistDetail(Playlist{ID: `3602407677`})
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't get playlist detail")
+	}
 }
 
 func TestQq_Search(t *testing.T) {
@@ -83,6 +91,21 @@ func TestQq_AlbumSongs(t *testing.T) {
 	}
 
 	r, err := p.AlbumSongs("001IskfD3Vncxo")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}
+
+func TestQq_ArtistSongs(t *testing.T) {
+	p := GetProvider("qq")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	r, err := p.ArtistSongs("004aRKga0CXIPm")
 	if err != nil {
 		t.Error(err)
 	}

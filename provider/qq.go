@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -289,8 +288,7 @@ type qqPlaylistDetail struct {
 
 func (p *qq) PlaylistDetail(pl Playlist) (Songs, error) {
 	// http://i.y.qq.com/qzone-music/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg?type=1&json=1&utf8=1&onlysong=0&nosign=1&disstid=%s&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&jsonpCallback=jsonCallback&needNewCode=0
-	u := fmt.Sprintf(`http://i.y.qq.com/qzone-music/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg?type=1&json=1&utf8=1&onlysong=0&nosign=1&disstid=%s&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&jsonpCallback=jsonCallback&needNewCode=0`,
-		pl.ID)
+	u := fmt.Sprintf(`http://i.y.qq.com/qzone-music/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg?type=1&json=1&utf8=1&onlysong=0&nosign=1&disstid=%s&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`, pl.ID)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
@@ -318,11 +316,6 @@ func (p *qq) PlaylistDetail(pl Playlist) (Songs, error) {
 	content, err := util.ReadHttpResponseBody(resp)
 	if err != nil {
 		return nil, err
-	}
-
-	if bytes.HasPrefix(content, []byte(`jsonCallback(`)) && bytes.HasSuffix(content, []byte(`)`)) {
-		content = content[len(`jsonCallback(`):]
-		content = content[:len(content)-1]
 	}
 
 	var pld qqPlaylistDetail
@@ -352,35 +345,31 @@ func (p *qq) PlaylistDetail(pl Playlist) (Songs, error) {
 	return songs, nil
 }
 
-func (p *qq) ArtistSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
-}
-
-type qqAlbumSongs struct {
+type qqArtistSongs struct {
 	Code int `json:"code"`
 	Data struct {
-		SingerName   string `json:"singername"`
-		SingerMID    string `json:"singermid"`
-		ID           int    `json:"id"`
-		Total        int    `json:"total"`
-		TotalSongNum int    `json:"total_song_num"`
-		MID          string `json:"mid"`
-		List         []struct {
-			SongName  string `json:"songname"`
-			SongMID   string `json:"songmid"`
-			AlbumMID  string `json:"albummid"`
-			AlbumName string `json:"albumname"`
-			Singer    []struct {
-				MID  string `json:"mid"`
-				Name string `json:"name"`
-			} `json:"singer"`
+		SingerID   string `json:"singer_id"`
+		SingerMID  string `json:"singer_mid"`
+		SingerName string `json:"singer_name"`
+		Total      int    `json:"total"`
+		List       []struct {
+			MusicData struct {
+				AlbumMID  string `json:"albummid"`
+				AlbumName string `json:"AlbumName"`
+				SongName  string `json:"songname"`
+				SongMID   string `json:"songmid"`
+				Singer    []struct {
+					MID  string `json:"mid"`
+					Name string `json:"name"`
+				} `json:"singer"`
+			} `json:"musicData"`
 		} `json:"list"`
 	} `json:"data"`
 }
 
-func (p *qq) AlbumSongs(id string) (res Songs, err error) {
-	// https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_info_cp.fcg?albummid=001IskfD3Vncxo&g_tk=1278911659&hostUin=0&format=jsonp&jsonpCallback=callback&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0
-	u := fmt.Sprintf(`https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_info_cp.fcg?albummid=%s&g_tk=1278911659&hostUin=0&format=jsonp&jsonpCallback=callback&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`, id)
+func (p *qq) ArtistSongs(id string) (res Songs, err error) {
+	// https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?g_tk=5381&jsonpCallback=callback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&singermid=004aRKga0CXIPm&order=listen&begin=0&num=30&songstatus=1
+	u := fmt.Sprintf(`https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&singermid=%s&order=listen&begin=0&num=300&songstatus=1`, id)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
@@ -409,10 +398,85 @@ func (p *qq) AlbumSongs(id string) (res Songs, err error) {
 	if err != nil {
 		return nil, err
 	}
-	content = bytes.TrimSpace(content)
-	if bytes.HasPrefix(content, []byte(`callback(`)) && bytes.HasSuffix(content, []byte(`})`)) {
-		content = content[len(`callback(`):]
-		content = content[:len(content)-1]
+
+	var pld qqArtistSongs
+	if err = json.Unmarshal(content, &pld); err != nil {
+		return nil, err
+	}
+
+	if len(pld.Data.List) == 0 {
+		return nil, errors.New("empty playlist")
+	}
+
+	var songs Songs
+	for _, pl := range pld.Data.List {
+		var singers []string
+		for _, s := range pl.MusicData.Singer {
+			singers = append(singers, s.Name)
+		}
+		songs = append(songs, Song{
+			ID:       pl.MusicData.SongMID,
+			Title:    pl.MusicData.SongName,
+			Artist:   strings.Join(singers, "/"),
+			Provider: "qq",
+		})
+	}
+
+	return songs, nil
+}
+
+type qqAlbumSongs struct {
+	Code int `json:"code"`
+	Data struct {
+		SingerName   string `json:"singername"`
+		SingerMID    string `json:"singermid"`
+		ID           int    `json:"id"`
+		Total        int    `json:"total"`
+		TotalSongNum int    `json:"total_song_num"`
+		MID          string `json:"mid"`
+		List         []struct {
+			SongName  string `json:"songname"`
+			SongMID   string `json:"songmid"`
+			AlbumMID  string `json:"albummid"`
+			AlbumName string `json:"albumname"`
+			Singer    []struct {
+				MID  string `json:"mid"`
+				Name string `json:"name"`
+			} `json:"singer"`
+		} `json:"list"`
+	} `json:"data"`
+}
+
+func (p *qq) AlbumSongs(id string) (res Songs, err error) {
+	// https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_info_cp.fcg?albummid=001IskfD3Vncxo&g_tk=1278911659&hostUin=0&format=jsonp&jsonpCallback=callback&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0
+	u := fmt.Sprintf(`https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_info_cp.fcg?albummid=%s&g_tk=1278911659&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`, id)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://y.qq.com/")
+	req.Header.Set("Origin", "http://y.qq.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
 	}
 
 	var pld qqAlbumSongs

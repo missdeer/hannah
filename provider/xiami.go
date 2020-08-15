@@ -7,21 +7,26 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 )
 
 const (
-	xiamiAppKey            = "23649156"
-	xiamiAPISearch         = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
-	xiamiBaseURL           = `https://www.xiami.com`
-	xiamiAPIHot            = `/api/list/collect`
-	xiamiAPIPlaylistDetail = `/api/collect/initialize`
-	xiamiAPIAlbumDetail    = `/api/album/initialize`
+	xiamiAppKey          = "23649156"
+	xiamiAPISearch       = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
+	xiamiBaseURL         = `https://www.xiami.com`
+	xiamiAPIHot          = `/api/list/collect`
+	xiamiAPIPlaylistInfo = `/api/collect/initialize`
+	xiamiAPIAlbumInfo    = `/api/album/initialize`
+	xiamiAPIArtistInfo   = `/api/artist/initialize`
+	xiamiAPIArtistDetail = `/api/artist/getArtistDetail`
+	xiamiAPIArtistSongs  = `/api/song/getArtistSongs`
 )
 
 var (
@@ -461,7 +466,7 @@ type xiamiPlaylistDetail struct {
 }
 
 func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
-	token, err := p.getToken(xiamiBaseURL+xiamiAPIPlaylistDetail, `xm_sg_tk`)
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIPlaylistInfo, `xm_sg_tk`)
 	if err != nil {
 		return nil, err
 	}
@@ -469,7 +474,7 @@ func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
 	model := map[string]interface{}{
 		"listId": pl.ID,
 	}
-	u, err := signPlaylistPayload(token, model, xiamiAPIPlaylistDetail)
+	u, err := signPlaylistPayload(token, model, xiamiAPIPlaylistInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -517,8 +522,169 @@ func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
 	return songs, nil
 }
 
+type xiamiArtistInfo struct {
+	Code   string `json:"code"`
+	Result struct {
+		Status string `json:"status"`
+		Data   struct {
+			ArtistDetail struct {
+				ArtistID       int    `json:"artistId"`
+				ArtistStringID string `json:"artistStringId"`
+				ArtistName     string `json:"artistName"`
+				ArtistLogo     string `json:"artistLogo"`
+			} `json:"artistDetail"`
+		} `json:"data"`
+	} `json:"result"`
+}
+
+func (p *xiami) getArtistIDFromArtistStringID(id string) (int, error) {
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIArtistInfo, `xm_sg_tk`)
+	if err != nil {
+		return 0, err
+	}
+
+	model := map[string]interface{}{
+		"artistId": id,
+	}
+	u, err := signPlaylistPayload(token, model, xiamiAPIArtistInfo)
+	if err != nil {
+		return 0, err
+	}
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	req.Header.Set("Origin", "https://h.xiami.com")
+	req.Header.Set("Referer", "https://h.xiami.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return 0, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return 0, err
+	}
+
+	var pld xiamiArtistInfo
+	if err = json.Unmarshal(content, &pld); err != nil {
+		return 0, err
+	}
+
+	return pld.Result.Data.ArtistDetail.ArtistID, nil
+}
+
+type xiamiArtistSongs struct {
+	Code   string `json:"code"`
+	Result struct {
+		Status string `json:"status"`
+		Data   struct {
+			Songs []struct {
+				SongID       int    `json:"songId"`
+				SongStringId string `json:"songStringId"`
+				SongName     string `json:"songName"`
+				AlbumLogo    string `json:"albumLogo"`
+				ArtistName   string `json:"artistName"`
+				Singers      string `json:"singers"`
+				LyricInfo    struct {
+					LyricFile string `json:"lyricFile"`
+				} `json:"lyricInfo"`
+				ArtistVOs []struct {
+					ArtistID   int    `json:"artistId"`
+					ArtistName string `json:"artistName"`
+				} `json:"artistVOs"`
+				SingerVOs []struct {
+					ArtistID   int    `json:"artistId"`
+					ArtistName string `json:"artistName"`
+				} `json:"singerVOs"`
+			} `json:"songs"`
+			Total int `json:"total"`
+		} `json:"data"`
+	} `json:"result"`
+}
+
 func (p *xiami) ArtistSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	reg := regexp.MustCompile(`^[0-9]+$`)
+	if !reg.MatchString(id) {
+		idNr, err := p.getArtistIDFromArtistStringID(id)
+		if err != nil {
+			return nil, err
+		}
+		id = strconv.Itoa(idNr)
+	}
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIArtistSongs, `xm_sg_tk`)
+	if err != nil {
+		return nil, err
+	}
+
+	model := map[string]interface{}{
+		"artistId": id,
+		"category": 0,
+		"pagingVO": map[string]int{
+			"page":     config.Page,
+			"pageSize": config.Limit,
+		},
+	}
+	u, err := signPlaylistPayload(token, model, xiamiAPIArtistSongs)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Origin", "https://h.xiami.com")
+	req.Header.Set("Referer", "https://h.xiami.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var pld xiamiArtistSongs
+	if err = json.Unmarshal(content, &pld); err != nil {
+		return nil, err
+	}
+
+	var songs Songs
+	for _, pl := range pld.Result.Data.Songs {
+		var artists []string
+		for _, a := range pl.SingerVOs {
+			artists = append(artists, a.ArtistName)
+		}
+		songs = append(songs, Song{
+			ID:       strconv.Itoa(pl.SongID),
+			Title:    pl.SongName,
+			Artist:   strings.Join(artists, "/"),
+			Image:    pl.AlbumLogo,
+			Lyric:    pl.LyricInfo.LyricFile,
+			Provider: "xiami",
+		})
+	}
+
+	return songs, nil
 }
 
 type xiamiAlbumSongs struct {
@@ -547,7 +713,7 @@ type xiamiAlbumSongs struct {
 }
 
 func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
-	token, err := p.getToken(xiamiBaseURL+xiamiAPIAlbumDetail, `xm_sg_tk`)
+	token, err := p.getToken(xiamiBaseURL+xiamiAPIAlbumInfo, `xm_sg_tk`)
 	if err != nil {
 		return nil, err
 	}
@@ -555,7 +721,7 @@ func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
 	model := map[string]interface{}{
 		"albumId": id,
 	}
-	u, err := signPlaylistPayload(token, model, xiamiAPIAlbumDetail)
+	u, err := signPlaylistPayload(token, model, xiamiAPIAlbumInfo)
 	if err != nil {
 		return nil, err
 	}

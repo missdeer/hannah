@@ -112,3 +112,26 @@ func TestXiami_AlbumSongs(t *testing.T) {
 		t.Error("empty result")
 	}
 }
+
+func TestXiami_ArtistSongs(t *testing.T) {
+	p := GetProvider("xiami")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	r, err := p.ArtistSongs("2110497377")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+
+	r, err = p.ArtistSongs("9dgxobfae92")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(r) == 0 {
+		t.Error("empty result")
+	}
+}

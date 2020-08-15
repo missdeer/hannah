@@ -28,7 +28,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/collect\/([0-9]+)`):                     "xiami",
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/playlist\/([0-9]+)\.html`):           "qq",
 		regexp.MustCompile(`^https?:\/\/www.kugou.com\/yy\/special\/single\/([0-9]+)\.html`):   "kugou",
-		regexp.MustCompile(`^http:\/\/kuwo.cn\/playlist_detail\/([0-9]+)`):                     "kuwo",
+		regexp.MustCompile(`^https?:\/\/kuwo.cn\/playlist_detail\/([0-9]+)`):                   "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/playlist\/([0-9]+)`):         "migu",
 	}
 	songPatterns = map[*regexp.Regexp]string{
@@ -36,18 +36,18 @@ var (
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/song\/([0-9a-zA-Z]+)`):        "xiami",
 		regexp.MustCompile(`^https?:\/\/y.qq.com/n/yqq\/song\/([0-9a-zA-Z]+)\.html`): "qq",
 		regexp.MustCompile(`^https?:\/\/www.kugou.com\/song\/#hash=([0-9A-F]+)`):     "kugou",
-		regexp.MustCompile(`^http:\/\/kuwo.cn\/play_detail\/([0-9]+)`):               "kuwo",
+		regexp.MustCompile(`^https?:\/\/kuwo.cn\/play_detail\/([0-9]+)`):             "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/song\/([0-9]+)`):   "migu",
 	}
 	artistPatterns = map[*regexp.Regexp]string{
 		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`):     "netease",
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/singer\/([0-9a-zA-Z]+)\.html`): "qq",
-		regexp.MustCompile(`^https:\/\/www.xiami.com\/artist\/([0-9a-zA-Z]+)`):           "xiami",
+		regexp.MustCompile(`^https?:\/\/www.xiami.com\/artist\/([0-9a-zA-Z]+)`):          "xiami",
 	}
 	albumPatterns = map[*regexp.Regexp]string{
 		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`):     "netease",
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/album\/([0-9a-zA-Z]+)\.html`): "qq",
-		regexp.MustCompile(`^https:\/\/www.xiami.com\/album\/([0-9a-zA-Z]+)`):           "xiami",
+		regexp.MustCompile(`^https?:\/\/www.xiami.com\/album\/([0-9a-zA-Z]+)`):          "xiami",
 	}
 )
 

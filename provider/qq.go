@@ -353,11 +353,11 @@ func (p *qq) PlaylistDetail(pl Playlist) (Songs, error) {
 }
 
 func (p *qq) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *qq) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *qq) Name() string {

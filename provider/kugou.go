@@ -282,11 +282,11 @@ func (p *kugou) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 }
 
 func (p *kugou) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *kugou) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *kugou) Name() string {

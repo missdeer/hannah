@@ -329,11 +329,11 @@ func (p *migu) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 }
 
 func (p *migu) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *migu) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *migu) Name() string {

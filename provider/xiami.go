@@ -517,11 +517,11 @@ func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
 }
 
 func (p *xiami) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *xiami) Name() string {

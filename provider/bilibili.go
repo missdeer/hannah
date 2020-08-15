@@ -211,11 +211,11 @@ func (p *bilibili) PlaylistDetail(pl Playlist) (Songs, error) {
 }
 
 func (p *bilibili) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *bilibili) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *bilibili) Name() string {

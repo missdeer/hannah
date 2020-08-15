@@ -9,31 +9,31 @@ func (p *musictool) SetProvider(provider string) {
 }
 
 func (p *musictool) Search(keyword string, page int, limit int) (SearchResult, error) {
-	return nil, nil
+	return nil, ErrNotImplemented
 }
 
 func (p *musictool) ResolveSongURL(song Song) (Song, error) {
-	return song, nil
+	return song, ErrNotImplemented
 }
 
 func (p *musictool) ResolveSongLyric(song Song) (Song, error){
-	return song, nil
+	return song, ErrNotImplemented
 }
 
 func (p *musictool) HotPlaylist(page int, limit int) (Playlists, error) {
-	return nil, nil
+	return nil, ErrNotImplemented
 }
 
 func (p *musictool) PlaylistDetail(pl Playlist) (Songs, error) {
-	return nil, nil
+	return nil, ErrNotImplemented
 }
 
 func (p *musictool) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *musictool) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *musictool) Name() string {

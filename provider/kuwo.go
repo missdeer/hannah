@@ -309,11 +309,11 @@ func (p *kuwo) PlaylistDetail(pl Playlist) (Songs, error) {
 }
 
 func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
-	return
+	return nil, ErrNotImplemented
 }
 
 func (p *kuwo) Name() string {

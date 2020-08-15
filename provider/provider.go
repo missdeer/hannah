@@ -72,6 +72,7 @@ func (p *providerMap) add(provider string) IProvider {
 var (
 	json               = jsoniter.ConfigCompatibleWithStandardLibrary
 	ErrStatusNotOK     = errors.New("status != 200")
+	ErrNotImplemented  = errors.New("not implemented yet")
 	providers          = providerMap{m: make(map[string]IProvider)}
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },

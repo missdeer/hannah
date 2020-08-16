@@ -40,9 +40,11 @@ var (
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/song\/([0-9]+)`):   "migu",
 	}
 	artistPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`):     "netease",
-		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/singer\/([0-9a-zA-Z]+)\.html`): "qq",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/artist\/([0-9a-zA-Z]+)`):          "xiami",
+		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`):                                                "netease",
+		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/singer\/([0-9a-zA-Z]+)\.html`):                                            "qq",
+		regexp.MustCompile(`^https?:\/\/www.xiami.com\/artist\/([0-9a-zA-Z]+)`):                                                     "xiami",
+		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={%22artistId%22:%22([0-9]+)%22}`): "xiami",
+		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={"artistId":"([0-9]+)"}`):         "xiami",
 	}
 	albumPatterns = map[*regexp.Regexp]string{
 		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`):     "netease",
@@ -89,12 +91,15 @@ func makeSongs(c *gin.Context, providerName string, cacheKey string, getter gett
 	}
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)
-	_, err = playlist.WriteSimpleTo(w)
-	if err != nil {
+	if _, err = playlist.WriteSimpleTo(w); err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return nil, err
 	}
-	w.Flush()
+
+	if err = w.Flush(); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return nil, err
+	}
 
 	if config.CacheEnabled {
 		redis.Put(cacheKey, b.Bytes())
@@ -147,7 +152,9 @@ func makeSongInM3U(songURL string, songTitle string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	w.Flush()
+	if err = w.Flush(); err != nil {
+		return nil, err
+	}
 	return b.Bytes(), nil
 }
 

@@ -125,7 +125,7 @@ func TestNetease_Login(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	err := p.Login("missdeerme@163.com", "2f6d010cab08597aeaa120fb88432354")
+	err := p.Login()
 	if err != nil {
 		t.Error(err)
 	}

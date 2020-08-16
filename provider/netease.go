@@ -147,7 +147,7 @@ type neteaseSongInfo struct {
 	} `json:"data"`
 }
 
-func (p *netease) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *netease) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	body := fmt.Sprintf("limit=%d&offset=%d&s=%s&type=1", limit, (page-1)*limit, url.QueryEscape(keyword))
 	req, err := http.NewRequest("POST", neteaseAPISearch, strings.NewReader(body))
 	if err != nil {

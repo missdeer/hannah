@@ -15,7 +15,7 @@ func search(keywords ...string) error {
 	if p == nil {
 		return ErrUnsupportedProvider
 	}
-	songs, err := p.Search(strings.Join(keywords, " "), config.Page, config.Limit)
+	songs, err := p.SearchSongs(strings.Join(keywords, " "), config.Page, config.Limit)
 	if err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func searchSave(keywords ...string) error {
 	if p == nil {
 		return ErrUnsupportedProvider
 	}
-	songs, err := p.Search(strings.Join(keywords, " "), config.Page, config.Limit)
+	songs, err := p.SearchSongs(strings.Join(keywords, " "), config.Page, config.Limit)
 	if err != nil {
 		return err
 	}

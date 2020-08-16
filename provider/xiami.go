@@ -238,7 +238,7 @@ func caesar(location string) (string, error) {
 	return strings.Replace(res, "^", "0", -1), nil
 }
 
-func (p *xiami) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *xiami) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	token, err := p.getToken(xiamiAPISearch, "_m_h5_tk")
 	if err != nil {
 		return nil, err

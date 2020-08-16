@@ -75,7 +75,7 @@ func (p *kuwo) getToken() (string, error) {
 	return "", nil
 }
 
-func (p *kuwo) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	token, err := p.getToken()
 	if err != nil {
 		return nil, err

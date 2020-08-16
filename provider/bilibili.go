@@ -18,7 +18,7 @@ const (
 type bilibili struct {
 }
 
-func (p *bilibili) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *bilibili) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	// not supported
 	return nil, nil
 }

@@ -8,7 +8,7 @@ func (p *musictool) SetProvider(provider string) {
 	p.provider = provider
 }
 
-func (p *musictool) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *musictool) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	return nil, ErrNotImplemented
 }
 

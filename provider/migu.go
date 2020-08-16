@@ -51,7 +51,7 @@ type miguSearchResult struct {
 	Success bool   `json:"success"`
 }
 
-func (p *migu) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *migu) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	u := fmt.Sprintf(miguAPISearch, keyword, page, limit)
 
 	req, err := http.NewRequest("GET", u, nil)

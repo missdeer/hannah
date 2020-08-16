@@ -54,7 +54,7 @@ type kugouSongInfo struct {
 	} `json:"extra"`
 }
 
-func (p *kugou) Search(keyword string, page int, limit int) (SearchResult, error) {
+func (p *kugou) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
 	u := fmt.Sprintf(kugouAPISearch, keyword, page, limit)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {

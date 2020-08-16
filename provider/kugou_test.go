@@ -26,7 +26,7 @@ func TestKugou_Search(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	songs, err := p.Search("backstreet", 1, 25)
+	songs, err := p.SearchSongs("backstreet", 1, 25)
 	if err != nil {
 		t.Error(err)
 	}

@@ -118,3 +118,15 @@ func TestNetease_AlbumSongs(t *testing.T) {
 		t.Error("empty result")
 	}
 }
+
+func TestNetease_Login(t *testing.T) {
+	p := &netease{}
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	err := p.Login("missdeerme@163.com", "2f6d010cab08597aeaa120fb88432354")
+	if err != nil {
+		t.Error(err)
+	}
+}

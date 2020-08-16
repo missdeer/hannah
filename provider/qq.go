@@ -505,6 +505,10 @@ func (p *qq) AlbumSongs(id string) (res Songs, err error) {
 	return songs, nil
 }
 
+func (p *qq) Login() error {
+	return  ErrNotImplemented
+}
+
 func (p *qq) Name() string {
 	return "qq"
 }

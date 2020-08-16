@@ -336,6 +336,10 @@ func (p *migu) AlbumSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+func (p *migu) Login() error {
+	return  ErrNotImplemented
+}
+
 func (p *migu) Name() string {
 	return "migu"
 }

@@ -289,6 +289,10 @@ func (p *kugou) AlbumSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+func (p *kugou) Login() error {
+	return  ErrNotImplemented
+}
+
 func (p *kugou) Name() string {
 	return "kugou"
 }

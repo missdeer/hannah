@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -35,6 +36,9 @@ const (
 	neteaseAPISongDetail               = `http://music.163.com/weapi/v3/song/detail`
 	neteaseAPIGetArtistSongs           = `http://music.163.com/weapi/v1/artist/%s`
 	neteaseAPIGetAlbumSongs            = `http://music.163.com/weapi/v1/album/%s`
+	neteaseAPILoginCellphone           = `http://music.163.com/weapi/login/cellphone`
+	neteaseAPILoginMail                = `http://music.163.com/weapi/login`
+	neteaseAPILoginClientToken         = "1_jVUMqWEPke0/1/Vu56xCmJpo5vP1grjn_SOVVDzOc78w8OKLVZ2JH7IfkjSXqgfmh"
 )
 
 func weapi(origData interface{}) map[string]interface{} {
@@ -668,6 +672,64 @@ func (p *netease) AlbumSongs(id string) (res Songs, err error) {
 		})
 	}
 	return res, nil
+}
+
+func (p *netease) Login() error {
+	username := config.NeteaseUsername
+	password := config.NeteasePassword
+	if username == "" || password == "" {
+		return ErrNoAuthorizeInfo
+	}
+	data := map[string]interface{}{
+		"password":      md5.Sum([]byte(password)),
+		"rememberLogin": "true",
+	}
+	r := regexp.MustCompile(`^[0-9]+$`)
+	var u string
+	if r.MatchString(username) {
+		u = neteaseAPILoginCellphone
+		data["phone"] = username
+	} else {
+		u = neteaseAPILoginMail
+		data["username"] = username
+		data["clientToken"] = neteaseAPILoginClientToken
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", u, strings.NewReader(postBody))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return ErrStatusNotOK
+	}
+
+	if _, err = util.ReadHttpResponseBody(resp); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *netease) Name() string {

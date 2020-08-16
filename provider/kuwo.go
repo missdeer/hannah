@@ -316,6 +316,10 @@ func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+func (p *kuwo) Login() error {
+	return  ErrNotImplemented
+}
+
 func (p *kuwo) Name() string {
 	return "kuwo"
 }

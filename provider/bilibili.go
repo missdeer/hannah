@@ -218,6 +218,10 @@ func (p *bilibili) AlbumSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+func (p *bilibili) Login() error {
+	return  ErrNotImplemented
+}
+
 func (p *bilibili) Name() string {
 	return "bilibili"
 }

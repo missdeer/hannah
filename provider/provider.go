@@ -40,6 +40,7 @@ type IProvider interface {
 	ArtistSongs(id string) (Songs, error)
 	AlbumSongs(id string) (Songs, error)
 	Name() string
+	Login() error
 }
 
 type providerGetter func() IProvider
@@ -64,6 +65,7 @@ func (p *providerMap) add(provider string) IProvider {
 	if c, ok := providerCreatorMap[provider]; ok {
 		i := c()
 		p.m[provider] = i
+		i.Login()
 		return i
 	}
 	return nil
@@ -73,6 +75,7 @@ var (
 	json               = jsoniter.ConfigCompatibleWithStandardLibrary
 	ErrStatusNotOK     = errors.New("status != 200")
 	ErrNotImplemented  = errors.New("not implemented yet")
+	ErrNoAuthorizeInfo = errors.New("no authorize info")
 	providers          = providerMap{m: make(map[string]IProvider)}
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },

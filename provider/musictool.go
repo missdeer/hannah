@@ -36,6 +36,10 @@ func (p *musictool) AlbumSongs(id string) (res Songs, err error) {
 	return nil, ErrNotImplemented
 }
 
+func (p *musictool) Login() error {
+	return  ErrNotImplemented
+}
+
 func (p *musictool) Name() string {
 	return "musictool"
 }

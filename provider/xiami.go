@@ -774,6 +774,10 @@ func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
 	return songs, nil
 }
 
+func (p *xiami) Login() error {
+	return ErrNotImplemented
+}
+
 func (p *xiami) Name() string {
 	return "xiami"
 }

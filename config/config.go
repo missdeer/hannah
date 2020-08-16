@@ -24,6 +24,8 @@ var (
 	DownloadDir         string
 	M3UFileName         string
 	BaseURL             string
+	NeteaseUsername     string
+	NeteasePassword     string
 	CacheAddr           = "127.0.0.1:6379"
 	ReverseProxy        = "127.0.0.1:8123"
 	Action              = "play"
@@ -34,6 +36,8 @@ var (
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
+		"netease-username":      &NeteaseUsername,
+		"netease-password":      &NeteasePassword,
 		"baseurl":               &BaseURL,
 		"cache":                 &CacheEnabled,
 		"cache-addr":            &CacheAddr,

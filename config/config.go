@@ -20,6 +20,7 @@ var (
 	ReverseProxyRetries int
 	Socks5Proxy         string
 	HttpProxy           string
+	NetworkInterface    string
 	Player              string
 	DownloadDir         string
 	M3UFileName         string
@@ -56,6 +57,7 @@ var (
 		"provider":              &Provider,
 		"socks5":                &Socks5Proxy,
 		"http-proxy":            &HttpProxy,
+		"network-interface":     &NetworkInterface,
 		"player":                &Player,
 		"engine":                &Engine,
 		"limit":                 &Limit,

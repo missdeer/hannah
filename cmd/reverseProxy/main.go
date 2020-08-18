@@ -25,6 +25,7 @@ func main() {
 	}
 	showHelpMessage := false
 	limit := ""
+	flag.StringVarP(&config.NetworkInterface, "network-interface", "i", config.NetworkInterface, "set local network interface name, for example: en1, will overwirte socks5/http-proxy option")
 	flag.IntVarP(&config.ReverseProxyRetries, "retry", "", config.ReverseProxyRetries, "reverse proxy retries count")
 	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")
 	flag.StringVarP(&addr, "bind-addr", "b", addr, "set bind address")

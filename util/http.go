@@ -116,6 +116,53 @@ func createHttpClient() *http.Client {
 		Jar:       jar,
 		Timeout:   time.Duration(config.NetworkTimeout) * time.Second,
 	}
+
+	var localAddr net.Addr
+	if config.NetworkInterface != "" {
+		if ip := net.ParseIP(config.NetworkInterface); ip != nil {
+			localAddr, _ = net.ResolveTCPAddr("tcp", config.NetworkInterface)
+		}
+		if i, err := net.InterfaceByName(config.NetworkInterface); err == nil {
+			if addrs, err := i.Addrs(); err == nil {
+				for _, addr := range addrs {
+					ip, _, err := net.ParseCIDR(addr.String())
+					if err == nil && ip != nil && !ip.IsLinkLocalUnicast() && !ip.IsLinkLocalMulticast() && !ip.IsLoopback() {
+						localAddr = addr
+						break
+					}
+				}
+			}
+		}
+	}
+	if localAddr != nil {
+		ip, _, _ := net.ParseCIDR(localAddr.String())
+		if ipaddr, err := net.ResolveIPAddr("ip", ip.String()); err == nil {
+			client.Transport = &http.Transport{
+				Proxy: http.ProxyFromEnvironment,
+				DialContext: (&net.Dialer{
+					LocalAddr: &net.TCPAddr{IP: ipaddr.IP},
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+					DualStack: true,
+				}).DialContext,
+				ForceAttemptHTTP2:     true,
+				MaxIdleConns:          100,
+				IdleConnTimeout:       90 * time.Second,
+				TLSHandshakeTimeout:   10 * time.Second,
+				ExpectContinueTimeout: 1 * time.Second,
+			}
+			net.DefaultResolver = &net.Resolver{
+				PreferGo: true,
+				Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+					d := net.Dialer{
+						LocalAddr: &net.UDPAddr{IP: ipaddr.IP},
+					}
+					return d.DialContext(ctx, "udp", "114.114.114.114:53")
+				},
+			}
+		}
+	}
+
 	httpProxy := os.Getenv("HTTP_PROXY")
 	if config.HttpProxy != "" {
 		httpProxy = config.HttpProxy

@@ -26,6 +26,7 @@ func main() {
 	}
 
 	showHelpMessage := false
+	flag.StringVarP(&config.NetworkInterface, "network-interface", "i", config.NetworkInterface, "set local network interface name, for example: en1, will overwirte socks5/http-proxy option")
 	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")
 	flag.BoolVarP(&config.CacheEnabled, "cache", "c", config.CacheEnabled, "cache song resolving result in Redis")
 	flag.StringVarP(&config.CacheAddr, "cache-addr", "", config.CacheAddr, "set cache(Redis) service address")

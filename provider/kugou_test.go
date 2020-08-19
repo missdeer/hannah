@@ -1,7 +1,11 @@
 package provider
 
 import (
+	"net/url"
+	"path/filepath"
 	"testing"
+
+	"github.com/missdeer/hannah/config"
 )
 
 func TestKugou_HotPlaylist(t *testing.T) {
@@ -38,19 +42,37 @@ func TestKugou_Search(t *testing.T) {
 }
 
 func TestKugou_ResolveSongURL(t *testing.T) {
+	config.NetworkInterface = "en1"
 	p := GetProvider("kugou")
 	if p == nil {
 		t.Error("can't get provider")
 	}
 
+	u, err:= p.ResolveSongURL(Song{ID: "F3EA661A19E9A0C965AD64049040BBAC"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	parsedURL, err := url.Parse(u.URL)
+	if err != nil {
+		t.Error(err)
+	}
+	if filepath.Base(parsedURL.Path) == ".m4a" {
+		t.Error("incorrect song URL")
+	}
 }
 
 func TestKugou_ResolveSongLyric(t *testing.T) {
+	config.NetworkInterface = "en1"
 	p := GetProvider("kugou")
 	if p == nil {
 		t.Error("can't get provider")
 	}
 
+	_, err := p.ResolveSongLyric(Song{ID: "F3EA661A19E9A0C965AD64049040BBAC"})
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestKugou_Name(t *testing.T) {

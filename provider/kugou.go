@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -13,6 +15,12 @@ const (
 	kugouAPISongInfo       = `http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo&hash=%s`
 	kugouAPIHot            = `http://m.kugou.com/plist/index&json=true&page=%d`
 	kugouAPIPlaylistDetail = `http://m.kugou.com/plist/list/%s?json=true&page=%d`
+	kugouAPIGetLyric       = `http://krcs.kugou.com/search?ver=1&man=yes&client=mobi&keyword=&duration=&hash=%s&album_audio_id=`
+	kugouAPIDownloadLyric  = `http://lyrics.kugou.com/download?ver=1&client=pc&id=%s&accesskey=%s&fmt=lrc&charset=utf8`
+)
+
+var (
+	ErrEmptyKugouKRC = errors.New("empty kugou KRC")
 )
 
 type kugou struct {
@@ -147,7 +155,108 @@ func (p *kugou) ResolveSongURL(song Song) (Song, error) {
 	return song, nil
 }
 
+type kugouKRC struct {
+	Info       string `json:"info"`
+	Status     int    `json:"status"`
+	Candidates []struct {
+		KRCType   int    `json:"krctype"`
+		ID        string `json:"id"`
+		AccessKey string `json:"accesskey"`
+		Duration  int    `json:"duration"`
+		UID       string `json:"uid"`
+		Song      string `json:"song"`
+		Singer    string `json:"singer"`
+	} `json:"candidates"`
+}
+
+type kugouDownloadLRC struct {
+	Content string `json:"content"`
+	Info    string `json:"info"`
+	Status  int    `json:"status"`
+	Charset string `json:"charset"`
+	Format  string `json:"fmt"`
+}
+
 func (p *kugou) ResolveSongLyric(song Song) (Song, error) {
+	u := fmt.Sprintf(kugouAPIGetLyric, song.ID)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://www.kugou.com/")
+	req.Header.Set("Origin", "http://www.kugou.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	var krc kugouKRC
+	if err = json.Unmarshal(content, &krc); err != nil {
+		return song, err
+	}
+
+	if len(krc.Candidates) == 0 {
+		return song, ErrEmptyKugouKRC
+	}
+
+	u = fmt.Sprintf(kugouAPIDownloadLyric, krc.Candidates[0].ID, krc.Candidates[0].AccessKey)
+	req, err = http.NewRequest("GET", u, nil)
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://www.kugou.com/")
+	req.Header.Set("Origin", "http://www.kugou.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err = httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err = util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	var lrc kugouDownloadLRC
+	err = json.Unmarshal(content, &lrc)
+	if err != nil {
+		return song, err
+	}
+
+	res, err := base64.StdEncoding.DecodeString(lrc.Content)
+	if err != nil {
+		return song, err
+	}
+	song.Lyric = string(res)
 	return song, nil
 }
 
@@ -290,7 +399,7 @@ func (p *kugou) AlbumSongs(id string) (res Songs, err error) {
 }
 
 func (p *kugou) Login() error {
-	return  ErrNotImplemented
+	return ErrNotImplemented
 }
 
 func (p *kugou) Name() string {

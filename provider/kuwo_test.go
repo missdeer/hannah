@@ -43,6 +43,10 @@ func TestKuwo_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	_, err := p.ResolveSongURL(Song{ID: `MUSIC_147917739`})
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestKuwo_ResolveSongLyric(t *testing.T) {
@@ -51,6 +55,10 @@ func TestKuwo_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	_, err := p.ResolveSongLyric(Song{ID: `147917739`})
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestKuwo_Name(t *testing.T) {

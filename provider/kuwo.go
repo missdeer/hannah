@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/missdeer/hannah/util"
 )
@@ -15,10 +16,12 @@ const (
 	kuwoAPIConvertURL     = `http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3|wma|aac&response=url&rid=%s`
 	kuwoAPIHot            = `http://www.kuwo.cn/www/categoryNew/getPlayListInfoUnderCategory?type=taglist&digest=10000&id=37&start=%d&count=%d`
 	kuwoAPIPlaylistDetail = `http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
+	kuwoAPIGetLyric       = `http://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=%s`
 )
 
 var (
 	ErrEmptyKuwoToken = errors.New("empty kuwo token")
+	ErrEmptyKuwoLRC   = errors.New("empty kuwo lyric")
 )
 
 type kuwo struct {
@@ -169,7 +172,72 @@ func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
 	return song, nil
 }
 
+type kuwoLyric struct {
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   struct {
+		LRCList []struct {
+			LineLyric string `json:"line_lyric"`
+			Time      string `json:"time"`
+		} `json:"lrclist"`
+		SongInfo struct {
+			SongName string `json:"songName"`
+			Album    string `json:"album"`
+			ID       string `json:"id"`
+			Artist   string `json:"artist"`
+			Pic      string `json:"pic"`
+		} `json:"songinfo"`
+	} `json:"data"`
+}
+
 func (p *kuwo) ResolveSongLyric(song Song) (Song, error) {
+	id := song.ID
+	if strings.HasPrefix(id, "MUSIC_") {
+		id = id[len(`MUSIC_`):]
+	}
+	u := fmt.Sprintf(kuwoAPIGetLyric, id)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://www.kuwo.cn/")
+	req.Header.Set("Origin", "http://www.kuwo.cn/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	var lrc kuwoLyric
+	err = json.Unmarshal(content, &lrc)
+	if err != nil {
+		return song, err
+	}
+	if len(lrc.Data.LRCList) == 0 {
+		return song, ErrEmptyKuwoLRC
+	}
+	var lines []string
+	for _, l := range lrc.Data.LRCList {
+		lines = append(lines, fmt.Sprintf(`[%s]%s`, strings.Replace(l.Time, ".", ":", -1), l.LineLyric))
+	}
+	song.Lyric = strings.Join(lines, "\n")
 	return song, nil
 }
 

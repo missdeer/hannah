@@ -17,6 +17,10 @@ const (
 	kuwoAPIPlaylistDetail = `http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
 )
 
+var (
+	ErrEmptyKuwoToken = errors.New("empty kuwo token")
+)
+
 type kuwo struct {
 }
 
@@ -72,7 +76,7 @@ func (p *kuwo) getToken() (string, error) {
 			return cookie.Value, nil
 		}
 	}
-	return "", nil
+	return "", ErrEmptyKuwoToken
 }
 
 func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
@@ -317,7 +321,7 @@ func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
 }
 
 func (p *kuwo) Login() error {
-	return  ErrNotImplemented
+	return ErrNotImplemented
 }
 
 func (p *kuwo) Name() string {

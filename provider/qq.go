@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -197,7 +199,62 @@ func (p *qq) ResolveSongURL(song Song) (Song, error) {
 	return song, nil
 }
 
+type qqSongLyric struct {
+	RetCode int    `json:"retcode"`
+	Code    int    `json:"code"`
+	Lyric   string `json:"lyric"`
+}
+
 func (p *qq) ResolveSongLyric(song Song) (Song, error) {
+	// http://i.y.qq.com/lyric/fcgi-bin/fcg_query_lyric.fcg?songmid=track_id&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0
+	u := fmt.Sprintf(`http://i.y.qq.com/lyric/fcgi-bin/fcg_query_lyric.fcg?songmid=%s&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`, song.ID)
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://y.qq.com/")
+	req.Header.Set("Origin", "http://y.qq.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	content = bytes.TrimSpace(content)
+	if bytes.HasPrefix(content, []byte(`MusicJsonCallback(`)) && bytes.HasSuffix(content, []byte(`)`)) {
+		content = content[len(`MusicJsonCallback(`):]
+		content = content[:len(content)-1]
+	}
+
+	var lyric qqSongLyric
+	err = json.Unmarshal(content, &lyric)
+	if err != nil {
+		return song, err
+	}
+
+	res, err := base64.StdEncoding.DecodeString(lyric.Lyric)
+	if err != nil {
+		return song, err
+	}
+	song.Lyric = string(res)
 	return song, nil
 }
 
@@ -506,7 +563,7 @@ func (p *qq) AlbumSongs(id string) (res Songs, err error) {
 }
 
 func (p *qq) Login() error {
-	return  ErrNotImplemented
+	return ErrNotImplemented
 }
 
 func (p *qq) Name() string {

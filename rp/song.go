@@ -15,7 +15,7 @@ import (
 
 var (
 	playersNotSupportRedirectURL = []string{
-		"libmpv", "BASS",
+		"libmpv", "BASS", "mpg123",
 	}
 )
 

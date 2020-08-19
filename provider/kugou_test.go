@@ -4,8 +4,6 @@ import (
 	"net/url"
 	"path/filepath"
 	"testing"
-
-	"github.com/missdeer/hannah/config"
 )
 
 func TestKugou_HotPlaylist(t *testing.T) {
@@ -42,7 +40,6 @@ func TestKugou_Search(t *testing.T) {
 }
 
 func TestKugou_ResolveSongURL(t *testing.T) {
-	config.NetworkInterface = "en1"
 	p := GetProvider("kugou")
 	if p == nil {
 		t.Error("can't get provider")
@@ -63,7 +60,6 @@ func TestKugou_ResolveSongURL(t *testing.T) {
 }
 
 func TestKugou_ResolveSongLyric(t *testing.T) {
-	config.NetworkInterface = "en1"
 	p := GetProvider("kugou")
 	if p == nil {
 		t.Error("can't get provider")

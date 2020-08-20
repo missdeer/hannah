@@ -10,6 +10,7 @@ jobs:
         include:
           - GOARCH: amd64
             GOOS: linux
+            LIBPATH: x86_64-linux-gnu
 
     steps:
 
@@ -31,8 +32,6 @@ jobs:
           env CGO_ENABLED=1 GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -ldflags="-s -w" -o ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/hannah
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          cp /usr/local/lib/libmpg123.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          cp /usr/local/lib/libfaad.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cd cmd/reverseProxy
           env CGO_ENABLED=1 GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -ldflags="-s -w" -o ../../${{ matrix.GOOS }}-${{ matrix.GOARCH }}/rp
 

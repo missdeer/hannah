@@ -17,6 +17,7 @@ var (
 	RedirectURL         bool
 	AutoRedirectURL     bool
 	ReverseProxyEnabled bool
+	ShowUserAgent       bool
 	ReverseProxyRetries int
 	Socks5Proxy         string
 	HttpProxy           string
@@ -37,6 +38,7 @@ var (
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
+		"show-useragent":        &ShowUserAgent,
 		"netease-username":      &NeteaseUsername,
 		"netease-password":      &NeteasePassword,
 		"baseurl":               &BaseURL,

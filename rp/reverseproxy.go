@@ -2,6 +2,7 @@ package rp
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -27,6 +28,9 @@ var (
 )
 
 func getSongPlaylist(c *gin.Context) {
+	if config.ShowUserAgent {
+		log.Println(c.Request.UserAgent())
+	}
 	p := c.Param("provider")
 	if p == "m3u" {
 		generateM3ULink(c)

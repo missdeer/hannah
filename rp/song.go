@@ -15,7 +15,10 @@ import (
 
 var (
 	playersNotSupportRedirectURL = []string{
-		"libmpv", "BASS", "mpg123",
+		"libmpv", // mpv
+		"BASS",   // bass
+		"mpg123", // mpg123
+		"wbx 1.0.0; wbxapp 1.0.0; zhumu 4.0.0", // TTPlayer
 	}
 )
 

@@ -19,6 +19,7 @@ var (
 		"BASS",   // bass
 		"mpg123", // mpg123
 		"wbx 1.0.0; wbxapp 1.0.0; zhumu 4.0.0", // TTPlayer
+		"TTPlayer", // TTPlayer
 	}
 )
 

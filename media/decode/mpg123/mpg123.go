@@ -5,7 +5,7 @@ package mpg123
 /*
 #cgo darwin windows pkg-config: libmpg123
 #cgo linux LDFLAGS: -lmpg123
-#include <mpg123.h>
+#include "mpg123.h"
 */
 import "C"
 

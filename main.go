@@ -73,7 +73,7 @@ func main() {
 		}
 		defer media.Finalize(!config.ByExternalPlayer && holdOn)
 		if err := handler(args...); err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	} else {
 		log.Fatal("unsupoorted action")

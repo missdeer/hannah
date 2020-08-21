@@ -12,7 +12,6 @@ require (
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/gomodule/redigo v1.8.2
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
-	github.com/gopherjs/gopherwasm v1.1.0 // indirect
 	github.com/hajimehoshi/oto v0.6.3 // indirect
 	github.com/jfreymuth/oggvorbis v1.0.1 // indirect
 	github.com/json-iterator/go v1.1.10

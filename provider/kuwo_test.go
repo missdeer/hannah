@@ -43,7 +43,7 @@ func TestKuwo_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongURL(Song{ID: `MUSIC_147917739`})
+	_, err := p.ResolveSongURL(Song{ID: `147917739`})
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,6 +1,9 @@
 package provider
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net/http"
@@ -8,12 +11,14 @@ import (
 	"strings"
 
 	"github.com/missdeer/hannah/util"
+	"github.com/missdeer/hannah/util/cryptography"
 )
 
 const (
 	kuwoAPISearch         = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=%s&pn=%d&rn=%d`
 	kuwoAPIToken          = `http://www.kuwo.cn/search/list?key=`
-	kuwoAPIConvertURL     = `http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3|wma|aac&response=url&rid=%s`
+	kuwoAPIConvertURL     = `http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3|aac|wma&response=url&rid=%s`
+	kuwoAPIGetLossless    = "http://mobi.kuwo.cn/mobi.s?f=kuwo&q="
 	kuwoAPIHot            = `http://www.kuwo.cn/www/categoryNew/getPlayListInfoUnderCategory?type=taglist&digest=10000&id=37&start=%d&count=%d`
 	kuwoAPIPlaylistDetail = `http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
 	kuwoAPIGetLyric       = `http://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=%s`
@@ -139,19 +144,22 @@ func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 }
 
 func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
-	u := fmt.Sprintf(kuwoAPIConvertURL, song.ID)
+	token, err := p.getToken()
+	id := song.ID
+	if strings.HasPrefix(id, "MUSIC_") {
+		id = id[len(`MUSIC_`):]
+	}
+	u := kuwoAPIGetLossless + base64.StdEncoding.EncodeToString(cryptography.DESEncrypt([]byte("corp=kuwo&p2p=1&type=convert_url2&sig=0&format=flac|mp3&rid="+id)))
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return song, err
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
 	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "http://www.kuwo.cn/")
-	req.Header.Set("Origin", "http://www.kuwo.cn/")
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Referer", "http://www.kuwo.cn/search/list?key=The+Call")
 	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("csrf", token)
+	req.Header.Set("cookie", "kw_token="+token)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -168,7 +176,16 @@ func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
 	if err != nil {
 		return song, err
 	}
-	song.URL = string(content)
+
+	scanner := bufio.NewScanner(bytes.NewReader(content))
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		b := scanner.Bytes()
+		if bytes.HasPrefix(b, []byte("url=")) {
+			song.URL = string(b[len(`url=`):])
+			break
+		}
+	}
 	return song, nil
 }
 

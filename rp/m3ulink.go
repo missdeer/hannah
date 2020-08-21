@@ -49,6 +49,7 @@ var (
 	}
 	albumPatterns = map[*regexp.Regexp]string{
 		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`):     "netease",
+		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/album\?id=([0-9]+)`):          "netease",
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/album\/([0-9a-zA-Z]+)\.html`): "qq",
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/album\/([0-9a-zA-Z]+)`):          "xiami",
 	}

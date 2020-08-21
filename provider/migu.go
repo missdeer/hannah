@@ -3,12 +3,19 @@ package provider
 import (
 	"bufio"
 	"bytes"
+	"crypto/md5"
+	"crypto/rsa"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"math"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 
 	"github.com/missdeer/hannah/util"
+	"github.com/missdeer/hannah/util/cryptography"
 )
 
 const (
@@ -21,29 +28,41 @@ var (
 	miguAPIHot            = `https://music.migu.cn/v3/music/playlist?page=%d`
 	miguAPIPlaylistDetail = `https://music.migu.cn/v3/music/playlist/%s`
 	miguAPIGetPlayInfo    = `https://m.music.migu.cn/migu/remoting/cms_detail_tag?cpid=%s`
+	miguAPIGetLossless    = `http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?dataType=2&`
 	miguAPILyric          = `https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId=%s`
 
 	regPlaylist       = regexp.MustCompile(`data\-share='([^']+)'`)
 	regPlaylistLink   = regexp.MustCompile(`^\/v3\/music\/playlist\/([0-9]+)\?origin=[0-9]+$`)
 	regSongInPlaylist = regexp.MustCompile(`^<a\sclass="song\-name\-txt"\shref="([^"]+)"\stitle="([^"]+)"\starget="_blank">`)
 	regSongLink       = regexp.MustCompile(`^\/v3\/music\/song\/([0-9]+)$`)
+
+	rsaPublicKey *rsa.PublicKey
 )
+
+func getRsaPublicKey() (*rsa.PublicKey, error) {
+	var err error = nil
+	if rsaPublicKey == nil {
+		rsaPublicKey, err = cryptography.ParsePublicKey([]byte(miguRSAPublicKey))
+	}
+	return rsaPublicKey, err
+}
 
 type migu struct {
 }
 
 type miguSearchResult struct {
 	Musics []struct {
-		AlbumName  string `json:"albumName"`
-		AlbumID    string `json:"albumId"`
-		MP3        string `json:"mp3"`
-		SongName   string `json:"songName"`
-		Lyrics     string `json:"lyrics"`
-		ID         string `json:"id"`
-		Title      string `json:"title"`
-		Cover      string `json:"cover"`
-		SingerName string `json:"singerName"`
-		Artist     string `json:"artist"`
+		AlbumName   string `json:"albumName"`
+		AlbumID     string `json:"albumId"`
+		MP3         string `json:"mp3"`
+		CopyrightID string `json:"copyrightId"`
+		SongName    string `json:"songName"`
+		Lyrics      string `json:"lyrics"`
+		ID          string `json:"id"`
+		Title       string `json:"title"`
+		Cover       string `json:"cover"`
+		SingerName  string `json:"singerName"`
+		Artist      string `json:"artist"`
 	} `json:"musics"`
 	Pgt     int    `json:"pgt"`
 	Keyword string `json:"keyword"`
@@ -92,7 +111,7 @@ func (p *migu) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 	var res SearchResult
 	for _, music := range sr.Musics {
 		res = append(res, Song{
-			ID:       music.ID,
+			ID:       music.CopyrightID,
 			URL:      music.MP3,
 			Title:    music.Title,
 			Image:    music.Cover,
@@ -116,11 +135,13 @@ type miguSongInfo struct {
 	} `json:"data"`
 }
 
-func (p *migu) ResolveSongURL(song Song) (Song, error) {
-	if song.URL != "" {
-		return song, nil
-	}
+type miguSongURL struct {
+	Data struct {
+		PlayURL string `json:"playUrl"`
+	} `json:"data"`
+}
 
+func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	u := fmt.Sprintf(miguAPIGetPlayInfo, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)
@@ -160,6 +181,42 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	song.Title = si.Data.SongName
 	song.Artist = strings.Join(si.Data.SingerName, "/")
 	song.Image = si.Data.PicL
+
+	u = fmt.Sprintf("%s%s", miguAPIGetLossless, p.encrypt(fmt.Sprintf(`{"copyrightId":"%s", "type":3}`, song.ID)))
+
+	req, err = http.NewRequest("GET", u, nil)
+	if err != nil {
+		return song, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://migu.cn/")
+	req.Header.Set("Origin", "http://migu.cn/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	resp, err = httpClient.Do(req)
+	if err != nil {
+		return song, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return song, ErrStatusNotOK
+	}
+
+	content, err = util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return song, err
+	}
+
+	var songURL miguSongURL
+	if err = json.Unmarshal(content, &songURL); err != nil {
+		return song, err
+	}
+	song.URL = "http:" + songURL.Data.PlayURL
 
 	return song, nil
 }
@@ -337,9 +394,66 @@ func (p *migu) AlbumSongs(id string) (res Songs, err error) {
 }
 
 func (p *migu) Login() error {
-	return  ErrNotImplemented
+	return ErrNotImplemented
 }
 
 func (p *migu) Name() string {
 	return "migu"
+}
+
+func (p *migu) encrypt(text string) (encryptedData string) {
+	// fmt.Println(text)
+	text = util.ToJson(util.ParseJson(bytes.NewBufferString(text).Bytes()))
+	randomBytes, err := util.GenRandomBytes(32)
+	if err != nil {
+		fmt.Println(err)
+		return encryptedData
+	}
+	pwd := bytes.NewBufferString(hex.EncodeToString(randomBytes)).Bytes()
+	salt, err := util.GenRandomBytes(8)
+	if err != nil {
+		fmt.Println(err)
+		return encryptedData
+	}
+	// key = []byte{0xaf, 0xb3, 0xac, 0x50, 0xcd, 0x1d, 0x23, 0x81, 0x58, 0x5f, 0xa7, 0xbc, 0xbd, 0x8c, 0xbe, 0x02, 0x56, 0x0f, 0xad, 0xe7, 0xd1, 0x7e, 0x2e, 0xb1, 0x14, 0x81, 0x6f, 0x27, 0xab, 0x7b, 0x6a, 0x75}
+	// iv = []byte{0xfb, 0x10, 0x89, 0xb0, 0x13, 0x32, 0xf2, 0xa7, 0x02, 0x51, 0x49, 0xff, 0xbc, 0x16, 0xf0, 0x40}
+	// pwd = bytes.NewBufferString("d8e28215ed6573e0fd5eb8b8ae8062542589e96f669bee6503af003c63cdfbd4").Bytes()
+	// salt = []byte{0xde, 0xfc, 0x9f, 0x26, 0x29, 0xdd, 0xec, 0x37}
+	key, iv := p.derive(pwd, salt, 256, 16)
+	var data []byte
+	data = append(data, bytes.NewBufferString("Salted__").Bytes()...)
+	data = append(data, salt...)
+	encryptedD := cryptography.AesEncryptCBCWithIv(bytes.NewBufferString(text).Bytes(), key, iv)
+	data = append(data, encryptedD...)
+	dat := base64.StdEncoding.EncodeToString(data)
+	var rsaB []byte
+	pubKey, err := getRsaPublicKey()
+	if err == nil {
+		rsaB = cryptography.RSAEncryptV2(pwd, pubKey)
+	}
+	sec := base64.StdEncoding.EncodeToString(rsaB)
+	// fmt.Println("data:", dat)
+	// fmt.Println("sec:", sec)
+	encryptedData = "data=" + url.QueryEscape(dat)
+	encryptedData = encryptedData + "&secKey=" + url.QueryEscape(sec)
+	return encryptedData
+}
+
+func (p *migu) derive(password []byte, salt []byte, keyLength int, ivSize int) ([]byte, []byte) {
+	keySize := keyLength / 8
+	repeat := math.Ceil(float64(keySize+ivSize*8) / 32)
+	var data []byte
+	var lastData []byte
+	for i := 0.0; i < repeat; i++ {
+		var md5Data []byte
+		md5Data = append(md5Data, lastData...)
+		md5Data = append(md5Data, password...)
+		md5Data = append(md5Data, salt...)
+		h := md5.New()
+		h.Write(md5Data)
+		md5Data = h.Sum(nil)
+		data = append(data, md5Data...)
+		lastData = md5Data
+	}
+	return data[:keySize], data[keySize : keySize+ivSize]
 }

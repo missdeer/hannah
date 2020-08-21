@@ -26,7 +26,7 @@ func TestMigu_Search(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	songs, err := p.SearchSongs("backstreet", 1, 25)
+	songs, err := p.SearchSongs("Lydia", 1, 25)
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,6 +43,10 @@ func TestMigu_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	_, err := p.ResolveSongURL(Song{ID: `6005752J00T`, Param: `6005752J00T`})
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestMigu_ResolveSongLyric(t *testing.T) {

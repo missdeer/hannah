@@ -4,10 +4,13 @@ RPFULLPATH:=cmd/reverseProxy/$(RP)
 CHECKS:=go.mod go.sum \
 	util/cryptography/ecb.go \
     util/cryptography/cryptography.go \
+    util/cryptography/crypto.go \
     util/conv_test.go \
     util/http.go \
     util/player.go \
     util/conv.go \
+    util/json.go \
+    util/rand.go \
     config/config.go \
     config/cfg_darwin.go \
     config/cfg_linux.go \

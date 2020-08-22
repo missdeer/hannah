@@ -216,6 +216,9 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	if err = json.Unmarshal(content, &songURL); err != nil {
 		return song, err
 	}
+	if songURL.Data.PlayURL == "" {
+		return song, ErrEmptyPURL
+	}
 	song.URL = "http:" + songURL.Data.PlayURL
 
 	return song, nil

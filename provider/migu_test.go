@@ -32,7 +32,7 @@ func TestMigu_Search(t *testing.T) {
 	}
 
 	if len(songs) == 0 {
-		t.Error("can't found songs for backstreet")
+		t.Error("can't found songs for Lydia")
 	}
 
 }
@@ -43,7 +43,7 @@ func TestMigu_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongURL(Song{ID: `6005752J00T`, Param: `6005752J00T`})
+	_, err := p.ResolveSongURL(Song{ID: `6005752J00T`})
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,5 +64,38 @@ func TestMigu_Name(t *testing.T) {
 	}
 	if p.Name() != "migu" {
 		t.Error("provider name mismatched")
+	}
+}
+
+func TestMigu_AlbumSongs(t *testing.T) {
+	p := GetProvider("migu")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	songs, err := p.AlbumSongs("1135110570")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't found songs for album")
+	}
+}
+
+
+func TestMigu_ArtistSongs(t *testing.T) {
+	p := GetProvider("migu")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	songs, err := p.ArtistSongs("266")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't found songs for artist")
 	}
 }

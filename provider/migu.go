@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -27,14 +28,15 @@ var (
 	miguAPISearch         = `http://m.music.migu.cn/migu/remoting/scr_search_tag?type=2&keyword=%s&pgc=%d&rows=%d`
 	miguAPIHot            = `https://music.migu.cn/v3/music/playlist?page=%d`
 	miguAPIPlaylistDetail = `https://music.migu.cn/v3/music/playlist/%s`
+	miguAPIArtistSongs    = `https://music.migu.cn/v3/music/artist/%s/song?page=%d`
+	miguAPIAlbumSongs     = `https://music.migu.cn/v3/music/album/%s`
 	miguAPIGetPlayInfo    = `https://m.music.migu.cn/migu/remoting/cms_detail_tag?cpid=%s`
 	miguAPIGetLossless    = `http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?dataType=2&`
 	miguAPILyric          = `https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId=%s`
 
 	regPlaylist       = regexp.MustCompile(`data\-share='([^']+)'`)
 	regPlaylistLink   = regexp.MustCompile(`^\/v3\/music\/playlist\/([0-9]+)\?origin=[0-9]+$`)
-	regSongInPlaylist = regexp.MustCompile(`^<a\sclass="song\-name\-txt"\shref="([^"]+)"\stitle="([^"]+)"\starget="_blank">`)
-	regSongLink       = regexp.MustCompile(`^\/v3\/music\/song\/([0-9]+)$`)
+	regSongInPlaylist = regexp.MustCompile(`^<a\sclass="song\-name\-txt"\shref="\/v3\/music\/song\/([0-9A-Za-z]+)"\stitle="([^"]+)"\starget="_blank">`)
 
 	rsaPublicKey *rsa.PublicKey
 )
@@ -375,25 +377,116 @@ func (p *migu) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 		line := scanner.Text()
 		ss := regSongInPlaylist.FindAllStringSubmatch(line, -1)
 		if len(ss) == 1 && len(ss[0]) == 3 {
-			sss := regSongLink.FindAllStringSubmatch(ss[0][1], -1)
-			if len(sss) == 1 && len(sss[0]) == 2 {
-				songs = append(songs, Song{
-					ID:       sss[0][1],
-					Title:    ss[0][2],
-					Provider: "migu",
-				})
-			}
+			songs = append(songs, Song{
+				ID:       ss[0][1],
+				Title:    ss[0][2],
+				Provider: "migu",
+			})
 		}
 	}
 	return songs, nil
 }
 
 func (p *migu) ArtistSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	u := fmt.Sprintf(miguAPIArtistSongs, id, config.Page)
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://migu.cn/")
+	req.Header.Set("Origin", "http://migu.cn/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+
+	if err != nil {
+		return nil, err
+	}
+	scanner := bufio.NewScanner(bytes.NewReader(content))
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		line := scanner.Text()
+		ss := regSongInPlaylist.FindAllStringSubmatch(line, -1)
+		if len(ss) == 1 && len(ss[0]) == 3 {
+			res = append(res, Song{
+				ID:       ss[0][1],
+				Title:    ss[0][2],
+				Provider: "migu",
+			})
+		}
+	}
+	if len(res) == 0 {
+		return nil, ErrEmptyTrackList
+	}
+	return
 }
 
 func (p *migu) AlbumSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	u := fmt.Sprintf(miguAPIAlbumSongs, id)
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://migu.cn/")
+	req.Header.Set("Origin", "http://migu.cn/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+
+	if err != nil {
+		return nil, err
+	}
+	scanner := bufio.NewScanner(bytes.NewReader(content))
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		line := scanner.Text()
+		ss := regSongInPlaylist.FindAllStringSubmatch(line, -1)
+		if len(ss) == 1 && len(ss[0]) == 3 {
+			res = append(res, Song{
+				ID:       ss[0][1],
+				Title:    ss[0][2],
+				Provider: "migu",
+			})
+		}
+	}
+	if len(res) == 0 {
+		return nil, ErrEmptyTrackList
+	}
+	return
 }
 
 func (p *migu) Login() error {

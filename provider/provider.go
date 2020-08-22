@@ -93,7 +93,7 @@ var (
 		"kugou":    regexp.MustCompile(`^[0-9A-F]+$`),
 		"kuwo":     regexp.MustCompile(`^[0-9]+$`),
 		"bilibili": regexp.MustCompile(`^[0-9]+$`),
-		"migu":     regexp.MustCompile(`^[0-9]+$`),
+		"migu":     regexp.MustCompile(`^[0-9a-zA-Z]+$`),
 	}
 )
 

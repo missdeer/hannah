@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -22,6 +24,7 @@ const (
 	kuwoAPIHot            = `http://www.kuwo.cn/www/categoryNew/getPlayListInfoUnderCategory?type=taglist&digest=10000&id=37&start=%d&count=%d`
 	kuwoAPIPlaylistDetail = `http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
 	kuwoAPIGetLyric       = `http://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=%s`
+	kuwoAPIArtistSongs    = `http://www.kuwo.cn/api/www/artist/artistMusic?artistid=%s&pn=%d&rn=%d`
 )
 
 var (
@@ -393,12 +396,80 @@ func (p *kuwo) PlaylistDetail(pl Playlist) (Songs, error) {
 			Provider: "kuwo",
 		})
 	}
-
+	if len(songs) == 0 {
+		return nil, ErrEmptyTrackList
+	}
 	return songs, nil
 }
 
+type kuwoArtistSongs struct {
+	Code int `json:"code"`
+	Data struct {
+		Total string `json:"total"`
+		List  []struct {
+			MusicRID    string `json:"musicrid"`
+			Artist      string `json:"artist"`
+			ArtistID    int    `json:"artistid"`
+			Pic         string `json:"pic"`
+			RID         int    `json:"rid"`
+			HasLossless bool   `json:"hasLossless"`
+			Album       string `json:"album"`
+			AlbumID     int    `json:"albumid"`
+			Name        string `json:"name"`
+		} `json:"list"`
+	} `json:"data"`
+}
+
 func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	token, err := p.getToken()
+	u := fmt.Sprintf(kuwoAPIArtistSongs, id, config.Page, config.Limit)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Referer", "http://www.kuwo.cn/")
+	req.Header.Set("Origin", "http://www.kuwo.cn/")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("csrf", token)
+	req.Header.Set("cookie", "kw_token="+token)
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var artistSongs kuwoArtistSongs
+	err = json.Unmarshal(content, &artistSongs)
+	if err != nil {
+		return nil, err
+	}
+	for _, song := range artistSongs.Data.List {
+		res = append(res, Song{
+			ID:       strconv.Itoa(song.RID),
+			Title:    song.Name,
+			Artist:   song.Artist,
+			Image:    song.Pic,
+			Provider: "kuwo",
+		})
+	}
+	if len(res) == 0 {
+		return nil, ErrEmptyTrackList
+	}
+	return
 }
 
 func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {

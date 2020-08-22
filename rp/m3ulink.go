@@ -46,6 +46,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/artist\/([0-9a-zA-Z]+)`):                                                     "xiami",
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={%22artistId%22:%22([0-9]+)%22}`): "xiami",
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={"artistId":"([0-9]+)"}`):         "xiami",
+		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/singer_detail\/([0-9]+)`):                                                      "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/artist\/([0-9]+)`):                                                "migu",
 	}
 	albumPatterns = map[*regexp.Regexp]string{

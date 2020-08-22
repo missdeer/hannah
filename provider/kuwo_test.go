@@ -86,3 +86,19 @@ func TestKuwo_ArtistSongs(t *testing.T) {
 		t.Error("can't found artist songs")
 	}
 }
+
+func TestKuwo_AlbumSongs(t *testing.T) {
+	p := GetProvider("kuwo")
+	if p == nil {
+		t.Error("can't get provider")
+	}
+
+	songs, err := p.AlbumSongs("12997")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't found album songs")
+	}
+}

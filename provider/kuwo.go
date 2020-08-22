@@ -25,6 +25,7 @@ const (
 	kuwoAPIPlaylistDetail = `http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
 	kuwoAPIGetLyric       = `http://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=%s`
 	kuwoAPIArtistSongs    = `http://www.kuwo.cn/api/www/artist/artistMusic?artistid=%s&pn=%d&rn=%d`
+	kuwoAPIAlbumSongs     = `http://www.kuwo.cn/api/www/album/albumInfo?albumId=%s&pn=%d&rn=%d`
 )
 
 var (
@@ -472,8 +473,78 @@ func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 	return
 }
 
+type kuwoAlbumSongs struct {
+	Code int `json:"code"`
+	Data struct {
+		Artist    string `json:"artist"`
+		ArtistID  int    `json:"artistid"`
+		Album     string `json:"album"`
+		AlbumID   int    `json:"albumid"`
+		Pic       string `json:"pic"`
+		MusicList []struct {
+			MusicRID    string `json:"musicrid"`
+			RID         int    `json:"rid"`
+			Artist      string `json:"artist"`
+			ArtistID    int    `json:"artistid"`
+			HasLossless bool   `json:"hasLossless"`
+			Album       string `json:"album"`
+			AlbumID     int    `json:"albumid"`
+			Name        string `json:"name"`
+			Pic         string `json:"pic120"`
+		} `json:"musicList"`
+	} `json:"data"`
+}
+
 func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
-	return nil, ErrNotImplemented
+	token, err := p.getToken()
+	u := fmt.Sprintf(kuwoAPIAlbumSongs, id, config.Page, config.Limit)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Referer", "http://www.kuwo.cn/")
+	req.Header.Set("Origin", "http://www.kuwo.cn/")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("csrf", token)
+	req.Header.Set("cookie", "kw_token="+token)
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var albumSongs kuwoAlbumSongs
+	err = json.Unmarshal(content, &albumSongs)
+	if err != nil {
+		return nil, err
+	}
+	for _, song := range albumSongs.Data.MusicList {
+		res = append(res, Song{
+			ID:       strconv.Itoa(song.RID),
+			Title:    song.Name,
+			Artist:   song.Artist,
+			Image:    song.Pic,
+			Provider: "kuwo",
+		})
+	}
+	if len(res) == 0 {
+		return nil, ErrEmptyTrackList
+	}
+	return
 }
 
 func (p *kuwo) Login() error {

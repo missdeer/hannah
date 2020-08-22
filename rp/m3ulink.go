@@ -54,6 +54,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/album\?id=([0-9]+)`):          "netease",
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/album\/([0-9a-zA-Z]+)\.html`): "qq",
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/album\/([0-9a-zA-Z]+)`):          "xiami",
+		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/album_detail\/([0-9]+)`):           "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/album\/([0-9]+)`):     "migu",
 	}
 )

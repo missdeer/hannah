@@ -28,6 +28,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/collect\/([0-9]+)`):                     "xiami",
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/playlist\/([0-9]+)\.html`):           "qq",
 		regexp.MustCompile(`^https?:\/\/www.kugou.com\/yy\/special\/single\/([0-9]+)\.html`):   "kugou",
+		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/playlist_detail\/([0-9]+)`):               "kuwo",
 		regexp.MustCompile(`^https?:\/\/kuwo.cn\/playlist_detail\/([0-9]+)`):                   "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/playlist\/([0-9]+)`):         "migu",
 	}
@@ -36,6 +37,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/song\/([0-9a-zA-Z]+)`):        "xiami",
 		regexp.MustCompile(`^https?:\/\/y.qq.com/n/yqq\/song\/([0-9a-zA-Z]+)\.html`): "qq",
 		regexp.MustCompile(`^https?:\/\/www.kugou.com\/song\/#hash=([0-9A-F]+)`):     "kugou",
+		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/play_detail\/([0-9]+)`):         "kuwo",
 		regexp.MustCompile(`^https?:\/\/kuwo.cn\/play_detail\/([0-9]+)`):             "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/song\/([0-9]+)`):   "migu",
 	}
@@ -47,6 +49,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={%22artistId%22:%22([0-9]+)%22}`): "xiami",
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={"artistId":"([0-9]+)"}`):         "xiami",
 		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/singer_detail\/([0-9]+)`):                                                      "kuwo",
+		regexp.MustCompile(`^https?:\/\/kuwo.cn\/singer_detail\/([0-9]+)`):                                                          "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/artist\/([0-9]+)`):                                                "migu",
 	}
 	albumPatterns = map[*regexp.Regexp]string{
@@ -55,6 +58,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/album\/([0-9a-zA-Z]+)\.html`): "qq",
 		regexp.MustCompile(`^https?:\/\/www.xiami.com\/album\/([0-9a-zA-Z]+)`):          "xiami",
 		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/album_detail\/([0-9]+)`):           "kuwo",
+		regexp.MustCompile(`^https?:\/\/kuwo.cn\/album_detail\/([0-9]+)`):               "kuwo",
 		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/album\/([0-9]+)`):     "migu",
 	}
 )

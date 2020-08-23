@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/util"
 )
 
@@ -81,7 +82,7 @@ func LoadChinaIPList() error {
 			return err
 		}
 
-		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+		req.Header.Set("User-Agent", config.UserAgent)
 		req.Header.Set("Accept", "application/json, text/plain, */*")
 		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 		req.Header.Set("Accept-Encoding", "gzip, deflate")

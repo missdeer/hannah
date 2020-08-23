@@ -28,6 +28,7 @@ var (
 	BaseURL             string
 	NeteaseUsername     string
 	NeteasePassword     string
+	UserAgent           = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0"
 	CacheAddr           = "127.0.0.1:6379"
 	ReverseProxy        = "127.0.0.1:8123"
 	Action              = "play"
@@ -38,6 +39,7 @@ var (
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
+		"user-agent":            &UserAgent,
 		"show-useragent":        &ShowUserAgent,
 		"netease-username":      &NeteaseUsername,
 		"netease-password":      &NeteasePassword,

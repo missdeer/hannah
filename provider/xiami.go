@@ -267,7 +267,7 @@ func (p *xiami) SearchSongs(keyword string, page int, limit int) (SearchResult, 
 
 	req.Header.Set("Origin", "https://h.xiami.com")
 	req.Header.Set("Referer", "https://h.xiami.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -317,7 +317,7 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 		return song, err
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Referer", "https://www.xiami.com/")
@@ -362,7 +362,7 @@ func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
 			return song, err
 		}
 
-		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+		req.Header.Set("User-Agent", config.UserAgent)
 		req.Header.Set("Accept", "application/json, text/plain, */*")
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.Header.Set("Referer", "https://www.xiami.com/")
@@ -435,7 +435,7 @@ func (p *xiami) HotPlaylist(page int, limit int) (Playlists, error) {
 
 	req.Header.Set("Origin", "https://h.xiami.com")
 	req.Header.Set("Referer", "https://h.xiami.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -513,7 +513,7 @@ func (p *xiami) PlaylistDetail(pl Playlist) (Songs, error) {
 
 	req.Header.Set("Origin", "https://h.xiami.com")
 	req.Header.Set("Referer", "https://h.xiami.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -585,7 +585,7 @@ func (p *xiami) getArtistIDFromArtistStringID(id string) (int, error) {
 
 	req.Header.Set("Origin", "https://h.xiami.com")
 	req.Header.Set("Referer", "https://h.xiami.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -673,7 +673,7 @@ func (p *xiami) ArtistSongs(id string) (res Songs, err error) {
 
 	req.Header.Set("Origin", "https://h.xiami.com")
 	req.Header.Set("Referer", "https://h.xiami.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -760,7 +760,7 @@ func (p *xiami) AlbumSongs(id string) (res Songs, err error) {
 
 	req.Header.Set("Origin", "https://h.xiami.com")
 	req.Header.Set("Referer", "https://h.xiami.com")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0")
+	req.Header.Set("User-Agent", config.UserAgent)
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)

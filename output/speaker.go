@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/missdeer/hannah/output/bass"
-	"github.com/missdeer/hannah/output/beep"
 )
 
 type ISpeaker interface {
@@ -30,8 +29,6 @@ type ISpeaker interface {
 
 func NewSpeaker(engine string) ISpeaker {
 	switch strings.ToLower(engine) {
-	case "builtin":
-		return beep.NewSpeaker()
 	case "bass":
 		return bass.NewSpeaker()
 	}

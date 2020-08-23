@@ -3,17 +3,13 @@ package media
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gdamore/tcell"
 
 	"github.com/missdeer/hannah/config"
-	"github.com/missdeer/hannah/input"
-	"github.com/missdeer/hannah/media/decode"
 	"github.com/missdeer/hannah/output"
 	"github.com/missdeer/hannah/output/bass"
-	"github.com/missdeer/hannah/output/beep"
 	"github.com/missdeer/hannah/provider"
 )
 
@@ -25,22 +21,16 @@ var (
 	screenPanel          *output.ScreenPanel
 	audioSpeaker         output.ISpeaker
 	tcellEvents          chan tcell.Event
-	PlayMedia            = builtinPlayMedia
-	IsSupportedFileType  = beep.SupportedFileType
+	PlayMedia            = bassPlayMedia
+	IsSupportedFileType  = bass.SupportedFileType
 )
 
 func Initialize(screenPanelEnabled bool) error {
 	audioSpeaker = output.NewSpeaker(config.Engine)
 	audioSpeaker.Initialize()
 
-	switch strings.ToLower(config.Engine) {
-	case "builtin":
-		PlayMedia = builtinPlayMedia
-		IsSupportedFileType = beep.SupportedFileType
-	case "bass":
-		PlayMedia = bassPlayMedia
-		IsSupportedFileType = bass.SupportedFileType
-	}
+	PlayMedia = bassPlayMedia
+	IsSupportedFileType = bass.SupportedFileType
 	if screenPanelEnabled {
 		screenPanel = output.NewScreenPanel()
 		if err := screenPanel.Initialize(); err != nil {
@@ -158,50 +148,6 @@ func bassPlayMedia(song provider.Song, index int, total int) error {
 
 	done := make(chan struct{})
 	audioSpeaker.UpdateURI(song.URL, done)
-
-	return playMedia(song, index, total, done)
-}
-
-func builtinPlayMedia(song provider.Song, index int, total int) error {
-	if !audioSpeaker.IsNil() {
-		screenPanel.SetMessage(fmt.Sprintf("Loading %s ...", song.URL))
-		pos, length, vol, speed := audioSpeaker.Status()
-		screenPanel.Draw(pos, length, vol, speed)
-	}
-
-	r, err := input.OpenSource(song.URL)
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-
-	if !audioSpeaker.IsNil() {
-		screenPanel.SetMessage(fmt.Sprintf("Decoding %s ...", song.URL))
-		pos, length, vol, speed := audioSpeaker.Status()
-		screenPanel.Draw(pos, length, vol, speed)
-	}
-
-	decoder := decode.GetBuiltinDecoder(song.URL)
-	if decoder == nil {
-		return UnsupportedMediaType
-	}
-	streamer, format, err := decoder(r)
-	if err != nil {
-		return err
-	}
-	defer streamer.Close()
-
-	if !audioSpeaker.IsNil() {
-		screenPanel.SetMessage("Initializing speaker...")
-		pos, length, vol, speed := audioSpeaker.Status()
-		screenPanel.Draw(pos, length, vol, speed)
-	}
-
-	audioSpeaker.PrePlay(int(format.SampleRate), format.SampleRate.N(time.Second/10))
-	defer audioSpeaker.Shutdown()
-
-	done := make(chan struct{})
-	audioSpeaker.UpdateStream(int(format.SampleRate), streamer, done)
 
 	return playMedia(song, index, total, done)
 }

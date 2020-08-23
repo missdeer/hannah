@@ -11,15 +11,16 @@ import (
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 var (
 	playersNotSupportRedirectURL = []string{
-		"libmpv", // mpv
-		"BASS",   // bass
-		"mpg123", // mpg123
+		"libmpv",                               // mpv
+		"BASS",                                 // bass
+		"mpg123",                               // mpg123
 		"wbx 1.0.0; wbxapp 1.0.0; zhumu 4.0.0", // TTPlayer
-		"TTPlayer", // TTPlayer
+		"TTPlayer",                             // TTPlayer
 	}
 )
 
@@ -115,6 +116,8 @@ func getSong(c *gin.Context) {
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
 	}
+	_, mimeType := util.GetExtName(song.URL)
+	c.Writer.Header().Set("Content-Type", mimeType)
 	c.Stream(func(w io.Writer) bool {
 		_, e := io.Copy(w, resp.Body)
 		return e == nil

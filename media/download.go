@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
@@ -15,34 +14,9 @@ import (
 )
 
 var (
-	ErrNotDir        = errors.New("path exists but not a directory")
-	ErrFileExists    = errors.New("file exists")
-	extensionNameMap = map[string]struct{}{
-		".mp3":  {},
-		".ogg":  {},
-		".flac": {},
-		".wav":  {},
-		".m4a":  {},
-		".aac":  {},
-		".wma":  {},
-		".ape":  {},
-	}
+	ErrNotDir     = errors.New("path exists but not a directory")
+	ErrFileExists = errors.New("file exists")
 )
-
-func getExtName(uri string) string {
-	for k := range extensionNameMap {
-		if strings.HasPrefix(uri, "http://") || strings.HasPrefix(uri, "https://") {
-			if strings.Contains(strings.ToLower(uri), k) {
-				return k
-			}
-		} else {
-			if strings.HasSuffix(strings.ToLower(uri), k) {
-				return k
-			}
-		}
-	}
-	return ""
-}
 
 func downloadSong(song provider.Song, done chan string) error {
 	stat, err := os.Stat(config.DownloadDir)
@@ -54,7 +28,8 @@ func downloadSong(song provider.Song, done chan string) error {
 		return ErrNotDir
 	}
 
-	filename := fmt.Sprintf("%s-%s%s", song.Title, song.Artist, getExtName(song.URL))
+	extName, _ := util.GetExtName(song.URL)
+	filename := fmt.Sprintf("%s-%s%s", song.Title, song.Artist, extName)
 	fn := filepath.Join(config.DownloadDir, filename)
 	if _, err = os.Stat(fn); !os.IsNotExist(err) {
 		return ErrFileExists

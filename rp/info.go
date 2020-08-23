@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 func getSongInfo(c *gin.Context) {
@@ -57,6 +59,12 @@ func getSongInfo(c *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
+
+	if !strings.HasPrefix(resp.Header.Get("Content-Type"), "audio/") {
+		_, mimeType := util.GetExtName(song.URL)
+		resp.Header.Set("Content-Type", mimeType)
+	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
@@ -71,5 +79,6 @@ func getSongInfo(c *gin.Context) {
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
 	}
+	fmt.Println(resp.Header.Get("Content-Type"))
 	c.Data(http.StatusOK, resp.Header.Get("Content-Type"), data)
 }

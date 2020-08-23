@@ -108,6 +108,11 @@ func getSong(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
+	if !strings.HasPrefix(resp.Header.Get("Content-Type"), "audio/") {
+		_, mimeType := util.GetExtName(song.URL)
+		resp.Header.Set("Content-Type", mimeType)
+	}
+
 	// cache the info
 	if redis != nil {
 		redis.PutWithTimeout(headerKey, resp.Header, cacheTimeout)
@@ -116,8 +121,7 @@ func getSong(c *gin.Context) {
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
 	}
-	_, mimeType := util.GetExtName(song.URL)
-	c.Writer.Header().Set("Content-Type", mimeType)
+
 	c.Stream(func(w io.Writer) bool {
 		_, e := io.Copy(w, resp.Body)
 		return e == nil

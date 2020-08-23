@@ -35,7 +35,6 @@ var (
 	Provider            = "netease"
 	Limit               = 35
 	Page                = 1
-	Engine              = "bass"
 	NetworkTimeout      = 60
 
 	m = map[string]interface{}{
@@ -63,7 +62,6 @@ var (
 		"http-proxy":            &HttpProxy,
 		"network-interface":     &NetworkInterface,
 		"player":                &Player,
-		"engine":                &Engine,
 		"limit":                 &Limit,
 		"page":                  &Page,
 		"network-timeout":       &NetworkTimeout,

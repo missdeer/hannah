@@ -26,7 +26,7 @@ var (
 )
 
 func Initialize(screenPanelEnabled bool) error {
-	audioSpeaker = output.NewSpeaker(config.Engine)
+	audioSpeaker = output.NewSpeaker()
 	audioSpeaker.Initialize()
 
 	PlayMedia = bassPlayMedia

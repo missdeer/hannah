@@ -1,7 +1,6 @@
 package output
 
 import (
-	"strings"
 	"time"
 
 	"github.com/missdeer/hannah/output/bass"
@@ -27,10 +26,7 @@ type ISpeaker interface {
 	UpdateStream(int, interface{}, chan struct{})
 }
 
-func NewSpeaker(engine string) ISpeaker {
-	switch strings.ToLower(engine) {
-	case "bass":
-		return bass.NewSpeaker()
-	}
-	return nil
+func NewSpeaker() ISpeaker {
+	// only bass is supported
+	return bass.NewSpeaker()
 }

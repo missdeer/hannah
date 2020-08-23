@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y pkg-config libmpg123-dev portaudio19-dev libfaad-dev
+          sudo apt-get install -y pkg-config 
           env CGO_ENABLED=1 GOOS=${{ matrix.GOOS }} GOARCH=${{ matrix.GOARCH }} go build -ldflags="-s -w" -o ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/hannah
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/

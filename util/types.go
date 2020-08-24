@@ -1,6 +1,7 @@
 package util
 
 import (
+	"net/url"
 	"strings"
 )
 
@@ -19,12 +20,17 @@ var (
 
 func GetExtName(uri string) (ext string, mimetype string) {
 	u := strings.ToLower(uri)
-	for k, v := range extNameMimeTypeMap {
-		if strings.HasPrefix(u, "http://") || strings.HasPrefix(u, "https://") {
-			if strings.Contains(u, k) {
-				return k, v
+	if strings.HasPrefix(u, "http://") || strings.HasPrefix(u, "https://") {
+		if u, err := url.Parse(uri); err == nil {
+			for k, v := range extNameMimeTypeMap {
+				if strings.HasSuffix(strings.ToLower(u.Path), k) {
+					return k, v
+				}
 			}
-		} else {
+
+		}
+	} else {
+		for k, v := range extNameMimeTypeMap {
 			if strings.HasSuffix(u, k) {
 				return k, v
 			}

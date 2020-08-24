@@ -39,6 +39,7 @@ const (
 	neteaseAPILoginCellphone           = `http://music.163.com/weapi/login/cellphone`
 	neteaseAPILoginMail                = `http://music.163.com/weapi/login`
 	neteaseAPILoginClientToken         = "1_jVUMqWEPke0/1/Vu56xCmJpo5vP1grjn_SOVVDzOc78w8OKLVZ2JH7IfkjSXqgfmh"
+	neteaseAPIRefreshToken             = `https://music.163.com/weapi/login/token/refresh`
 )
 
 func weapi(origData interface{}) map[string]interface{} {
@@ -727,6 +728,48 @@ func (p *netease) Login() error {
 	}
 
 	if _, err = util.ReadHttpResponseBody(resp); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *netease) RefreshToken() error {
+	data := map[string]interface{}{
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", neteaseAPIRefreshToken, strings.NewReader(postBody))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("User-Agent", config.UserAgent)
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return ErrStatusNotOK
+	}
+
+	_, err = util.ReadHttpResponseBody(resp)
+	if err != nil {
 		return err
 	}
 

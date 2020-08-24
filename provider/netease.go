@@ -680,8 +680,9 @@ func (p *netease) Login() error {
 	if username == "" || password == "" {
 		return ErrNoAuthorizeInfo
 	}
+	sum := md5.Sum([]byte(password))
 	data := map[string]interface{}{
-		"password":      md5.Sum([]byte(password)),
+		"password":      hex.EncodeToString(sum[:]),
 		"rememberLogin": "true",
 	}
 	r := regexp.MustCompile(`^[0-9]+$`)

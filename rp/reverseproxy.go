@@ -25,6 +25,7 @@ var (
 	errUnsupportedProvider = errors.New("unsupported provider")
 	errInvalidSongID       = errors.New("invaild song ID")
 	errInvalidURL          = errors.New("invalid URL")
+	notFoundPage           = []byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`)
 )
 
 func getSongPlaylist(c *gin.Context) {
@@ -81,7 +82,7 @@ func Start(addr string, limit string) error {
 	r.HEAD("/:provider/:id", getSongInfo)
 
 	r.NoRoute(func(c *gin.Context) {
-		c.Data(http.StatusNotFound, "text/html; charset=UTF-8", []byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
+		c.Data(http.StatusNotFound, "text/html; charset=UTF-8", notFoundPage)
 	})
 	return r.Run(addr)
 }

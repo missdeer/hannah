@@ -22,44 +22,40 @@ type makeFunc func(*gin.Context, string, string) ([]byte, error)
 
 var (
 	playlistPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/discover\/toplist\?id=([0-9]+)`):     "netease",
-		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/playlist\?id=([0-9]+)`):              "netease",
-		regexp.MustCompile(`^https?:\/\/music.163.com\/#/my\/m\/music\/playlist\?id=([0-9]+)`): "netease",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/collect\/([0-9]+)`):                     "xiami",
-		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/playlist\/([0-9]+)\.html`):           "qq",
-		regexp.MustCompile(`^https?:\/\/www.kugou.com\/yy\/special\/single\/([0-9]+)\.html`):   "kugou",
-		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/playlist_detail\/([0-9]+)`):               "kuwo",
-		regexp.MustCompile(`^https?:\/\/kuwo.cn\/playlist_detail\/([0-9]+)`):                   "kuwo",
-		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/playlist\/([0-9]+)`):         "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/#\/discover\/toplist\?id=(\d+)`):     "netease",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/#\/playlist\?id=(\d+)`):              "netease",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/#/my\/m\/music\/playlist\?id=(\d+)`): "netease",
+		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/collect\/(\d+)`):                     "xiami",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/yqq\/playlist\/(\d+)\.html`):           "qq",
+		regexp.MustCompile(`^https?:\/\/www\.kugou\.com\/yy\/special\/single\/(\d+)\.html`):   "kugou",
+		regexp.MustCompile(`^https?:\/\/(www\.)?kuwo\.cn\/playlist_detail\/(\d+)`):            "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/playlist\/(\d+)`):         "migu",
 	}
 	songPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/song\?id=([0-9]+)`):        "netease",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/song\/([0-9a-zA-Z]+)`):        "xiami",
-		regexp.MustCompile(`^https?:\/\/y.qq.com/n/yqq\/song\/([0-9a-zA-Z]+)\.html`): "qq",
-		regexp.MustCompile(`^https?:\/\/www.kugou.com\/song\/#hash=([0-9A-F]+)`):     "kugou",
-		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/play_detail\/([0-9]+)`):         "kuwo",
-		regexp.MustCompile(`^https?:\/\/kuwo.cn\/play_detail\/([0-9]+)`):             "kuwo",
-		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/song\/([0-9]+)`):   "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/#\/song\?id=(\d+)`):       "netease",
+		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/song\/(\w+)`):             "xiami",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com/n/yqq\/song\/(\w+)\.html`):      "qq",
+		regexp.MustCompile(`^https?:\/\/www\.kugou\.com\/song\/#hash=([0-9A-F]+)`): "kugou",
+		regexp.MustCompile(`^https?:\/\/(www\.)kuwo.cn\/play_detail\/(\d+)`):       "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/song\/(\d+)`):  "migu",
 	}
 	artistPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/artist\/([0-9]+)`):                                                "netease",
-		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/artist\?id=([0-9]+)`):                                                     "netease",
-		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/singer\/([0-9a-zA-Z]+)\.html`):                                            "qq",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/artist\/([0-9a-zA-Z]+)`):                                                     "xiami",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={%22artistId%22:%22([0-9]+)%22}`): "xiami",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/list\?scene=artist&type=[0-9a-zA-Z]+&query={"artistId":"([0-9]+)"}`):         "xiami",
-		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/singer_detail\/([0-9]+)`):                                                      "kuwo",
-		regexp.MustCompile(`^https?:\/\/kuwo.cn\/singer_detail\/([0-9]+)`):                                                          "kuwo",
-		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/artist\/([0-9]+)`):                                                "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/weapi\/v1\/artist\/(\d+)`):                                       "netease",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/#\/artist\?id=(\d+)`):                                            "netease",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/yqq\/singer\/(\w+)\.html`):                                         "qq",
+		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/artist\/(\w+)`):                                                  "xiami",
+		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/list\?scene=artist&type=\w+&query={%22artistId%22:%22(\d+)%22}`): "xiami",
+		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/list\?scene=artist&type=\w+&query={"artistId":"(\d+)"}`):         "xiami",
+		regexp.MustCompile(`^https?:\/\/(www\.)?kuwo\.cn\/singer_detail\/(\d+)`):                                          "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/artist\/(\d+)`):                                       "migu",
 	}
 	albumPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music.163.com\/weapi\/v1\/album\/([0-9]+)`):     "netease",
-		regexp.MustCompile(`^https?:\/\/music.163.com\/#\/album\?id=([0-9]+)`):          "netease",
-		regexp.MustCompile(`^https?:\/\/y.qq.com\/n\/yqq\/album\/([0-9a-zA-Z]+)\.html`): "qq",
-		regexp.MustCompile(`^https?:\/\/www.xiami.com\/album\/([0-9a-zA-Z]+)`):          "xiami",
-		regexp.MustCompile(`^https?:\/\/www.kuwo.cn\/album_detail\/([0-9]+)`):           "kuwo",
-		regexp.MustCompile(`^https?:\/\/kuwo.cn\/album_detail\/([0-9]+)`):               "kuwo",
-		regexp.MustCompile(`^https?:\/\/music.migu.cn\/v3\/music\/album\/([0-9]+)`):     "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/weapi\/v1\/album\/(\d+)`): "netease",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/#\/album\?id=(\d+)`):      "netease",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/yqq\/album\/(\w+)\.html`):   "qq",
+		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/album\/(\w+)`):            "xiami",
+		regexp.MustCompile(`^https?:\/\/(www\.)?kuwo\.cn\/album_detail\/(\d+)`):    "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/album\/(\d+)`): "migu",
 	}
 )
 
@@ -208,19 +204,17 @@ func generateM3ULink(c *gin.Context) {
 		return
 	}
 
-	c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
-		[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
+	c.Data(http.StatusNotFound, "text/html; charset=UTF-8", notFoundPage)
 }
 
 func makeM3U(c *gin.Context, u string, patterns map[*regexp.Regexp]string, make makeFunc) bool {
 	for pattern, providerName := range patterns {
 		if pattern.MatchString(u) {
 			ss := pattern.FindAllStringSubmatch(u, -1)
-			if len(ss) == 1 && len(ss[0]) == 2 {
-				b, err := make(c, ss[0][1], providerName)
+			if len(ss) == 1 && len(ss[0]) >= 2 {
+				b, err := make(c, ss[0][len(ss[0])-1], providerName)
 				if err != nil {
-					c.Data(http.StatusNotFound, "text/html; charset=UTF-8",
-						[]byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`))
+					c.Data(http.StatusNotFound, "text/html; charset=UTF-8", notFoundPage)
 				} else {
 					c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)
 					c.Data(http.StatusOK, "audio/x-mpegurl", b)

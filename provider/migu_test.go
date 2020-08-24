@@ -2,6 +2,8 @@ package provider
 
 import (
 	"testing"
+
+	"github.com/missdeer/hannah/config"
 )
 
 func TestMigu_HotPlaylist(t *testing.T) {
@@ -68,6 +70,7 @@ func TestMigu_Name(t *testing.T) {
 }
 
 func TestMigu_AlbumSongs(t *testing.T) {
+	config.NetworkInterface = "en1"
 	p := GetProvider("migu")
 	if p == nil {
 		t.Error("can't get provider")
@@ -82,7 +85,6 @@ func TestMigu_AlbumSongs(t *testing.T) {
 		t.Error("can't found songs for album")
 	}
 }
-
 
 func TestMigu_ArtistSongs(t *testing.T) {
 	p := GetProvider("migu")

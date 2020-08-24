@@ -34,9 +34,9 @@ var (
 	miguAPIGetLossless    = `http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?dataType=2&`
 	miguAPILyric          = `https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId=%s`
 
-	regPlaylist       = regexp.MustCompile(`data\-share='([^']+)'`)
-	regPlaylistLink   = regexp.MustCompile(`^\/v3\/music\/playlist\/([0-9]+)\?origin=[0-9]+$`)
-	regSongInPlaylist = regexp.MustCompile(`^<a\sclass="song\-name\-txt"\shref="\/v3\/music\/song\/([0-9A-Za-z]+)"\stitle="([^"]+)"\starget="_blank">`)
+	regPlaylist     = regexp.MustCompile(`data\-share='([^']+)'`)
+	regPlaylistLink = regexp.MustCompile(`^\/v3\/music\/playlist\/([0-9]+)\?origin=[0-9]+$`)
+	regSongs        = regexp.MustCompile(`(?m)data\-share='{\n"type":"song",\n"title":"[^"]+",\n"linkUrl":"\/v3\/music\/song\/(\w+)",\n"imgUrl":"([^"]+)",\n"summary":"([^"]+)",\n"singer":"([^"]+)",\n"album":"[^"]+"\n}`)
 
 	rsaPublicKey *rsa.PublicKey
 )
@@ -367,19 +367,17 @@ func (p *migu) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)
-
 	if err != nil {
 		return nil, err
 	}
-	scanner := bufio.NewScanner(bytes.NewReader(content))
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		line := scanner.Text()
-		ss := regSongInPlaylist.FindAllStringSubmatch(line, -1)
-		if len(ss) == 1 && len(ss[0]) == 3 {
+	ss := regSongs.FindAllSubmatch(content, -1)
+	for _, s := range ss {
+		if len(s) == 5 {
 			songs = append(songs, Song{
-				ID:       ss[0][1],
-				Title:    ss[0][2],
+				ID:       string(s[1]),
+				Image:    "http:" + string(s[2]),
+				Title:    string(s[3]),
+				Artist:   string(s[4]),
 				Provider: "migu",
 			})
 		}
@@ -415,19 +413,17 @@ func (p *migu) ArtistSongs(id string) (res Songs, err error) {
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)
-
 	if err != nil {
 		return nil, err
 	}
-	scanner := bufio.NewScanner(bytes.NewReader(content))
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		line := scanner.Text()
-		ss := regSongInPlaylist.FindAllStringSubmatch(line, -1)
-		if len(ss) == 1 && len(ss[0]) == 3 {
+	ss := regSongs.FindAllSubmatch(content, -1)
+	for _, s := range ss {
+		if len(s) == 5 {
 			res = append(res, Song{
-				ID:       ss[0][1],
-				Title:    ss[0][2],
+				ID:       string(s[1]),
+				Image:    "http:" + string(s[2]),
+				Title:    string(s[3]),
+				Artist:   string(s[4]),
 				Provider: "migu",
 			})
 		}
@@ -466,19 +462,17 @@ func (p *migu) AlbumSongs(id string) (res Songs, err error) {
 	}
 
 	content, err := util.ReadHttpResponseBody(resp)
-
 	if err != nil {
 		return nil, err
 	}
-	scanner := bufio.NewScanner(bytes.NewReader(content))
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		line := scanner.Text()
-		ss := regSongInPlaylist.FindAllStringSubmatch(line, -1)
-		if len(ss) == 1 && len(ss[0]) == 3 {
+	ss := regSongs.FindAllSubmatch(content, -1)
+	for _, s := range ss {
+		if len(s) == 5 {
 			res = append(res, Song{
-				ID:       ss[0][1],
-				Title:    ss[0][2],
+				ID:       string(s[1]),
+				Image:    "http:" + string(s[2]),
+				Title:    string(s[3]),
+				Artist:   string(s[4]),
 				Provider: "migu",
 			})
 		}

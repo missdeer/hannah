@@ -3,6 +3,7 @@ package rp
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -77,6 +78,10 @@ func getSong(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
+	}
+
+	if config.ShowTargetURL {
+		log.Println(song.URL)
 	}
 
 	if canRedirect && (config.RedirectURL || (!config.RedirectURL && config.AutoRedirectURL && InChina(c.ClientIP()))) {

@@ -18,6 +18,7 @@ var (
 	AutoRedirectURL     bool
 	ReverseProxyEnabled bool
 	ShowUserAgent       bool
+	ShowTargetURL       bool
 	ReverseProxyRetries int
 	Socks5Proxy         string
 	HttpProxy           string
@@ -40,6 +41,7 @@ var (
 	m = map[string]interface{}{
 		"user-agent":            &UserAgent,
 		"show-useragent":        &ShowUserAgent,
+		"show-targeturl":        &ShowTargetURL,
 		"netease-username":      &NeteaseUsername,
 		"netease-password":      &NeteasePassword,
 		"baseurl":               &BaseURL,

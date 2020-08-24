@@ -13,24 +13,31 @@ jobs:
   fix:
     runs-on: macos-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Tidy
+
+      - name: Set up Go 1.15
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+        id: go
+
+      - run: go version && go env
+
+      - name: Tidy
         run: |
           rm -f go.sum
           go mod tidy
-      -
-        name: Set up Git
+
+      - name: Set up Git
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config user.name "auto-go-mod-tidy[bot]"
           git config user.email "auto-go-mod-tidy[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-      -
-        name: Commit and push changes
+
+      - name: Commit and push changes
         run: |
           git add .
           if output=$(git status --porcelain) && [ ! -z "$output" ]; then

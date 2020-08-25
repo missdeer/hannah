@@ -19,6 +19,17 @@ import (
 var (
 	ErrEmptyMidURLInfoField = errors.New("empty MidURLInfo field")
 	ErrEmptyPURL            = errors.New("empty PURL, may be VIP needed")
+	typeMap                 = []struct {
+		Quality string
+		Prefix  string
+		ExtName string
+	}{
+		{"flac", "F000", ".flac"},
+		{"ape", "A000", ".ape"},
+		{"320", "M800", ".mp3"},
+		{"128", "M500", ".mp3"},
+		{"m4a", "C400", ".m4a"},
+	}
 )
 
 type qq struct {
@@ -145,59 +156,71 @@ type qqSongDetail struct {
 }
 
 func (p *qq) ResolveSongURL(song Song) (Song, error) {
-	// https://u.y.qq.com/cgi-bin/musicu.fcg?loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0
-	// &data=%7B%22req_0%22%3A%7B%22module%22%3A%22vkey.GetVkeyServer%22%2C%22method%22%3A%22CgiGetVkey%22%2C%22param%22%3A%7B%22guid%22%3A%2210000%22%2C%22songmid%22%3A%5B%22003VQrF72a0DGb%22%5D%2C%22songtype%22%3A%5B0%5D%2C%22uin%22%3A%220%22%2C%22loginflag%22%3A1%2C%22platform%22%3A%2220%22%7D%7D%2C%22comm%22%3A%7B%22uin%22%3A0%2C%22format%22%3A%22json%22%2C%22ct%22%3A20%2C%22cv%22%3A0%7D%7D
-	u := `https://u.y.qq.com/cgi-bin/musicu.fcg?loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=%7B%22req_0%22%3A%7B%22module%22%3A%22vkey.GetVkeyServer%22%2C%22method%22%3A%22CgiGetVkey%22%2C%22param%22%3A%7B%22guid%22%3A%2210000%22%2C%22songmid%22%3A%5B%22` + song.ID + `%22%5D%2C%22songtype%22%3A%5B0%5D%2C%22uin%22%3A%220%22%2C%22loginflag%22%3A1%2C%22platform%22%3A%2220%22%7D%7D%2C%22comm%22%3A%7B%22uin%22%3A0%2C%22format%22%3A%22json%22%2C%22ct%22%3A20%2C%22cv%22%3A0%7D%7D`
+	var err error
+	for _, tm := range typeMap {
+		u := `https://u.y.qq.com/cgi-bin/musicu.fcg?-=getplaysongvkey&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=%7B%22req_0%22%3A%7B%22module%22%3A%22vkey.GetVkeyServer%22%2C%22method%22%3A%22CgiGetVkey%22%2C%22param%22%3A%7B%22filename%22%3A%5B%22` +
+			tm.Prefix + song.ID + tm.ExtName + `%22%5D%2C%22guid%22%3A%22` + strconv.Itoa(rand.Int()+10000) + `%22%2C%22songmid%22%3A%5B%22` + song.ID + `%22%5D%2C%22songtype%22%3A%5B0%5D%2C%22uin%22%3A%220%22%2C%22loginflag%22%3A1%2C%22platform%22%3A%2220%22%7D%7D%2C%22comm%22%3A%7B%22uin%22%3A0%2C%22format%22%3A%22json%22%2C%22ct%22%3A20%2C%22cv%22%3A0%7D%7D`
 
-	req, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return song, err
+		req, e := http.NewRequest("GET", u, nil)
+		if e != nil {
+			err = e
+			continue
+		}
+
+		req.Header.Set("User-Agent", config.UserAgent)
+		req.Header.Set("Accept", "application/json, text/plain, */*")
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.Header.Set("Referer", "http://y.qq.com/")
+		req.Header.Set("Origin", "http://y.qq.com/")
+		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+		req.Header.Set("Accept-Encoding", "gzip, deflate")
+
+		httpClient := util.GetHttpClient()
+		resp, e := httpClient.Do(req)
+		if e != nil {
+			err = e
+			continue
+		}
+
+		if resp.StatusCode != 200 {
+			resp.Body.Close()
+			err = ErrStatusNotOK
+			continue
+		}
+
+		content, e := util.ReadHttpResponseBody(resp)
+		if e != nil {
+			resp.Body.Close()
+			err = e
+			continue
+		}
+		resp.Body.Close()
+
+		var detail qqSongDetail
+		err = json.Unmarshal(content, &detail)
+		if err != nil {
+			continue
+		}
+
+		if detail.Code != 0 {
+			err = ErrCodeFieldNotExists
+			continue
+		}
+
+		if len(detail.Req0.Data.MidURLInfo) == 0 {
+			err = ErrEmptyMidURLInfoField
+			continue
+		}
+
+		if detail.Req0.Data.MidURLInfo[0].PURL == "" {
+			err = ErrEmptyPURL
+			continue
+		}
+
+		song.URL = `http://ws.stream.qqmusic.qq.com/` + detail.Req0.Data.MidURLInfo[0].PURL
+		return song, nil
 	}
-
-	req.Header.Set("User-Agent", config.UserAgent)
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "http://y.qq.com/")
-	req.Header.Set("Origin", "http://y.qq.com/")
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
-
-	httpClient := util.GetHttpClient()
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return song, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return song, ErrStatusNotOK
-	}
-
-	content, err := util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return song, err
-	}
-
-	var detail qqSongDetail
-	err = json.Unmarshal(content, &detail)
-	if err != nil {
-		return song, err
-	}
-
-	if detail.Code != 0 {
-		return song, fmt.Errorf("code = %d", detail.Code)
-	}
-
-	if len(detail.Req0.Data.MidURLInfo) == 0 {
-		return song, ErrEmptyMidURLInfoField
-	}
-
-	if detail.Req0.Data.MidURLInfo[0].PURL == "" {
-		return song, ErrEmptyPURL
-	}
-
-	song.URL = `http://ws.stream.qqmusic.qq.com/` + detail.Req0.Data.MidURLInfo[0].PURL
-	return song, nil
+	return song, err
 }
 
 type qqSongLyric struct {

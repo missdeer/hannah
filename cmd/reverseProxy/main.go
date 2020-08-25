@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/missdeer/golib/fsutil"
 	flag "github.com/spf13/pflag"
@@ -43,6 +45,8 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
+
+	rand.Seed(time.Now().UnixNano())
 
 	config.NetworkTimeout = 0 // no timeout, streaming costs much time
 	if err := rp.Init(config.CacheAddr); err != nil {

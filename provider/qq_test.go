@@ -1,9 +1,11 @@
 package provider
 
 import (
+	"math/rand"
 	"net/url"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestQq_HotPlaylist(t *testing.T) {
@@ -52,6 +54,7 @@ func TestQq_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	rand.Seed(time.Now().UnixNano())
 	u, err := p.ResolveSongURL(Song{ID: "003VQrF72a0DGb"})
 	if err != nil {
 		t.Error(err)

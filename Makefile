@@ -63,6 +63,7 @@ CHECKS:=go.mod go.sum \
     media/media.go \
     media/download.go \
     media/m3u.go
+UNAME_S:=$(shell uname -s)
 
 .PHONY: all
 all: $(HANNAH) $(RPFULLPATH)
@@ -72,7 +73,7 @@ $(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
 
 $(HANNAH): $(CHECKS)
 	env CGO_ENABLED=1 go build -ldflags="-s -w" -o $(HANNAH)
-	install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib hannah
+	if [ "$(UNAME_S)" = "Darwin" ]; then install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib hannah; fi
 	go mod tidy
 
 .PHONY: clean

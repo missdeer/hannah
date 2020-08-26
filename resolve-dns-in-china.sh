@@ -7,7 +7,7 @@ do
     firstip=`echo $ip | awk -F ';' '{print $1}'`;  
     if [ -n "$firstip" ];
     then
-        echo $firstip $domain; 
+        printf "%-15s %s\n" $firstip $domain; 
     fi
 done > result.txt
 cat result.txt | sort -n

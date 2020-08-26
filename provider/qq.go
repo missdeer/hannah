@@ -203,7 +203,7 @@ func (p *qq) ResolveSongURL(song Song) (Song, error) {
 		}
 
 		if detail.Code != 0 {
-			err = ErrCodeFieldNotExists
+			err = fmt.Errorf("detail code = %d", detail.Code)
 			continue
 		}
 

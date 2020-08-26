@@ -157,7 +157,7 @@ func createHttpClient() *http.Client {
 					d := net.Dialer{
 						LocalAddr: &net.UDPAddr{IP: ipaddr.IP},
 					}
-					return d.DialContext(ctx, "udp", "114.114.114.114:53")
+					return d.DialContext(ctx, "udp", "119.29.29.29:53")
 				},
 			}
 		}

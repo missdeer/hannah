@@ -72,7 +72,7 @@ CHECKS:=go.mod go.sum \
     media/m3u.go
 
 .PHONY: all
-all: $(HANNAH) $(RPFULLPATH)
+all: $(RPFULLPATH) $(HANNAH)
 
 $(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
 	cd cmd/reverseProxy && go build -ldflags="-s -w" -o $(RP)

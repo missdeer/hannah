@@ -129,6 +129,6 @@ func getSong(c *gin.Context) {
 
 	c.Stream(func(w io.Writer) bool {
 		_, e := io.Copy(w, resp.Body)
-		return e == nil
+		return e != nil && e != io.EOF
 	})
 }

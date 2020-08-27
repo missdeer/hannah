@@ -46,7 +46,9 @@ jobs:
           set CGO_ENABLED=1
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=${{ matrix.GOOS }}
-          mingw32-make
+          path
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin mingw32-make.exe
+          mkdir ${{ matrix.mingw_prefix }}
           copy hannah.exe ${{ matrix.mingw_prefix }}\
           copy cmd\reverseProxy\rp.exe ${{ matrix.mingw_prefix }}\
           copy output\bass\lib\windows\${{ matrix.GOARCH }}\bass.dll ${{ matrix.mingw_prefix }}\

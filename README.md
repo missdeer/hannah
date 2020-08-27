@@ -46,6 +46,11 @@ Listen music
 
 # if you are NOT in China, need to use a proxy to access those song services
 ./cmd/reverseProxy/rp -b 127.0.0.1:8888 --socks5 127.0.0.1:8080
+
+# if you have two or more network connections and want to specify one to be used by Hannah
+./cmd/reverseProxy/rp -b 127.0.0.1:8888 --network-interface en1
+# or
+./cmd/reverseProxy/rp -b 127.0.0.1:8888 --network-interface 192.168.2.100
 ```
 
 * use [foobar2000](http://www.foobar2000.org/) to open `old.m3u` and enjoy it.
@@ -63,6 +68,11 @@ Listen music
 
 # if you are NOT in China, need to use a proxy to access those song services
 ./cmd/reverseProxy/rp -b 127.0.0.1:8888 --socks5 127.0.0.1:8080
+
+# if you have two or more network connections and want to specify one to be used by Hannah
+./cmd/reverseProxy/rp -b 127.0.0.1:8888 --network-interface en1
+# or
+./cmd/reverseProxy/rp -b 127.0.0.1:8888 --network-interface 192.168.2.100
 ```
 
 * add a bookmark button on your web browser's Bookmarks Toolbar

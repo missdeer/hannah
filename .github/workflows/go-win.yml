@@ -46,14 +46,11 @@ jobs:
           set CGO_ENABLED=1
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=${{ matrix.GOOS }}
-          path
-          go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}\hannah.exe
+          mingw32-make
+          copy hannah.exe ${{ matrix.mingw_prefix }}\
+          copy cmd\reverseProxy\rp.exe ${{ matrix.mingw_prefix }}\
           copy output\bass\lib\windows\${{ matrix.GOARCH }}\bass.dll ${{ matrix.mingw_prefix }}\
           copy output\bass\lib\windows\${{ matrix.GOARCH }}\plugins\*.dll ${{ matrix.mingw_prefix }}\
-          copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin\libmpg123-0.dll ${{ matrix.mingw_prefix }}\
-          copy ${{ runner.temp }}\msys\msys64\${{ matrix.mingw_arch }}\bin\libfaad-2.dll ${{ matrix.mingw_prefix }}\
-          cd cmd\reverseProxy
-          go build -ldflags="-s -w" -o ..\..\${{ matrix.mingw_prefix }}\rp.exe
 
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0

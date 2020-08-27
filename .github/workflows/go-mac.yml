@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: |
         brew install pkg-config
-        make -f Makefile.macOS
+        make
         install_name_tool -change @executable_path/output/bass/lib/macOS/libbass.dylib @executable_path/libbass.dylib hannah
         mkdir darwin-amd64
         mv hannah darwin-amd64/

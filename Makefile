@@ -1,11 +1,12 @@
-UNAME_O:=$(shell uname -o)
+HANNAH:=hannah
+RP=rp
 UNAME_S:=$(shell uname -s)
-ifeq ($(UNAME_O),Msys)
-    HANNAH:=hannah.exe
-    RP=rp.exe
-else
-    HANNAH:=hannah
-    RP=rp
+ifneq ($(UNAME_S),Darwin)
+	UNAME_O:=$(shell uname -o)
+	ifeq ($(UNAME_O),Msys)
+		HANNAH:=hannah.exe
+		RP=rp.exe
+	endif
 endif
 RPFULLPATH:=cmd/reverseProxy/$(RP)
 CHECKS:=go.mod go.sum \

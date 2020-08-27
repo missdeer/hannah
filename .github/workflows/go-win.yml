@@ -47,7 +47,7 @@ jobs:
           set GOARCH=${{ matrix.GOARCH }}
           set GOOS=${{ matrix.GOOS }}
           path
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin mingw32-make.exe
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe
           mkdir ${{ matrix.mingw_prefix }}
           copy hannah.exe ${{ matrix.mingw_prefix }}\
           copy cmd\reverseProxy\rp.exe ${{ matrix.mingw_prefix }}\

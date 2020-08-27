@@ -1,5 +1,12 @@
-HANNAH:=hannah
-RP=rp
+UNAME_O:=$(shell uname -o)
+UNAME_S:=$(shell uname -s)
+ifeq ($(UNAME_O),Msys)
+    HANNAH:=hannah.exe
+    RP=rp.exe
+else
+    HANNAH:=hannah
+    RP=rp
+endif
 RPFULLPATH:=cmd/reverseProxy/$(RP)
 CHECKS:=go.mod go.sum \
 	util/cryptography/ecb.go \
@@ -63,7 +70,6 @@ CHECKS:=go.mod go.sum \
     media/media.go \
     media/download.go \
     media/m3u.go
-UNAME_S:=$(shell uname -s)
 
 .PHONY: all
 all: $(HANNAH) $(RPFULLPATH)

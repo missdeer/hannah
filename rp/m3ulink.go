@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/ushis/m3u"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 type getterFunc func(provider.IProvider) (provider.Songs, error)
@@ -79,15 +79,7 @@ func makeSongs(c *gin.Context, providerName string, cacheKey string, getter gett
 	}
 
 	playlist := m3u.Playlist{}
-	baseURL := config.BaseURL
-	if baseURL == "" {
-		scheme := c.Request.Header.Get("X-Forwarded-Proto")
-		if scheme == "" {
-			originURL := location.Get(c)
-			scheme = originURL.Scheme
-		}
-		baseURL = fmt.Sprintf("%s://%s", scheme, c.Request.Host)
-	}
+	baseURL := util.GetBaseURL(c)
 	for _, song := range pld {
 		filename := strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)
 		playlist = append(playlist, m3u.Track{
@@ -188,7 +180,10 @@ func makeSong(c *gin.Context, id string, providerName string) ([]byte, error) {
 		redis.PutWithTimeout(urlKey, song.URL, cacheTimeout)
 	}
 
-	return makeSongInM3U(song.URL, song.Title)
+	baseURL := util.GetBaseURL(c)
+	filename := strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)
+
+	return makeSongInM3U(fmt.Sprintf("%s/%s/%s/%s", baseURL, song.Provider, song.ID, url.PathEscape(filename)), song.Title)
 }
 
 func generateM3ULink(c *gin.Context) {

@@ -20,6 +20,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gin-contrib/location"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/net/proxy"
 	"golang.org/x/net/publicsuffix"
 
@@ -240,4 +242,17 @@ func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {
 		return nil, err
 	}
 	return ioutil.ReadAll(reader)
+}
+
+func GetBaseURL(c *gin.Context) (baseURL string) {
+	baseURL = config.BaseURL
+	if baseURL == "" {
+		scheme := c.Request.Header.Get("X-Forwarded-Proto")
+		if scheme == "" {
+			originURL := location.Get(c)
+			scheme = originURL.Scheme
+		}
+		baseURL = fmt.Sprintf("%s://%s", scheme, c.Request.Host)
+	}
+	return
 }

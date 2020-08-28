@@ -8,12 +8,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/ushis/m3u"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 func getAlbumSongs(c *gin.Context) {
@@ -48,15 +48,7 @@ func getAlbumSongs(c *gin.Context) {
 	}
 
 	playlist := m3u.Playlist{}
-	baseURL := config.BaseURL
-	if baseURL == "" {
-		scheme := c.Request.Header.Get("X-Forwarded-Proto")
-		if scheme == "" {
-			originURL := location.Get(c)
-			scheme = originURL.Scheme
-		}
-		baseURL = fmt.Sprintf("%s://%s", scheme, c.Request.Host)
-	}
+	baseURL := util.GetBaseURL(c)
 	for _, song := range pld {
 		filename := strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)
 		playlist = append(playlist, m3u.Track{

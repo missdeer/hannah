@@ -198,7 +198,7 @@ type kuwoLyric struct {
 	Msg    string `json:"msg"`
 	Data   struct {
 		LRCList []struct {
-			LineLyric string `json:"line_lyric"`
+			LineLyric string `json:"lineLyric"`
 			Time      string `json:"time"`
 		} `json:"lrclist"`
 		SongInfo struct {
@@ -256,7 +256,18 @@ func (p *kuwo) ResolveSongLyric(song Song) (Song, error) {
 	}
 	var lines []string
 	for _, l := range lrc.Data.LRCList {
-		lines = append(lines, fmt.Sprintf(`[%s]%s`, strings.Replace(l.Time, ".", ":", -1), l.LineLyric))
+		tt := strings.Split(l.Time, ".")
+		var timestamp string
+		if len(tt) == 2 {
+			seconds, err := strconv.Atoi(tt[0])
+			if err == nil {
+				minutes := seconds / 60
+				seconds = seconds % 60
+				millisecond, _ := strconv.Atoi(tt[1])
+				timestamp = fmt.Sprintf("%02d:%02d.%02d", minutes, seconds, millisecond%100)
+			}
+		}
+		lines = append(lines, fmt.Sprintf(`[%s]%s`, timestamp, l.LineLyric))
 	}
 	song.Lyric = strings.Join(lines, "\n")
 	return song, nil

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -25,6 +26,7 @@ var (
 	errUnsupportedProvider = errors.New("unsupported provider")
 	errInvalidSongID       = errors.New("invaild song ID")
 	errInvalidURL          = errors.New("invalid URL")
+	errLyricNotFound       = errors.New("lyric not found")
 	notFoundPage           = []byte(`<html><script type="text/javascript" src="//qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js" charset="utf-8"></script><body></body></html>`)
 )
 
@@ -48,7 +50,12 @@ func getSongPlaylist(c *gin.Context) {
 	case "search":
 		searchSongs(c)
 	default:
-		getSong(c)
+		fn := c.Param("filename")
+		if fn == "lrc" || strings.ToLower(filepath.Ext(fn)) == ".lrc" {
+			getLyric(c)
+		} else {
+			getSong(c)
+		}
 	}
 }
 

@@ -34,6 +34,63 @@ func supportRedirectURL(userAgent string) bool {
 	return true
 }
 
+func getLyric(c *gin.Context) {
+	providerName := c.Param("provider")
+	id := c.Param("id")
+
+	r := provider.GetSongIDPattern(providerName)
+	if r == nil {
+		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
+		return
+	}
+	if !r.MatchString(id) {
+		c.AbortWithError(http.StatusNotFound, errInvalidSongID)
+		return
+	}
+	// check cache first
+	urlKey := fmt.Sprintf("%s:%s:lyric", providerName, id)
+	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
+	if config.CacheEnabled {
+		if h, err := redis.Get(headerKey); err == nil {
+			if header, ok := h.(http.Header); ok {
+				for k, v := range header {
+					c.Writer.Header().Set(k, v[0])
+				}
+			}
+		}
+
+		if lyric, err := redis.GetString(urlKey); err == nil {
+			c.Data(http.StatusOK, "application/octet-stream", []byte(lyric))
+			return
+		}
+	}
+
+	// resolve URL now
+	p := provider.GetProvider(providerName)
+	if p == nil {
+		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
+		return
+	}
+
+	song, err := p.ResolveSongLyric(provider.Song{ID: id})
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	if song.Lyric == "" {
+		c.AbortWithError(http.StatusNotFound, errLyricNotFound)
+		return
+	}
+
+	// cache the resolved result
+	if redis != nil {
+		redis.Put(urlKey, song.Lyric)
+	}
+
+	c.Data(http.StatusOK, "application/octet-stream", []byte(song.Lyric))
+}
+
 func getSong(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
@@ -71,6 +128,7 @@ func getSong(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
 		return
 	}
+
 	song, err := p.ResolveSongURL(provider.Song{ID: id})
 	for i := 0; i < config.ReverseProxyRetries && err != nil; i++ {
 		song, err = p.ResolveSongURL(provider.Song{ID: id})

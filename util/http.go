@@ -199,49 +199,56 @@ func GetHttpClient() *http.Client {
 	return globalClient
 }
 
-func uncompressReader(r *http.Response) (io.ReadCloser, error) {
+func uncompressReader(r *http.Response) (io.ReadCloser, bool, error) {
 	header := strings.ToLower(r.Header.Get("Content-Encoding"))
 	switch header {
 	case "":
-		return r.Body, nil
+		return r.Body, false, nil
 	case "gzip":
 		rc, err := gzip.NewReader(r.Body)
 		if err != nil {
 			log.Println("creating gzip reader failed:", err)
-			return nil, err
+			return nil, false, err
 		}
-		return rc, nil
+		return rc, true, nil
 	case "deflate":
 		content, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Println("reading inflate failed:", err)
-			return nil, err
+			return nil, false, err
 		}
 		rc := flate.NewReader(bytes.NewReader(content[2:]))
 		if rc == nil {
 			log.Println("creating deflate reader failed")
-			return nil, errors.New("creating deflate reader failed")
+			return nil, false, errors.New("creating deflate reader failed")
 		}
-		return rc, nil
+		return rc, true, nil
 	}
-	return nil, errors.New("unexpected encoding type")
+	return nil, false, errors.New("unexpected encoding type")
 }
 
 func CopyHttpResponseBody(r *http.Response, w io.Writer) error {
-	reader, err := uncompressReader(r)
+	reader, needClose, err := uncompressReader(r)
 	if err != nil {
 		return err
 	}
 	_, err = io.Copy(w, reader)
+	if needClose {
+		reader.Close()
+	}
 	return err
 }
 
 func ReadHttpResponseBody(r *http.Response) (b []byte, err error) {
-	reader, err := uncompressReader(r)
+	reader, needClose, err := uncompressReader(r)
 	if err != nil {
 		return nil, err
 	}
-	return ioutil.ReadAll(reader)
+	b, err = ioutil.ReadAll(reader)
+	if needClose {
+		reader.Close()
+	}
+	return
 }
 
 func GetBaseURL(c *gin.Context) (baseURL string) {

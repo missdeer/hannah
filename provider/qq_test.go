@@ -75,7 +75,7 @@ func TestQq_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongLyric(Song{ID: "003VQrF72a0DGb"})
+	_, err := p.ResolveSongLyric(Song{ID: "003VQrF72a0DGb"}, "lrc")
 	if err != nil {
 		t.Error(err)
 	}

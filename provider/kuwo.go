@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/lyric"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -211,7 +212,7 @@ type kuwoLyric struct {
 	} `json:"data"`
 }
 
-func (p *kuwo) ResolveSongLyric(song Song) (Song, error) {
+func (p *kuwo) ResolveSongLyric(song Song, format string) (Song, error) {
 	id := song.ID
 	if strings.HasPrefix(id, "MUSIC_") {
 		id = id[len(`MUSIC_`):]
@@ -269,7 +270,7 @@ func (p *kuwo) ResolveSongLyric(song Song) (Song, error) {
 		}
 		lines = append(lines, fmt.Sprintf(`[%s]%s`, timestamp, l.LineLyric))
 	}
-	song.Lyric = strings.Join(lines, "\n")
+	song.Lyric = lyric.LyricConvert("lrc", format, strings.Join(lines, "\n"))
 	return song, nil
 }
 

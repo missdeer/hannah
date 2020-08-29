@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/lyric"
 	"github.com/missdeer/hannah/util"
 )
 
@@ -356,7 +357,7 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 	return song, err
 }
 
-func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
+func (p *xiami) ResolveSongLyric(song Song, format string) (Song, error) {
 	r := regexp.MustCompile(`\d+`)
 	if song.Lyric == "" && r.MatchString(song.ID) {
 		s, err := p.ResolveSongURL(song)
@@ -395,11 +396,7 @@ func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
 			return song, err
 		}
 
-		r1 := regexp.MustCompile(`<\d+>`)
-		r2 := regexp.MustCompile(`\[x\-trans\][^\n]*\n`)
-		content = r1.ReplaceAll(content, []byte(""))
-		content = r2.ReplaceAll(content, []byte(""))
-		song.Lyric = string(content)
+		song.Lyric = lyric.LyricConvert("xtrc", format, string(content))
 	}
 	return song, nil
 }

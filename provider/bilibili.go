@@ -74,7 +74,7 @@ func (p *bilibili) ResolveSongURL(song Song) (Song, error) {
 	return song, nil
 }
 
-func (p *bilibili) ResolveSongLyric(song Song) (Song, error) {
+func (p *bilibili) ResolveSongLyric(song Song, format string) (Song, error) {
 	return song, nil
 }
 

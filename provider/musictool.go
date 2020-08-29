@@ -16,7 +16,7 @@ func (p *musictool) ResolveSongURL(song Song) (Song, error) {
 	return song, ErrNotImplemented
 }
 
-func (p *musictool) ResolveSongLyric(song Song) (Song, error){
+func (p *musictool) ResolveSongLyric(song Song, format string) (Song, error){
 	return song, ErrNotImplemented
 }
 

@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/lyric"
 	"github.com/missdeer/hannah/util"
 )
 
@@ -178,7 +179,7 @@ type kugouDownloadLRC struct {
 	Format  string `json:"fmt"`
 }
 
-func (p *kugou) ResolveSongLyric(song Song) (Song, error) {
+func (p *kugou) ResolveSongLyric(song Song, format string) (Song, error) {
 	u := fmt.Sprintf(kugouAPIGetLyric, song.ID)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -257,7 +258,7 @@ func (p *kugou) ResolveSongLyric(song Song) (Song, error) {
 	if err != nil {
 		return song, err
 	}
-	song.Lyric = string(res)
+	song.Lyric = lyric.LyricConvert("lrc", format, string(res))
 	return song, nil
 }
 

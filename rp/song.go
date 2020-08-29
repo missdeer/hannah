@@ -34,7 +34,7 @@ func supportRedirectURL(userAgent string) bool {
 	return true
 }
 
-func getLyric(c *gin.Context) {
+func getLyric(c *gin.Context, format string) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
 
@@ -48,7 +48,7 @@ func getLyric(c *gin.Context) {
 		return
 	}
 	// check cache first
-	urlKey := fmt.Sprintf("%s:%s:lyric", providerName, id)
+	urlKey := fmt.Sprintf("%s:%s:%s:lyric", providerName, id, format)
 	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
 	if config.CacheEnabled {
 		if h, err := redis.Get(headerKey); err == nil {
@@ -72,7 +72,7 @@ func getLyric(c *gin.Context) {
 		return
 	}
 
-	song, err := p.ResolveSongLyric(provider.Song{ID: id})
+	song, err := p.ResolveSongLyric(provider.Song{ID: id}, format)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

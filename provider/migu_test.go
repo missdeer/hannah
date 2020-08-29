@@ -55,6 +55,10 @@ func TestMigu_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	_, err := p.ResolveSongLyric(Song{ID: `6005752J00T`}, "lrc")
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestMigu_Name(t *testing.T) {

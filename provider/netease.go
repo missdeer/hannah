@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/lyric"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -272,7 +273,7 @@ type neteaseLyricDetail struct {
 	Code int `json:"code"`
 }
 
-func (p *netease) ResolveSongLyric(song Song) (Song, error) {
+func (p *netease) ResolveSongLyric(song Song, format string) (Song, error) {
 	data := map[string]interface{}{
 		"id":         song.ID,
 		"lv":         -1,
@@ -315,12 +316,12 @@ func (p *netease) ResolveSongLyric(song Song) (Song, error) {
 		return song, err
 	}
 
-	var lyric neteaseLyricDetail
-	if err = json.Unmarshal(content, &lyric); err != nil {
+	var lrc neteaseLyricDetail
+	if err = json.Unmarshal(content, &lrc); err != nil {
 		return song, nil
 	}
 
-	song.Lyric = lyric.LRC.Lyric
+	song.Lyric = lyric.LyricConvert("lrc", format, lrc.LRC.Lyric)
 	return song, nil
 }
 

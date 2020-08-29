@@ -34,7 +34,7 @@ type Playlists []Playlist
 type IProvider interface {
 	SearchSongs(keyword string, page int, limit int) (SearchResult, error)
 	ResolveSongURL(song Song) (Song, error)
-	ResolveSongLyric(song Song) (Song, error)
+	ResolveSongLyric(song Song, format string) (Song, error)
 	HotPlaylist(page int, limit int) (Playlists, error)
 	PlaylistDetail(pl Playlist) (Songs, error)
 	ArtistSongs(id string) (Songs, error)

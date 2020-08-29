@@ -27,6 +27,8 @@ CHECKS:=go.mod go.sum \
     config/cfg_windows.go \
     config/cfg_bsd.go \
     input/source.go \
+    lyric/lrc.go \
+    lyric/xtrc.go \
     provider/provider.go \
     provider/kuwo.go \
     provider/provider_test.go \

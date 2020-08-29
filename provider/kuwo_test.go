@@ -55,7 +55,7 @@ func TestKuwo_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongLyric(Song{ID: `147917739`})
+	_, err := p.ResolveSongLyric(Song{ID: `147917739`}, "lrc")
 	if err != nil {
 		t.Error(err)
 	}

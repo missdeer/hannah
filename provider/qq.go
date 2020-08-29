@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/lyric"
 	"github.com/missdeer/hannah/util"
 )
 
@@ -229,7 +230,7 @@ type qqSongLyric struct {
 	Lyric   string `json:"lyric"`
 }
 
-func (p *qq) ResolveSongLyric(song Song) (Song, error) {
+func (p *qq) ResolveSongLyric(song Song, format string) (Song, error) {
 	// http://i.y.qq.com/lyric/fcgi-bin/fcg_query_lyric.fcg?songmid=track_id&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0
 	u := fmt.Sprintf(`http://i.y.qq.com/lyric/fcgi-bin/fcg_query_lyric.fcg?songmid=%s&loginUin=0&hostUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0`, song.ID)
 
@@ -268,17 +269,17 @@ func (p *qq) ResolveSongLyric(song Song) (Song, error) {
 		content = content[:len(content)-1]
 	}
 
-	var lyric qqSongLyric
-	err = json.Unmarshal(content, &lyric)
+	var lrc qqSongLyric
+	err = json.Unmarshal(content, &lrc)
 	if err != nil {
 		return song, err
 	}
 
-	res, err := base64.StdEncoding.DecodeString(lyric.Lyric)
+	res, err := base64.StdEncoding.DecodeString(lrc.Lyric)
 	if err != nil {
 		return song, err
 	}
-	song.Lyric = string(res)
+	song.Lyric = lyric.LyricConvert("lrc", format, string(res))
 	return song, nil
 }
 

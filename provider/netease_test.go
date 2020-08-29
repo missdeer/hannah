@@ -41,7 +41,7 @@ func TestNetease_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	u, err := p.ResolveSongLyric(Song{ID: "1426649237"})
+	u, err := p.ResolveSongLyric(Song{ID: "1426649237"}, "lrc")
 	if err != nil {
 		t.Error(err)
 	}

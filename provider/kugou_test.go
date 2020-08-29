@@ -65,7 +65,7 @@ func TestKugou_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongLyric(Song{ID: "F3EA661A19E9A0C965AD64049040BBAC"})
+	_, err := p.ResolveSongLyric(Song{ID: "F3EA661A19E9A0C965AD64049040BBAC"}, "lrc")
 	if err != nil {
 		t.Error(err)
 	}

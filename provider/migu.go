@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/missdeer/hannah/config"
+	"github.com/missdeer/hannah/lyric"
 	"github.com/missdeer/hannah/util"
 	"github.com/missdeer/hannah/util/cryptography"
 )
@@ -232,7 +233,7 @@ type miguLyric struct {
 	Lyric      string `json:"lyric"`
 }
 
-func (p *migu) ResolveSongLyric(song Song) (Song, error) {
+func (p *migu) ResolveSongLyric(song Song, format string) (Song, error) {
 	if song.Lyric != "" {
 		return song, nil
 	}
@@ -267,11 +268,11 @@ func (p *migu) ResolveSongLyric(song Song) (Song, error) {
 		return song, err
 	}
 
-	var lyric miguLyric
-	if err = json.Unmarshal(content, &lyric); err != nil {
+	var lrc miguLyric
+	if err = json.Unmarshal(content, &lrc); err != nil {
 		return song, err
 	}
-	song.Lyric = lyric.Lyric
+	song.Lyric = lyric.LyricConvert("lrc", format, lrc.Lyric)
 
 	return song, nil
 }

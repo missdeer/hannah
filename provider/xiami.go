@@ -40,7 +40,7 @@ var (
 )
 
 type xiami struct {
-	token   string
+	token string
 }
 
 type xiamiSongDetail struct {
@@ -352,10 +352,19 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 	}
 	u, err = caesar(sd.Data.TrackList[0].Location)
 	song.URL = "https:" + u
+	song.Lyric = "https:" + sd.Data.TrackList[0].LyricInfo.LyricFile
 	return song, err
 }
 
 func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
+	r := regexp.MustCompile(`\d+`)
+	if song.Lyric == "" && r.MatchString(song.ID) {
+		s, err := p.ResolveSongURL(song)
+		if err != nil {
+			return song, err
+		}
+		song.Lyric = s.Lyric
+	}
 	if strings.HasPrefix(song.Lyric, "https://") || strings.HasPrefix(song.Lyric, "http://") {
 		req, err := http.NewRequest("GET", song.Lyric, nil)
 		if err != nil {
@@ -386,6 +395,10 @@ func (p *xiami) ResolveSongLyric(song Song) (Song, error) {
 			return song, err
 		}
 
+		r1 := regexp.MustCompile(`<\d+>`)
+		r2 := regexp.MustCompile(`\[x\-trans\][^\n]*\n`)
+		content = r1.ReplaceAll(content, []byte(""))
+		content = r2.ReplaceAll(content, []byte(""))
 		song.Lyric = string(content)
 	}
 	return song, nil

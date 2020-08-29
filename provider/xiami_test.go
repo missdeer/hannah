@@ -65,6 +65,10 @@ func TestXiami_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	_, err := p.ResolveSongLyric(Song{ID: "1769262490"})
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestXiami_Name(t *testing.T) {

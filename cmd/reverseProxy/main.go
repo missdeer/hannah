@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -12,6 +13,11 @@ import (
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/rp"
+)
+
+var (
+	// Gitcommit contains the commit where we built reverseProxy from.
+	GitCommit string
 )
 
 func main() {
@@ -26,6 +32,7 @@ func main() {
 		addr = b
 	}
 	showHelpMessage := false
+	showVersion := false
 	limit := ""
 	flag.StringVarP(&config.NetworkInterface, "network-interface", "i", config.NetworkInterface, "set local network interface name, for example: en1, will overwirte socks5/http-proxy option")
 	flag.IntVarP(&config.ReverseProxyRetries, "retry", "", config.ReverseProxyRetries, "reverse proxy retries count")
@@ -39,10 +46,16 @@ func main() {
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "s", config.Socks5Proxy, "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "t", config.HttpProxy, "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
 	flag.BoolVarP(&showHelpMessage, "help", "h", false, "show this help message")
+	flag.BoolVarP(&showVersion, "version", "v", false, "show version number")
 	flag.Parse()
 
 	if showHelpMessage {
 		flag.PrintDefaults()
+		return
+	}
+
+	if showVersion {
+		fmt.Println("Hannah Reverse Proxy version:", GitCommit)
 		return
 	}
 

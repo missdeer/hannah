@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -17,6 +18,11 @@ import (
 	"github.com/missdeer/hannah/rp"
 )
 
+var (
+	// Gitcommit contains the commit where we built Hannah from.
+	GitCommit string
+)
+
 func main() {
 	if homeDir, err := os.UserHomeDir(); err == nil {
 		conf := filepath.Join(homeDir, ".hannah.conf")
@@ -26,6 +32,7 @@ func main() {
 	}
 
 	showHelpMessage := false
+	showVersion := false
 	flag.StringVarP(&config.NetworkInterface, "network-interface", "i", config.NetworkInterface, "set local network interface name, for example: en1, will overwirte socks5/http-proxy option")
 	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")
 	flag.BoolVarP(&config.CacheEnabled, "cache", "c", config.CacheEnabled, "cache song resolving result in Redis")
@@ -48,10 +55,16 @@ func main() {
 	flag.StringVarP(&config.DownloadDir, "dir", "", config.DownloadDir, "set directory to save download files")
 	flag.StringVarP(&config.M3UFileName, "m3u", "", config.M3UFileName, "set m3u file name to save play list")
 	flag.BoolVarP(&showHelpMessage, "help", "h", false, "show this help message")
+	flag.BoolVarP(&showVersion, "version", "v", false, "show version number")
 	flag.Parse()
 
 	if showHelpMessage {
 		flag.PrintDefaults()
+		return
+	}
+
+	if showVersion {
+		fmt.Println("Hannah version:", GitCommit)
 		return
 	}
 

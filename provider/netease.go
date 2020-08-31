@@ -166,7 +166,7 @@ func (p *netease) SearchSongs(keyword string, page int, limit int) (SearchResult
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -231,7 +231,7 @@ func (p *netease) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -298,7 +298,7 @@ func (p *netease) ResolveSongLyric(song Song, format string) (Song, error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -338,7 +338,7 @@ func (p *netease) HotPlaylist(page int, limit int) (res Playlists, err error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -444,7 +444,7 @@ func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -497,7 +497,7 @@ func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	resp, err = httpClient.Do(req)
 	if err != nil {
@@ -566,7 +566,7 @@ func (p *netease) ArtistSongs(id string) (res Songs, err error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -637,7 +637,7 @@ func (p *netease) AlbumSongs(id string) (res Songs, err error) {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -715,7 +715,7 @@ func (p *netease) Login() error {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -756,7 +756,7 @@ func (p *netease) RefreshToken() error {
 	req.Header.Set("Referer", "http://music.163.com/")
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)

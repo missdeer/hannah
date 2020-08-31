@@ -20,6 +20,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/andybalholm/brotli"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/proxy"
@@ -204,6 +205,13 @@ func uncompressReader(r *http.Response) (io.ReadCloser, bool, error) {
 	switch header {
 	case "":
 		return r.Body, false, nil
+	case "br":
+		rc := brotli.NewReader(r.Body)
+		if rc == nil {
+			log.Println("creating brotli reader failed")
+			return nil, false, errors.New("creating brotli reader failed")
+		}
+		return ioutil.NopCloser(rc), true, nil
 	case "gzip":
 		rc, err := gzip.NewReader(r.Body)
 		if err != nil {

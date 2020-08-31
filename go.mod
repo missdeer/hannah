@@ -3,6 +3,7 @@ module github.com/missdeer/hannah
 go 1.14
 
 require (
+	github.com/andybalholm/brotli v1.0.0
 	github.com/bogem/id3v2 v1.2.0
 	github.com/gdamore/tcell v1.3.0
 	github.com/gin-contrib/location v0.0.2

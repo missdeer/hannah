@@ -77,7 +77,7 @@ func (p *kugou) SearchSongs(keyword string, page int, limit int) (SearchResult, 
 	req.Header.Set("Referer", "http://www.kugou.com/")
 	req.Header.Set("Origin", "http://www.kugou.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -127,7 +127,7 @@ func (p *kugou) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Referer", "http://www.kugou.com/")
 	req.Header.Set("Origin", "http://www.kugou.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -192,7 +192,7 @@ func (p *kugou) ResolveSongLyric(song Song, format string) (Song, error) {
 	req.Header.Set("Referer", "http://www.kugou.com/")
 	req.Header.Set("Origin", "http://www.kugou.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -231,7 +231,7 @@ func (p *kugou) ResolveSongLyric(song Song, format string) (Song, error) {
 	req.Header.Set("Referer", "http://www.kugou.com/")
 	req.Header.Set("Origin", "http://www.kugou.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	resp, err = httpClient.Do(req)
 	if err != nil {
@@ -293,7 +293,7 @@ func (p *kugou) HotPlaylist(page int, limit int) (Playlists, error) {
 	req.Header.Set("Referer", "http://www.kugou.com/")
 	req.Header.Set("Origin", "http://www.kugou.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -357,7 +357,7 @@ func (p *kugou) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 		req.Header.Set("Referer", "http://www.kugou.com/")
 		req.Header.Set("Origin", "http://www.kugou.com/")
 		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-		req.Header.Set("Accept-Encoding", "gzip, deflate")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 		httpClient := util.GetHttpClient()
 		resp, err := httpClient.Do(req)

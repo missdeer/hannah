@@ -323,7 +323,7 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Referer", "https://www.xiami.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 	req.Header.Set("TE", "Trailers")
 
 	httpClient := util.GetHttpClient()
@@ -377,7 +377,7 @@ func (p *xiami) ResolveSongLyric(song Song, format string) (Song, error) {
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.Header.Set("Referer", "https://www.xiami.com/")
 		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-		req.Header.Set("Accept-Encoding", "gzip, deflate")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 		req.Header.Set("TE", "Trailers")
 
 		httpClient := util.GetHttpClient()

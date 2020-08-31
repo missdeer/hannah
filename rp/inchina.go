@@ -85,7 +85,7 @@ func LoadChinaIPList() error {
 		req.Header.Set("User-Agent", config.UserAgent)
 		req.Header.Set("Accept", "application/json, text/plain, */*")
 		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-		req.Header.Set("Accept-Encoding", "gzip, deflate")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 		client := util.GetHttpClient()
 		resp, err := client.Do(req)

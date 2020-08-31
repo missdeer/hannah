@@ -68,7 +68,7 @@ func (p *kuwo) getToken() (string, error) {
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -109,7 +109,7 @@ func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 	req.Header.Set("csrf", token)
 
 	httpClient := util.GetHttpClient()
@@ -162,7 +162,7 @@ func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
 
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Referer", "http://www.kuwo.cn/search/list?key=The+Call")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 	req.Header.Set("csrf", token)
 	req.Header.Set("cookie", "kw_token="+token)
 
@@ -225,7 +225,7 @@ func (p *kuwo) ResolveSongLyric(song Song, format string) (Song, error) {
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -306,7 +306,7 @@ func (p *kuwo) HotPlaylist(page int, limit int) (res Playlists, err error) {
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -373,7 +373,7 @@ func (p *kuwo) PlaylistDetail(pl Playlist) (Songs, error) {
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -441,7 +441,7 @@ func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 	req.Header.Set("csrf", token)
 	req.Header.Set("cookie", "kw_token="+token)
 
@@ -515,7 +515,7 @@ func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Referer", "http://www.kuwo.cn/")
 	req.Header.Set("Origin", "http://www.kuwo.cn/")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
 	req.Header.Set("csrf", token)
 	req.Header.Set("cookie", "kw_token="+token)
 

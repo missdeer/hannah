@@ -136,8 +136,12 @@ func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 
 	var res SearchResult
 	for _, r := range sr.Data.List {
+		id := r.MusicRID
+		if strings.HasPrefix(id, "MUSIC_") {
+			id = id[len("MUSIC_"):]
+		}
 		res = append(res, Song{
-			ID:       r.MusicRID,
+			ID:       id,
 			Title:    r.Name,
 			Image:    r.Pic120,
 			Artist:   r.Artist,
@@ -150,11 +154,7 @@ func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 
 func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
 	token, err := p.getToken()
-	id := song.ID
-	if strings.HasPrefix(id, "MUSIC_") {
-		id = id[len(`MUSIC_`):]
-	}
-	u := kuwoAPIGetLossless + base64.StdEncoding.EncodeToString(cryptography.DESEncrypt([]byte("corp=kuwo&p2p=1&type=convert_url2&sig=0&format=flac|mp3&rid="+id)))
+	u := kuwoAPIGetLossless + base64.StdEncoding.EncodeToString(cryptography.DESEncrypt([]byte("corp=kuwo&p2p=1&type=convert_url2&sig=0&format=flac|mp3&rid="+song.ID)))
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return song, err
@@ -213,11 +213,7 @@ type kuwoLyric struct {
 }
 
 func (p *kuwo) ResolveSongLyric(song Song, format string) (Song, error) {
-	id := song.ID
-	if strings.HasPrefix(id, "MUSIC_") {
-		id = id[len(`MUSIC_`):]
-	}
-	u := fmt.Sprintf(kuwoAPIGetLyric, id)
+	u := fmt.Sprintf(kuwoAPIGetLyric, song.ID)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return song, err

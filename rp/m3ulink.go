@@ -139,7 +139,7 @@ func makePlaylist(c *gin.Context, id string, providerName string) ([]byte, error
 	})
 }
 
-func makeSongInM3U(songURL string, songTitle string) ([]byte, error) {
+func makeSingleSongInM3U(songURL string, songTitle string) ([]byte, error) {
 	playlist := m3u.Playlist{m3u.Track{
 		Path:  songURL,
 		Title: songTitle,
@@ -156,12 +156,12 @@ func makeSongInM3U(songURL string, songTitle string) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-func makeSong(c *gin.Context, id string, providerName string) ([]byte, error) {
+func makeSingleSong(c *gin.Context, id string, providerName string) ([]byte, error) {
 	// check cache first
 	urlKey := fmt.Sprintf("%s:%s:url", providerName, id)
 	if config.CacheEnabled {
 		if songURL, err := redis.GetString(urlKey); err == nil {
-			return makeSongInM3U(songURL, "")
+			return makeSingleSongInM3U(songURL, "")
 		}
 	}
 
@@ -183,7 +183,7 @@ func makeSong(c *gin.Context, id string, providerName string) ([]byte, error) {
 	baseURL := util.GetBaseURL(c)
 	filename := strings.Replace(fmt.Sprintf("%s - %s", song.Title, song.Artist), "/", "-", -1)
 
-	return makeSongInM3U(fmt.Sprintf("%s/%s/%s/%s", baseURL, song.Provider, song.ID, url.PathEscape(filename)), song.Title)
+	return makeSingleSongInM3U(fmt.Sprintf("%s/%s/%s/%s", baseURL, song.Provider, song.ID, url.PathEscape(filename)), song.Title)
 }
 
 func generateM3ULink(c *gin.Context) {
@@ -195,7 +195,7 @@ func generateM3ULink(c *gin.Context) {
 	if makeM3U(c, u, playlistPatterns, makePlaylist) ||
 		makeM3U(c, u, albumPatterns, makeAlbumSongs) ||
 		makeM3U(c, u, artistPatterns, makeArtistSongs) ||
-		makeM3U(c, u, songPatterns, makeSong) {
+		makeM3U(c, u, songPatterns, makeSingleSong) {
 		return
 	}
 

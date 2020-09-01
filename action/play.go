@@ -17,6 +17,7 @@ import (
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/media"
 	"github.com/missdeer/hannah/provider"
+	"github.com/missdeer/hannah/util"
 )
 
 var (
@@ -135,7 +136,32 @@ func resolve(song provider.Song) (provider.Songs, error) {
 
 		return provider.Songs{song}, err
 	}
-	// http/https
+	// providers link
+	if id, providerName, matched := util.PlaylistMatch(song.URL); matched {
+		p := provider.GetProvider(providerName)
+		if songs, err := p.PlaylistDetail(provider.Playlist{ID: id}); err == nil {
+			return songs, nil
+		}
+	}
+	if id, providerName, matched := util.ArtistMatch(song.URL); matched {
+		p := provider.GetProvider(providerName)
+		if songs, err := p.ArtistSongs(id); err == nil {
+			return songs, nil
+		}
+	}
+	if id, providerName, matched := util.AlbumMatch(song.URL); matched {
+		p := provider.GetProvider(providerName)
+		if songs, err := p.AlbumSongs(id); err == nil {
+			return songs, nil
+		}
+	}
+	if id, providerName, matched := util.SingleSongMatch(song.URL); matched {
+		p := provider.GetProvider(providerName)
+		if s, err := p.ResolveSongURL(provider.Song{ID: id}); err == nil {
+			return provider.Songs{s}, nil
+		}
+	}
+	// normal http/https link
 	for k, _ := range supportedRemote {
 		if strings.HasPrefix(song.URL, k) {
 			song.Provider = "http(s)"

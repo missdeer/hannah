@@ -20,6 +20,7 @@ CHECKS:=go.mod go.sum \
     util/player.go \
     util/conv.go \
     util/json.go \
+    util/linkpattern.go \
     util/rand.go \
     config/config.go \
     config/cfg_darwin.go \

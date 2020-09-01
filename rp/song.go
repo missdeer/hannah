@@ -23,9 +23,15 @@ var (
 		"wbx 1.0.0; wbxapp 1.0.0; zhumu 4.0.0", // TTPlayer
 		"TTPlayer",                             // TTPlayer
 	}
+	providersNotSupportRedirectURL = map[string]struct{}{
+		"netease": {},
+	}
 )
 
-func supportRedirectURL(userAgent string) bool {
+func supportRedirectURL(providerName string, userAgent string) bool {
+	if _, ok := providersNotSupportRedirectURL[providerName]; ok {
+		return false
+	}
 	for _, k := range playersNotSupportRedirectURL {
 		if strings.Contains(userAgent, k) {
 			return false
@@ -94,7 +100,6 @@ func getLyric(c *gin.Context, format string) {
 func getSong(c *gin.Context) {
 	providerName := c.Param("provider")
 	id := c.Param("id")
-	canRedirect := supportRedirectURL(c.Request.UserAgent())
 	r := provider.GetSongIDPattern(providerName)
 	if r == nil {
 		c.AbortWithError(http.StatusNotFound, errUnsupportedProvider)
@@ -104,6 +109,7 @@ func getSong(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, errInvalidSongID)
 		return
 	}
+	canRedirect := supportRedirectURL(providerName, c.Request.UserAgent())
 	// check cache first
 	urlKey := fmt.Sprintf("%s:%s:url", providerName, id)
 	headerKey := fmt.Sprintf("%s:%s:header", providerName, id)
@@ -138,11 +144,13 @@ func getSong(c *gin.Context) {
 		return
 	}
 
-	if config.ShowTargetURL {
+	if config.Debugging {
 		log.Println(song.URL)
+		log.Println("client ip:", c.ClientIP())
 	}
 
-	if canRedirect && (config.RedirectURL || (!config.RedirectURL && config.AutoRedirectURL && InChina(c.ClientIP()))) {
+	if canRedirect && (config.RedirectURL ||
+		(!config.RedirectURL && config.AutoRedirectURL && (InChina(c.ClientIP()) || InLan(c.ClientIP())))) {
 		c.Redirect(http.StatusFound, song.URL)
 		return
 	}

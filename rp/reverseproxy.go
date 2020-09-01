@@ -31,7 +31,7 @@ var (
 )
 
 func getSongPlaylist(c *gin.Context) {
-	if config.ShowUserAgent {
+	if config.Debugging {
 		log.Println(c.Request.UserAgent())
 	}
 	p := c.Param("provider")

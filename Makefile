@@ -67,6 +67,7 @@ CHECKS:=go.mod go.sum \
     rp/artist.go \
     rp/inchina.go \
     rp/info.go \
+    rp/inlan.go \
     rp/m3ulink.go \
     rp/playlist.go \
     rp/search.go \

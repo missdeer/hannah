@@ -74,7 +74,7 @@ type miguSearchResult struct {
 }
 
 func (p *migu) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
-	u := fmt.Sprintf(miguAPISearch, keyword, page, limit)
+	u := fmt.Sprintf(miguAPISearch, url.QueryEscape(keyword), page, limit)
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {

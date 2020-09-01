@@ -97,7 +97,7 @@ func (p *kuwo) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 	if err != nil {
 		return nil, err
 	}
-	u := fmt.Sprintf(kuwoAPISearch, keyword, page, limit)
+	u := fmt.Sprintf(kuwoAPISearch, url.QueryEscape(keyword), page, limit)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err

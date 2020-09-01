@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/missdeer/hannah/config"
@@ -65,7 +66,7 @@ type kugouSongInfo struct {
 }
 
 func (p *kugou) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
-	u := fmt.Sprintf(kugouAPISearch, keyword, page, limit)
+	u := fmt.Sprintf(kugouAPISearch, url.QueryEscape(keyword), page, limit)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err

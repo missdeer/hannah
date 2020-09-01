@@ -15,7 +15,7 @@ var (
 	ByExternalPlayer    bool
 	CacheEnabled        bool
 	RedirectURL         bool
-	AutoRedirectURL     bool
+	AutoRedirectURL     = true
 	ReverseProxyEnabled bool
 	Debugging           bool
 	ReverseProxyRetries int

@@ -65,10 +65,16 @@ func playSongs(songs provider.Songs, r songResolver) error {
 		if config.Shuffle {
 			rand.Shuffle(len(ss), func(i, j int) { ss[i], ss[j] = ss[j], ss[i] })
 		}
-		u, err := url.Parse(inputSong.URL)
+
 		var p provider.IProvider
-		if err == nil {
-			p = provider.GetProvider(u.Scheme)
+		if u, err := url.Parse(inputSong.URL); err == nil {
+			if p = provider.GetProvider(u.Scheme); p == nil {
+				providerName, matched := util.GuessProvider(inputSong.URL)
+				if !matched {
+					continue
+				}
+				p = provider.GetProvider(providerName)
+			}
 		}
 		index := j + 1
 		count := len(songs)

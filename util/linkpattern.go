@@ -70,3 +70,19 @@ func ArtistMatch(u string) (string, string, bool) {
 func AlbumMatch(u string) (string, string, bool) {
 	return patternMatch(u, albumPatterns)
 }
+
+func GuessProvider(u string) (string, bool) {
+	if _, p, matched := patternMatch(u, playlistPatterns); matched {
+		return p, matched
+	}
+	if _, p, matched := patternMatch(u, artistPatterns); matched {
+		return p, matched
+	}
+	if _, p, matched := patternMatch(u, albumPatterns); matched {
+		return p, matched
+	}
+	if _, p, matched := patternMatch(u, songPatterns); matched {
+		return p, matched
+	}
+	return "", false
+}

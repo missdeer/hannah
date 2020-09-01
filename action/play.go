@@ -222,7 +222,7 @@ func play(args ...string) error {
 	if len(medias) == 0 {
 		return ErrEmptyArgs
 	}
-	fmt.Printf("Found %d songs.\n", len(medias))
+	fmt.Printf("Found %d item(s).\n", len(medias))
 
 	var songs provider.Songs
 	for _, media := range medias {

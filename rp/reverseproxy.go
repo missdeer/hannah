@@ -54,9 +54,11 @@ func getSongPlaylist(c *gin.Context) {
 		lyricForamt := strings.ToLower(filepath.Ext(fn))
 		if lyricForamt == "" {
 			lyricForamt = fn
+		} else {
+			lyricForamt = lyricForamt[1:]
 		}
 		switch lyricForamt {
-		case "lrc", ".lrc", "smi", ".smi":
+		case "lrc", "smi":
 			getLyric(c, lyricForamt)
 		default:
 			getSong(c)

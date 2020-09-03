@@ -150,7 +150,7 @@ func getSong(c *gin.Context) {
 	}
 
 	if canRedirect && (config.RedirectURL ||
-		(!config.RedirectURL && config.AutoRedirectURL && (InChina(c.ClientIP()) || InLan(c.ClientIP())))) {
+		(!config.RedirectURL && config.AutoRedirectURL && InChina(c.ClientIP()))) {
 		c.Redirect(http.StatusFound, song.URL)
 		return
 	}

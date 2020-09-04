@@ -37,7 +37,7 @@ var (
 
 	regPlaylist     = regexp.MustCompile(`data\-share='([^']+)'`)
 	regPlaylistLink = regexp.MustCompile(`^\/v3\/music\/playlist\/([0-9]+)\?origin=[0-9]+$`)
-	regSongs        = regexp.MustCompile(`(?m)data\-share='{\n"type":"song",\n"title":"[^"]+",\n"linkUrl":"\/v3\/music\/song\/(\w+)",\n"imgUrl":"([^"]+)",\n"summary":"([^"]+)",\n"singer":"([^"]+)",\n"album":"[^"]+"\n}`)
+	regSongs        = regexp.MustCompile(`(?m)data\-share='{\n"type":"song",\n"title":"[^"]+",\n"linkUrl":"\/v3\/music\/song\/(\w+)",\n"imgUrl":"([^"]+)",\n"summary":"([^"]+)",\n"singer":"([^"]+)",\n"album":"[^"]+"\n?}`)
 
 	rsaPublicKey *rsa.PublicKey
 )

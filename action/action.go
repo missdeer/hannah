@@ -53,7 +53,8 @@ func shuffleRepeatPlaySongs(songs provider.Songs, r songResolver) error {
 }
 
 func playSongs(songs provider.Songs, r songResolver) error {
-	for j, inputSong := range songs {
+	for j := 0; j < len(songs); j++ {
+		inputSong := songs[j]
 		ss, err := r(inputSong)
 		if err != nil {
 			log.Println(err)
@@ -69,7 +70,8 @@ func playSongs(songs provider.Songs, r songResolver) error {
 		var p provider.IProvider
 		index := j + 1
 		count := len(songs)
-		for i, song := range ss {
+		for i := 0; i < len(ss); i++ {
+			song := ss[i]
 			if config.ByExternalPlayer {
 				util.ExternalPlay(song.URL)
 				continue
@@ -117,7 +119,11 @@ func playSongs(songs provider.Songs, r songResolver) error {
 			case media.ShouldQuit:
 				return err
 			case media.PreviousSong:
-				i -= 2
+				if len(ss) == 1 {
+					j -= 2
+				} else {
+					i -= 2
+				}
 			case media.NextSong:
 				// auto next
 			case media.UnsupportedMediaType:

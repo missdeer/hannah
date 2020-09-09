@@ -33,6 +33,7 @@ func main() {
 
 	showHelpMessage := false
 	showVersion := false
+	flag.StringVarP(&config.LogFile, "log", "", "hannah.log", "set log file name, output to stdout if it's empty")
 	flag.StringVarP(&config.NetworkInterface, "network-interface", "i", config.NetworkInterface, "set local network interface name, for example: en1, will overwirte socks5/http-proxy option")
 	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")
 	flag.BoolVarP(&config.CacheEnabled, "cache", "c", config.CacheEnabled, "cache song resolving result in Redis")
@@ -67,6 +68,17 @@ func main() {
 		fmt.Println("Hannah version:", GitCommit)
 		return
 	}
+
+	f := os.Stdout
+	if config.LogFile != "" {
+		var err error
+		f, err = os.OpenFile(config.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	defer f.Close()
+	log.SetOutput(f)
 
 	args := flag.Args()
 	rand.Seed(time.Now().UnixNano())

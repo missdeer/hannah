@@ -67,15 +67,6 @@ func playSongs(songs provider.Songs, r songResolver) error {
 		}
 
 		var p provider.IProvider
-		if u, err := url.Parse(inputSong.URL); err == nil {
-			if p = provider.GetProvider(u.Scheme); p == nil {
-				providerName, matched := util.GuessProvider(inputSong.URL)
-				if !matched {
-					continue
-				}
-				p = provider.GetProvider(providerName)
-			}
-		}
 		index := j + 1
 		count := len(songs)
 		for i, song := range ss {
@@ -83,7 +74,21 @@ func playSongs(songs provider.Songs, r songResolver) error {
 				util.ExternalPlay(song.URL)
 				continue
 			}
-			if song.URL == "" && p != nil {
+			if song.URL == "" {
+				if p == nil {
+					if u, err := url.Parse(inputSong.URL); err == nil {
+						if p = provider.GetProvider(u.Scheme); p == nil {
+							providerName, matched := util.GuessProvider(inputSong.URL)
+							if !matched {
+								continue
+							}
+							p = provider.GetProvider(providerName)
+						}
+					}
+				}
+				if p == nil {
+					continue
+				}
 				// from playlist, only song ID exists, get the song URL now
 				s, err := p.ResolveSongURL(song)
 				if err != nil {

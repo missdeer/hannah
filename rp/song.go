@@ -6,8 +6,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
+	"github.com/djherbis/buffer"
+	"github.com/djherbis/nio"
 	"github.com/gin-gonic/gin"
 
 	"github.com/missdeer/hannah/config"
@@ -194,7 +197,13 @@ func getSong(c *gin.Context) {
 	}
 
 	c.Stream(func(w io.Writer) bool {
-		_, e := io.Copy(w, resp.Body)
-		return e != nil && e != io.EOF
+		l := resp.Header.Get("Content-Length")
+		length, err := strconv.ParseInt(l, 10, 64)
+		if err != nil {
+			length = 32 * 1024 * 1024 // 32MB In memory Buffer by default
+		}
+		buf := buffer.New(length)
+		_, err = nio.Copy(w, resp.Body, buf)
+		return err != nil && err != io.EOF
 	})
 }

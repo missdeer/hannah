@@ -10,33 +10,34 @@ import (
 )
 
 var (
-	Shuffle             bool
-	Repeat              bool
-	ByExternalPlayer    bool
-	CacheEnabled        bool
-	RedirectURL         bool
-	AutoRedirectURL     = true
-	ReverseProxyEnabled bool
-	Debugging           bool
-	ReverseProxyRetries int
-	Socks5Proxy         string
-	HttpProxy           string
-	NetworkInterface    string
-	Player              string
-	DownloadDir         string
-	M3UFileName         string
-	BaseURL             string
-	NeteaseUsername     string
-	NeteasePassword     string
-	LogFile             string
-	UserAgent           = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0"
-	CacheAddr           = "127.0.0.1:6379"
-	ReverseProxy        = "127.0.0.1:8123"
-	Action              = "play"
-	Provider            = "netease"
-	Limit               = 35
-	Page                = 1
-	NetworkTimeout      = 60
+	Shuffle              bool
+	Repeat               bool
+	ByExternalPlayer     bool
+	CacheEnabled         bool
+	RedirectURL          bool
+	AutoRedirectURL      = true
+	ReverseProxyEnabled  bool
+	Debugging            bool
+	ReverseProxyRetries  int
+	FixedStreamCacheSize int
+	Socks5Proxy          string
+	HttpProxy            string
+	NetworkInterface     string
+	Player               string
+	DownloadDir          string
+	M3UFileName          string
+	BaseURL              string
+	NeteaseUsername      string
+	NeteasePassword      string
+	LogFile              string
+	UserAgent            = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0"
+	CacheAddr            = "127.0.0.1:6379"
+	ReverseProxy         = "127.0.0.1:8123"
+	Action               = "play"
+	Provider             = "netease"
+	Limit                = 35
+	Page                 = 1
+	NetworkTimeout       = 60
 
 	m = map[string]interface{}{
 		"log":                   &LogFile,
@@ -47,6 +48,7 @@ var (
 		"baseurl":               &BaseURL,
 		"cache":                 &CacheEnabled,
 		"cache-addr":            &CacheAddr,
+		"fixed-stream-cache":    &FixedStreamCacheSize,
 		"redirect":              &RedirectURL,
 		"auto-redirect":         &AutoRedirectURL,
 		"reverse-proxy-enabled": &ReverseProxyEnabled,

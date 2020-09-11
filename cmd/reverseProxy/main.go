@@ -34,6 +34,7 @@ func main() {
 	showHelpMessage := false
 	showVersion := false
 	limit := ""
+	flag.IntVarP(&config.FixedStreamCacheSize, "fixed-stream-cache-size", "", config.FixedStreamCacheSize, "set fixed stream cache size, if it's 0, then the cache size is decided by HTTP header Content-Length")
 	flag.StringVarP(&config.NetworkInterface, "network-interface", "i", config.NetworkInterface, "set local network interface name, for example: en1, will overwirte socks5/http-proxy option")
 	flag.IntVarP(&config.ReverseProxyRetries, "retry", "", config.ReverseProxyRetries, "reverse proxy retries count")
 	flag.StringVarP(&config.BaseURL, "baseurl", "", config.BaseURL, "set base URL for reverse proxy, used in m3u play list items")

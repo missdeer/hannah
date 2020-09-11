@@ -202,6 +202,9 @@ func getSong(c *gin.Context) {
 		if err != nil {
 			length = 32 * 1024 * 1024 // 32MB In memory Buffer by default
 		}
+		if config.FixedStreamCacheSize > 0 {
+			length = int64(config.FixedStreamCacheSize)
+		}
 		buf := buffer.New(length)
 		_, err = nio.Copy(w, resp.Body, buf)
 		return err != nil && err != io.EOF

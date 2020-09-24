@@ -35,7 +35,6 @@ jobs:
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp hannah ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp cmd/reverseProxy/rp ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
       - name: Upload artifact hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
         uses: actions/upload-artifact@v1.0.0
@@ -85,7 +84,6 @@ jobs:
           ref: master
 
       - name: Build
-        shell: cmd
         run: |
           env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}\hannah.exe
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll ${{ matrix.mingw_prefix }}/
@@ -125,6 +123,7 @@ jobs:
           cp output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/
           cp output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
           cp cmd/reverseProxy/rp darwin-amd64/
+          env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
       - name: Upload artifact hannah-darwin-amd64
         uses: actions/upload-artifact@v1.0.0

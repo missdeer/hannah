@@ -85,11 +85,11 @@ jobs:
 
       - name: Build
         run: |
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}\hannah.exe
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}/hannah.exe
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll ${{ matrix.mingw_prefix }}/
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll ${{ matrix.mingw_prefix }}/
           cd cmd/reverseProxy
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ..\..\${{ matrix.mingw_prefix }}\rp.exe
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ../../${{ matrix.mingw_prefix }}/rp.exe
 
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0

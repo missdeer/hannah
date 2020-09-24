@@ -1,0 +1,137 @@
+name: Go Build
+on: [push]
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - GOARCH: amd64
+            GOOS: linux
+            LIBPATH: x86_64-linux-gnu
+
+    steps:
+      - name: Set up Go 1.15
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+        id: go
+
+      - run: go version && go env
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Build
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y pkg-config
+          mkdir -p ${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          make
+          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp hannah ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp cmd/reverseProxy/rp ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
+
+      - name: Upload artifact hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          path: ${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+
+  Windows:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - mingw_arch: MINGW64
+            mingw_prefix: mingw-w64-x86_64
+            GOARCH: amd64
+            GOOS: windows
+            CC: x86_64-w64-mingw32-gcc
+            CXX: x86_64-w64-mingw32-g++
+            LD: x86_64-w64-mingw32-ld
+            TOOLCHAIN: g++-mingw-w64-x86-64
+          - mingw_arch: MINGW32
+            mingw_prefix: mingw-w64-i686
+            GOARCH: 386
+            GOOS: windows
+            CC: i686-w64-mingw32-gcc
+            CXX: i686-w64-mingw32-g++
+            LD: i686-w64-mingw32-ld
+            TOOLCHAIN: g++-mingw-w64-i686
+
+    steps:
+      - name: prepare MinGW
+        run: |
+          sudo apt-get update -qq ;
+          sudo apt-get install -qq ${{ matrix.TOOLCHAIN }} ;
+
+      - name: Set up Go 1.15
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+        id: go
+
+      - run: go version && go env
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Build
+        shell: cmd
+        run: |
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}\hannah.exe
+          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll ${{ matrix.mingw_prefix }}/
+          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll ${{ matrix.mingw_prefix }}/
+          cd cmd/reverseProxy
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ..\..\${{ matrix.mingw_prefix }}\rp.exe
+
+      - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: hannah-${{ matrix.mingw_prefix }}
+          path: ${{ matrix.mingw_prefix }}
+
+  Darwin:
+    runs-on: macos-latest
+    steps:
+      - name: Set up Go 1.15
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+        id: go
+
+      - run: go version && go env
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Build
+        run: |
+          brew install pkg-config
+          make
+          install_name_tool -change @executable_path/output/bass/lib/macOS/libbass.dylib @executable_path/libbass.dylib hannah
+          mkdir darwin-amd64
+          mv hannah darwin-amd64/
+          cp output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/
+          cp output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
+          cp cmd/reverseProxy/rp darwin-amd64/
+
+      - name: Upload artifact hannah-darwin-amd64
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: hannah-darwin-amd64
+          path: darwin-amd64
+
+      - name: Remove old artifacts
+        run: |
+          gopath/bin/cicdutil -p github -u missdeer -t ${{ secrets.GH_TOKEN }} -r hannah -k 0 -a delete

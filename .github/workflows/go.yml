@@ -33,7 +33,7 @@ jobs:
           make
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          cp hannah ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp cmd/hannah/hannah ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
           cp cmd/reverseProxy/rp ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
 
       - name: Upload artifact hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
@@ -85,9 +85,11 @@ jobs:
 
       - name: Build
         run: |
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ${{ matrix.mingw_prefix }}/hannah.exe
+          cd cmd/hannah
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ../../${{ matrix.mingw_prefix }}/hannah.exe
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll ${{ matrix.mingw_prefix }}/
           cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll ${{ matrix.mingw_prefix }}/
+          cd ../..
           cd cmd/reverseProxy
           env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ../../${{ matrix.mingw_prefix }}/rp.exe
 
@@ -117,12 +119,12 @@ jobs:
         run: |
           brew install pkg-config
           make
-          install_name_tool -change @executable_path/output/bass/lib/macOS/libbass.dylib @executable_path/libbass.dylib hannah
+          install_name_tool -change @executable_path/output/bass/lib/macOS/libbass.dylib @executable_path/libbass.dylib cmd/hannah/hannah
           mkdir darwin-amd64
-          mv hannah darwin-amd64/
+          mv cmd/hannah/hannah darwin-amd64/
           cp output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/
           cp output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
-          cp cmd/reverseProxy/rp darwin-amd64/
+          mv cmd/reverseProxy/rp darwin-amd64/
           env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
       - name: Upload artifact hannah-darwin-amd64

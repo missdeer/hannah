@@ -27,6 +27,7 @@ jobs:
       - name: Tidy
         run: |
           rm -f go.sum
+          cd cmd/hannah
           go mod tidy
 
       - name: Set up Git

@@ -10,6 +10,7 @@ ifneq ($(UNAME_S),Darwin)
 	endif
 endif
 RPFULLPATH:=cmd/reverseProxy/$(RP)
+HANNAHFULLPATH:=cmd/hannah/$(HANNAH)
 CHECKS:=go.mod go.sum \
 	util/cryptography/ecb.go \
     util/cryptography/aes.go \
@@ -61,7 +62,6 @@ CHECKS:=go.mod go.sum \
     action/hot.go \
     action/playlist.go \
     cache/redis.go \
-    main.go \
     rp/reverseproxy.go \
     rp/limit.go \
     rp/album.go \
@@ -78,20 +78,24 @@ CHECKS:=go.mod go.sum \
     media/m3u.go
 
 .PHONY: all
-all: $(RPFULLPATH) $(HANNAH)
+all: $(RPFULLPATH) $(HANNAHFULLPATH)
 
 $(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
 	cd cmd/reverseProxy && go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(RP)
 
-$(HANNAH): $(CHECKS)
+$(HANNAHFULLPATH): $(CHECKS) cmd/hannah/main.go
+	cd cmd/hannah
 	env CGO_ENABLED=1 go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(HANNAH)
 	if [ "$(UNAME_S)" = "Darwin" ]; then install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib hannah; fi
 	go mod tidy
 
 .PHONY: clean
 clean:
+	cd cmd/reverseProxy
 	env CGO_ENABLED=1 go clean
-	rm -f $(HANNAH) $(RPFULLPATH)
+	cd cmd/hannah
+	env CGO_ENABLED=1 go clean
+	rm -f $(HANNAHFULLPATH) $(RPFULLPATH)
 
 .PHONY: test 
 test:

@@ -3,7 +3,6 @@ module github.com/missdeer/hannah
 go 1.14
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.3.3 // indirect
 	github.com/andybalholm/brotli v1.0.1
 	github.com/bogem/id3v2 v1.2.0
 	github.com/djherbis/buffer v1.1.0

@@ -84,17 +84,13 @@ $(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
 	cd cmd/reverseProxy && go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(RP)
 
 $(HANNAHFULLPATH): $(CHECKS) cmd/hannah/main.go
-	cd cmd/hannah
-	env CGO_ENABLED=1 go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(HANNAH)
-	if [ "$(UNAME_S)" = "Darwin" ]; then install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib hannah; fi
-	go mod tidy
+	cd cmd/hannah && env CGO_ENABLED=1 go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(HANNAH)
+	if [ "$(UNAME_S)" = "Darwin" ]; then install_name_tool -change @loader_path/libbass.dylib @executable_path/output/bass/lib/darwin/amd64/libbass.dylib cmd/hannah/hannah; fi
 
 .PHONY: clean
 clean:
-	cd cmd/reverseProxy
-	env CGO_ENABLED=1 go clean
-	cd cmd/hannah
-	env CGO_ENABLED=1 go clean
+	cd cmd/reverseProxy && env CGO_ENABLED=1 go clean
+	cd cmd/hannah && env CGO_ENABLED=1 go clean
 	rm -f $(HANNAHFULLPATH) $(RPFULLPATH)
 
 .PHONY: test 

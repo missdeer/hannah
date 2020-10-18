@@ -31,10 +31,10 @@ jobs:
           sudo apt-get install -y pkg-config
           mkdir -p ${{ matrix.GOOS }}-${{ matrix.GOARCH }}
           make
-          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          cp cmd/hannah/hannah ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
-          cp cmd/reverseProxy/rp ${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/libbass.so $PWD/${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.so $PWD/${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp $PWD/cmd/hannah/hannah $PWD/${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
+          cp $PWD/cmd/reverseProxy/rp $PWD/${{ matrix.GOOS }}-${{ matrix.GOARCH }}/
 
       - name: Upload artifact hannah-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
         uses: actions/upload-artifact@v1.0.0
@@ -85,13 +85,13 @@ jobs:
 
       - name: Build
         run: |
-          cd cmd/hannah
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ../../${{ matrix.mingw_prefix }}/hannah.exe
-          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll ${{ matrix.mingw_prefix }}/
-          cp output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll ${{ matrix.mingw_prefix }}/
-          cd ../..
-          cd cmd/reverseProxy
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o ../../${{ matrix.mingw_prefix }}/rp.exe
+          cd $PWD/cmd/hannah
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o $PWD/../../${{ matrix.mingw_prefix }}/hannah.exe
+          cd $PWD/../..
+          cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/
+          cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}/
+          cd $PWD/cmd/reverseProxy
+          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o $PWD/../../${{ matrix.mingw_prefix }}/rp.exe
 
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0
@@ -121,10 +121,10 @@ jobs:
           make
           install_name_tool -change @executable_path/output/bass/lib/macOS/libbass.dylib @executable_path/libbass.dylib cmd/hannah/hannah
           mkdir darwin-amd64
-          mv cmd/hannah/hannah darwin-amd64/
-          cp output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/
-          cp output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
-          mv cmd/reverseProxy/rp darwin-amd64/
+          mv $PWD/cmd/hannah/hannah darwin-amd64/
+          cp $PWD/output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/
+          cp $PWD/output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
+          mv $PWD/cmd/reverseProxy/rp darwin-amd64/
           env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
       - name: Upload artifact hannah-darwin-amd64

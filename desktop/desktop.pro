@@ -21,6 +21,10 @@ FORMS += \
     mainwindow.ui
     
 macx : {
+    HEADERS += \
+        application.h 
+    SOURCES += \
+        application.cpp 
     QMAKE_INFO_PLIST = macInfo.plist
     ICON = hannah.icns
     icon.path = $$PWD
@@ -31,3 +35,6 @@ macx : {
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    hannah.qrc

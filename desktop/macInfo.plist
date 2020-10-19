@@ -20,13 +20,15 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string></string>
+			<string>Hannah</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>hannah</string>
 			</array>
 		</dict>
 	</array>
+	<key>LSUIElement</key>
+	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2020 . All rights reserved.</string>
 	<key>CFBundleSignature</key>

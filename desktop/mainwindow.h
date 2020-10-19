@@ -2,9 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
+class QSystemTrayIcon;
+class QMenu;
+class QCloseEvent;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -14,6 +18,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+protected:
+    void closeEvent(QCloseEvent *event);
+
+public slots:
+    void onOpenUrl(QUrl url);
 
 private slots:
     void on_useExternalPlayer_stateChanged(int arg1);
@@ -40,7 +50,11 @@ private slots:
 
     void on_reverseProxyProxyAddress_textChanged(const QString &arg1);
 
+    void onGlobalClipboardChanged();
+
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow * ui;
+    QMenu *          trayIconMenu;
+    QSystemTrayIcon *trayIcon;
 };
 #endif // MAINWINDOW_H

@@ -14,14 +14,12 @@ SOURCES += \
     qtlocalpeer.cpp \
     qtlockedfile.cpp \
     qtlockedfile_unix.cpp \
-    qtlockedfile_win.cpp \
-    qtsingleapplication.cpp 
+    qtlockedfile_win.cpp
 
 HEADERS += \
     mainwindow.h \
     qtlocalpeer.h \
-    qtlockedfile.h \
-    qtsingleapplication.h 
+    qtlockedfile.h
 
 FORMS += \
     mainwindow.ui
@@ -37,9 +35,11 @@ macx : {
     INSTALLS += icon
 } else : {
     HEADERS += \
-        qtsinglecoreapplication.h 
+        qtsinglecoreapplication.h  \
+        qtsingleapplication.h 
     SOURCES += \
-        qtsinglecoreapplication.cpp 
+        qtsinglecoreapplication.cpp  \
+        qtsingleapplication.cpp 
 }
 
 # Default rules for deployment.

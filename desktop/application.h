@@ -21,7 +21,7 @@ public:
     bool    isRunning();
     QString id() const;
 
-public Q_SLOTS:
+public slots:
     bool sendMessage(const QString &message, int timeout = 5000);
 
 signals:

@@ -25,6 +25,7 @@ protected:
 public slots:
     void onOpenUrl(QUrl url);
 
+    void onApplicationMessageReceived(const QString &message);
 private slots:
     void on_useExternalPlayer_stateChanged(int arg1);
 

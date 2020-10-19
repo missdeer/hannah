@@ -60,6 +60,11 @@ void MainWindow::onOpenUrl(QUrl url)
     QMessageBox::information(this, tr("Open URL"), url.toString());
 }
 
+void MainWindow::onApplicationMessageReceived(const QString &message)
+{
+    QMessageBox::information(this, tr("application message received"), message);
+}
+
 void MainWindow::on_useExternalPlayer_stateChanged(int arg1) {}
 
 void MainWindow::on_externalPlayerPath_textChanged(const QString &arg1) {}

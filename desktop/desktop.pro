@@ -1,6 +1,4 @@
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui network widgets
 
 CONFIG += c++17
 
@@ -12,10 +10,18 @@ TARGET = Hannah
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    qtlocalpeer.cpp \
+    qtlockedfile.cpp \
+    qtlockedfile_unix.cpp \
+    qtlockedfile_win.cpp \
+    qtsingleapplication.cpp 
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    qtlocalpeer.h \
+    qtlockedfile.h \
+    qtsingleapplication.h 
 
 FORMS += \
     mainwindow.ui
@@ -29,6 +35,11 @@ macx : {
     ICON = hannah.icns
     icon.path = $$PWD
     INSTALLS += icon
+} else : {
+    HEADERS += \
+        qtsinglecoreapplication.h 
+    SOURCES += \
+        qtsinglecoreapplication.cpp 
 }
 
 # Default rules for deployment.

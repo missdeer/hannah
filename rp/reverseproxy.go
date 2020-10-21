@@ -1,6 +1,7 @@
 package rp
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -21,6 +22,7 @@ const (
 )
 
 var (
+	srv                    *http.Server
 	client                 *http.Client
 	redis                  *cache.RedisCache
 	errUnsupportedProvider = errors.New("unsupported provider")
@@ -98,5 +100,28 @@ func Start(addr string, limit string) error {
 	r.NoRoute(func(c *gin.Context) {
 		c.Data(http.StatusNotFound, "text/html; charset=UTF-8", notFoundPage)
 	})
-	return r.Run(addr)
+
+	srv = &http.Server{
+		Addr:    addr,
+		Handler: r,
+	}
+
+	// Initializing the server in a goroutine so that
+	// it won't block the graceful shutdown handling below
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+	return nil
+}
+
+func Stop() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server forced to shutdown:", err)
+	}
+
+	log.Println("Server exiting")
 }

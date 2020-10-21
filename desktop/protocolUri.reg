@@ -1,0 +1,7 @@
+[HKEY_CLASSES_ROOT\hannah]
+@="URL:hannah Protocol"
+"URL Protocol"=""
+[HKEY_CLASSES_ROOT\hannah\shell]
+[HKEY_CLASSES_ROOT\hannah\shell\open]
+[HKEY_CLASSES_ROOT\hannah\shell\open\command]
+@="\"C:\Hanna.exe\"\"%1\""

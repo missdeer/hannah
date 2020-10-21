@@ -2,6 +2,7 @@
 #include <QCommandLineParser>
 #include <QFileOpenEvent>
 #include <QMessageBox>
+#include <QSettings>
 #include <QtCore>
 
 #include "mainwindow.h"
@@ -17,13 +18,6 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_MAC)
     Application a(argc, argv);
     MainWindow  w;
-    w.connect(&a, &Application::openUrl, &w, &MainWindow::onOpenUrl);
-    w.connect(&a, &Application::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
-    if (a.isRunning())
-    {
-        a.sendMessage("running");
-        a.exit();
-    }
 #else
     QtSingleApplication a(argc, argv);
     QCoreApplication::setApplicationName("Hannah");
@@ -49,6 +43,16 @@ int main(int argc, char *argv[])
     }
     MainWindow w;
     w.connect(&a, &QtSingleApplication::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
+
+#    if defined(Q_OS_WIN)
+    QSettings mxKey("HKEY_CLASSES_ROOT\\hannah", QSettings::NativeFormat);
+    mxKey.setValue(".", "URL:hannah Protocol");
+    mxKey.setValue("URL Protocol", "");
+
+    QSettings mxOpenKey("HKEY_CLASSES_ROOT\\foo\\shell\\open\\command", QSettings::NativeFormat);
+    QString   cmdLine = QString("\"%1\" \"%%1\"").arg(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+    mxOpenKey.setValue(".", cmdLine);
+#    endif
 #endif
 
     return a.exec();

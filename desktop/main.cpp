@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QDir>
 #include <QFileOpenEvent>
 #include <QMessageBox>
 #include <QSettings>
@@ -50,8 +51,7 @@ int main(int argc, char *argv[])
     mxKey.setValue("URL Protocol", "");
 
     QSettings mxOpenKey("HKEY_CLASSES_ROOT\\foo\\shell\\open\\command", QSettings::NativeFormat);
-    QString   cmdLine = QString("\"%1\" \"%%1\"").arg(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
-    mxOpenKey.setValue(".", cmdLine);
+    mxOpenKey.setValue(".", QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QString("\" \"%1\""));
 #    endif
 #endif
 

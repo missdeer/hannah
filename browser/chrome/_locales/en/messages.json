@@ -1,0 +1,14 @@
+{
+    "application_title": {
+        "message": "Hannah",
+        "description": "Hannah"
+    },
+    "application_description": {
+        "message": "Allows you to listen music by external third party music player from the browser.",
+        "description": "Allows you to listen music by external third party music player from the browser."
+    },
+    "play_title": {
+        "message": "Play with Hannah",
+        "description": "Play with Hannah"
+    }
+}

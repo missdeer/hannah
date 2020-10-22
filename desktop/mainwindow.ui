@@ -129,7 +129,13 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="reverseProxyBindNetworkInterface"/>
+         <widget class="QComboBox" name="reverseProxyBindNetworkInterface">
+          <item>
+           <property name="text">
+            <string>-- Default --</string>
+           </property>
+          </item>
+         </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="reverseProxyAutoRedirect">

@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "Minidump.info");
+    settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
     ui->setupUi(this);
 
     auto interfaces = QNetworkInterface::allInterfaces();
@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
             &MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged);
     connect(ui->useExternalPlayer, &QCheckBox::stateChanged, this, &MainWindow::onUseExternalPlayerStateChanged);
     connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &MainWindow::onBrowseExternalPlayerClicked);
+    connect(ui->externalPlayerPath, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerPathTextChanged);
     connect(ui->externalPlayerArguments, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerArgumentsTextChanged);
     connect(ui->externalPlayerWorkingDir, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerWorkingDirTextChanged);
     connect(ui->reverseProxyListenPort, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onReverseProxyListenPortValueChanged);
@@ -146,42 +147,49 @@ void MainWindow::onUseExternalPlayerStateChanged(int state)
 
     Q_ASSERT(settings);
     settings->setValue("useExternalPlayer", state);
+    settings->sync();
 }
 
 void MainWindow::onExternalPlayerPathTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("externalPlayerPath", text);
+    settings->sync();
 }
 
 void MainWindow::onBrowseExternalPlayerClicked()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("External Player"));
     ui->externalPlayerPath->setText(fn);
+    settings->sync();
 }
 
 void MainWindow::onExternalPlayerArgumentsTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("externalPlayerArguments", text);
+    settings->sync();
 }
 
 void MainWindow::onExternalPlayerWorkingDirTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("externalPlayerWorkingDir", text);
+    settings->sync();
 }
 
 void MainWindow::onBrowseExternalPlayerWorkingDirClicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Working Directory"));
     ui->externalPlayerWorkingDir->setText(dir);
+    settings->sync();
 }
 
 void MainWindow::onReverseProxyListenPortValueChanged(int port)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyListenPort", port);
+    settings->sync();
     StopReverseProxy();
 
     reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
@@ -192,6 +200,7 @@ void MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QStr
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyBindNetworkInterface", text);
+    settings->sync();
     StopReverseProxy();
 
     QByteArray ba = ui->reverseProxyBindNetworkInterface->currentText().toUtf8();
@@ -204,6 +213,7 @@ void MainWindow::onReverseProxyAutoRedirectStateChanged(int state)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyAutoRedirect", state);
+    settings->sync();
     StopReverseProxy();
     SetAutoRedirect(state);
     StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
@@ -213,6 +223,7 @@ void MainWindow::onReverseProxyRedirectStateChanged(int state)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyRedirect", state);
+    settings->sync();
     StopReverseProxy();
     SetRedirect(state);
     StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
@@ -222,6 +233,7 @@ void MainWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyProxyType", text);
+    settings->sync();
     StopReverseProxy();
     if (text == "Http")
     {
@@ -245,6 +257,7 @@ void MainWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyProxyAddress", text);
+    settings->sync();
     StopReverseProxy();
 
     if (text == "Http")
@@ -328,6 +341,8 @@ void MainWindow::handle(const QString &url)
         qDebug() << "args:" << args;
         return;
     }
+#elif defined(Q_OS_WIN)
+#else
 #endif
     auto args = arguments.split(" ");
     args << url;

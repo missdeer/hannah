@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>hannah.png</file>
+        <file>rc/runInTerminal.app.scpt</file>
     </qresource>
 </RCC>

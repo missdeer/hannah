@@ -348,7 +348,33 @@ void MainWindow::handle(const QString &url)
         qDebug() << "args:" << args;
         return;
     }
+    else
+    {
+        QFile f(":/rc/runInTerminal.app.scpt");
+        if (f.open(QIODevice::ReadOnly))
+        {
+            auto data = f.readAll();
+            f.close();
+
+            auto  path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
+            QFile tf(path);
+            if (tf.open(QIODevice::WriteOnly))
+            {
+                tf.write(data);
+                tf.close();
+                QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
+                QProcess::startDetached("/usr/bin/osascript", args, workingDir);
+                qDebug() << "args:" << args;
+                return;
+            }
+        }
+    }
 #elif defined(Q_OS_WIN)
+    auto args = arguments.split(" ");
+    args << url;
+    args.removeAll("");
+    ::ShellExecuteW(
+        nullptr, L"open", player.toStdWString().c_str(), args.join(" ").toStdWString().c_str(), workingDir.toStdWString().c_str(), SW_SHOWNORMAL);
 #else
 #endif
     auto args = arguments.split(" ");

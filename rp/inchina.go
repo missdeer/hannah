@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
+	"runtime"
 	"sync"
 	"time"
 
@@ -70,9 +72,20 @@ func InChina(ip string) bool {
 	return IPv4InChina(ipv4)
 }
 
+func UserHomeDir() string {
+	if runtime.GOOS == "windows" {
+		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		if home == "" {
+			home = os.Getenv("USERPROFILE")
+		}
+		return home
+	}
+	return os.Getenv("HOME")
+}
+
 // LoadChinaIPList loads china IP list from file
 func LoadChinaIPList() error {
-	ipListFile := "china_ip_list.txt"
+	ipListFile := filepath.Join(UserHomeDir(), ".china_ip_list.txt")
 
 	stat, err := os.Stat(ipListFile)
 	if os.IsNotExist(err) || stat.ModTime().Add(30*24*time.Hour).Before(time.Now()) {

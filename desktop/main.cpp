@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_MAC)
     Application a(argc, argv);
     MainWindow  w;
+    w.connect(&a, &Application::openUrl, &w, &MainWindow::onOpenUrl);
 #else
     QtSingleApplication a(argc, argv);
     QCoreApplication::setApplicationName("Hannah");

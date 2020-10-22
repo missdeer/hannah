@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QNetworkInterface>
+#include <QProcess>
 #include <QSettings>
 #include <QSystemTrayIcon>
 
@@ -95,12 +96,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::onOpenUrl(QUrl url)
 {
-    QMessageBox::information(this, tr("Open URL"), url.toString());
+    QString u = url.toString();
+    if (u.startsWith("hannah://play?url="))
+    {
+        u = u.replace("hannah://play?url=", QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()));
+        handle(u);
+    }
 }
 
 void MainWindow::onApplicationMessageReceived(const QString &message)
 {
-    QMessageBox::information(this, tr("application message received"), message);
+    QString u = message;
+    if (u.startsWith("hannah://play?url="))
+    {
+        u = u.replace("hannah://play?url=", QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()));
+        handle(u);
+    }
 }
 
 void MainWindow::on_useExternalPlayer_stateChanged(int state)
@@ -185,5 +196,60 @@ void MainWindow::onGlobalClipboardChanged()
 {
     QClipboard *clipboard = QGuiApplication::clipboard();
     QString     text      = clipboard->text();
-    // check text pattern
+    QStringList patterns  = {"^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)discover\\/toplist\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)playlist\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)my\\/m\\/music\\/playlist\?id=(\\d+)",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/collect\\/(\\d+)",
+                            "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/playlist\\/(\\d+)\\.html",
+                            "^https?:\\/\\/www\\.kugou\\.com\\/yy\\/special\\/single\\/(\\d+)\\.html",
+                            "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/playlist_detail\\/(\\d+)",
+                            "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/playlist\\/(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)song\?id=(\\d+)",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/song\\/(\\w+)",
+                            "^https?:\\/\\/y\\.qq\\.com/n\\/yqq\\/song\\/(\\w+)\\.html",
+                            "^https?:\\/\\/www\\.kugou\\.com\\/song\\/#hash=([0-9A-F]+)",
+                            "^https?:\\/\\/(?:www\\.)kuwo.cn\\/play_detail\\/(\\d+)",
+                            "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/song\\/(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/artist\\/(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)artist\?id=(\\d+)",
+                            "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/singer\\/(\\w+)\\.html",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/artist\\/(\\w+)",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/list\?scene=artist&type=\\w+&query={%22artistId%22:%22(\\d+)%22}",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/list\?scene=artist&type=\\w+&query={\"artistId\":\"(\\d+)\"}",
+                            "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/singer_detail\\/(\\d+)",
+                            "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/artist\\/(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/album\\/(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)album\?id=(\\d+)",
+                            "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/album\\/(\\w+)\\.html",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/album\\/(\\w+)",
+                            "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/album_detail\\/(\\d+)",
+                            "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/album\\/(\\d+)"};
+    for (const auto &p : patterns)
+    {
+        QRegularExpression r(p);
+        auto               match = r.match(text);
+        if (match.hasMatch())
+        {
+            handle(text);
+            break;
+        }
+    }
+}
+
+void MainWindow::handle(const QString &url)
+{
+    auto player     = ui->externalPlayerPath->text();
+    auto arguments  = ui->externalPlayerArguments->text();
+    auto workingDir = ui->externalPlayerWorkingDir->text();
+
+    QFileInfo fi(player);
+
+#if defined(Q_OS_MAC)
+    if (fi.isBundle() && player.endsWith(".app"))
+    {
+        QProcess::startDetached("/usr/bin/open", {player, "--args", arguments, url}, workingDir);
+        return;
+    }
+#endif
+    QProcess::startDetached(player, {arguments, url}, workingDir);
 }

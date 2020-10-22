@@ -59,5 +59,7 @@ private:
     QMenu *          trayIconMenu;
     QSystemTrayIcon *trayIcon;
     QSettings *      settings;
+
+    void handle(const QString &url);
 };
 #endif // MAINWINDOW_H

@@ -28,29 +28,29 @@ public slots:
 
     void onApplicationMessageReceived(const QString &message);
 private slots:
-    void on_useExternalPlayer_stateChanged(int state);
+    void onUseExternalPlayerStateChanged(int state);
 
-    void on_externalPlayerPath_textChanged(const QString &text);
+    void onExternalPlayerPathTextChanged(const QString &text);
 
-    void on_browseExternalPlayer_clicked();
+    void onBrowseExternalPlayerClicked();
 
-    void on_externalPlayerArguments_textChanged(const QString &text);
+    void onExternalPlayerArgumentsTextChanged(const QString &text);
 
-    void on_externalPlayerWorkingDir_textChanged(const QString &text);
+    void onExternalPlayerWorkingDirTextChanged(const QString &text);
 
-    void on_browseExternalPlayerWorkingDir_clicked();
+    void onBrowseExternalPlayerWorkingDirClicked();
 
-    void on_reverseProxyListenPort_valueChanged(int port);
+    void onReverseProxyListenPortValueChanged(int port);
 
     void onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QString &text);
 
-    void on_reverseProxyAutoRedirect_stateChanged(int state);
+    void onReverseProxyAutoRedirectStateChanged(int state);
 
-    void on_reverseProxyRedirect_stateChanged(int state);
+    void onReverseProxyRedirectStateChanged(int state);
 
-    void on_reverseProxyProxyType_currentTextChanged(const QString &text);
+    void onReverseProxyProxyTypeCurrentTextChanged(const QString &text);
 
-    void on_reverseProxyProxyAddress_textChanged(const QString &text);
+    void onReverseProxyProxyAddressTextChanged(const QString &text);
 
     void onGlobalClipboardChanged();
 
@@ -59,6 +59,7 @@ private:
     QMenu *          trayIconMenu;
     QSystemTrayIcon *trayIcon;
     QSettings *      settings;
+    QByteArray       reverseProxyAddr;
 
     void handle(const QString &url);
 };

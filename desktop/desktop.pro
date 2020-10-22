@@ -48,6 +48,7 @@ macx : {
     ICON = hannah.icns
     icon.path = $$PWD
     INSTALLS += icon
+    LIBS += -framework Security
 } else : {
     HEADERS += \
         qtsinglecoreapplication.h  \

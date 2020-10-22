@@ -83,6 +83,9 @@ func Init(addr string) error {
 }
 
 func Start(addr string, limit string) error {
+	if srv != nil {
+		Stop()
+	}
 	r := gin.New()
 	if gin.Mode() != gin.ReleaseMode {
 		r.Use(gin.Logger())
@@ -117,6 +120,9 @@ func Start(addr string, limit string) error {
 }
 
 func Stop() {
+	if srv == nil {
+		return
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {

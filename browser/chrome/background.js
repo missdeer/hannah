@@ -35,7 +35,7 @@ chrome.contextMenus.create({
 	"id": "hannah_link",
 	"onclick": function(info, tab) {
 		if (validateUrl(info.linkUrl)) {
-			access("hannah://play?url=" + info.linkUrl);
+			access("hannah://play?url=" + encodeURIComponent(info.linkUrl));
 		}
 	}
 });
@@ -77,7 +77,7 @@ chrome.contextMenus.create({
 	"id": "hannah_play_page",
 	"onclick": function(info, tab) {
 		if (validateUrl(info.pageUrl)) {
-			access("hannah://play?url=" + info.pageUrl);
+			access("hannah://play?url=" + encodeURIComponent(info.pageUrl));
 		}
 	}	
 });
@@ -87,13 +87,13 @@ chrome.contextMenus.create({
 	"contexts": ["audio"],
 	"id": "hannah_play_audio",
 	"onclick": function(info, tab) {
-		access("hannah://play?url=" + info.linkUrl);
+		access("hannah://play?url=" + encodeURIComponent(info.linkUrl));
 	}
 });
 
 chrome.browserAction.onClicked.addListener(function(tab) {
 	if (validateUrl(tab.url)) {
-		access("hannah://play?url=" + tab.url);
+		access("hannah://play?url=" + encodeURIComponent(tab.url));
 	}
 });
 

@@ -51,12 +51,28 @@ MainWindow::MainWindow(QWidget *parent)
             &QComboBox::currentTextChanged,
             this,
             &MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged);
+    connect(ui->useExternalPlayer, &QCheckBox::stateChanged, this, &MainWindow::onUseExternalPlayerStateChanged);
+    connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &MainWindow::onBrowseExternalPlayerClicked);
+    connect(ui->externalPlayerArguments, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerArgumentsTextChanged);
+    connect(ui->externalPlayerWorkingDir, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerWorkingDirTextChanged);
+    connect(ui->reverseProxyListenPort, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onReverseProxyListenPortValueChanged);
+    connect(ui->reverseProxyAutoRedirect, &QCheckBox::stateChanged, this, &MainWindow::onReverseProxyAutoRedirectStateChanged);
+    connect(ui->reverseProxyRedirect, &QCheckBox::stateChanged, this, &MainWindow::onReverseProxyRedirectStateChanged);
+    connect(ui->reverseProxyProxyType, &QComboBox::currentTextChanged, this, &MainWindow::onReverseProxyProxyTypeCurrentTextChanged);
+    connect(ui->reverseProxyProxyAddress, &QLineEdit::textChanged, this, &MainWindow::onReverseProxyProxyAddressTextChanged);
 
     QClipboard *clipboard = QGuiApplication::clipboard();
     connect(clipboard, &QClipboard::dataChanged, this, &MainWindow::onGlobalClipboardChanged);
 
     auto configAction = new QAction(tr("&Configuration"), this);
-    connect(configAction, &QAction::triggered, this, &MainWindow::showNormal);
+    connect(configAction, &QAction::triggered, this, [this]() {
+        if (isHidden())
+        {
+            showNormal();
+        }
+        activateWindow();
+        raise();
+    });
 
     auto quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
@@ -71,14 +87,20 @@ MainWindow::MainWindow(QWidget *parent)
     trayIcon->setIcon(QIcon(":/hannah.png"));
 
     trayIcon->show();
+
+    reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 MainWindow::~MainWindow()
 {
+    StopReverseProxy();
+
     settings->sync();
     delete settings;
     delete ui;
 }
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 #ifdef Q_OS_MACOS
@@ -114,82 +136,134 @@ void MainWindow::onApplicationMessageReceived(const QString &message)
     }
 }
 
-void MainWindow::on_useExternalPlayer_stateChanged(int state)
+void MainWindow::onUseExternalPlayerStateChanged(int state)
 {
     ui->externalPlayerArguments->setEnabled(state == Qt::Checked);
     ui->externalPlayerPath->setEnabled(state == Qt::Checked);
+    ui->externalPlayerWorkingDir->setEnabled(state == Qt::Checked);
     ui->browseExternalPlayer->setEnabled(state == Qt::Checked);
     ui->browseExternalPlayerWorkingDir->setEnabled(state == Qt::Checked);
-    ui->externalPlayerWorkingDir->setEnabled(state == Qt::Checked);
 
     Q_ASSERT(settings);
     settings->setValue("useExternalPlayer", state);
 }
 
-void MainWindow::on_externalPlayerPath_textChanged(const QString &text)
+void MainWindow::onExternalPlayerPathTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("externalPlayerPath", text);
 }
 
-void MainWindow::on_browseExternalPlayer_clicked()
+void MainWindow::onBrowseExternalPlayerClicked()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("External Player"));
     ui->externalPlayerPath->setText(fn);
 }
 
-void MainWindow::on_externalPlayerArguments_textChanged(const QString &text)
+void MainWindow::onExternalPlayerArgumentsTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("externalPlayerArguments", text);
 }
 
-void MainWindow::on_externalPlayerWorkingDir_textChanged(const QString &text)
+void MainWindow::onExternalPlayerWorkingDirTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("externalPlayerWorkingDir", text);
 }
 
-void MainWindow::on_browseExternalPlayerWorkingDir_clicked()
+void MainWindow::onBrowseExternalPlayerWorkingDirClicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Working Directory"));
     ui->externalPlayerWorkingDir->setText(dir);
 }
 
-void MainWindow::on_reverseProxyListenPort_valueChanged(int port)
+void MainWindow::onReverseProxyListenPortValueChanged(int port)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyListenPort", port);
+    StopReverseProxy();
+
+    reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyBindNetworkInterface", text);
+    StopReverseProxy();
+
+    QByteArray ba = ui->reverseProxyBindNetworkInterface->currentText().toUtf8();
+    SetNetworkInterface(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::on_reverseProxyAutoRedirect_stateChanged(int state)
+void MainWindow::onReverseProxyAutoRedirectStateChanged(int state)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyAutoRedirect", state);
+    StopReverseProxy();
+    SetAutoRedirect(state);
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::on_reverseProxyRedirect_stateChanged(int state)
+void MainWindow::onReverseProxyRedirectStateChanged(int state)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyRedirect", state);
+    StopReverseProxy();
+    SetRedirect(state);
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::on_reverseProxyProxyType_currentTextChanged(const QString &text)
+void MainWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyProxyType", text);
+    StopReverseProxy();
+    if (text == "Http")
+    {
+        QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
+        SetHttpProxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+    }
+    else if (text == "Socks5")
+    {
+        QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
+        SetSocks5Proxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+    }
+    else
+    {
+        SetHttpProxy(GoString {nullptr, 0});
+        SetSocks5Proxy(GoString {nullptr, 0});
+    }
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::on_reverseProxyProxyAddress_textChanged(const QString &text)
+void MainWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
 {
     Q_ASSERT(settings);
     settings->setValue("reverseProxyProxyAddress", text);
+    StopReverseProxy();
+
+    if (text == "Http")
+    {
+        QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
+        SetHttpProxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+    }
+    else if (text == "Socks5")
+    {
+        QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
+        SetSocks5Proxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+    }
+    else
+    {
+        SetHttpProxy(GoString {nullptr, 0});
+        SetSocks5Proxy(GoString {nullptr, 0});
+    }
+
+    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onGlobalClipboardChanged()
@@ -247,9 +321,17 @@ void MainWindow::handle(const QString &url)
 #if defined(Q_OS_MAC)
     if (fi.isBundle() && player.endsWith(".app"))
     {
-        QProcess::startDetached("/usr/bin/open", {player, "--args", arguments, url}, workingDir);
+        QStringList args = {player, "--args"};
+        args << arguments.split(" ") << url;
+        args.removeAll("");
+        QProcess::startDetached("/usr/bin/open", args, workingDir);
+        qDebug() << "args:" << args;
         return;
     }
 #endif
-    QProcess::startDetached(player, {arguments, url}, workingDir);
+    auto args = arguments.split(" ");
+    args << url;
+    args.removeAll("");
+    QProcess::startDetached(player, args, workingDir);
+    qDebug() << player << args;
 }

@@ -112,7 +112,7 @@ function validateUrl(url) {
 		/^https?:\/\/www\.xiami\.com\/song\/(\w+)/g,
 		/^https?:\/\/y\.qq\.com\/n\/yqq\/song\/(\w+)\.html/g,
 		/^https?:\/\/www\.kugou\.com\/song\/#hash=([0-9A-F]+)/g,
-		/^https?:\/\/(www\.)kuwo.cn\/play_detail\/(\d+)/g,
+		/^https?:\/\/(www\.)?kuwo.cn\/play_detail\/(\d+)/g,
 		/^https?:\/\/music\.migu\.cn\/v3\/music\/song\/(\d+)/g,
 
 		/^https?:\/\/music\.163\.com\/weapi\/v1\/artist\/(\d+)/g,

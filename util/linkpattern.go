@@ -20,7 +20,7 @@ var (
 		regexp.MustCompile(`^https?:\/\/www\.xiami\.com\/song\/(\w+)`):             "xiami",
 		regexp.MustCompile(`^https?:\/\/y\.qq\.com/n\/yqq\/song\/(\w+)\.html`):     "qq",
 		regexp.MustCompile(`^https?:\/\/www\.kugou\.com\/song\/#hash=([0-9A-F]+)`): "kugou",
-		regexp.MustCompile(`^https?:\/\/(?:www\.)kuwo.cn\/play_detail\/(\d+)`):     "kuwo",
+		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo.cn\/play_detail\/(\d+)`):    "kuwo",
 		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/song\/(\d+)`):  "migu",
 	}
 	artistPatterns = map[*regexp.Regexp]string{

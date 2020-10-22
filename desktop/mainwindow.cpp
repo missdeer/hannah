@@ -1,6 +1,7 @@
 #include <QClipboard>
 #include <QCloseEvent>
 #include <QCoreApplication>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
@@ -79,8 +80,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
     trayIconMenu = new QMenu(this);
-    trayIconMenu->addAction(configAction);
+    trayIconMenu->addAction(tr("Netease"), []() { QDesktopServices::openUrl(QUrl("https://music.163.com")); });
+    trayIconMenu->addAction(tr("QQ"), []() { QDesktopServices::openUrl(QUrl("https://y.qq.com")); });
+    trayIconMenu->addAction(tr("Xiami"), []() { QDesktopServices::openUrl(QUrl("https://www.xiami.com")); });
+    trayIconMenu->addAction(tr("Migu"), []() { QDesktopServices::openUrl(QUrl("https://music.migu.cn/v3")); });
+    trayIconMenu->addAction(tr("Kugou"), []() { QDesktopServices::openUrl(QUrl("https://www.kugou.com")); });
+    trayIconMenu->addAction(tr("Kuwo"), []() { QDesktopServices::openUrl(QUrl("http://kuwo.cn")); });
     trayIconMenu->addSeparator();
+    trayIconMenu->addAction(configAction);
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon(this);

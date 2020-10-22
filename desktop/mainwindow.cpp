@@ -375,6 +375,7 @@ void MainWindow::handle(const QString &url)
     args.removeAll("");
     ::ShellExecuteW(
         nullptr, L"open", player.toStdWString().c_str(), args.join(" ").toStdWString().c_str(), workingDir.toStdWString().c_str(), SW_SHOWNORMAL);
+    return;
 #else
 #endif
     auto args = arguments.split(" ");

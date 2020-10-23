@@ -57,6 +57,12 @@ win32: {
         LIBS += -L$$PWD/../lib/reverseProxy/x86
         INCLUDEPATH += $$PWD/../lib/reverseProxy/x86
     }
+    CONFIG(release, debug|release) : {
+        WINDEPLOYQT = $$[QT_INSTALL_BINS]/windeployqt.exe
+        DESTDIR = $$OUT_PWD/release
+    } else : {
+        DESTDIR = $$OUT_PWD/debug
+    }
     
     translate.commands = '$(COPY_DIR) $$shell_path($$PWD/translations) $$shell_path($$DESTDIR/translations)'
     
@@ -73,6 +79,7 @@ macx : {
         application.h 
     SOURCES += \
         application.cpp 
+    DESTDIR = $$OUT_PWD
     QMAKE_INFO_PLIST = macInfo.plist
     ICON = hannah.icns
     icon.path = $$PWD

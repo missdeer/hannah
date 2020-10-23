@@ -66,5 +66,5 @@ func main() {
 	if err := rp.Init(config.CacheAddr); err != nil {
 		log.Println(err)
 	}
-	log.Fatal(rp.Start(addr, limit))
+	rp.StartDaemon(addr, limit)
 }

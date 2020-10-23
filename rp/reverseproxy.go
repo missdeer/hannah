@@ -5,8 +5,11 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/gin-contrib/location"
@@ -82,7 +85,21 @@ func Init(addr string) error {
 	return err
 }
 
-func Start(addr string, limit string) error {
+func StartDaemon(addr string, limit string) {
+	Start(addr, limit)
+
+	quit := make(chan os.Signal)
+	// kill (no param) default send syscall.SIGTERM
+	// kill -2 is syscall.SIGINT
+	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+
+	Stop()
+}
+
+func Start(addr string, limit string) {
 	if srv != nil {
 		Stop()
 	}
@@ -116,7 +133,6 @@ func Start(addr string, limit string) error {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-	return nil
 }
 
 func Stop() {

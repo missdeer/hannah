@@ -30,11 +30,7 @@ func StartReverseProxy(addr, limit string) bool {
 		log.Println(err)
 		return false
 	}
-	err := rp.Start(addr, limit)
-	if err != nil {
-		log.Fatal(err)
-		return false
-	}
+	rp.Start(addr, limit)
 	return true
 }
 

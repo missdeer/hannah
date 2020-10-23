@@ -1,4 +1,4 @@
-name: Go Build
+name: Build
 on: [push]
 
 jobs:
@@ -101,6 +101,10 @@ jobs:
 
   Darwin:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        qt_ver: [5.15.1]
+        qt_arch: [clang_64]
     steps:
       - name: Set up Go 1.15
         uses: actions/setup-go@v2
@@ -115,7 +119,7 @@ jobs:
         with:
           ref: master
 
-      - name: Build
+      - name: Build Go executables
         run: |
           brew install pkg-config
           make
@@ -125,14 +129,39 @@ jobs:
           cp $PWD/output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/
           cp $PWD/output/bass/lib/darwin/amd64/plugins/*.dylib darwin-amd64/
           mv $PWD/cmd/reverseProxy/rp darwin-amd64/
-          env GOPATH=$PWD/gopath go get -u github.com/missdeer/cicdutil
 
-      - name: Upload artifact hannah-darwin-amd64
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2.0.0
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+
+      - name: build macos
+        run: |
+          cd desktop
+          mkdir build
+          cd build
+          qmake -r CONFIG+=release CONFIG+=qtquickcompiler ..
+          make -j 2
+          cd ..
+      
+      - name: package
+        if: startsWith(github.event.ref, 'refs/tags/')
+        run: |
+          # 拷贝依赖
+          macdeployqt "desktop/build/Hannah.app" -qmldir=. -verbose=1 -dmg
+          ls -l $PWD
+          ls -l desktop/build
+
+      - name: Upload artifact hannah-cmd-darwin-amd64
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: hannah-darwin-amd64
+          name: hannah-cmd-darwin-amd64
           path: darwin-amd64
 
-      - name: Remove old artifacts
-        run: |
-          gopath/bin/cicdutil -p github -u missdeer -t ${{ secrets.GH_TOKEN }} -r hannah -k 0 -a delete
+      - name: Upload artifact Hannah-desktop-darwin-amd64
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: Hannah-desktop-darwin-amd64
+          path: desktop/build/Hannah.dmg

@@ -223,7 +223,7 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 		return song, ErrEmptyPURL
 	}
 	song.URL = "http:" + songURL.Data.PlayURL
-
+	song.Provider = "migu"
 	return song, nil
 }
 

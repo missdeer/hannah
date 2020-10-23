@@ -352,6 +352,7 @@ func (p *xiami) ResolveSongURL(song Song) (Song, error) {
 		return song, ErrEmptyTrackList
 	}
 	u, err = caesar(sd.Data.TrackList[0].Location)
+	song.Provider = "xiami"
 	song.URL = "https:" + u
 	song.Lyric = "https:" + sd.Data.TrackList[0].LyricInfo.LyricFile
 	return song, err

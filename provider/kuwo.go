@@ -191,6 +191,7 @@ func (p *kuwo) ResolveSongURL(song Song) (Song, error) {
 			break
 		}
 	}
+	song.Provider = "kuwo"
 	return song, nil
 }
 

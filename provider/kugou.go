@@ -154,7 +154,7 @@ func (p *kugou) ResolveSongURL(song Song) (Song, error) {
 	song.Image = si.ImgURL
 	song.Artist = si.SingerName
 	song.Title = si.SongName
-
+	song.Provider = "kugou"
 	return song, nil
 }
 

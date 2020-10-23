@@ -258,6 +258,7 @@ func (p *netease) ResolveSongURL(song Song) (Song, error) {
 		return song, ErrEmptyPURL
 	}
 
+	song.Provider = "netease"
 	song.URL = songInfo.Data[0].URL
 	return song, nil
 }

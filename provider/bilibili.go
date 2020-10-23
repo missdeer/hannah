@@ -71,6 +71,7 @@ func (p *bilibili) ResolveSongURL(song Song) (Song, error) {
 		return song, errors.New("no song URL")
 	}
 	song.URL = songURL.Data.CDNs[0]
+	song.Provider = "bilibili"
 	return song, nil
 }
 

@@ -218,6 +218,7 @@ func (p *qq) ResolveSongURL(song Song) (Song, error) {
 			continue
 		}
 
+		song.Provider = "qq"
 		song.URL = `http://ws.stream.qqmusic.qq.com/` + detail.Req0.Data.MidURLInfo[0].PURL
 		return song, nil
 	}

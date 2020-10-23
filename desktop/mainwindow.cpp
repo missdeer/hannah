@@ -38,13 +38,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->reverseProxyBindNetworkInterface->setCurrentText(m_settings->value("reverseProxyBindNetworkInterface", tr("-- Default --")).toString());
     ui->reverseProxyProxyType->setCurrentText(m_settings->value("reverseProxyProxyType", tr("None")).toString());
     ui->reverseProxyProxyAddress->setText(m_settings->value("reverseProxyProxyAddress").toString());
-    auto state = m_settings->value("useExternalPlayer", true).toInt(&ok);
+    auto state = m_settings->value("useExternalPlayer", 2).toInt(&ok);
     if (ok)
         ui->useExternalPlayer->setCheckState(Qt::CheckState(state));
-    state = m_settings->value("reverseProxyAutoRedirect", true).toInt(&ok);
+    state = m_settings->value("reverseProxyAutoRedirect", 2).toInt(&ok);
     if (ok)
         ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
-    state = m_settings->value("reverseProxyRedirect", true).toInt(&ok);
+    state = m_settings->value("reverseProxyRedirect", 2).toInt(&ok);
     if (ok)
         ui->reverseProxyRedirect->setCheckState(Qt::CheckState(state));
     auto port = m_settings->value("reverseProxyListenPort", 8090).toInt(&ok);
@@ -167,6 +167,14 @@ void MainWindow::onExternalPlayerPathTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("externalPlayerPath", text);
+    if (ui->externalPlayerWorkingDir->text().isEmpty())
+    {
+        QFileInfo fi(text);
+        if (fi.isAbsolute() && fi.isFile() && fi.exists())
+        {
+            ui->externalPlayerWorkingDir->setText(fi.absolutePath());
+        }
+    }
     m_settings->sync();
 }
 
@@ -412,30 +420,33 @@ void MainWindow::handle(const QString &url)
         connect(reply, &QNetworkReply::errorOccurred, this, &MainWindow::onReplyError);
         connect(reply, &QNetworkReply::sslErrors, this, &MainWindow::onReplySslErrors);
         QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
         loop.exec();
         auto fn = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u";
         if (QFile::exists(fn))
         {
             QProcess::startDetached("/usr/bin/open", {player, "--args", fn}, workingDir);
-        }
-        return;
-    }
-
-    QFile f(":/rc/runInTerminal.app.scpt");
-    if (f.open(QIODevice::ReadOnly))
-    {
-        auto data = f.readAll();
-        f.close();
-
-        auto  path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
-        QFile tf(path);
-        if (tf.open(QIODevice::WriteOnly))
-        {
-            tf.write(data);
-            tf.close();
-            QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
-            QProcess::startDetached("/usr/bin/osascript", args, workingDir);
             return;
+        }
+    }
+    else
+    {
+        QFile f(":/rc/runInTerminal.app.scpt");
+        if (f.open(QIODevice::ReadOnly))
+        {
+            auto data = f.readAll();
+            f.close();
+
+            auto  path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
+            QFile tf(path);
+            if (tf.open(QIODevice::WriteOnly))
+            {
+                tf.write(data);
+                tf.close();
+                QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
+                QProcess::startDetached("/usr/bin/osascript", args, workingDir);
+                return;
+            }
         }
     }
 #elif defined(Q_OS_WIN)

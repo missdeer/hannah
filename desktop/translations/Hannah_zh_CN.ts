@@ -137,22 +137,22 @@
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="175"/>
+        <location filename="../mainwindow.cpp" line="183"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="196"/>
+        <location filename="../mainwindow.cpp" line="204"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="401"/>
+        <location filename="../mainwindow.cpp" line="409"/>
         <source>Erorr</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="401"/>
+        <location filename="../mainwindow.cpp" line="409"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>

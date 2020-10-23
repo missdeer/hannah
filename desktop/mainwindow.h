@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QNetworkReply>
 #include <QUrl>
 
 QT_BEGIN_NAMESPACE
@@ -10,6 +11,7 @@ class QSystemTrayIcon;
 class QMenu;
 class QCloseEvent;
 class QSettings;
+class QNetworkAccessManager;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -54,12 +56,22 @@ private slots:
 
     void onGlobalClipboardChanged();
 
+    void onReplyError(QNetworkReply::NetworkError code);
+
+    void onReplyFinished();
+
+    void onReplySslErrors(const QList<QSslError> &errors);
+
+    void onReplyReadyRead();
+
 private:
-    Ui::MainWindow * ui;
-    QMenu *          trayIconMenu;
-    QSystemTrayIcon *trayIcon;
-    QSettings *      settings;
-    QByteArray       reverseProxyAddr;
+    Ui::MainWindow *       ui;
+    QMenu *                m_trayIconMenu;
+    QSystemTrayIcon *      m_trayIcon;
+    QSettings *            m_settings;
+    QNetworkAccessManager *m_nam;
+    QByteArray             m_reverseProxyAddr;
+    QByteArray             m_playlistContent;
 
     void handle(const QString &url);
 };

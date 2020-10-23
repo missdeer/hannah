@@ -56,7 +56,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="135"/>
-        <location filename="../mainwindow.cpp" line="35"/>
+        <location filename="../mainwindow.cpp" line="38"/>
         <source>-- Default --</source>
         <translation>--默认--</translation>
     </message>
@@ -77,7 +77,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="165"/>
-        <location filename="../mainwindow.cpp" line="36"/>
+        <location filename="../mainwindow.cpp" line="39"/>
         <source>None</source>
         <translation>无</translation>
     </message>
@@ -97,62 +97,62 @@
         <translation>代理地址</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="69"/>
+        <location filename="../mainwindow.cpp" line="72"/>
         <source>&amp;Configuration</source>
         <translation>设置(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="79"/>
+        <location filename="../mainwindow.cpp" line="82"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="83"/>
+        <location filename="../mainwindow.cpp" line="86"/>
         <source>Netease</source>
         <translation>网易云音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="84"/>
+        <location filename="../mainwindow.cpp" line="87"/>
         <source>QQ</source>
         <translation>QQ音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="85"/>
+        <location filename="../mainwindow.cpp" line="88"/>
         <source>Xiami</source>
         <translation>虾米</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="86"/>
+        <location filename="../mainwindow.cpp" line="89"/>
         <source>Migu</source>
         <translation>咪咕音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="87"/>
+        <location filename="../mainwindow.cpp" line="90"/>
         <source>Kugou</source>
         <translation>酷狗音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="88"/>
+        <location filename="../mainwindow.cpp" line="91"/>
         <source>Kuwo</source>
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="169"/>
+        <location filename="../mainwindow.cpp" line="175"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="190"/>
+        <location filename="../mainwindow.cpp" line="196"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="343"/>
+        <location filename="../mainwindow.cpp" line="401"/>
         <source>Erorr</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="343"/>
+        <location filename="../mainwindow.cpp" line="401"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>

@@ -2,9 +2,11 @@
 #include <QCloseEvent>
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEventLoop>
 #include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QNetworkAccessManager>
 #include <QNetworkInterface>
 #include <QProcess>
 #include <QSettings>
@@ -19,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
+    m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
+    m_nam      = new QNetworkAccessManager(this);
     ui->setupUi(this);
 
     auto interfaces = QNetworkInterface::allInterfaces();
@@ -29,22 +32,22 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     bool ok = true;
-    ui->externalPlayerPath->setText(settings->value("externalPlayerPath").toString());
-    ui->externalPlayerArguments->setText(settings->value("externalPlayerArguments").toString());
-    ui->externalPlayerWorkingDir->setText(settings->value("externalPlayerWorkingDir").toString());
-    ui->reverseProxyBindNetworkInterface->setCurrentText(settings->value("reverseProxyBindNetworkInterface", tr("-- Default --")).toString());
-    ui->reverseProxyProxyType->setCurrentText(settings->value("reverseProxyProxyType", tr("None")).toString());
-    ui->reverseProxyProxyAddress->setText(settings->value("reverseProxyProxyAddress").toString());
-    auto state = settings->value("useExternalPlayer", true).toInt(&ok);
+    ui->externalPlayerPath->setText(m_settings->value("externalPlayerPath").toString());
+    ui->externalPlayerArguments->setText(m_settings->value("externalPlayerArguments").toString());
+    ui->externalPlayerWorkingDir->setText(m_settings->value("externalPlayerWorkingDir").toString());
+    ui->reverseProxyBindNetworkInterface->setCurrentText(m_settings->value("reverseProxyBindNetworkInterface", tr("-- Default --")).toString());
+    ui->reverseProxyProxyType->setCurrentText(m_settings->value("reverseProxyProxyType", tr("None")).toString());
+    ui->reverseProxyProxyAddress->setText(m_settings->value("reverseProxyProxyAddress").toString());
+    auto state = m_settings->value("useExternalPlayer", true).toInt(&ok);
     if (ok)
         ui->useExternalPlayer->setCheckState(Qt::CheckState(state));
-    state = settings->value("reverseProxyAutoRedirect", true).toInt(&ok);
+    state = m_settings->value("reverseProxyAutoRedirect", true).toInt(&ok);
     if (ok)
         ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
-    state = settings->value("reverseProxyRedirect", true).toInt(&ok);
+    state = m_settings->value("reverseProxyRedirect", true).toInt(&ok);
     if (ok)
         ui->reverseProxyRedirect->setCheckState(Qt::CheckState(state));
-    auto port = settings->value("reverseProxyListenPort", 8090).toInt(&ok);
+    auto port = m_settings->value("reverseProxyListenPort", 8090).toInt(&ok);
     if (ok)
         ui->reverseProxyListenPort->setValue(port);
 
@@ -79,33 +82,36 @@ MainWindow::MainWindow(QWidget *parent)
     auto quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
-    trayIconMenu = new QMenu(this);
-    trayIconMenu->addAction(tr("Netease"), []() { QDesktopServices::openUrl(QUrl("https://music.163.com")); });
-    trayIconMenu->addAction(tr("QQ"), []() { QDesktopServices::openUrl(QUrl("https://y.qq.com")); });
-    trayIconMenu->addAction(tr("Xiami"), []() { QDesktopServices::openUrl(QUrl("https://www.xiami.com")); });
-    trayIconMenu->addAction(tr("Migu"), []() { QDesktopServices::openUrl(QUrl("https://music.migu.cn/v3")); });
-    trayIconMenu->addAction(tr("Kugou"), []() { QDesktopServices::openUrl(QUrl("https://www.kugou.com")); });
-    trayIconMenu->addAction(tr("Kuwo"), []() { QDesktopServices::openUrl(QUrl("http://kuwo.cn")); });
-    trayIconMenu->addSeparator();
-    trayIconMenu->addAction(configAction);
-    trayIconMenu->addAction(quitAction);
+    m_trayIconMenu = new QMenu(this);
+    m_trayIconMenu->addAction(tr("Netease"), []() { QDesktopServices::openUrl(QUrl("https://music.163.com")); });
+    m_trayIconMenu->addAction(tr("QQ"), []() { QDesktopServices::openUrl(QUrl("https://y.qq.com")); });
+    m_trayIconMenu->addAction(tr("Xiami"), []() { QDesktopServices::openUrl(QUrl("https://www.xiami.com")); });
+    m_trayIconMenu->addAction(tr("Migu"), []() { QDesktopServices::openUrl(QUrl("https://music.migu.cn/v3")); });
+    m_trayIconMenu->addAction(tr("Kugou"), []() { QDesktopServices::openUrl(QUrl("https://www.kugou.com")); });
+    m_trayIconMenu->addAction(tr("Kuwo"), []() { QDesktopServices::openUrl(QUrl("http://kuwo.cn")); });
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(configAction);
+    m_trayIconMenu->addAction(quitAction);
 
-    trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon(":/hannah.png"));
+    m_trayIcon = new QSystemTrayIcon(this);
+    m_trayIcon->setContextMenu(m_trayIconMenu);
+    m_trayIcon->setIcon(QIcon(":/hannah.png"));
 
-    trayIcon->show();
+    m_trayIcon->show();
 
-    reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    m_reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 MainWindow::~MainWindow()
 {
     StopReverseProxy();
 
-    settings->sync();
-    delete settings;
+    delete m_nam;
+
+    m_settings->sync();
+    delete m_settings;
+
     delete ui;
 }
 
@@ -117,7 +123,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         return;
     }
 #endif
-    if (trayIcon->isVisible())
+    if (m_trayIcon->isVisible())
     {
         hide();
         event->ignore();
@@ -152,95 +158,95 @@ void MainWindow::onUseExternalPlayerStateChanged(int state)
     ui->browseExternalPlayer->setEnabled(state == Qt::Checked);
     ui->browseExternalPlayerWorkingDir->setEnabled(state == Qt::Checked);
 
-    Q_ASSERT(settings);
-    settings->setValue("useExternalPlayer", state);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("useExternalPlayer", state);
+    m_settings->sync();
 }
 
 void MainWindow::onExternalPlayerPathTextChanged(const QString &text)
 {
-    Q_ASSERT(settings);
-    settings->setValue("externalPlayerPath", text);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("externalPlayerPath", text);
+    m_settings->sync();
 }
 
 void MainWindow::onBrowseExternalPlayerClicked()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("External Player"));
     ui->externalPlayerPath->setText(fn);
-    settings->sync();
+    m_settings->sync();
 }
 
 void MainWindow::onExternalPlayerArgumentsTextChanged(const QString &text)
 {
-    Q_ASSERT(settings);
-    settings->setValue("externalPlayerArguments", text);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("externalPlayerArguments", text);
+    m_settings->sync();
 }
 
 void MainWindow::onExternalPlayerWorkingDirTextChanged(const QString &text)
 {
-    Q_ASSERT(settings);
-    settings->setValue("externalPlayerWorkingDir", text);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("externalPlayerWorkingDir", text);
+    m_settings->sync();
 }
 
 void MainWindow::onBrowseExternalPlayerWorkingDirClicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Working Directory"));
     ui->externalPlayerWorkingDir->setText(dir);
-    settings->sync();
+    m_settings->sync();
 }
 
 void MainWindow::onReverseProxyListenPortValueChanged(int port)
 {
-    Q_ASSERT(settings);
-    settings->setValue("reverseProxyListenPort", port);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("reverseProxyListenPort", port);
+    m_settings->sync();
     StopReverseProxy();
 
-    reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    m_reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QString &text)
 {
-    Q_ASSERT(settings);
-    settings->setValue("reverseProxyBindNetworkInterface", text);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("reverseProxyBindNetworkInterface", text);
+    m_settings->sync();
     StopReverseProxy();
 
     QByteArray ba = ui->reverseProxyBindNetworkInterface->currentText().toUtf8();
     SetNetworkInterface(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
 
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onReverseProxyAutoRedirectStateChanged(int state)
 {
-    Q_ASSERT(settings);
-    settings->setValue("reverseProxyAutoRedirect", state);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("reverseProxyAutoRedirect", state);
+    m_settings->sync();
     StopReverseProxy();
     SetAutoRedirect(state);
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onReverseProxyRedirectStateChanged(int state)
 {
-    Q_ASSERT(settings);
-    settings->setValue("reverseProxyRedirect", state);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("reverseProxyRedirect", state);
+    m_settings->sync();
     StopReverseProxy();
     SetRedirect(state);
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
 {
-    Q_ASSERT(settings);
-    settings->setValue("reverseProxyProxyType", text);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("reverseProxyProxyType", text);
+    m_settings->sync();
     StopReverseProxy();
     if (text == "Http")
     {
@@ -257,14 +263,14 @@ void MainWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
         SetHttpProxy(GoString {nullptr, 0});
         SetSocks5Proxy(GoString {nullptr, 0});
     }
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
 {
-    Q_ASSERT(settings);
-    settings->setValue("reverseProxyProxyAddress", text);
-    settings->sync();
+    Q_ASSERT(m_settings);
+    m_settings->setValue("reverseProxyProxyAddress", text);
+    m_settings->sync();
     StopReverseProxy();
 
     if (text == "Http")
@@ -283,7 +289,7 @@ void MainWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
         SetSocks5Proxy(GoString {nullptr, 0});
     }
 
-    StartReverseProxy(GoString {(const char *)reverseProxyAddr.data(), (ptrdiff_t)reverseProxyAddr.length()}, GoString {nullptr, 0});
+    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
 void MainWindow::onGlobalClipboardChanged()
@@ -330,6 +336,58 @@ void MainWindow::onGlobalClipboardChanged()
     }
 }
 
+void MainWindow::onReplyError(QNetworkReply::NetworkError code)
+{
+    Q_UNUSED(code);
+    auto reply = qobject_cast<QNetworkReply *>(sender());
+    Q_ASSERT(reply);
+#if !defined(QT_NO_DEBUG)
+    qDebug() << reply->errorString();
+#endif
+}
+
+void MainWindow::onReplyFinished()
+{
+    auto reply = qobject_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+
+#if !defined(QT_NO_DEBUG)
+    qDebug() << " finished: " << QString(m_playlistContent).left(256) << "\n";
+#endif
+    auto fn = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u";
+    if (m_playlistContent.isEmpty())
+    {
+        QFile::remove(fn);
+        return;
+    }
+    QFile f(fn);
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        f.write(m_playlistContent);
+        f.close();
+    }
+}
+
+void MainWindow::onReplySslErrors(const QList<QSslError> &errors)
+{
+    for (const auto &e : errors)
+    {
+#if !defined(QT_NO_DEBUG)
+        qDebug() << "ssl error:" << e.errorString();
+#endif
+    }
+}
+
+void MainWindow::onReplyReadyRead()
+{
+    auto *reply      = qobject_cast<QNetworkReply *>(sender());
+    int   statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if (statusCode >= 200 && statusCode < 300)
+    {
+        m_playlistContent.append(reply->readAll());
+    }
+}
+
 void MainWindow::handle(const QString &url)
 {
     auto player     = ui->externalPlayerPath->text();
@@ -346,10 +404,20 @@ void MainWindow::handle(const QString &url)
 #if defined(Q_OS_MAC)
     if (fi.isBundle() && player.endsWith(".app"))
     {
-        QStringList args = {player, "--args"};
-        args << arguments.split(" ") << url;
-        args.removeAll("");
-        QProcess::startDetached("/usr/bin/open", args, workingDir);
+        m_playlistContent.clear();
+        QNetworkRequest req(QUrl::fromUserInput(url));
+        auto            reply = m_nam->get(req);
+        connect(reply, &QNetworkReply::finished, this, &MainWindow::onReplyFinished);
+        connect(reply, &QNetworkReply::readyRead, this, &MainWindow::onReplyReadyRead);
+        connect(reply, &QNetworkReply::errorOccurred, this, &MainWindow::onReplyError);
+        connect(reply, &QNetworkReply::sslErrors, this, &MainWindow::onReplySslErrors);
+        QEventLoop loop;
+        loop.exec();
+        auto fn = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u";
+        if (QFile::exists(fn))
+        {
+            QProcess::startDetached("/usr/bin/open", {player, "--args", fn}, workingDir);
+        }
         return;
     }
 

@@ -1,0 +1,18 @@
+{
+    "application_title": {
+        "message": "Hannah",
+        "description": "Hannah"
+    },
+    "application_description": {
+        "message": "允许您使用 Hannah 从浏览器中调起外部第三方音乐播放器欣赏网络音乐",
+        "description": "允许您使用 Hannah 从浏览器中调起外部第三方音乐播放器欣赏网络音乐"
+    },
+    "play_title": {
+        "message": "使用 Hannah 播放",
+        "description": "使用 Hannah 播放"
+    },
+    "unsupported_link": {
+        "message": "不支持此链接",
+        "description": "不支持此链接"
+    }
+}

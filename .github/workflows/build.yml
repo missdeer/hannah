@@ -140,7 +140,6 @@ jobs:
           cd ..
       
       - name: package desktop
-        if: startsWith(github.event.ref, 'refs/tags/')
         run: |
           # 拷贝依赖
           macdeployqt "desktop/build/Hannah.app" -qmldir=. -verbose=1 -dmg

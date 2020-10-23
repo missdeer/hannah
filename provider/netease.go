@@ -528,7 +528,11 @@ func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
 	}
 
 	for i := 0; i < len(plds.Playlist.TrackIDs); i += 200 {
-		sd, err := p.getSongList(plds.Playlist.TrackIDs[i : i+200])
+		end := i + 200
+		if end > len(plds.Playlist.TrackIDs) {
+			end = len(plds.Playlist.TrackIDs)
+		}
+		sd, err := p.getSongList(plds.Playlist.TrackIDs[i:end])
 		if err != nil {
 			return res, err
 		}

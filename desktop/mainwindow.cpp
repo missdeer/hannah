@@ -352,24 +352,22 @@ void MainWindow::handle(const QString &url)
         QProcess::startDetached("/usr/bin/open", args, workingDir);
         return;
     }
-    else
-    {
-        QFile f(":/rc/runInTerminal.app.scpt");
-        if (f.open(QIODevice::ReadOnly))
-        {
-            auto data = f.readAll();
-            f.close();
 
-            auto  path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
-            QFile tf(path);
-            if (tf.open(QIODevice::WriteOnly))
-            {
-                tf.write(data);
-                tf.close();
-                QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
-                QProcess::startDetached("/usr/bin/osascript", args, workingDir);
-                return;
-            }
+    QFile f(":/rc/runInTerminal.app.scpt");
+    if (f.open(QIODevice::ReadOnly))
+    {
+        auto data = f.readAll();
+        f.close();
+
+        auto  path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
+        QFile tf(path);
+        if (tf.open(QIODevice::WriteOnly))
+        {
+            tf.write(data);
+            tf.close();
+            QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
+            QProcess::startDetached("/usr/bin/osascript", args, workingDir);
+            return;
         }
     }
 #elif defined(Q_OS_WIN)

@@ -14,10 +14,56 @@
 #    include "qtsingleapplication.h"
 #endif
 
+void i18n()
+{
+    QString     locale = "zh_CN";
+    QTranslator translator;
+    QTranslator qtTranslator;
+
+    // main application and dynamic linked library locale
+#if defined(Q_OS_MAC)
+    QString localeDirPath = QApplication::applicationDirPath() + "/../Resources/translations";
+#else
+    QString localeDirPath = QApplication::applicationDirPath() + "/translations";
+    if (!QDir(localeDirPath).exists())
+    {
+        localeDirPath = QApplication::applicationDirPath() + "/../translations";
+    }
+#endif
+
+    if (!translator.load("Hannah_" + locale, localeDirPath))
+    {
+        qDebug() << "loading " << locale << " from " << localeDirPath << " failed";
+    }
+    else
+    {
+        qDebug() << "loading " << locale << " from " << localeDirPath << " success";
+        if (!QApplication::installTranslator(&translator))
+        {
+            qDebug() << "installing translator failed ";
+        }
+    }
+
+    // qt locale
+    if (!qtTranslator.load("qt_" + locale, localeDirPath))
+    {
+        qDebug() << "loading " << locale << " from " << localeDirPath << " failed";
+    }
+    else
+    {
+        qDebug() << "loading " << locale << " from " << localeDirPath << " success";
+        if (!QApplication::installTranslator(&qtTranslator))
+        {
+            qDebug() << "installing qt translator failed ";
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_MAC)
     Application a(argc, argv);
+    i18n();
     MainWindow  w;
     w.connect(&a, &Application::openUrl, &w, &MainWindow::onOpenUrl);
 #else
@@ -43,6 +89,7 @@ int main(int argc, char *argv[])
             a.exit();
         }
     }
+    i18n();
     MainWindow w;
     w.connect(&a, &QtSingleApplication::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
 

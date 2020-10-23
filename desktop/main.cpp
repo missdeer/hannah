@@ -33,11 +33,11 @@ void i18n()
 
     if (!translator.load("Hannah_" + locale, localeDirPath))
     {
-        qDebug() << "loading " << locale << " from " << localeDirPath << " failed";
+        qDebug() << "loading Hannah" << locale << " from " << localeDirPath << " failed";
     }
     else
     {
-        qDebug() << "loading " << locale << " from " << localeDirPath << " success";
+        qDebug() << "loading Hannah" << locale << " from " << localeDirPath << " success";
         if (!QApplication::installTranslator(&translator))
         {
             qDebug() << "installing translator failed ";
@@ -47,11 +47,11 @@ void i18n()
     // qt locale
     if (!qtTranslator.load("qt_" + locale, localeDirPath))
     {
-        qDebug() << "loading " << locale << " from " << localeDirPath << " failed";
+        qDebug() << "loading qt" << locale << " from " << localeDirPath << " failed";
     }
     else
     {
-        qDebug() << "loading " << locale << " from " << localeDirPath << " success";
+        qDebug() << "loading qt" << locale << " from " << localeDirPath << " success";
         if (!QApplication::installTranslator(&qtTranslator))
         {
             qDebug() << "installing qt translator failed ";
@@ -103,5 +103,6 @@ int main(int argc, char *argv[])
 #    endif
 #endif
 
+    a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

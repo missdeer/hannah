@@ -409,25 +409,28 @@ void MainWindow::handle(const QString &url)
         QMessageBox::critical(this, tr("Erorr"), tr("External player path not configured properly"));
         return;
     }
+
+    m_playlistContent.clear();
+    QNetworkRequest req(QUrl::fromUserInput(url));
+    auto            reply = m_nam->get(req);
+    connect(reply, &QNetworkReply::finished, this, &MainWindow::onReplyFinished);
+    connect(reply, &QNetworkReply::readyRead, this, &MainWindow::onReplyReadyRead);
+    connect(reply, &QNetworkReply::errorOccurred, this, &MainWindow::onReplyError);
+    connect(reply, &QNetworkReply::sslErrors, this, &MainWindow::onReplySslErrors);
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    auto localTempPlaylist = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u";
+    if (!QFile::exists(localTempPlaylist))
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Can't get song(s)."));
+        return;
+    }
 #if defined(Q_OS_MAC)
     if (fi.isBundle() && player.endsWith(".app"))
     {
-        m_playlistContent.clear();
-        QNetworkRequest req(QUrl::fromUserInput(url));
-        auto            reply = m_nam->get(req);
-        connect(reply, &QNetworkReply::finished, this, &MainWindow::onReplyFinished);
-        connect(reply, &QNetworkReply::readyRead, this, &MainWindow::onReplyReadyRead);
-        connect(reply, &QNetworkReply::errorOccurred, this, &MainWindow::onReplyError);
-        connect(reply, &QNetworkReply::sslErrors, this, &MainWindow::onReplySslErrors);
-        QEventLoop loop;
-        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-        loop.exec();
-        auto fn = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u";
-        if (QFile::exists(fn))
-        {
-            QProcess::startDetached("/usr/bin/open", {player, "--args", fn}, workingDir);
-            return;
-        }
+        QProcess::startDetached("/usr/bin/open", {player, "--args", localTempPlaylist}, workingDir);
+        return;
     }
     else
     {
@@ -437,13 +440,14 @@ void MainWindow::handle(const QString &url)
             auto data = f.readAll();
             f.close();
 
-            auto  path = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
-            QFile tf(path);
+            auto  runInTerminalScriptPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/runInTerminal.app.scpt";
+            QFile tf(runInTerminalScriptPath);
             if (tf.open(QIODevice::WriteOnly))
             {
                 tf.write(data);
                 tf.close();
-                QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
+                QStringList args = {QDir::toNativeSeparators(runInTerminalScriptPath),
+                                    QString("\"%1\" %2 \"%3\"").arg(player, arguments, localTempPlaylist)};
                 QProcess::startDetached("/usr/bin/osascript", args, workingDir);
                 return;
             }
@@ -451,7 +455,7 @@ void MainWindow::handle(const QString &url)
     }
 #elif defined(Q_OS_WIN)
     auto args = arguments.split(" ");
-    args << url;
+    args << localTempPlaylist;
     args.removeAll("");
     ::ShellExecuteW(
         nullptr, L"open", player.toStdWString().c_str(), args.join(" ").toStdWString().c_str(), workingDir.toStdWString().c_str(), SW_SHOWNORMAL);
@@ -459,7 +463,7 @@ void MainWindow::handle(const QString &url)
 #else
 #endif
     auto args = arguments.split(" ");
-    args << url;
+    args << localTempPlaylist;
     args.removeAll("");
     QProcess::startDetached(player, args, workingDir);
 }

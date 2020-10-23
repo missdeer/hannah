@@ -156,5 +156,15 @@
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="426"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="426"/>
+        <source>Can&apos;t get song(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

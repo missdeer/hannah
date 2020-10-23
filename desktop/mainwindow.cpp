@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_trayIcon->show();
 
-    m_reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+    m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
@@ -213,7 +213,7 @@ void MainWindow::onReverseProxyListenPortValueChanged(int port)
     m_settings->sync();
     StopReverseProxy();
 
-    m_reverseProxyAddr = QString(":%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+    m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 

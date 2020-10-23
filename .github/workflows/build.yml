@@ -124,7 +124,7 @@ jobs:
           mv $PWD/cmd/reverseProxy/rp darwin-amd64/
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2.0.0
+        uses: jurplel/install-qt-action@v2
         with:
           version: ${{ matrix.qt_ver }}
           target: ${{ matrix.qt_target }}
@@ -141,19 +141,11 @@ jobs:
       
       - name: package desktop
         run: |
-          # 拷贝依赖
           macdeployqt "desktop/build/Hannah.app" -qmldir=. -verbose=1 -dmg
-          ls -l $PWD
-          ls -l desktop/build
+          cp desktop/build/Hannah.dmg darwin-amd64/
 
-      - name: Upload artifact hannah-cmd-darwin-amd64
+      - name: Upload artifact hannah-darwin-amd64
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: hannah-cmd-darwin-amd64
+          name: hannah-darwin-amd64
           path: darwin-amd64
-
-      - name: Upload artifact Hannah-desktop-darwin-amd64
-        uses: actions/upload-artifact@v1.0.0
-        with:
-          name: Hannah-desktop-darwin-amd64
-          path: desktop/build/Hannah.dmg

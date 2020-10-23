@@ -128,7 +128,7 @@ jobs:
         run: |
           brew install pkg-config
           make
-          install_name_tool -change @executable_path/output/bass/lib/macOS/libbass.dylib @executable_path/libbass.dylib cmd/hannah/hannah
+          install_name_tool -change @executable_path/../../output/bass/lib/darwin/amd64/libbass.dylib @executable_path/libbass.dylib cmd/hannah/hannah
           mkdir darwin-amd64
           mv $PWD/cmd/hannah/hannah darwin-amd64/
           cp $PWD/output/bass/lib/darwin/amd64/libbass.dylib darwin-amd64/

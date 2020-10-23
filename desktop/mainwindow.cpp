@@ -429,7 +429,8 @@ void MainWindow::handle(const QString &url)
 #if defined(Q_OS_MAC)
     if (fi.isBundle() && player.endsWith(".app"))
     {
-        QProcess::startDetached("/usr/bin/open", {player, "--args", localTempPlaylist}, workingDir);
+        auto script = QString("tell application \"%1\" to open \"%2\"").arg(player, localTempPlaylist);
+        QProcess::startDetached("/usr/bin/osascript", {"-e", script}, workingDir);
         return;
     }
     else

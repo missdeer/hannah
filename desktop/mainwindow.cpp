@@ -32,19 +32,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->externalPlayerPath->setText(settings->value("externalPlayerPath").toString());
     ui->externalPlayerArguments->setText(settings->value("externalPlayerArguments").toString());
     ui->externalPlayerWorkingDir->setText(settings->value("externalPlayerWorkingDir").toString());
-    ui->reverseProxyBindNetworkInterface->setCurrentText(settings->value("reverseProxyBindNetworkInterface").toString());
-    ui->reverseProxyProxyType->setCurrentText(settings->value("reverseProxyProxyType").toString());
+    ui->reverseProxyBindNetworkInterface->setCurrentText(settings->value("reverseProxyBindNetworkInterface", tr("-- Default --")).toString());
+    ui->reverseProxyProxyType->setCurrentText(settings->value("reverseProxyProxyType", tr("None")).toString());
     ui->reverseProxyProxyAddress->setText(settings->value("reverseProxyProxyAddress").toString());
-    auto state = settings->value("useExternalPlayer").toInt(&ok);
+    auto state = settings->value("useExternalPlayer", true).toInt(&ok);
     if (ok)
         ui->useExternalPlayer->setCheckState(Qt::CheckState(state));
-    state = settings->value("reverseProxyAutoRedirect").toInt(&ok);
+    state = settings->value("reverseProxyAutoRedirect", true).toInt(&ok);
     if (ok)
         ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
-    state = settings->value("reverseProxyRedirect").toInt(&ok);
+    state = settings->value("reverseProxyRedirect", true).toInt(&ok);
     if (ok)
         ui->reverseProxyRedirect->setCheckState(Qt::CheckState(state));
-    auto port = settings->value("reverseProxyListenPort").toInt(&ok);
+    auto port = settings->value("reverseProxyListenPort", 8090).toInt(&ok);
     if (ok)
         ui->reverseProxyListenPort->setValue(port);
 

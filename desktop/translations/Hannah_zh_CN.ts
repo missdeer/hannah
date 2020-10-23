@@ -56,6 +56,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="135"/>
+        <location filename="../mainwindow.cpp" line="35"/>
         <source>-- Default --</source>
         <translation>--默认--</translation>
     </message>
@@ -76,6 +77,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="165"/>
+        <location filename="../mainwindow.cpp" line="36"/>
         <source>None</source>
         <translation>无</translation>
     </message>

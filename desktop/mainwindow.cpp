@@ -338,6 +338,11 @@ void MainWindow::handle(const QString &url)
 
     QFileInfo fi(player);
 
+    if (!fi.exists())
+    {
+        QMessageBox::critical(this, tr("Erorr"), tr("External player path not configured properly"));
+        return;
+    }
 #if defined(Q_OS_MAC)
     if (fi.isBundle() && player.endsWith(".app"))
     {
@@ -345,7 +350,6 @@ void MainWindow::handle(const QString &url)
         args << arguments.split(" ") << url;
         args.removeAll("");
         QProcess::startDetached("/usr/bin/open", args, workingDir);
-        qDebug() << "args:" << args;
         return;
     }
     else
@@ -364,7 +368,6 @@ void MainWindow::handle(const QString &url)
                 tf.close();
                 QStringList args = {QDir::toNativeSeparators(path), QString("%1 %2 %3").arg(player, arguments, url)};
                 QProcess::startDetached("/usr/bin/osascript", args, workingDir);
-                qDebug() << "args:" << args;
                 return;
             }
         }
@@ -382,5 +385,4 @@ void MainWindow::handle(const QString &url)
     args << url;
     args.removeAll("");
     QProcess::startDetached(player, args, workingDir);
-    qDebug() << player << args;
 }

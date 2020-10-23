@@ -55,14 +55,6 @@ jobs:
             CXX: x86_64-w64-mingw32-g++
             LD: x86_64-w64-mingw32-ld
             TOOLCHAIN: g++-mingw-w64-x86-64
-          - mingw_arch: MINGW32
-            mingw_prefix: mingw-w64-i686
-            GOARCH: 386
-            GOOS: windows
-            CC: i686-w64-mingw32-gcc
-            CXX: i686-w64-mingw32-g++
-            LD: i686-w64-mingw32-ld
-            TOOLCHAIN: g++-mingw-w64-i686
 
     steps:
       - name: prepare MinGW
@@ -104,6 +96,7 @@ jobs:
     strategy:
       matrix:
         qt_ver: [5.15.1]
+        qt_target: [desktop]
         qt_arch: [clang_64]
     steps:
       - name: Set up Go 1.15
@@ -146,7 +139,7 @@ jobs:
           make -j 2
           cd ..
       
-      - name: package
+      - name: package desktop
         if: startsWith(github.event.ref, 'refs/tags/')
         run: |
           # 拷贝依赖

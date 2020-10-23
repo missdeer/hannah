@@ -71,7 +71,7 @@ func TestNetease_PlaylistDetail(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	songs, err := p.PlaylistDetail(Playlist{ID: `5038176324`})
+	songs, err := p.PlaylistDetail(Playlist{ID: `46376429`})
 	if err != nil {
 		t.Error(err)
 	}

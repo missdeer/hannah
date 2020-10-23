@@ -383,6 +383,10 @@ func (p *netease) HotPlaylist(page int, limit int) (res Playlists, err error) {
 	return
 }
 
+type neteaseTrackIDs []struct {
+	ID int `json:"id"`
+}
+
 type neteasePlaylistDetail struct {
 	Code     int `json:"code"`
 	Playlist struct {
@@ -397,24 +401,80 @@ type neteasePlaylistDetail struct {
 				Name string `json:"name"`
 			} `json:"ar"`
 		} `json:"tracks"`
-		TrackIDs []struct {
-			ID int `json:"id"`
-		} `json:"trackIds"`
+		TrackIDs neteaseTrackIDs `json:"trackIds"`
 	} `json:"playlist"`
 }
 
-type neteaseSongDetail struct {
-	Songs []struct {
+type neteaseSongs []struct {
+	Name string `json:"name"`
+	ID   int    `json:"id"`
+	AL   struct {
+		Name   string `json:"name"`
+		PicURL string `json:"picUrl"`
+	} `json:"al"`
+	AR []struct {
 		Name string `json:"name"`
-		ID   int    `json:"id"`
-		AL   struct {
-			Name   string `json:"name"`
-			PicURL string `json:"picUrl"`
-		} `json:"al"`
-		AR []struct {
-			Name string `json:"name"`
-		} `json:"ar"`
-	} `json:"songs"`
+	} `json:"ar"`
+}
+
+type neteaseSongDetail struct {
+	Songs neteaseSongs `json:"songs"`
+}
+
+func (p *netease) getSongList(trackIDs neteaseTrackIDs) (res neteaseSongs, err error) {
+	var ids []string
+	var c []string
+	for _, trackID := range trackIDs {
+		ids = append(ids, strconv.Itoa(trackID.ID))
+		c = append(c, fmt.Sprintf(`{"id":%d}`, trackID.ID))
+	}
+
+	// song detail
+	data := map[string]interface{}{
+		"ids": fmt.Sprintf(`[%s]`, strings.Join(ids, ",")),
+		"c":   fmt.Sprintf(`[%s]`, strings.Join(c, ",")),
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", neteaseAPISongDetail, strings.NewReader(postBody))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("User-Agent", config.UserAgent)
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Referer", "http://music.163.com/")
+	req.Header.Set("Origin", "http://music.163.com/")
+	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+
+	httpClient := util.GetHttpClient()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return res, ErrStatusNotOK
+	}
+
+	content, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
+		return
+	}
+
+	var sd neteaseSongDetail
+	if err = json.Unmarshal(content, &sd); err != nil {
+		return nil, err
+	}
+	return sd.Songs, nil
 }
 
 func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
@@ -467,66 +527,21 @@ func (p *netease) PlaylistDetail(pl Playlist) (res Songs, err error) {
 		return
 	}
 
-	var ids []string
-	var c []string
-	for _, pld := range plds.Playlist.TrackIDs {
-		ids = append(ids, strconv.Itoa(pld.ID))
-		c = append(c, fmt.Sprintf(`{"id":%d}`, pld.ID))
-	}
+	for i := 0; i < len(plds.Playlist.TrackIDs); i += 200 {
+		sd, err := p.getSongList(plds.Playlist.TrackIDs[i : i+200])
+		if err != nil {
+			return res, err
+		}
 
-	// song detail
-	data = map[string]interface{}{
-		"ids": fmt.Sprintf(`[%s]`, strings.Join(ids, ",")),
-		"c":   fmt.Sprintf(`[%s]`, strings.Join(c, ",")),
-	}
-
-	params = weapi(data)
-	values = url.Values{}
-	for k, vs := range params {
-		values.Add(k, vs.(string))
-	}
-	postBody = values.Encode()
-	req, err = http.NewRequest("POST", neteaseAPISongDetail, strings.NewReader(postBody))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("User-Agent", config.UserAgent)
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "http://music.163.com/")
-	req.Header.Set("Origin", "http://music.163.com/")
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-
-	resp, err = httpClient.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return res, ErrStatusNotOK
-	}
-
-	content, err = util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return
-	}
-
-	var sd neteaseSongDetail
-	if err = json.Unmarshal(content, &sd); err != nil {
-		return
-	}
-
-	for _, d := range sd.Songs {
-		res = append(res, Song{
-			ID:       strconv.Itoa(d.ID),
-			Title:    d.Name,
-			Image:    d.AL.PicURL,
-			Provider: "netease",
-			Artist:   d.AR[0].Name,
-		})
+		for _, d := range sd {
+			res = append(res, Song{
+				ID:       strconv.Itoa(d.ID),
+				Title:    d.Name,
+				Image:    d.AL.PicURL,
+				Provider: "netease",
+				Artist:   d.AR[0].Name,
+			})
+		}
 	}
 
 	return

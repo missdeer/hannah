@@ -17,6 +17,12 @@
 #include "librp.h"
 #include "ui_mainwindow.h"
 
+#if defined(Q_OS_WIN)
+#    include <Windows.h>
+#    include <shellapi.h>
+#    include <tchar.h>
+#endif
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -347,9 +353,9 @@ void MainWindow::onGlobalClipboardChanged()
 void MainWindow::onReplyError(QNetworkReply::NetworkError code)
 {
     Q_UNUSED(code);
+#if !defined(QT_NO_DEBUG)
     auto reply = qobject_cast<QNetworkReply *>(sender());
     Q_ASSERT(reply);
-#if !defined(QT_NO_DEBUG)
     qDebug() << reply->errorString();
 #endif
 }
@@ -376,14 +382,18 @@ void MainWindow::onReplyFinished()
     }
 }
 
-void MainWindow::onReplySslErrors(const QList<QSslError> &errors)
+void MainWindow::onReplySslErrors(const QList<QSslError> &
+#if !defined(QT_NO_DEBUG)
+                                      errors
+#endif
+)
 {
+#if !defined(QT_NO_DEBUG)
     for (const auto &e : errors)
     {
-#if !defined(QT_NO_DEBUG)
         qDebug() << "ssl error:" << e.errorString();
-#endif
     }
+#endif
 }
 
 void MainWindow::onReplyReadyRead()
@@ -398,9 +408,9 @@ void MainWindow::onReplyReadyRead()
 
 void MainWindow::handle(const QString &url)
 {
-    auto player     = ui->externalPlayerPath->text();
+    auto player     = QDir::toNativeSeparators(ui->externalPlayerPath->text());
     auto arguments  = ui->externalPlayerArguments->text();
-    auto workingDir = ui->externalPlayerWorkingDir->text();
+    auto workingDir = QDir::toNativeSeparators(ui->externalPlayerWorkingDir->text());
 
     QFileInfo fi(player);
 
@@ -411,6 +421,7 @@ void MainWindow::handle(const QString &url)
     }
 
     m_playlistContent.clear();
+
     QNetworkRequest req(QUrl::fromUserInput(url));
     auto            reply = m_nam->get(req);
     connect(reply, &QNetworkReply::finished, this, &MainWindow::onReplyFinished);
@@ -420,7 +431,8 @@ void MainWindow::handle(const QString &url)
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
-    auto localTempPlaylist = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u";
+
+    auto localTempPlaylist = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u");
     if (!QFile::exists(localTempPlaylist))
     {
         QMessageBox::critical(this, tr("Error"), tr("Can't get song(s)."));
@@ -463,8 +475,8 @@ void MainWindow::handle(const QString &url)
     return;
 #else
 #endif
-    auto args = arguments.split(" ");
-    args << localTempPlaylist;
-    args.removeAll("");
-    QProcess::startDetached(player, args, workingDir);
+    auto argv = arguments.split(" ");
+    argv << localTempPlaylist;
+    argv.removeAll("");
+    QProcess::startDetached(player, argv, workingDir);
 }

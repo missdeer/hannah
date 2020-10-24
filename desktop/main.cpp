@@ -82,25 +82,15 @@ int main(int argc, char *argv[])
 
     if (args.length() > 0)
     {
-        QMessageBox::information(nullptr, "arguments", args.join(" "));
         if (a.isRunning())
         {
             a.sendMessage(args.join("~"));
-            a.exit();
+            return 0;
         }
     }
     i18n();
     MainWindow w;
     w.connect(&a, &QtSingleApplication::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
-
-#    if defined(Q_OS_WIN)
-    QSettings mxKey("HKEY_CLASSES_ROOT\\hannah", QSettings::NativeFormat);
-    mxKey.setValue(".", "URL:hannah Protocol");
-    mxKey.setValue("URL Protocol", "");
-
-    QSettings mxOpenKey("HKEY_CLASSES_ROOT\\foo\\shell\\open\\command", QSettings::NativeFormat);
-    mxOpenKey.setValue(".", QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QString("\" \"%1\""));
-#    endif
 #endif
 
     a.setQuitOnLastWindowClosed(false);

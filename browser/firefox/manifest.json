@@ -2,7 +2,7 @@
     "applications": {
         "gecko": {
             "id": "me@minidump.info",
-            "strict_min_version": "45.0"
+            "strict_min_version": "55.0"
         }
     },
    "name": "__MSG_application_title__",
@@ -25,6 +25,6 @@
       "contextMenus",
       "tabs"
    ],
-   "default_locale": "en",
+   "default_locale": "zh-CN",
    "version": "1.0"
 }

@@ -122,12 +122,14 @@ jobs:
           cd ..
 
       - name: package Chrome extension
+        shell: msys2 {0}
         run: |
           cd $PWD/browser/chrome
           zip $PWD/../../${{ matrix.mingw_prefix }}/hannah.crx ./*
           cd $PWD/../..
 
       - name: package Firefox extension
+        shell: msys2 {0}
         run: |
           cd $PWD/browser/firefox
           zip $PWD/../../${{ matrix.mingw_prefix }}/hannah.xpi ./*

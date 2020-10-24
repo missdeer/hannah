@@ -138,21 +138,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::onOpenUrl(QUrl url)
 {
-    QString u = url.toString();
-    if (u.startsWith("hannah://play?url="))
-    {
-        u = u.replace("hannah://play?url=", QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()));
-        handle(u);
-    }
+    onApplicationMessageReceived(url.toString());
 }
 
 void MainWindow::onApplicationMessageReceived(const QString &message)
 {
     QString u = message;
-    if (u.startsWith("hannah://play?url="))
+    QString pattern = "hannah://play";
+    if (u.startsWith(pattern))
     {
-        u = u.replace("hannah://play?url=", QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()));
-        handle(u);
+        auto index = u.indexOf("url=");
+        if (index > pattern.length())
+        {
+            auto url        = u.mid(index + 4);
+            auto requestUrl = QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()) + url;
+            handle(requestUrl);
+        }
     }
 }
 
@@ -435,7 +436,7 @@ void MainWindow::handle(const QString &url)
     auto localTempPlaylist = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/hannah.m3u");
     if (!QFile::exists(localTempPlaylist))
     {
-        QMessageBox::critical(this, tr("Error"), tr("Can't get song(s)."));
+        QMessageBox::critical(this, tr("Error"), tr("Can't get song(s), maybe VIP is requested."));
         return;
     }
 #if defined(Q_OS_MAC)
@@ -470,8 +471,12 @@ void MainWindow::handle(const QString &url)
     auto args = arguments.split(" ");
     args << localTempPlaylist;
     args.removeAll("");
-    ::ShellExecuteW(
-        nullptr, L"open", player.toStdWString().c_str(), args.join(" ").toStdWString().c_str(), workingDir.toStdWString().c_str(), SW_SHOWNORMAL);
+    ::ShellExecuteW((HWND)winId(),
+                    L"open",
+                    player.toStdWString().c_str(),
+                    args.join(" ").toStdWString().c_str(),
+                    workingDir.toStdWString().c_str(),
+                    SW_SHOWNORMAL);
     return;
 #else
 #endif

@@ -55,24 +55,34 @@ jobs:
           path: ${{ matrix.GOOS }}-${{ matrix.GOARCH }}
 
   Windows:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
+        qt_arch: [mingw64_qt5-static-gcc, mingw32_qt5-static-gcc]
         include:
-          - mingw_arch: MINGW64
+          - qt_arch: mingw64_qt5-static-gcc
+            mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
-            GOARCH: amd64
-            GOOS: windows
-            CC: x86_64-w64-mingw32-gcc
-            CXX: x86_64-w64-mingw32-g++
-            LD: x86_64-w64-mingw32-ld
-            TOOLCHAIN: g++-mingw-w64-x86-64
+            toolchains: gcc
+            mkspec: win32-g++
+            qt_build: qt5-static
+            qmake: /mingw64/qt5-static/bin/qmake.exe
+            GOOS: amd64
+          - qt_arch: mingw32_qt5-static-gcc
+            mingw_arch: MINGW32
+            mingw_prefix: mingw-w64-i686
+            toolchains: gcc
+            mkspec: win32-g++
+            qt_build: qt5-static
+            qmake: /mingw32/qt5-static/bin/qmake.exe
+            GOOS: 386
 
     steps:
-      - name: prepare MinGW
-        run: |
-          sudo apt-get update -qq ;
-          sudo apt-get install -qq ${{ matrix.TOOLCHAIN }} ;
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+          install:  ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
 
       - name: Set up Go 1.15
         uses: actions/setup-go@v2
@@ -85,17 +95,31 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
         with:
-          ref: master
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
 
-      - name: Build
+      - name: Build Go executables
+        shell: msys2 {0}
         run: |
-          cd $PWD/cmd/hannah
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o $PWD/../../${{ matrix.mingw_prefix }}/hannah.exe
-          cd $PWD/../..
+          env GOARCH=${{ matrix.GOOS }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin make
+          mkdir -p ${{ matrix.mingw_arch }}
           cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/
           cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}/
-          cd $PWD/cmd/reverseProxy
-          env CGO_ENABLED=1 GOARCH=${{ matrix.GOARCH }} GOOS=${{ matrix.GOOS }} CC=${{ matrix.CC }} CXX=${{ matrix.CXX }} LD=${{ matrix.LD }} go build -ldflags="-s -w" -o $PWD/../../${{ matrix.mingw_prefix }}/rp.exe
+          cp $PWD/cmd/hannah/hannah.exe $PWD/${{ matrix.mingw_prefix }}/
+          cp $PWD/cmd/reverseProxy/rp.exe $PWD/${{ matrix.mingw_prefix }}/
+
+      - name: Build GUI executables
+        shell: msys2 {0}
+        run: |
+          mkdir build
+          cd build
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
+          mkdir -p $PWD/desktop/release/translations
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe
+          cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/
+          cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/
+          cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/
+          cd ..
 
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0

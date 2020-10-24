@@ -143,9 +143,8 @@ void MainWindow::onApplicationMessageReceived(const QString &message)
         auto index = u.indexOf("url=");
         if (index > pattern.length())
         {
-            auto url        = u.mid(index + 4);
-            auto requestUrl = QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()) + url;
-            handle(requestUrl);
+            auto url = u.mid(index + 4);
+            handle(url, false);
         }
     }
 }
@@ -304,30 +303,30 @@ void MainWindow::onGlobalClipboardChanged()
 {
     QClipboard *clipboard = QGuiApplication::clipboard();
     QString     text      = clipboard->text();
-    QStringList patterns  = {"^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)discover\\/toplist\?id=(\\d+)",
-                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)playlist\?id=(\\d+)",
-                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)my\\/m\\/music\\/playlist\?id=(\\d+)",
+    QStringList patterns  = {"^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)discover\\/toplist\\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)playlist\\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)my\\/m\\/music\\/playlist\\?id=(\\d+)",
                             "^https?:\\/\\/www\\.xiami\\.com\\/collect\\/(\\d+)",
                             "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/playlist\\/(\\d+)\\.html",
                             "^https?:\\/\\/www\\.kugou\\.com\\/yy\\/special\\/single\\/(\\d+)\\.html",
                             "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/playlist_detail\\/(\\d+)",
                             "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/playlist\\/(\\d+)",
-                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)song\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)song\\?id=(\\d+)",
                             "^https?:\\/\\/www\\.xiami\\.com\\/song\\/(\\w+)",
                             "^https?:\\/\\/y\\.qq\\.com/n\\/yqq\\/song\\/(\\w+)\\.html",
                             "^https?:\\/\\/www\\.kugou\\.com\\/song\\/#hash=([0-9A-F]+)",
                             "^https?:\\/\\/(?:www\\.)kuwo.cn\\/play_detail\\/(\\d+)",
                             "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/song\\/(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/artist\\/(\\d+)",
-                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)artist\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)artist\\?id=(\\d+)",
                             "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/singer\\/(\\w+)\\.html",
                             "^https?:\\/\\/www\\.xiami\\.com\\/artist\\/(\\w+)",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/list\?scene=artist&type=\\w+&query={%22artistId%22:%22(\\d+)%22}",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/list\?scene=artist&type=\\w+&query={\"artistId\":\"(\\d+)\"}",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/list\\?scene=artist&type=\\w+&query={%22artistId%22:%22(\\d+)%22}",
+                            "^https?:\\/\\/www\\.xiami\\.com\\/list\\?scene=artist&type=\\w+&query={\"artistId\":\"(\\d+)\"}",
                             "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/singer_detail\\/(\\d+)",
                             "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/artist\\/(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/album\\/(\\d+)",
-                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)album\?id=(\\d+)",
+                            "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)album\\?id=(\\d+)",
                             "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/album\\/(\\w+)\\.html",
                             "^https?:\\/\\/www\\.xiami\\.com\\/album\\/(\\w+)",
                             "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/album_detail\\/(\\d+)",
@@ -338,7 +337,7 @@ void MainWindow::onGlobalClipboardChanged()
         auto               match = r.match(text);
         if (match.hasMatch())
         {
-            handle(text);
+            handle(QString(QUrl::toPercentEncoding(text)), true);
             break;
         }
     }
@@ -418,7 +417,7 @@ void MainWindow::onShowConfiguration()
     raise();
 }
 
-void MainWindow::handle(const QString &url)
+void MainWindow::handle(const QString &url, bool needConfirm)
 {
     auto player     = QDir::toNativeSeparators(ui->externalPlayerPath->text());
     auto arguments  = ui->externalPlayerArguments->text();
@@ -428,13 +427,14 @@ void MainWindow::handle(const QString &url)
 
     if (!fi.exists())
     {
-        QMessageBox::critical(this, tr("Erorr"), tr("External player path not configured properly"));
+        if (!needConfirm)
+            QMessageBox::critical(this, tr("Erorr"), tr("External player path not configured properly"));
         return;
     }
 
     m_playlistContent.clear();
 
-    QNetworkRequest req(QUrl::fromUserInput(url));
+    QNetworkRequest req(QUrl::fromUserInput(QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()) + url));
     auto            reply = m_nam->get(req);
     connect(reply, &QNetworkReply::finished, this, &MainWindow::onReplyFinished);
     connect(reply, &QNetworkReply::readyRead, this, &MainWindow::onReplyReadyRead);
@@ -450,6 +450,10 @@ void MainWindow::handle(const QString &url)
         QMessageBox::critical(this, tr("Error"), tr("Can't get song(s), maybe VIP is requested."));
         return;
     }
+
+    if (needConfirm &&
+        QMessageBox::question(this, tr("Confirm"), tr("Play song(s) by %1?").arg(player), QMessageBox::Ok | QMessageBox::Cancel) != QMessageBox::Ok)
+        return;
 #if defined(Q_OS_MAC)
     if (fi.isBundle() && player.endsWith(".app"))
     {

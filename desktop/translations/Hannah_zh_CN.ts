@@ -142,12 +142,22 @@
         <translation>不能获取歌曲信息，可能需要VIP。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="183"/>
+        <location filename="../mainwindow.cpp" line="455"/>
+        <source>Confirm</source>
+        <translation>确认</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="455"/>
+        <source>Play song(s) by %1?</source>
+        <translation>使用%1播放歌曲？</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="182"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="204"/>
+        <location filename="../mainwindow.cpp" line="203"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>

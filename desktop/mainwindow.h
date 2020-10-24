@@ -80,6 +80,6 @@ private:
     QByteArray             m_reverseProxyAddr;
     QByteArray             m_playlistContent;
 
-    void handle(const QString &url);
+    void handle(const QString &url, bool needConfirm);
 };
 #endif // MAINWINDOW_H

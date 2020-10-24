@@ -14,7 +14,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Minidump.Info"
-            VALUE "FileDescription", "Hannah - Listen Netease/QQ/Xiami/Migu/Kugou/Kuwo with your favourite media player."
+            VALUE "FileDescription", "Hannah - Listen music with your favourite media player"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "Hannah"
             VALUE "LegalCopyright", "Copyright (C) 2020 Minidump.Info. All rights reserved."

@@ -17,5 +17,5 @@ int main(int argc, char *argv[])
     mxKey.sync();
 #endif
 
-    return a.exec();
+    return 0;
 }

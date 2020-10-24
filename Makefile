@@ -9,7 +9,6 @@ ifneq ($(UNAME_S),Darwin)
 	ifeq ($(UNAME_O),Msys)
 		HANNAH:=hannah.exe
 		RP=rp.exe
-		LIBRP=rp.dll
 	endif
 endif
 RPFULLPATH:=cmd/reverseProxy/$(RP)

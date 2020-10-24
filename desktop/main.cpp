@@ -19,56 +19,44 @@
 #    include "qtsingleapplication.h"
 #endif
 
-void i18n()
+void i18n(QTranslator &translator, QTranslator &qtTranslator)
 {
-    QString     locale = "zh_CN";
-    QTranslator translator;
-    QTranslator qtTranslator;
+    QString locale = "zh_CN";
 
     // main application and dynamic linked library locale
+    QString localeDirPath = QCoreApplication::applicationDirPath() +
 #if defined(Q_OS_MAC)
-    QString localeDirPath = QApplication::applicationDirPath() + "/../Resources/translations";
+                            "/../Resources/translations";
 #else
-    QString localeDirPath = QApplication::applicationDirPath() + "/translations";
-    if (!QDir(localeDirPath).exists())
-    {
-        localeDirPath = QApplication::applicationDirPath() + "/../translations";
-    }
+                            "/translations";
 #endif
 
-    if (!translator.load("Hannah_" + locale, localeDirPath))
-    {
-        qDebug() << "loading Hannah" << locale << " from " << localeDirPath << " failed";
-    }
-    else
+    if (translator.load("Hannah_" + locale, localeDirPath))
     {
         qDebug() << "loading Hannah" << locale << " from " << localeDirPath << " success";
-        if (!QApplication::installTranslator(&translator))
+        if (QCoreApplication::installTranslator(&translator))
         {
-            qDebug() << "installing translator failed ";
+            qDebug() << "installing translator success ";
         }
     }
 
-    // qt locale
-    if (!qtTranslator.load("qt_" + locale, localeDirPath))
-    {
-        qDebug() << "loading qt" << locale << " from " << localeDirPath << " failed";
-    }
-    else
+    if (qtTranslator.load("qt_" + locale, localeDirPath))
     {
         qDebug() << "loading qt" << locale << " from " << localeDirPath << " success";
-        if (!QApplication::installTranslator(&qtTranslator))
+        if (QCoreApplication::installTranslator(&qtTranslator))
         {
-            qDebug() << "installing qt translator failed ";
+            qDebug() << "installing qt translator success ";
         }
     }
 }
 
 int main(int argc, char *argv[])
 {
+    QTranslator translator;
+    QTranslator qtTranslator;
 #if defined(Q_OS_MAC)
     Application a(argc, argv);
-    i18n();
+    i18n(translator, qtTranslator);
     MainWindow  w;
     w.connect(&a, &Application::openUrl, &w, &MainWindow::onOpenUrl);
 #else
@@ -94,7 +82,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    i18n();
+    i18n(translator, qtTranslator);
     MainWindow w;
     w.connect(&a, &QtSingleApplication::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
     if (args.length() > 0)

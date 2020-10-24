@@ -102,7 +102,7 @@ jobs:
         shell: msys2 {0}
         run: |
           env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/1.15.2/x64/bin make
-          mkdir -p ${{ matrix.mingw_arch }}
+          mkdir -p ${{ matrix.mingw_prefix }}
           cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/
           cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}/
           cp $PWD/cmd/hannah/hannah.exe $PWD/${{ matrix.mingw_prefix }}/

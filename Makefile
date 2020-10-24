@@ -81,7 +81,7 @@ CHECKS:=go.mod go.sum \
     media/m3u.go
 
 .PHONY: all
-all: $(RPFULLPATH) $(HANNAHFULLPATH) $(LIBRPFULLPATH)
+all: $(LIBRPFULLPATH) $(RPFULLPATH) $(HANNAHFULLPATH) 
 
 $(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
 	cd cmd/reverseProxy && go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(RP)

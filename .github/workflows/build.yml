@@ -67,7 +67,7 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5-static
             qmake: /mingw64/qt5-static/bin/qmake.exe
-            GOOS: amd64
+            GOARCH: amd64
           - qt_arch: mingw32_qt5-static-gcc
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
@@ -75,7 +75,7 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5-static
             qmake: /mingw32/qt5-static/bin/qmake.exe
-            GOOS: 386
+            GOARCH: 386
 
     steps:
       - uses: msys2/setup-msys2@v2
@@ -101,10 +101,10 @@ jobs:
       - name: Build Go executables
         shell: msys2 {0}
         run: |
-          env GOARCH=${{ matrix.GOOS }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/1.15.2/x64/bin make
+          env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/1.15.2/x64/bin make
           mkdir -p ${{ matrix.mingw_arch }}
-          cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/
-          cp $PWD/output/bass/lib/${{ matrix.GOOS }}/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}/
+          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/
+          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}/
           cp $PWD/cmd/hannah/hannah.exe $PWD/${{ matrix.mingw_prefix }}/
           cp $PWD/cmd/reverseProxy/rp.exe $PWD/${{ matrix.mingw_prefix }}/
 

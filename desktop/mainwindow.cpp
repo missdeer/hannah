@@ -10,7 +10,6 @@
 #include <QNetworkInterface>
 #include <QProcess>
 #include <QSettings>
-#include <QSystemTrayIcon>
 
 #include "mainwindow.h"
 
@@ -76,14 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clipboard, &QClipboard::dataChanged, this, &MainWindow::onGlobalClipboardChanged);
 
     auto configAction = new QAction(tr("&Configuration"), this);
-    connect(configAction, &QAction::triggered, this, [this]() {
-        if (isHidden())
-        {
-            showNormal();
-        }
-        activateWindow();
-        raise();
-    });
+    connect(configAction, &QAction::triggered, this, &MainWindow::onShowConfiguration);
 
     auto quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
@@ -104,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_trayIcon->setIcon(QIcon(":/hannah.png"));
 
     m_trayIcon->show();
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated);
 
     m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
@@ -405,6 +398,24 @@ void MainWindow::onReplyReadyRead()
     {
         m_playlistContent.append(reply->readAll());
     }
+}
+
+void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::DoubleClick)
+    {
+        onShowConfiguration();
+    }
+}
+
+void MainWindow::onShowConfiguration()
+{
+    if (isHidden())
+    {
+        showNormal();
+    }
+    activateWindow();
+    raise();
 }
 
 void MainWindow::handle(const QString &url)

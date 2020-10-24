@@ -3,11 +3,14 @@
 
 #include <QMainWindow>
 #include <QNetworkReply>
+#include <QSystemTrayIcon>
 #include <QUrl>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-class QSystemTrayIcon;
+namespace Ui
+{
+    class MainWindow;
+}
 class QMenu;
 class QCloseEvent;
 class QSettings;
@@ -63,6 +66,10 @@ private slots:
     void onReplySslErrors(const QList<QSslError> &errors);
 
     void onReplyReadyRead();
+
+    void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+
+    void onShowConfiguration();
 
 private:
     Ui::MainWindow *       ui;

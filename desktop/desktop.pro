@@ -63,7 +63,7 @@ win32: {
     } else : {
         DESTDIR = $$OUT_PWD/debug
     }
-    translate.commands = '$(COPY_DIR) $$shell_path($$PWD/translations) $$shell_path($$DESTDIR/translations)'
+    translate.commands = '$(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$DESTDIR/translations/)'
     
     qti18n.depends = translate
     win32-*g++*: {

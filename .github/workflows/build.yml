@@ -111,12 +111,12 @@ jobs:
       - name: Build GUI executables
         shell: msys2 {0}
         run: |
+          mkdir -p $PWD/${{ matrix.mingw_prefix }}/gui
           mkdir build
           cd build
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
           mkdir -p $PWD/desktop/release/translations
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe
-          mkdir -p ${{ matrix.mingw_prefix }}/gui
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/

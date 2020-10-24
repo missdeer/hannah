@@ -11,6 +11,11 @@
 #if defined(Q_OS_MAC)
 #    include "application.h"
 #else
+#    if defined(Q_OS_WIN)
+#        include <Windows.h>
+#        include <shellapi.h>
+#        include <tchar.h>
+#    endif
 #    include "qtsingleapplication.h"
 #endif
 
@@ -80,17 +85,43 @@ int main(int argc, char *argv[])
 
     const QStringList args = parser.positionalArguments();
 
-    if (args.length() > 0)
+    if (a.isRunning())
     {
-        if (a.isRunning())
+        if (args.length() > 0)
         {
             a.sendMessage(args.join("~"));
-            return 0;
         }
+        return 0;
     }
+
     i18n();
     MainWindow w;
     w.connect(&a, &QtSingleApplication::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
+    if (args.length() > 0)
+    {
+        w.onApplicationMessageReceived(args.join("~"));
+    }
+#    if defined(Q_OS_WIN)
+    else
+    {
+        QSettings mxKey("HKEY_CLASSES_ROOT\\hannah", QSettings::NativeFormat);
+        QString   v1 = mxKey.value(".").toString();
+        QSettings mxOpenKey("HKEY_CLASSES_ROOT\\hannah\\shell\\open\\command", QSettings::NativeFormat);
+        QString   v2 = mxOpenKey.value(".").toString();
+
+        if (v1 != "URL:hannah Protocol" ||
+            v2 != QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QString("\" \"%1\""))
+        {
+            QString cmd = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
+            ::ShellExecuteW(nullptr,
+                            L"open",
+                            cmd.toStdWString().c_str(),
+                            nullptr,
+                            QDir::toNativeSeparators(QCoreApplication::applicationDirPath()).toStdWString().c_str(),
+                            SW_SHOWNORMAL);
+        }
+    }
+#    endif
 #endif
 
     a.setQuitOnLastWindowClosed(false);

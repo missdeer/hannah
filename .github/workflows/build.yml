@@ -102,11 +102,11 @@ jobs:
         shell: msys2 {0}
         run: |
           env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/1.15.2/x64/bin make
-          mkdir -p ${{ matrix.mingw_prefix }}
-          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/
-          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}/
-          cp $PWD/cmd/hannah/hannah.exe $PWD/${{ matrix.mingw_prefix }}/
-          cp $PWD/cmd/reverseProxy/rp.exe $PWD/${{ matrix.mingw_prefix }}/
+          mkdir -p ${{ matrix.mingw_prefix }}/cui
+          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/cui/
+          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}//cui/
+          cp $PWD/cmd/hannah/hannah.exe $PWD/${{ matrix.mingw_prefix }}//cui/
+          cp $PWD/cmd/reverseProxy/rp.exe $PWD/${{ matrix.mingw_prefix }}//cui/
 
       - name: Build GUI executables
         shell: msys2 {0}
@@ -116,23 +116,24 @@ jobs:
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
           mkdir -p $PWD/desktop/release/translations
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe
-          cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/
-          cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/
-          cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/
+          mkdir -p ${{ matrix.mingw_prefix }}/gui
+          cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
+          cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
+          cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cd ..
 
       - name: package Chrome extension
         shell: msys2 {0}
         run: |
           cd $PWD/browser/chrome
-          zip $PWD/../../${{ matrix.mingw_prefix }}/hannah.crx ./*
+          zip $PWD/../../${{ matrix.mingw_prefix }}/hannah-chrome-extension.crx ./*
           cd $PWD/../..
 
       - name: package Firefox extension
         shell: msys2 {0}
         run: |
           cd $PWD/browser/firefox
-          zip $PWD/../../${{ matrix.mingw_prefix }}/hannah.xpi ./*
+          zip $PWD/../../${{ matrix.mingw_prefix }}/hannah-firefox-addon.xpi ./*
           cd $PWD/../..
           
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}

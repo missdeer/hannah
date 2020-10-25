@@ -6,7 +6,9 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -747,10 +749,22 @@ func (p *netease) Login() error {
 	if resp.StatusCode != 200 {
 		return ErrStatusNotOK
 	}
-
-	if _, err = util.ReadHttpResponseBody(resp); err != nil {
+	b, err := util.ReadHttpResponseBody(resp)
+	if err != nil {
 		return err
 	}
+	var res map[string]interface{}
+	err = json.Unmarshal(b, &res)
+	if err != nil {
+		return err
+	}
+	code, ok := res["code"]
+	if ok {
+		if code.(float64) != 200 {
+			return errors.New(res["message"].(string))
+		}
+	}
+	log.Println(string(b))
 
 	return nil
 }

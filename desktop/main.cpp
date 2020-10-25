@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
     }
 
     i18n(translator, qtTranslator);
-    MainWindow w;
-    w.connect(&a, &QtSingleApplication::messageReceived, &w, &MainWindow::onApplicationMessageReceived);
+    ConfigurationWindow w;
+    w.connect(&a, &QtSingleApplication::messageReceived, &w, &ConfigurationWindow::onApplicationMessageReceived);
     if (args.length() > 0)
     {
         w.onApplicationMessageReceived(args.join("~"));

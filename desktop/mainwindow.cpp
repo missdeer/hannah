@@ -22,9 +22,7 @@
 #    include <tchar.h>
 #endif
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::ConfigurationWindow)
 {
     m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
     m_nam      = new QNetworkAccessManager(this);
@@ -59,23 +57,24 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->reverseProxyBindNetworkInterface,
             &QComboBox::currentTextChanged,
             this,
-            &MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged);
-    connect(ui->useExternalPlayer, &QCheckBox::stateChanged, this, &MainWindow::onUseExternalPlayerStateChanged);
-    connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &MainWindow::onBrowseExternalPlayerClicked);
-    connect(ui->externalPlayerPath, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerPathTextChanged);
-    connect(ui->externalPlayerArguments, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerArgumentsTextChanged);
-    connect(ui->externalPlayerWorkingDir, &QLineEdit::textChanged, this, &MainWindow::onExternalPlayerWorkingDirTextChanged);
-    connect(ui->reverseProxyListenPort, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onReverseProxyListenPortValueChanged);
-    connect(ui->reverseProxyAutoRedirect, &QCheckBox::stateChanged, this, &MainWindow::onReverseProxyAutoRedirectStateChanged);
-    connect(ui->reverseProxyRedirect, &QCheckBox::stateChanged, this, &MainWindow::onReverseProxyRedirectStateChanged);
-    connect(ui->reverseProxyProxyType, &QComboBox::currentTextChanged, this, &MainWindow::onReverseProxyProxyTypeCurrentTextChanged);
-    connect(ui->reverseProxyProxyAddress, &QLineEdit::textChanged, this, &MainWindow::onReverseProxyProxyAddressTextChanged);
+            &ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged);
+    connect(ui->useExternalPlayer, &QCheckBox::stateChanged, this, &ConfigurationWindow::onUseExternalPlayerStateChanged);
+    connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &ConfigurationWindow::onBrowseExternalPlayerClicked);
+    connect(ui->externalPlayerPath, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerPathTextChanged);
+    connect(ui->externalPlayerArguments, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerArgumentsTextChanged);
+    connect(ui->externalPlayerWorkingDir, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerWorkingDirTextChanged);
+    connect(
+        ui->reverseProxyListenPort, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConfigurationWindow::onReverseProxyListenPortValueChanged);
+    connect(ui->reverseProxyAutoRedirect, &QCheckBox::stateChanged, this, &ConfigurationWindow::onReverseProxyAutoRedirectStateChanged);
+    connect(ui->reverseProxyRedirect, &QCheckBox::stateChanged, this, &ConfigurationWindow::onReverseProxyRedirectStateChanged);
+    connect(ui->reverseProxyProxyType, &QComboBox::currentTextChanged, this, &ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged);
+    connect(ui->reverseProxyProxyAddress, &QLineEdit::textChanged, this, &ConfigurationWindow::onReverseProxyProxyAddressTextChanged);
 
     QClipboard *clipboard = QGuiApplication::clipboard();
-    connect(clipboard, &QClipboard::dataChanged, this, &MainWindow::onGlobalClipboardChanged);
+    connect(clipboard, &QClipboard::dataChanged, this, &ConfigurationWindow::onGlobalClipboardChanged);
 
     auto configAction = new QAction(tr("&Configuration"), this);
-    connect(configAction, &QAction::triggered, this, &MainWindow::onShowConfiguration);
+    connect(configAction, &QAction::triggered, this, &ConfigurationWindow::onShowConfiguration);
 
     auto quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
@@ -96,14 +95,14 @@ MainWindow::MainWindow(QWidget *parent)
     m_trayIcon->setIcon(QIcon(":/hannah.png"));
 
     m_trayIcon->show();
-    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated);
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &ConfigurationWindow::onSystemTrayIconActivated);
 
     LoadConfigurations();
     m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-MainWindow::~MainWindow()
+ConfigurationWindow::~ConfigurationWindow()
 {
     StopReverseProxy();
 
@@ -115,7 +114,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void ConfigurationWindow::closeEvent(QCloseEvent *event)
 {
 #ifdef Q_OS_MACOS
     if (!event->spontaneous() || !isVisible())
@@ -130,12 +129,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::onOpenUrl(QUrl url)
+void ConfigurationWindow::onOpenUrl(QUrl url)
 {
     onApplicationMessageReceived(url.toString());
 }
 
-void MainWindow::onApplicationMessageReceived(const QString &message)
+void ConfigurationWindow::onApplicationMessageReceived(const QString &message)
 {
     QString u = message;
     QString pattern = "hannah://play";
@@ -150,7 +149,7 @@ void MainWindow::onApplicationMessageReceived(const QString &message)
     }
 }
 
-void MainWindow::onUseExternalPlayerStateChanged(int state)
+void ConfigurationWindow::onUseExternalPlayerStateChanged(int state)
 {
     ui->externalPlayerArguments->setEnabled(state == Qt::Checked);
     ui->externalPlayerPath->setEnabled(state == Qt::Checked);
@@ -163,7 +162,7 @@ void MainWindow::onUseExternalPlayerStateChanged(int state)
     m_settings->sync();
 }
 
-void MainWindow::onExternalPlayerPathTextChanged(const QString &text)
+void ConfigurationWindow::onExternalPlayerPathTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("externalPlayerPath", text);
@@ -178,35 +177,35 @@ void MainWindow::onExternalPlayerPathTextChanged(const QString &text)
     m_settings->sync();
 }
 
-void MainWindow::onBrowseExternalPlayerClicked()
+void ConfigurationWindow::onBrowseExternalPlayerClicked()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("External Player"));
     ui->externalPlayerPath->setText(fn);
     m_settings->sync();
 }
 
-void MainWindow::onExternalPlayerArgumentsTextChanged(const QString &text)
+void ConfigurationWindow::onExternalPlayerArgumentsTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("externalPlayerArguments", text);
     m_settings->sync();
 }
 
-void MainWindow::onExternalPlayerWorkingDirTextChanged(const QString &text)
+void ConfigurationWindow::onExternalPlayerWorkingDirTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("externalPlayerWorkingDir", text);
     m_settings->sync();
 }
 
-void MainWindow::onBrowseExternalPlayerWorkingDirClicked()
+void ConfigurationWindow::onBrowseExternalPlayerWorkingDirClicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Working Directory"));
     ui->externalPlayerWorkingDir->setText(dir);
     m_settings->sync();
 }
 
-void MainWindow::onReverseProxyListenPortValueChanged(int port)
+void ConfigurationWindow::onReverseProxyListenPortValueChanged(int port)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyListenPort", port);
@@ -217,7 +216,7 @@ void MainWindow::onReverseProxyListenPortValueChanged(int port)
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QString &text)
+void ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyBindNetworkInterface", text);
@@ -230,7 +229,7 @@ void MainWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QStr
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::onReverseProxyAutoRedirectStateChanged(int state)
+void ConfigurationWindow::onReverseProxyAutoRedirectStateChanged(int state)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyAutoRedirect", state);
@@ -240,7 +239,7 @@ void MainWindow::onReverseProxyAutoRedirectStateChanged(int state)
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::onReverseProxyRedirectStateChanged(int state)
+void ConfigurationWindow::onReverseProxyRedirectStateChanged(int state)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyRedirect", state);
@@ -250,7 +249,7 @@ void MainWindow::onReverseProxyRedirectStateChanged(int state)
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
+void ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyProxyType", text);
@@ -274,7 +273,7 @@ void MainWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
+void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyProxyAddress", text);
@@ -300,7 +299,7 @@ void MainWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void MainWindow::onGlobalClipboardChanged()
+void ConfigurationWindow::onGlobalClipboardChanged()
 {
     QClipboard *clipboard = QGuiApplication::clipboard();
     QString     text      = clipboard->text();
@@ -344,7 +343,7 @@ void MainWindow::onGlobalClipboardChanged()
     }
 }
 
-void MainWindow::onReplyError(QNetworkReply::NetworkError code)
+void ConfigurationWindow::onReplyError(QNetworkReply::NetworkError code)
 {
     Q_UNUSED(code);
 #if !defined(QT_NO_DEBUG)
@@ -354,7 +353,7 @@ void MainWindow::onReplyError(QNetworkReply::NetworkError code)
 #endif
 }
 
-void MainWindow::onReplyFinished()
+void ConfigurationWindow::onReplyFinished()
 {
     auto reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
@@ -376,9 +375,9 @@ void MainWindow::onReplyFinished()
     }
 }
 
-void MainWindow::onReplySslErrors(const QList<QSslError> &
+void ConfigurationWindow::onReplySslErrors(const QList<QSslError> &
 #if !defined(QT_NO_DEBUG)
-                                      errors
+                                               errors
 #endif
 )
 {
@@ -390,7 +389,7 @@ void MainWindow::onReplySslErrors(const QList<QSslError> &
 #endif
 }
 
-void MainWindow::onReplyReadyRead()
+void ConfigurationWindow::onReplyReadyRead()
 {
     auto *reply      = qobject_cast<QNetworkReply *>(sender());
     int   statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -400,7 +399,7 @@ void MainWindow::onReplyReadyRead()
     }
 }
 
-void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+void ConfigurationWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::DoubleClick)
     {
@@ -408,7 +407,7 @@ void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason rea
     }
 }
 
-void MainWindow::onShowConfiguration()
+void ConfigurationWindow::onShowConfiguration()
 {
     if (isHidden())
     {
@@ -418,7 +417,7 @@ void MainWindow::onShowConfiguration()
     raise();
 }
 
-void MainWindow::handle(const QString &url, bool needConfirm)
+void ConfigurationWindow::handle(const QString &url, bool needConfirm)
 {
     auto player     = QDir::toNativeSeparators(ui->externalPlayerPath->text());
     auto arguments  = ui->externalPlayerArguments->text();
@@ -437,10 +436,10 @@ void MainWindow::handle(const QString &url, bool needConfirm)
 
     QNetworkRequest req(QUrl::fromUserInput(QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()) + url));
     auto            reply = m_nam->get(req);
-    connect(reply, &QNetworkReply::finished, this, &MainWindow::onReplyFinished);
-    connect(reply, &QNetworkReply::readyRead, this, &MainWindow::onReplyReadyRead);
-    connect(reply, &QNetworkReply::errorOccurred, this, &MainWindow::onReplyError);
-    connect(reply, &QNetworkReply::sslErrors, this, &MainWindow::onReplySslErrors);
+    connect(reply, &QNetworkReply::finished, this, &ConfigurationWindow::onReplyFinished);
+    connect(reply, &QNetworkReply::readyRead, this, &ConfigurationWindow::onReplyReadyRead);
+    connect(reply, &QNetworkReply::errorOccurred, this, &ConfigurationWindow::onReplyError);
+    connect(reply, &QNetworkReply::sslErrors, this, &ConfigurationWindow::onReplySslErrors);
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();

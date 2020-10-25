@@ -9,7 +9,7 @@
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
-    class MainWindow;
+    class ConfigurationWindow;
 }
 class QMenu;
 class QCloseEvent;
@@ -17,13 +17,13 @@ class QSettings;
 class QNetworkAccessManager;
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class ConfigurationWindow : public QMainWindow
 {
     Q_OBJECT
     
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ConfigurationWindow(QWidget *parent = nullptr);
+    ~ConfigurationWindow();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -72,7 +72,7 @@ private slots:
     void onShowConfiguration();
 
 private:
-    Ui::MainWindow *       ui;
+    Ui::ConfigurationWindow *ui;
     QMenu *                m_trayIconMenu;
     QSystemTrayIcon *      m_trayIcon;
     QSettings *            m_settings;

@@ -6,7 +6,7 @@
 #include <QSettings>
 #include <QtCore>
 
-#include "mainwindow.h"
+#include "configurationwindow.h"
 
 #if defined(Q_OS_MAC)
 #    include "application.h"

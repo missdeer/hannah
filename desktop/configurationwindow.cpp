@@ -11,10 +11,10 @@
 #include <QProcess>
 #include <QSettings>
 
-#include "mainwindow.h"
+#include "configurationwindow.h"
 
 #include "librp.h"
-#include "ui_mainwindow.h"
+#include "ui_configurationwindow.h"
 
 #if defined(Q_OS_WIN)
 #    include <Windows.h>

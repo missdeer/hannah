@@ -11,19 +11,19 @@ INCLUDEPATH += $$PWD/../lib/reverseProxy
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
+    configurationwindow.cpp \
     qtlocalpeer.cpp \
     qtlockedfile.cpp \
     qtlockedfile_unix.cpp \
     qtlockedfile_win.cpp
 
 HEADERS += \
-    mainwindow.h \
+    configurationwindow.h \
     qtlocalpeer.h \
     qtlockedfile.h
 
 FORMS += \
-    mainwindow.ui
+    configurationwindow.ui
     
 RC_FILE = Hannah.rc
 

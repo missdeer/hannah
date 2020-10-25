@@ -31,7 +31,8 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     auto interfaces = QNetworkInterface::allInterfaces();
     for (const auto &i : interfaces)
     {
-        ui->reverseProxyBindNetworkInterface->addItem(i.humanReadableName());
+        if (i.type() == QNetworkInterface::Ethernet || i.type() == QNetworkInterface::Wifi || i.type() == QNetworkInterface::Ppp)
+            ui->reverseProxyBindNetworkInterface->addItem(i.humanReadableName());
     }
 
     bool ok = true;

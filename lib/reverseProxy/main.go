@@ -7,9 +7,13 @@ import "C"
 import (
 	"log"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/missdeer/golib/fsutil"
+
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/rp"
 )
@@ -20,6 +24,16 @@ var (
 )
 
 func main() {}
+
+//export LoadConfigurations
+func LoadConfigurations() {
+	if homeDir, err := os.UserHomeDir(); err == nil {
+		conf := filepath.Join(homeDir, ".hannah.conf")
+		if b, e := fsutil.FileExists(conf); e == nil && b {
+			config.LoadConfigurationFromFile(conf)
+		}
+	}
+}
 
 //export StartReverseProxy
 func StartReverseProxy(addr, limit string) bool {

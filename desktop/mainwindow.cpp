@@ -98,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_trayIcon->show();
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated);
 
+    LoadConfigurations();
     m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }

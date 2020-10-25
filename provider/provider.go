@@ -2,6 +2,7 @@ package provider
 
 import (
 	"errors"
+	"log"
 	"regexp"
 	"sync"
 
@@ -65,7 +66,9 @@ func (p *providerMap) add(provider string) IProvider {
 	if c, ok := providerCreatorMap[provider]; ok {
 		i := c()
 		p.m[provider] = i
-		i.Login()
+		if err := i.Login(); err != nil {
+			log.Println(provider, "login failed", err)
+		}
 		return i
 	}
 	return nil

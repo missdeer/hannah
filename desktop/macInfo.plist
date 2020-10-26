@@ -801,27 +801,31 @@
 	<key>NSServices</key>
 	<array>
 		<dict>
-			<key>NSMessage</key>
-			<string>searchWithHannah</string>
-			<key>NSPortName</key>
-			<string>Hannah</string>
-			<key>NSSendTypes</key>
-			<array>
-				<string>NSStringPboardType</string>
-				<string>public.utf8-plain-text</string>
-			</array>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
 				<string>Search With Hannah</string>
 			</dict>
-		</dict>
-		<dict>
+			<key>NSMessage</key>
+			<string>search</string>
+			<key>NSPortName</key>
+			<string>Hannah</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 			<key>NSSendTypes</key>
 			<array>
-				<string>public.rtf</string>
+				<string>NSStringPboardType</string>
 				<string>public.utf8-plain-text</string>
 			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Open URL in Hannah</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>openUrl</string>
 			<key>NSPortName</key>
 			<string>Hannah</string>
 			<key>NSRequiredContext</key>
@@ -838,13 +842,11 @@
 					</array>
 				</dict>
 			</array>
-			<key>NSMessage</key>
-			<string>webpageOpenUrlInHannah</string>
-			<key>NSMenuItem</key>
-			<dict>
-				<key>default</key>
-				<string>Open URL in Hannah</string>
-			</dict>
+			<key>NSSendTypes</key>
+			<array>
+				<string>public.rtf</string>
+				<string>public.utf8-plain-text</string>
+			</array>
 		</dict>
 		<dict>
 			<key>NSMenuItem</key>
@@ -853,7 +855,7 @@
 				<string>Open Link in Hannah</string>
 			</dict>
 			<key>NSMessage</key>
-			<string>openUrlInHannah</string>
+			<string>openUrl</string>
 			<key>NSPortName</key>
 			<string>Hannah</string>
 			<key>NSRequiredContext</key>

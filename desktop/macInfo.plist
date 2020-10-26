@@ -855,7 +855,7 @@
 				<string>Open Link in Hannah</string>
 			</dict>
 			<key>NSMessage</key>
-			<string>openUrl</string>
+			<string>openLink</string>
 			<key>NSPortName</key>
 			<string>Hannah</string>
 			<key>NSRequiredContext</key>

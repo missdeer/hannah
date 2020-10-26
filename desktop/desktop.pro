@@ -80,15 +80,19 @@ LIBS += -lrp
 
 macx : {
     HEADERS += \
-        application.h 
+        application.h
     SOURCES += \
         application.cpp 
+    OBJECTIVE_HEADERS += \
+        service.h
+    OBJECTIVE_SOURCES += \
+        service.mm
     DESTDIR = $$OUT_PWD
     QMAKE_INFO_PLIST = macInfo.plist
     ICON = hannah.icns
     icon.path = $$PWD
     INSTALLS += icon
-    LIBS += -framework Security
+    LIBS += -framework Security 
     
     CONFIG(release, debug|release) : {
         MACDEPLOYQT = $$[QT_INSTALL_BINS]/macdeployqt

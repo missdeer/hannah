@@ -59,6 +59,9 @@ int main(int argc, char *argv[])
     i18n(translator, qtTranslator);
     ConfigurationWindow  w;
     w.connect(&a, &Application::openUrl, &w, &ConfigurationWindow::onOpenUrl);
+
+    void registerHannahService();
+    registerHannahService();
 #else
     QtSingleApplication a(argc, argv);
     QCoreApplication::setApplicationName("Hannah");

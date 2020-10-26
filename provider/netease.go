@@ -738,6 +738,7 @@ func (p *netease) Login() error {
 	req.Header.Set("Origin", "http://music.163.com/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	req.Header.Set("Cookie", "os=pc; osver=Microsoft-Windows-10-Professional-build-10586-64bit; appver=2.0.3.131777; channel=netease; __remember_me=true;")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)

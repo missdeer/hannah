@@ -5,6 +5,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "serviceslots.h"
+
 @implementation HannahService
 
 - (void)search:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -21,19 +23,7 @@
     QString s = QString::fromNSString(pasteboardString);
     qDebug() << "search keyword:" << s;
 
-    //    NSString *methodName = [AKMethodNameExtractor extractMethodNameFromString:pasteboardString];
-
-    //    if (methodName == nil)
-    //    {
-    //        NSBeep();
-    //        return;
-    //    }
-
-    //    // Stuff the extracted method name into the system paste buffer.
-    //    NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
-
-    //    [generalPasteboard declareTypes:@[ NSStringPboardType ] owner:nil];
-    //    [generalPasteboard setString:methodName forType:NSStringPboardType];
+    serviceSearch(s);
 }
 
 - (void)openUrl:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -49,6 +39,8 @@
 
     QString s = QString::fromNSString(pasteboardString);
     qDebug() << "open Url:" << s;
+
+    serviceOpenUrl(s);
 }
 
 - (void)openLink:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -64,6 +56,8 @@
 
     QString s = QString::fromNSString(pasteboardString);
     qDebug() << "open link:" << s;
+
+    serviceOpenLink(s);
 }
 
 - (void)appendToPlaylist:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -74,12 +68,15 @@
         return;
     }
 
-    NSArray *fileArray = [pboard propertyListForType:NSFilenamesPboardType];
+    QStringList ss;
+    NSArray *   fileArray = [pboard propertyListForType:NSFilenamesPboardType];
     for (NSString *filePath in fileArray)
     {
-        QString s = QString::fromNSString(filePath);
-        qDebug() << "appendToPlaylist:" << s;
+        ss << QString::fromNSString(filePath);
     }
+
+    qDebug() << "appendToPlaylist:" << ss;
+    serviceAppendToPlaylist(ss);
 }
 
 - (void)clearAndAddToPlaylist:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -90,12 +87,15 @@
         return;
     }
 
-    NSArray *fileArray = [pboard propertyListForType:NSFilenamesPboardType];
+    QStringList ss;
+    NSArray *   fileArray = [pboard propertyListForType:NSFilenamesPboardType];
     for (NSString *filePath in fileArray)
     {
-        QString s = QString::fromNSString(filePath);
-        qDebug() << "clearAndAddToPlaylist:" << s;
+        ss << QString::fromNSString(filePath);
     }
+
+    qDebug() << "clearAndAddToPlaylist:" << ss;
+    serviceClearAndAddToPlaylist(ss);
 }
 
 - (void)appendToPlaylistFile:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -106,12 +106,15 @@
         return;
     }
 
-    NSArray *fileArray = [pboard propertyListForType:NSFilenamesPboardType];
+    QStringList ss;
+    NSArray *   fileArray = [pboard propertyListForType:NSFilenamesPboardType];
     for (NSString *filePath in fileArray)
     {
-        QString s = QString::fromNSString(filePath);
-        qDebug() << "appendToPlaylistFile:" << s;
+        ss << QString::fromNSString(filePath);
     }
+
+    qDebug() << "appendToPlaylistFile:" << ss;
+    serviceAppendToPlaylistFile(ss);
 }
 
 - (void)clearAndAddToPlaylistFile:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -122,12 +125,15 @@
         return;
     }
 
-    NSArray *fileArray = [pboard propertyListForType:NSFilenamesPboardType];
+    QStringList ss;
+    NSArray *   fileArray = [pboard propertyListForType:NSFilenamesPboardType];
     for (NSString *filePath in fileArray)
     {
-        QString s = QString::fromNSString(filePath);
-        qDebug() << "clearAndAddToPlaylistFile:" << s;
+        ss << QString::fromNSString(filePath);
     }
+
+    qDebug() << "clearAndAddToPlaylistFile:" << ss;
+    serviceClearAndAddToPlaylistFile(ss);
 }
 
 @end

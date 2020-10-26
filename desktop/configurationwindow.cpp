@@ -115,9 +115,31 @@ ConfigurationWindow::~ConfigurationWindow()
     delete ui;
 }
 
+#if defined(Q_OS_MACOS)
+void ConfigurationWindow::onMacServiceSearch(const QString &s) {}
+
+void ConfigurationWindow::onMacServiceOpenUrl(const QString &s)
+{
+    openLink(s);
+}
+
+void ConfigurationWindow::onMacServiceOpenLink(const QString &s)
+{
+    openLink(s);
+}
+
+void ConfigurationWindow::onMacServiceAppendToPlaylist(const QStringList &s) {}
+
+void ConfigurationWindow::onMacServiceClearAndAddToPlaylist(const QStringList &s) {}
+
+void ConfigurationWindow::onMacServiceAppendToPlaylistFile(const QStringList &s) {}
+
+void ConfigurationWindow::onMacServiceClearAndAddToPlaylistFile(const QStringList &s) {}
+#endif
+
 void ConfigurationWindow::closeEvent(QCloseEvent *event)
 {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS)
     if (!event->spontaneous() || !isVisible())
     {
         return;
@@ -300,11 +322,9 @@ void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &t
     StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
 }
 
-void ConfigurationWindow::onGlobalClipboardChanged()
+void ConfigurationWindow::openLink(const QString &text)
 {
-    QClipboard *clipboard = QGuiApplication::clipboard();
-    QString     text      = clipboard->text();
-    QStringList patterns  = {"^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?discover\\/toplist\\?id=(\\d+)",
+    QStringList patterns = {"^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?discover\\/toplist\\?id=(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?playlist\\?id=(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?my\\/m\\/music\\/playlist\\?id=(\\d+)",
                             "^https?:\\/\\/www\\.xiami\\.com\\/collect\\/(\\d+)",
@@ -342,6 +362,13 @@ void ConfigurationWindow::onGlobalClipboardChanged()
             break;
         }
     }
+}
+
+void ConfigurationWindow::onGlobalClipboardChanged()
+{
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    QString     text      = clipboard->text();
+    openLink(text);
 }
 
 void ConfigurationWindow::onReplyError(QNetworkReply::NetworkError code)
@@ -455,7 +482,7 @@ void ConfigurationWindow::handle(const QString &url, bool needConfirm)
     if (needConfirm &&
         QMessageBox::question(this, tr("Confirm"), tr("Play song(s) by %1?").arg(player), QMessageBox::Ok | QMessageBox::Cancel) != QMessageBox::Ok)
         return;
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
     if (fi.isBundle() && player.endsWith(".app"))
     {
         auto script = QString("tell application \"%1\" to open \"%2\"").arg(player, localTempPlaylist);

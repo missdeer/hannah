@@ -80,6 +80,7 @@ LIBS += -lrp
 
 macx : {
     HEADERS += \
+        serviceslots.h \
         application.h
     SOURCES += \
         application.cpp 

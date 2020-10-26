@@ -93,3 +93,8 @@ https://music.163.com/#/playlist?id=5149363884
 
 * click `Generate M3U` button created in above step
 * choose your favourite media player application, such as [foobar2000](http://www.foobar2000.org/), and click `Open` button on the web browser's opening dialog, enjoy it.
+
+## Firefox Addon
+
+https://addons.mozilla.org/zh-CN/firefox/addon/play-with-hannah/
+

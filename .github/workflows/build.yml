@@ -67,6 +67,7 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5-static
             qmake: /mingw64/qt5-static/bin/qmake.exe
+            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt5-static-gcc
             mingw_arch: MINGW32
@@ -75,6 +76,43 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5-static
             qmake: /mingw32/qt5-static/bin/qmake.exe
+            windeployqt: ls.exe
+            GOARCH: 386
+          - qt_arch: mingw64_qt5-gcc
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            mkspec: win32-g++
+            qt_build: qt5
+            qmake: qmake.exe
+            windeployqt: windeployqt.exe
+            GOARCH: amd64
+          - qt_arch: mingw32_qt5-gcc
+            mingw_arch: MINGW32
+            mingw_prefix: mingw-w64-i686
+            toolchains: gcc
+            mkspec: win32-g++
+            qt_build: qt5
+            qmake: qmake.exe
+            windeployqt: windeployqt.exe
+            GOARCH: 386
+          - qt_arch: mingw64_qt5-clang
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: clang
+            mkspec: win32-clang-g++
+            qt_build: qt5
+            qmake: qmake.exe
+            windeployqt: windeployqt.exe
+            GOARCH: amd64
+          - qt_arch: mingw32_qt5-clang
+            mingw_arch: MINGW32
+            mingw_prefix: mingw-w64-i686
+            toolchains: clang
+            mkspec: win32-clang-g++
+            qt_build: qt5
+            qmake: qmake.exe
+            windeployqt: windeployqt.exe
             GOARCH: 386
 
     steps:
@@ -119,6 +157,7 @@ jobs:
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
+          ${{ matrix.windeployqt }} $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
           cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cd ..
 
@@ -139,7 +178,7 @@ jobs:
       - name: Upload artifact hannah-${{ matrix.mingw_prefix }}
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: hannah-${{ matrix.mingw_prefix }}
+          name: hannah-${{ matrix.qt_arch }}
           path: ${{ matrix.mingw_prefix }}
 
   Darwin:

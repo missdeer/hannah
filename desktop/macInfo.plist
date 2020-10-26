@@ -857,19 +857,7 @@
 			<key>NSPortName</key>
 			<string>Hannah</string>
 			<key>NSRequiredContext</key>
-			<array>
-				<dict>
-					<key>NSTextContent</key>
-					<string>URL</string>
-				</dict>
-				<dict>
-					<key>NSLinkSchemes</key>
-					<array>
-						<string>http</string>
-						<string>https</string>
-					</array>
-				</dict>
-			</array>
+			<array/>
 			<key>NSSendTypes</key>
 			<array>
 				<string>NSRTFDPboardType</string>

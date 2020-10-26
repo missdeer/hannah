@@ -810,8 +810,6 @@
 			<string>search</string>
 			<key>NSPortName</key>
 			<string>Hannah</string>
-			<key>NSRequiredContext</key>
-			<dict/>
 			<key>NSSendTypes</key>
 			<array>
 				<string>NSStringPboardType</string>
@@ -859,7 +857,19 @@
 			<key>NSPortName</key>
 			<string>Hannah</string>
 			<key>NSRequiredContext</key>
-			<dict/>
+			<array>
+				<dict>
+					<key>NSTextContent</key>
+					<string>URL</string>
+				</dict>
+				<dict>
+					<key>NSLinkSchemes</key>
+					<array>
+						<string>http</string>
+						<string>https</string>
+					</array>
+				</dict>
+			</array>
 			<key>NSSendTypes</key>
 			<array>
 				<string>NSRTFDPboardType</string>

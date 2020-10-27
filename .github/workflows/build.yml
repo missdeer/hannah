@@ -147,7 +147,7 @@ jobs:
           copy desktop\release\Hannah.exe ..\${{ matrix.qt_arch }}\gui\
           windeployqt.exe ..\${{ matrix.qt_arch }}\gui\Hannah.exe
           copy registerProtocolHandler\release\registerProtocolHandler.exe ..\${{ matrix.qt_arch }}\gui\
-          copy lib\reverseProxy\*.dll ..\${{ matrix.qt_arch }}\gui\
+          copy ..\lib\reverseProxy\*.dll ..\${{ matrix.qt_arch }}\gui\
           cd ..
 
       - shell: msys2 {0} 

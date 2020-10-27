@@ -119,7 +119,7 @@ jobs:
         run: |
           cd lib\reverseProxy
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          set PATH=D:\a\_temp\msys\msys64\%mingw_arch%\bin;%PATH%
+          set PATH=D:\a\_temp\msys\msys64\%mingw_arch%\bin;%PATH%;C:\hostedtoolcache\windows\go\${{ env.go_version }}\x64\bin
           call %BUILDRP%
           cd ..\..
 

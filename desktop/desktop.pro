@@ -32,18 +32,16 @@ CODECFORSRC     = UTF-8
 TRANSLATIONS    = $$PWD/translations/Hannah_zh_CN.ts
 
 isEmpty(QMAKE_LUPDATE) {
-    win32:QMAKE_LUPDATE = $$[QT_INSTALL_BINS]\lupdate.exe
-    else:QMAKE_LUPDATE = $$[QT_INSTALL_BINS]/lupdate
+    QMAKE_LUPDATE = $$shell_path($$[QT_INSTALL_BINS]\lupdate)
 }
 
 isEmpty(QMAKE_LRELEASE) {
-    win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
-    else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+    QMAKE_LRELEASE = $$shell_path($$[QT_INSTALL_BINS]\lrelease)
 }
 
-lupdate.commands = $$QMAKE_LUPDATE -no-obsolete $$PWD/desktop.pro
+lupdate.commands = $$QMAKE_LUPDATE -no-obsolete $$shell_path($$PWD/desktop.pro)
 lupdates.depends = $$SOURCES $$HEADERS $$FORMS $$TRANSLATIONS
-lrelease.commands = $$QMAKE_LRELEASE $$PWD/desktop.pro
+lrelease.commands = $$QMAKE_LRELEASE $$shell_path($$PWD/desktop.pro)
 lrelease.depends = lupdate
 translate.depends = lrelease
 QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n 
@@ -51,20 +49,20 @@ POST_TARGETDEPS += translate qti18n
 
 win32: {
     CONFIG(release, debug|release) : {
-        WINDEPLOYQT = $$[QT_INSTALL_BINS]/windeployqt.exe
-        DESTDIR = $$OUT_PWD/release
+        WINDEPLOYQT = $$shell_path($$[QT_INSTALL_BINS]/windeployqt.exe)
+        DESTDIR = $$shell_path($$OUT_PWD/release)
     } else : {
-        DESTDIR = $$OUT_PWD/debug
+        DESTDIR = $$shell_path($$OUT_PWD/debug)
     }
     QMAKE_EXTRA_TARGETS += mkdir
-    mkdir.commands = '$(CHK_DIR_EXISTS) $$shell_path($$DESTDIR/translations/) $(MKDIR) $$shell_path($$DESTDIR/translations/)'
-    translate.depends += mkdir
-    translate.commands = '$(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$DESTDIR/translations/)'
+    translate.commands = '$(CHK_DIR_EXISTS) $$shell_path($$PWD/translations/Hannah_zh_CN.qm) $(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$DESTDIR/translations/)'
     
     qti18n.depends = translate
     win32-*g++*: {
         qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../share/qt5/translations/qt_zh_CN.qm) $$shell_path($${DESTDIR}/translations/qt_zh_CN.qm)'
     } else: {
+        mkdir.commands = '$(CHK_DIR_EXISTS) $$shell_path($$DESTDIR/translations/) $(MKDIR) $$shell_path($$DESTDIR/translations/)'
+        translate.depends += mkdir
         qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../translations/qt_zh_CN.qm) $$shell_path($${DESTDIR}/translations/qt_zh_CN.qm)'
     }
 }

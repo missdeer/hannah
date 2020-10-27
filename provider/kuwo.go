@@ -560,6 +560,10 @@ func (p *kuwo) Login() error {
 	return ErrNotImplemented
 }
 
+func (p *kuwo) RefreshToken() error {
+	return  ErrNotImplemented
+}
+
 func (p *kuwo) Name() string {
 	return "kuwo"
 }

@@ -5,6 +5,8 @@ import (
 	"log"
 	"regexp"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 )
@@ -42,6 +44,7 @@ type IProvider interface {
 	AlbumSongs(id string) (Songs, error)
 	Name() string
 	Login() error
+	RefreshToken() error
 }
 
 type providerGetter func() IProvider
@@ -66,9 +69,6 @@ func (p *providerMap) add(provider string) IProvider {
 	if c, ok := providerCreatorMap[provider]; ok {
 		i := c()
 		p.m[provider] = i
-		if err := i.Login(); err != nil {
-			log.Println(provider, "login failed", err)
-		}
 		return i
 	}
 	return nil
@@ -98,15 +98,30 @@ var (
 		"bilibili": regexp.MustCompile(`^[0-9]+$`),
 		"migu":     regexp.MustCompile(`^[0-9a-zA-Z]+$`),
 	}
+
+	authTimestamp atomic.Value
 )
+
+func init() {
+	authTimestamp.Store(time.Now())
+}
 
 // GetProvider return the specified provider
 func GetProvider(provider string) IProvider {
 	if p := providers.get(provider); p != nil {
+		now := time.Now()
+		last := authTimestamp.Load().(time.Time)
+		if last.Add(50 * time.Minute).After(now) {
+			_ = p.RefreshToken()
+			authTimestamp.Store(now)
+		}
 		return p
 	}
 
 	if p := providers.add(provider); p != nil {
+		if err := p.Login(); err != nil {
+			log.Println(provider, "login failed", err)
+		}
 		return p
 	}
 	return nil

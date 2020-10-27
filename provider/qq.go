@@ -592,6 +592,10 @@ func (p *qq) Login() error {
 	return ErrNotImplemented
 }
 
+func (p *qq) RefreshToken() error {
+	return  ErrNotImplemented
+}
+
 func (p *qq) Name() string {
 	return "qq"
 }

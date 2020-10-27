@@ -224,6 +224,10 @@ func (p *bilibili) Login() error {
 	return  ErrNotImplemented
 }
 
+func (p *bilibili) RefreshToken() error {
+	return  ErrNotImplemented
+}
+
 func (p *bilibili) Name() string {
 	return "bilibili"
 }

@@ -817,6 +817,10 @@ func (p *xiami) Login() error {
 	return ErrNotImplemented
 }
 
+func (p *xiami) RefreshToken() error {
+	return ErrNotImplemented
+}
+
 func (p *xiami) Name() string {
 	return "xiami"
 }

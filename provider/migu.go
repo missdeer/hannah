@@ -488,6 +488,10 @@ func (p *migu) Login() error {
 	return ErrNotImplemented
 }
 
+func (p *migu) RefreshToken() error {
+	return  ErrNotImplemented
+}
+
 func (p *migu) Name() string {
 	return "migu"
 }

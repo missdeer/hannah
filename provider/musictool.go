@@ -40,6 +40,10 @@ func (p *musictool) Login() error {
 	return  ErrNotImplemented
 }
 
+func (p *musictool) RefreshToken() error {
+	return  ErrNotImplemented
+}
+
 func (p *musictool) Name() string {
 	return "musictool"
 }

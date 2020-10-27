@@ -405,6 +405,10 @@ func (p *kugou) Login() error {
 	return ErrNotImplemented
 }
 
+func (p *kugou) RefreshToken() error {
+	return  ErrNotImplemented
+}
+
 func (p *kugou) Name() string {
 	return "kugou"
 }

@@ -58,7 +58,6 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        go_version: [1.15.3]
         include:
           - qt_arch: mingw64_qt5-static-gcc
             mingw_arch: MINGW64 
@@ -114,7 +113,8 @@ jobs:
             qmake: qmake.exe
             windeployqt: windeployqt.exe
             GOARCH: 386
-
+    env:
+      go_version: 1.15.3
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -125,7 +125,7 @@ jobs:
       - name: Set up Go 1.15
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go_version }}
+          go-version: ${{ env.go_version }}
         id: go
 
       - run: go version && go env
@@ -139,7 +139,7 @@ jobs:
       - name: Build Go executables
         shell: msys2 {0}
         run: |
-          env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/${{ matrix.go_version }}/x64/bin make
+          env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/${{ env.go_version }}/x64/bin make
           mkdir -p ${{ matrix.mingw_prefix }}/cui
           cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/cui/
           cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}//cui/

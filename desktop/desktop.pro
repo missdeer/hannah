@@ -46,7 +46,7 @@ lupdates.depends = $$SOURCES $$HEADERS $$FORMS $$TRANSLATIONS
 lrelease.commands = $$QMAKE_LRELEASE $$PWD/desktop.pro
 lrelease.depends = lupdate
 translate.depends = lrelease
-QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n
+QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n 
 POST_TARGETDEPS += translate qti18n
 
 win32: {
@@ -56,6 +56,9 @@ win32: {
     } else : {
         DESTDIR = $$OUT_PWD/debug
     }
+    QMAKE_EXTRA_TARGETS += mkdir
+    mkdir.commands = '$(CHK_DIR_EXISTS) $$shell_path($$DESTDIR/translations/) $(MKDIR) $$shell_path($$DESTDIR/translations/)'
+    translate.depends += mkdir
     translate.commands = '$(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$DESTDIR/translations/)'
     
     qti18n.depends = translate

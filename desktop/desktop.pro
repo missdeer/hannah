@@ -50,13 +50,6 @@ QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n
 POST_TARGETDEPS += translate qti18n
 
 win32: {
-    win32-*msvc*: {
-        contains(QMAKE_HOST.arch, x86_64): {
-            LIBS += -L$$PWD/../lib/reverseProxy/x64
-        } else: {
-            LIBS += -L$$PWD/../lib/reverseProxy/x86
-        }
-    }
     CONFIG(release, debug|release) : {
         WINDEPLOYQT = $$[QT_INSTALL_BINS]/windeployqt.exe
         DESTDIR = $$OUT_PWD/release
@@ -67,16 +60,13 @@ win32: {
     
     qti18n.depends = translate
     win32-*g++*: {
-        LIBS += -L$$PWD/../lib/reverseProxy
         qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../share/qt5/translations/qt_zh_CN.qm) $$shell_path($${DESTDIR}/translations/qt_zh_CN.qm)'
     } else: {
         qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../translations/qt_zh_CN.qm) $$shell_path($${DESTDIR}/translations/qt_zh_CN.qm)'
     }
-} else : {
-    LIBS += -L$$PWD/../lib/reverseProxy
 }
 
-LIBS += -lrp
+LIBS += -L$$PWD/../lib/reverseProxy -lrp
 
 macx : {
     HEADERS += \

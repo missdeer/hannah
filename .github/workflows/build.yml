@@ -152,7 +152,7 @@ jobs:
 
       - shell: msys2 {0} 
         run : |   
-          cp -r $PWD/build/desktop/release/translations $PWD/../${{ matrix.qt_arch }}/gui/
+          cp -r $PWD/build/desktop/release/translations $PWD/${{ matrix.qt_arch }}/gui/
 
       - name: package Chrome extension
         shell: msys2 {0}

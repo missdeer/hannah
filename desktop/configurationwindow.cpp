@@ -100,7 +100,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
 
     LoadConfigurations();
     m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    startReverseProxy();
 }
 
 ConfigurationWindow::~ConfigurationWindow()
@@ -228,15 +228,26 @@ void ConfigurationWindow::onBrowseExternalPlayerWorkingDirClicked()
     m_settings->sync();
 }
 
+void ConfigurationWindow::startReverseProxy()
+{
+    bool b = StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    if (!b)
+        QMessageBox::critical(this, tr("Error"), tr("Starting reverse proxy failed!"));
+}
+
+void ConfigurationWindow::restartReverseProxy()
+{
+    StopReverseProxy();
+    startReverseProxy();
+}
+
 void ConfigurationWindow::onReverseProxyListenPortValueChanged(int port)
 {
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyListenPort", port);
     m_settings->sync();
-    StopReverseProxy();
-
     m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    restartReverseProxy();
 }
 
 void ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(const QString &text)
@@ -244,12 +255,10 @@ void ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(c
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyBindNetworkInterface", text);
     m_settings->sync();
-    StopReverseProxy();
 
     QByteArray ba = ui->reverseProxyBindNetworkInterface->currentText().toUtf8();
     SetNetworkInterface(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
-
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    restartReverseProxy();
 }
 
 void ConfigurationWindow::onReverseProxyAutoRedirectStateChanged(int state)
@@ -257,9 +266,8 @@ void ConfigurationWindow::onReverseProxyAutoRedirectStateChanged(int state)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyAutoRedirect", state);
     m_settings->sync();
-    StopReverseProxy();
     SetAutoRedirect(state);
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    restartReverseProxy();
 }
 
 void ConfigurationWindow::onReverseProxyRedirectStateChanged(int state)
@@ -267,9 +275,8 @@ void ConfigurationWindow::onReverseProxyRedirectStateChanged(int state)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyRedirect", state);
     m_settings->sync();
-    StopReverseProxy();
     SetRedirect(state);
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    restartReverseProxy();
 }
 
 void ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged(const QString &text)
@@ -277,13 +284,12 @@ void ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged(const QStrin
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyProxyType", text);
     m_settings->sync();
-    StopReverseProxy();
-    if (text == "Http")
+    if (text == tr("Http"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
         SetHttpProxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
     }
-    else if (text == "Socks5")
+    else if (text == tr("Socks5"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
         SetSocks5Proxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
@@ -293,7 +299,7 @@ void ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged(const QStrin
         SetHttpProxy(GoString {nullptr, 0});
         SetSocks5Proxy(GoString {nullptr, 0});
     }
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    restartReverseProxy();
 }
 
 void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &text)
@@ -301,14 +307,13 @@ void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &t
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyProxyAddress", text);
     m_settings->sync();
-    StopReverseProxy();
 
-    if (text == "Http")
+    if (text == tr("Http"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
         SetHttpProxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
     }
-    else if (text == "Socks5")
+    else if (text == tr("Socks5"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
         SetSocks5Proxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
@@ -319,7 +324,7 @@ void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &t
         SetSocks5Proxy(GoString {nullptr, 0});
     }
 
-    StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    restartReverseProxy();
 }
 
 void ConfigurationWindow::openLink(const QString &text)

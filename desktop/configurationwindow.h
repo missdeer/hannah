@@ -92,5 +92,7 @@ private:
 
     void handle(const QString &url, bool needConfirm);
     void openLink(const QString &text);
+    void restartReverseProxy();
+    void startReverseProxy();
 };
 #endif // MAINWINDOW_H

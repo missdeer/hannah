@@ -16,3 +16,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RC_FILE = registerProtocolHandler.rc
+
+!win32-*msvc*: {
+    RC_FILE += manifest.rc
+}

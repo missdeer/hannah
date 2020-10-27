@@ -29,6 +29,3 @@ BEGIN
     END
 END
 
-
-#define MANIFEST_RESOURCE_ID 1
-MANIFEST_RESOURCE_ID RT_MANIFEST "registerProtocolHandler.exe.manifest"

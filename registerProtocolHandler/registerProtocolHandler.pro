@@ -17,6 +17,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RC_FILE = registerProtocolHandler.rc
 
-!win32-*msvc*: {
+win32-*msvc*: {
+    QMAKE_LFLAGS += /MANIFESTUAC:\"level=\'requireAdministrator\' uiAccess=\'false\'\"
+} else : {
     RC_FILE += manifest.rc
 }

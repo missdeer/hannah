@@ -58,7 +58,7 @@ win32: {
     
     qti18n.depends = translate
     win32-*g++*: {
-        translate.commands = '$$(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$DESTDIR/translations/)'
+        translate.commands = '$(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$DESTDIR/translations/)'
         qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../share/qt5/translations/qt_zh_CN.qm) $$shell_path($${DESTDIR}/translations/qt_zh_CN.qm)'
     } else: {
         mkdir.commands = '$(CHK_DIR_EXISTS) $$shell_path($$DESTDIR/translations/) $(MKDIR) $$shell_path($$DESTDIR/translations/)'

@@ -120,7 +120,15 @@ jobs:
         with:
           update: true
           msystem: ${{ matrix.mingw_arch }}
-          install: zip unzip make git ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
+          install: zip make git ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
+
+      - name: Set up Go 1.15
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+        id: go
+
+      - run: go version && go env
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -131,11 +139,7 @@ jobs:
       - name: Build Go executables
         shell: msys2 {0}
         run: |
-          curl -O -L https://golang.org/dl/go1.15.3.windows-amd64.zip
-          unzip go1.15.3.windows-amd64.zip
-          $PWD/go/bin/go version 
-          $PWD/go/bin/go env
-          env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:$PWD/go/bin/ make
+          env GOARCH=${{ matrix.GOARCH }} PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/C/hostedtoolcache/windows/go/1.15.3/x64/bin make
           mkdir -p ${{ matrix.mingw_prefix }}/cui
           cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.mingw_prefix }}/cui/
           cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.mingw_prefix }}//cui/

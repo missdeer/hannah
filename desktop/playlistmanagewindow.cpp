@@ -28,3 +28,11 @@ void PlaylistManageWindow::closeEvent(QCloseEvent *event)
     hide();
     event->ignore();
 }
+
+void PlaylistManageWindow::onAppendToPlaylist(const QStringList &s) {}
+
+void PlaylistManageWindow::onClearAndAddToPlaylist(const QStringList &s) {}
+
+void PlaylistManageWindow::onAppendToPlaylistFile(const QStringList &s) {}
+
+void PlaylistManageWindow::onClearAndAddToPlaylistFile(const QStringList &s) {}

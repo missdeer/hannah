@@ -25,15 +25,9 @@ public:
     ConfigurationWindow(QWidget *parent = nullptr);
     ~ConfigurationWindow();
 
-#if defined(Q_OS_MACOS)
-    void onMacServiceSearch(const QString &s);
-    void onMacServiceOpenUrl(const QString &s);
-    void onMacServiceOpenLink(const QString &s);
-    void onMacServiceAppendToPlaylist(const QStringList &s);
-    void onMacServiceClearAndAddToPlaylist(const QStringList &s);
-    void onMacServiceAppendToPlaylistFile(const QStringList &s);
-    void onMacServiceClearAndAddToPlaylistFile(const QStringList &s);
-#endif
+    void onSearch(const QString &s);
+    void onOpenUrl(const QString &s);
+    void onOpenLink(const QString &s);
 
 protected:
     void closeEvent(QCloseEvent *event);

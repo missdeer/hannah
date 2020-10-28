@@ -16,6 +16,11 @@ public:
     explicit PlaylistManageWindow(QWidget *parent = nullptr);
     ~PlaylistManageWindow();
 
+    void onAppendToPlaylist(const QStringList &s);
+    void onClearAndAddToPlaylist(const QStringList &s);
+    void onAppendToPlaylistFile(const QStringList &s);
+    void onClearAndAddToPlaylistFile(const QStringList &s);
+
 protected:
     void closeEvent(QCloseEvent *event);
 

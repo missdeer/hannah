@@ -83,15 +83,15 @@
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="170"/>
-        <location filename="../configurationwindow.cpp" line="292"/>
-        <location filename="../configurationwindow.cpp" line="316"/>
+        <location filename="../configurationwindow.cpp" line="282"/>
+        <location filename="../configurationwindow.cpp" line="306"/>
         <source>Http</source>
         <translation>Http</translation>
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="175"/>
-        <location filename="../configurationwindow.cpp" line="297"/>
-        <location filename="../configurationwindow.cpp" line="321"/>
+        <location filename="../configurationwindow.cpp" line="287"/>
+        <location filename="../configurationwindow.cpp" line="311"/>
         <source>Socks5</source>
         <translation>Socks5</translation>
     </message>
@@ -146,48 +146,48 @@
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="210"/>
+        <location filename="../configurationwindow.cpp" line="200"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="231"/>
+        <location filename="../configurationwindow.cpp" line="221"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="240"/>
+        <location filename="../configurationwindow.cpp" line="230"/>
         <source>Starting reverse proxy failed!</source>
         <translation>启动反向代理失败！</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="479"/>
+        <location filename="../configurationwindow.cpp" line="469"/>
         <source>Erorr</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="479"/>
+        <location filename="../configurationwindow.cpp" line="469"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="240"/>
-        <location filename="../configurationwindow.cpp" line="498"/>
+        <location filename="../configurationwindow.cpp" line="230"/>
+        <location filename="../configurationwindow.cpp" line="488"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="498"/>
+        <location filename="../configurationwindow.cpp" line="488"/>
         <source>Can&apos;t get song(s), maybe VIP is requested.</source>
         <translation>不能获取歌曲信息，可能需要VIP。</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="503"/>
+        <location filename="../configurationwindow.cpp" line="493"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="503"/>
+        <location filename="../configurationwindow.cpp" line="493"/>
         <source>Play song(s) by %1?</source>
         <translation>使用%1播放歌曲？</translation>
     </message>

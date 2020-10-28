@@ -120,27 +120,17 @@ ConfigurationWindow::~ConfigurationWindow()
     delete ui;
 }
 
-#if defined(Q_OS_MACOS)
-void ConfigurationWindow::onMacServiceSearch(const QString &s) {}
+void ConfigurationWindow::onSearch(const QString &s) {}
 
-void ConfigurationWindow::onMacServiceOpenUrl(const QString &s)
+void ConfigurationWindow::onOpenUrl(const QString &s)
 {
     openLink(s);
 }
 
-void ConfigurationWindow::onMacServiceOpenLink(const QString &s)
+void ConfigurationWindow::onOpenLink(const QString &s)
 {
     openLink(s);
 }
-
-void ConfigurationWindow::onMacServiceAppendToPlaylist(const QStringList &s) {}
-
-void ConfigurationWindow::onMacServiceClearAndAddToPlaylist(const QStringList &s) {}
-
-void ConfigurationWindow::onMacServiceAppendToPlaylistFile(const QStringList &s) {}
-
-void ConfigurationWindow::onMacServiceClearAndAddToPlaylistFile(const QStringList &s) {}
-#endif
 
 void ConfigurationWindow::closeEvent(QCloseEvent *event)
 {

@@ -27,14 +27,14 @@ void serviceSearch(const QString &s)
 {
     if (configurationWindow)
     {
-        configurationWindow->onMacServiceSearch(s);
+        configurationWindow->onSearch(s);
     }
 }
 void serviceOpenUrl(const QString &s)
 {
     if (configurationWindow)
     {
-        configurationWindow->onMacServiceSearch(s);
+        configurationWindow->onSearch(s);
     }
 }
 
@@ -42,39 +42,39 @@ void serviceOpenLink(const QString &s)
 {
     if (configurationWindow)
     {
-        configurationWindow->onMacServiceOpenLink(s);
+        configurationWindow->onOpenLink(s);
     }
 }
 
 void serviceAppendToPlaylist(const QStringList &s)
 {
-    if (configurationWindow)
+    if (playlistManageWindow)
     {
-        configurationWindow->onMacServiceAppendToPlaylist(s);
+        playlistManageWindow->onAppendToPlaylist(s);
     }
 }
 
 void serviceClearAndAddToPlaylist(const QStringList &s)
 {
-    if (configurationWindow)
+    if (playlistManageWindow)
     {
-        configurationWindow->onMacServiceClearAndAddToPlaylist(s);
+        playlistManageWindow->onClearAndAddToPlaylist(s);
     }
 }
 
 void serviceAppendToPlaylistFile(const QStringList &s)
 {
-    if (configurationWindow)
+    if (playlistManageWindow)
     {
-        configurationWindow->onMacServiceAppendToPlaylistFile(s);
+        playlistManageWindow->onAppendToPlaylistFile(s);
     }
 }
 
 void serviceClearAndAddToPlaylistFile(const QStringList &s)
 {
-    if (configurationWindow)
+    if (playlistManageWindow)
     {
-        configurationWindow->onMacServiceClearAndAddToPlaylistFile(s);
+        playlistManageWindow->onClearAndAddToPlaylistFile(s);
     }
 }
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     Application a(argc, argv);
     i18n(translator, qtTranslator);
     ConfigurationWindow  w;
-    w.connect(&a, &Application::openUrl, &w, &ConfigurationWindow::onOpenUrl);
+    w.connect(&a, &Application::openUrl, &w, qOverload<QUrl>(&ConfigurationWindow::onOpenUrl));
 
     configurationWindow = &w;
 

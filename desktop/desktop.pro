@@ -12,6 +12,7 @@ INCLUDEPATH += $$PWD/../lib/reverseProxy
 SOURCES += \
     main.cpp \
     configurationwindow.cpp \
+    playlistmanagewindow.cpp \
     qtlocalpeer.cpp \
     qtlockedfile.cpp \
     qtlockedfile_unix.cpp \
@@ -19,11 +20,13 @@ SOURCES += \
 
 HEADERS += \
     configurationwindow.h \
+    playlistmanagewindow.h \
     qtlocalpeer.h \
     qtlockedfile.h
 
 FORMS += \
-    configurationwindow.ui
+    configurationwindow.ui \
+    playlistmanagewindow.ui
     
 RC_FILE = Hannah.rc
 

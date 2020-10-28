@@ -14,6 +14,7 @@
 #include "configurationwindow.h"
 
 #include "librp.h"
+#include "playlistmanagewindow.h"
 #include "ui_configurationwindow.h"
 
 #if defined(Q_OS_WIN)
@@ -77,6 +78,9 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     auto configAction = new QAction(tr("&Configuration"), this);
     connect(configAction, &QAction::triggered, this, &ConfigurationWindow::onShowConfiguration);
 
+    auto playlistManageAction = new QAction(tr("Playlist Manage"), this);
+    connect(playlistManageAction, &QAction::triggered, this, &ConfigurationWindow::onShowPlaylistManage);
+
     auto quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
@@ -89,6 +93,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     m_trayIconMenu->addAction(tr("Kuwo"), []() { QDesktopServices::openUrl(QUrl("http://kuwo.cn")); });
     m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(configAction);
+    m_trayIconMenu->addAction(playlistManageAction);
     m_trayIconMenu->addAction(quitAction);
 
     m_trayIcon = new QSystemTrayIcon(this);
@@ -448,6 +453,16 @@ void ConfigurationWindow::onShowConfiguration()
     }
     activateWindow();
     raise();
+}
+
+void ConfigurationWindow::onShowPlaylistManage()
+{
+    if (playlistManageWindow->isHidden())
+    {
+        playlistManageWindow->showNormal();
+    }
+    playlistManageWindow->activateWindow();
+    playlistManageWindow->raise();
 }
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)

@@ -7,6 +7,7 @@
 #include <QtCore>
 
 #include "configurationwindow.h"
+#include "playlistmanagewindow.h"
 
 #if defined(Q_OS_MACOS)
 #    include "application.h"
@@ -22,60 +23,58 @@
 
 #if defined(Q_OS_MACOS)
 
-static ConfigurationWindow *cw = nullptr;
-
 void serviceSearch(const QString &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceSearch(s);
+        configurationWindow->onMacServiceSearch(s);
     }
 }
 void serviceOpenUrl(const QString &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceSearch(s);
+        configurationWindow->onMacServiceSearch(s);
     }
 }
 
 void serviceOpenLink(const QString &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceOpenLink(s);
+        configurationWindow->onMacServiceOpenLink(s);
     }
 }
 
 void serviceAppendToPlaylist(const QStringList &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceAppendToPlaylist(s);
+        configurationWindow->onMacServiceAppendToPlaylist(s);
     }
 }
 
 void serviceClearAndAddToPlaylist(const QStringList &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceClearAndAddToPlaylist(s);
+        configurationWindow->onMacServiceClearAndAddToPlaylist(s);
     }
 }
 
 void serviceAppendToPlaylistFile(const QStringList &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceAppendToPlaylistFile(s);
+        configurationWindow->onMacServiceAppendToPlaylistFile(s);
     }
 }
 
 void serviceClearAndAddToPlaylistFile(const QStringList &s)
 {
-    if (cw)
+    if (configurationWindow)
     {
-        cw->onMacServiceClearAndAddToPlaylistFile(s);
+        configurationWindow->onMacServiceClearAndAddToPlaylistFile(s);
     }
 }
 
@@ -122,7 +121,7 @@ int main(int argc, char *argv[])
     ConfigurationWindow  w;
     w.connect(&a, &Application::openUrl, &w, &ConfigurationWindow::onOpenUrl);
 
-    cw = &w;
+    configurationWindow = &w;
 
     void registerHannahService();
     registerHannahService();
@@ -152,6 +151,7 @@ int main(int argc, char *argv[])
     i18n(translator, qtTranslator);
     ConfigurationWindow w;
     w.connect(&a, &QtSingleApplication::messageReceived, &w, &ConfigurationWindow::onApplicationMessageReceived);
+    configurationWindow = &w;
     if (args.length() > 0)
     {
         w.onApplicationMessageReceived(args.join("~"));
@@ -178,6 +178,9 @@ int main(int argc, char *argv[])
     }
 #    endif
 #endif
+
+    PlaylistManageWindow pmw;
+    playlistManageWindow = &pmw;
 
     a.setQuitOnLastWindowClosed(false);
     return a.exec();

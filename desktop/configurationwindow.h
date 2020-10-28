@@ -81,6 +81,8 @@ private slots:
 
     void onShowConfiguration();
 
+    void onShowPlaylistManage();
+
 private:
     Ui::ConfigurationWindow *ui;
     QMenu *                m_trayIconMenu;
@@ -95,4 +97,7 @@ private:
     void restartReverseProxy();
     void startReverseProxy();
 };
+
+inline ConfigurationWindow *configurationWindow = nullptr;
+
 #endif // MAINWINDOW_H

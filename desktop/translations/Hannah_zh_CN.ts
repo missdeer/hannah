@@ -201,25 +201,60 @@
     </message>
     <message>
         <location filename="../playlistmanagewindow.ui" line="36"/>
-        <location filename="../playlistmanagewindow.ui" line="88"/>
+        <source>Add Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="39"/>
+        <location filename="../playlistmanagewindow.ui" line="125"/>
         <source>+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="43"/>
-        <location filename="../playlistmanagewindow.ui" line="95"/>
+        <location filename="../playlistmanagewindow.ui" line="50"/>
+        <source>Delete Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="53"/>
+        <location filename="../playlistmanagewindow.ui" line="139"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="50"/>
-        <location filename="../playlistmanagewindow.ui" line="102"/>
+        <location filename="../playlistmanagewindow.ui" line="64"/>
+        <source>Import Playlist (*.m3u; *.m3u8)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="67"/>
+        <location filename="../playlistmanagewindow.ui" line="153"/>
         <source>I</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="57"/>
+        <location filename="../playlistmanagewindow.ui" line="78"/>
+        <source>Save Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="81"/>
         <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="122"/>
+        <source>Add Song(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="136"/>
+        <source>Delete Song(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.ui" line="150"/>
+        <source>Import Song(s) From Playlist (*.m3u; *.m3u8)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

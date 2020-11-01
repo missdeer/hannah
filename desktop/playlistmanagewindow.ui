@@ -23,7 +23,11 @@
       <widget class="QWidget" name="verticalLayoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QLineEdit" name="edtPlaylistFilter"/>
+         <widget class="QLineEdit" name="edtPlaylistFilter">
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QListView" name="lstPlaylist"/>
@@ -31,30 +35,64 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QToolButton" name="toolButton">
+           <widget class="QToolButton" name="btnAddPlaylist">
+            <property name="toolTip">
+             <string>Add Playlist</string>
+            </property>
             <property name="text">
              <string>+</string>
             </property>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/add-playlist.png</normaloff>:/rc/images/add-playlist.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_2">
+           <widget class="QToolButton" name="btnDeletePlaylist">
+            <property name="toolTip">
+             <string>Delete Playlist</string>
+            </property>
             <property name="text">
              <string>-</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_3">
-            <property name="text">
-             <string>I</string>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/delete-playlist.png</normaloff>:/rc/images/delete-playlist.png</iconset>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_7">
+           <widget class="QToolButton" name="btnImportPlaylist">
+            <property name="toolTip">
+             <string>Import Playlist (*.m3u; *.m3u8)</string>
+            </property>
+            <property name="text">
+             <string>I</string>
+            </property>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/import-playlist.png</normaloff>:/rc/images/import-playlist.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnSavePlaylist">
+            <property name="toolTip">
+             <string>Save Playlist</string>
+            </property>
             <property name="text">
              <string>S</string>
+            </property>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/save-playlist.png</normaloff>:/rc/images/save-playlist.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -83,23 +121,44 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QToolButton" name="toolButton_4">
+           <widget class="QToolButton" name="btnAddSongs">
+            <property name="toolTip">
+             <string>Add Song(s)</string>
+            </property>
             <property name="text">
              <string>+</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_5">
-            <property name="text">
-             <string>-</string>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/add.png</normaloff>:/rc/images/add.png</iconset>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_6">
+           <widget class="QToolButton" name="btnDeleteSongs">
+            <property name="toolTip">
+             <string>Delete Song(s)</string>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/delete.png</normaloff>:/rc/images/delete.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnImportSongs">
+            <property name="toolTip">
+             <string>Import Song(s) From Playlist (*.m3u; *.m3u8)</string>
+            </property>
             <property name="text">
              <string>I</string>
+            </property>
+            <property name="icon">
+             <iconset resource="hannah.qrc">
+              <normaloff>:/rc/images/import.png</normaloff>:/rc/images/import.png</iconset>
             </property>
            </widget>
           </item>
@@ -130,11 +189,13 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="hannah.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -24,6 +24,25 @@ public:
 protected:
     void closeEvent(QCloseEvent *event);
 
+private slots:
+    void on_edtPlaylistFilter_textChanged(const QString &s);
+
+    void on_tblSongs_activated(const QModelIndex &index);
+
+    void on_btnAddPlaylist_triggered(QAction *);
+
+    void on_btnDeletePlaylist_triggered(QAction *);
+
+    void on_btnImportPlaylist_triggered(QAction *);
+
+    void on_btnSavePlaylist_triggered(QAction *);
+
+    void on_btnAddSongs_triggered(QAction *);
+
+    void on_btnDeleteSongs_triggered(QAction *);
+
+    void on_btnImportSongs_triggered(QAction *);
+
 private:
     Ui::PlaylistManageWindow *ui;
 };

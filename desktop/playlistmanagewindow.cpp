@@ -36,3 +36,21 @@ void PlaylistManageWindow::onClearAndAddToPlaylist(const QStringList &s) {}
 void PlaylistManageWindow::onAppendToPlaylistFile(const QStringList &s) {}
 
 void PlaylistManageWindow::onClearAndAddToPlaylistFile(const QStringList &s) {}
+
+void PlaylistManageWindow::on_edtPlaylistFilter_textChanged(const QString &s) {}
+
+void PlaylistManageWindow::on_tblSongs_activated(const QModelIndex &index) {}
+
+void PlaylistManageWindow::on_btnAddPlaylist_triggered(QAction *) {}
+
+void PlaylistManageWindow::on_btnDeletePlaylist_triggered(QAction *) {}
+
+void PlaylistManageWindow::on_btnImportPlaylist_triggered(QAction *) {}
+
+void PlaylistManageWindow::on_btnSavePlaylist_triggered(QAction *) {}
+
+void PlaylistManageWindow::on_btnAddSongs_triggered(QAction *) {}
+
+void PlaylistManageWindow::on_btnDeleteSongs_triggered(QAction *) {}
+
+void PlaylistManageWindow::on_btnImportSongs_triggered(QAction *) {}

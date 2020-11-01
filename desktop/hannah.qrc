@@ -2,5 +2,12 @@
     <qresource prefix="/">
         <file>hannah.png</file>
         <file>rc/runInTerminal.app.scpt</file>
+        <file>rc/images/add.png</file>
+        <file>rc/images/add-playlist.png</file>
+        <file>rc/images/delete.png</file>
+        <file>rc/images/delete-playlist.png</file>
+        <file>rc/images/import.png</file>
+        <file>rc/images/import-playlist.png</file>
+        <file>rc/images/save-playlist.png</file>
     </qresource>
 </RCC>

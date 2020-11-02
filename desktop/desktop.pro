@@ -4,6 +4,8 @@ CONFIG += c++17
 
 TARGET = Hannah
 
+include($$PWD/3rdparty/sqlite3/sqlite3.pri)
+
 INCLUDEPATH += $$PWD/../lib/reverseProxy
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -13,16 +15,22 @@ SOURCES += \
     main.cpp \
     configurationwindow.cpp \
     playlistmanagewindow.cpp \
+    playlistmodel.cpp \
     qtlocalpeer.cpp \
     qtlockedfile.cpp \
     qtlockedfile_unix.cpp \
-    qtlockedfile_win.cpp
+    qtlockedfile_win.cpp \
+    songlistmodel.cpp \
+    sqlite3helper.cpp
 
 HEADERS += \
     configurationwindow.h \
     playlistmanagewindow.h \
+    playlistmodel.h \
     qtlocalpeer.h \
-    qtlockedfile.h
+    qtlockedfile.h \
+    songlistmodel.h \
+    sqlite3helper.h
 
 FORMS += \
     configurationwindow.ui \

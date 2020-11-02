@@ -7,6 +7,8 @@ namespace Ui {
     class PlaylistManageWindow;
 }
 class QCloseEvent;
+class PlaylistModel;
+class SonglistModel;
 
 class PlaylistManageWindow : public QMainWindow
 {
@@ -45,6 +47,8 @@ private slots:
 
 private:
     Ui::PlaylistManageWindow *ui;
+    PlaylistModel *           m_playlistModel;
+    SonglistModel *           m_songlistModel;
 };
 
 inline PlaylistManageWindow *playlistManageWindow = nullptr;

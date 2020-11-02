@@ -258,4 +258,12 @@
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
     </message>
 </context>
+<context>
+    <name>SonglistModel</name>
+    <message>
+        <location filename="../songlistmodel.cpp" line="79"/>
+        <source>URI</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

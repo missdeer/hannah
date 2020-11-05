@@ -220,17 +220,17 @@
         <translation>保存播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="114"/>
+        <location filename="../playlistmanagewindow.ui" line="108"/>
         <source>Add Song(s)</source>
         <translation>添加歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="125"/>
+        <location filename="../playlistmanagewindow.ui" line="119"/>
         <source>Delete Song(s)</source>
         <translation>删除歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="136"/>
+        <location filename="../playlistmanagewindow.ui" line="130"/>
         <source>Import Song(s) From Playlist (*.m3u; *.m3u8)</source>
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
     </message>

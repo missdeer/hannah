@@ -205,57 +205,54 @@
         <translation>添加播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="43"/>
-        <location filename="../playlistmanagewindow.ui" line="129"/>
-        <source>+</source>
-        <translation>+</translation>
-    </message>
-    <message>
-        <location filename="../playlistmanagewindow.ui" line="54"/>
+        <location filename="../playlistmanagewindow.ui" line="51"/>
         <source>Delete Playlist</source>
         <translation>删除播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="57"/>
-        <location filename="../playlistmanagewindow.ui" line="143"/>
-        <source>-</source>
-        <translation>-</translation>
-    </message>
-    <message>
-        <location filename="../playlistmanagewindow.ui" line="68"/>
+        <location filename="../playlistmanagewindow.ui" line="62"/>
         <source>Import Playlist (*.m3u; *.m3u8)</source>
         <translation>导入播放列表(*.m3u; *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="71"/>
-        <location filename="../playlistmanagewindow.ui" line="157"/>
-        <source>I</source>
-        <translation>I</translation>
-    </message>
-    <message>
-        <location filename="../playlistmanagewindow.ui" line="82"/>
+        <location filename="../playlistmanagewindow.ui" line="73"/>
         <source>Save Playlist</source>
         <translation>保存播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="85"/>
-        <source>S</source>
-        <translation>S</translation>
-    </message>
-    <message>
-        <location filename="../playlistmanagewindow.ui" line="126"/>
+        <location filename="../playlistmanagewindow.ui" line="114"/>
         <source>Add Song(s)</source>
         <translation>添加歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="140"/>
+        <location filename="../playlistmanagewindow.ui" line="125"/>
         <source>Delete Song(s)</source>
         <translation>删除歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="154"/>
+        <location filename="../playlistmanagewindow.ui" line="136"/>
         <source>Import Song(s) From Playlist (*.m3u; *.m3u8)</source>
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="101"/>
+        <source>Import playlist</source>
+        <translation>导入播放列表</translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="101"/>
+        <source>Playlist (*.m3u *.m3u8)</source>
+        <translation>播放列表(*.m3u *.m3u8)</translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="122"/>
+        <source>Import song(s)</source>
+        <translation>导入歌曲</translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="122"/>
+        <source>Songs (*.m3u *.m3u8 *.mp3 *.wav *.ogg *.ape *.flac)</source>
+        <translation>歌曲 (*.m3u *.m3u8 *.mp3 *.wav *.ogg *.ape *.flac)</translation>
     </message>
 </context>
 <context>
@@ -263,7 +260,7 @@
     <message>
         <location filename="../songlistmodel.cpp" line="79"/>
         <source>URI</source>
-        <translation type="unfinished"></translation>
+        <translation>地址</translation>
     </message>
 </context>
 </TS>

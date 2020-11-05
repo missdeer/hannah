@@ -31,19 +31,19 @@ private slots:
 
     void on_tblSongs_activated(const QModelIndex &index);
 
-    void on_btnAddPlaylist_triggered(QAction *);
+    void on_btnAddPlaylist_clicked(bool checked);
 
-    void on_btnDeletePlaylist_triggered(QAction *);
+    void on_btnDeletePlaylist_clicked(bool checked);
 
-    void on_btnImportPlaylist_triggered(QAction *);
+    void on_btnImportPlaylist_clicked(bool checked);
 
-    void on_btnSavePlaylist_triggered(QAction *);
+    void on_btnSavePlaylist_clicked(bool checked);
 
-    void on_btnAddSongs_triggered(QAction *);
+    void on_btnAddSongs_clicked(bool checked);
 
-    void on_btnDeleteSongs_triggered(QAction *);
+    void on_btnDeleteSongs_clicked(bool checked);
 
-    void on_btnImportSongs_triggered(QAction *);
+    void on_btnImportSongs_clicked(bool checked);
 
 private:
     Ui::PlaylistManageWindow *ui;

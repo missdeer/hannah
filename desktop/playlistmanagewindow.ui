@@ -35,12 +35,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QToolButton" name="btnAddPlaylist">
+           <widget class="QPushButton" name="btnAddPlaylist">
             <property name="toolTip">
              <string>Add Playlist</string>
-            </property>
-            <property name="text">
-             <string>+</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">
@@ -49,12 +46,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnDeletePlaylist">
+           <widget class="QPushButton" name="btnDeletePlaylist">
             <property name="toolTip">
              <string>Delete Playlist</string>
-            </property>
-            <property name="text">
-             <string>-</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">
@@ -63,12 +57,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnImportPlaylist">
+           <widget class="QPushButton" name="btnImportPlaylist">
             <property name="toolTip">
              <string>Import Playlist (*.m3u; *.m3u8)</string>
-            </property>
-            <property name="text">
-             <string>I</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">
@@ -77,12 +68,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnSavePlaylist">
+           <widget class="QPushButton" name="btnSavePlaylist">
             <property name="toolTip">
              <string>Save Playlist</string>
-            </property>
-            <property name="text">
-             <string>S</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">
@@ -121,12 +109,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QToolButton" name="btnAddSongs">
+           <widget class="QPushButton" name="btnAddSongs">
             <property name="toolTip">
              <string>Add Song(s)</string>
-            </property>
-            <property name="text">
-             <string>+</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">
@@ -135,12 +120,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnDeleteSongs">
+           <widget class="QPushButton" name="btnDeleteSongs">
             <property name="toolTip">
              <string>Delete Song(s)</string>
-            </property>
-            <property name="text">
-             <string>-</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">
@@ -149,12 +131,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnImportSongs">
+           <widget class="QPushButton" name="btnImportSongs">
             <property name="toolTip">
              <string>Import Song(s) From Playlist (*.m3u; *.m3u8)</string>
-            </property>
-            <property name="text">
-             <string>I</string>
             </property>
             <property name="icon">
              <iconset resource="hannah.qrc">

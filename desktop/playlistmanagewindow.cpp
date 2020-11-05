@@ -1,4 +1,5 @@
 #include <QCloseEvent>
+#include <QFileDialog>
 
 #include "playlistmanagewindow.h"
 
@@ -79,13 +80,13 @@ void PlaylistManageWindow::on_tblSongs_activated(const QModelIndex &index)
     Q_ASSERT(m_songlistModel);
 }
 
-void PlaylistManageWindow::on_btnAddPlaylist_triggered(QAction *)
+void PlaylistManageWindow::on_btnAddPlaylist_clicked(bool)
 {
     Q_ASSERT(m_playlistModel);
     m_playlistModel->addPlaylist();
 }
 
-void PlaylistManageWindow::on_btnDeletePlaylist_triggered(QAction *)
+void PlaylistManageWindow::on_btnDeletePlaylist_clicked(bool)
 {
     auto model = ui->lstPlaylist->selectionModel();
     if (model->hasSelection())
@@ -95,27 +96,29 @@ void PlaylistManageWindow::on_btnDeletePlaylist_triggered(QAction *)
     }
 }
 
-void PlaylistManageWindow::on_btnImportPlaylist_triggered(QAction *)
+void PlaylistManageWindow::on_btnImportPlaylist_clicked(bool)
+{
+    QString fn = QFileDialog::getOpenFileName(this, tr("Import playlist"), "", tr("Playlist (*.m3u *.m3u8)"));
+    Q_ASSERT(m_playlistModel);
+}
+
+void PlaylistManageWindow::on_btnSavePlaylist_clicked(bool)
 {
     Q_ASSERT(m_playlistModel);
 }
 
-void PlaylistManageWindow::on_btnSavePlaylist_triggered(QAction *)
-{
-    Q_ASSERT(m_playlistModel);
-}
-
-void PlaylistManageWindow::on_btnAddSongs_triggered(QAction *)
+void PlaylistManageWindow::on_btnAddSongs_clicked(bool)
 {
     Q_ASSERT(m_songlistModel);
 }
 
-void PlaylistManageWindow::on_btnDeleteSongs_triggered(QAction *)
+void PlaylistManageWindow::on_btnDeleteSongs_clicked(bool)
 {
     Q_ASSERT(m_songlistModel);
 }
 
-void PlaylistManageWindow::on_btnImportSongs_triggered(QAction *)
+void PlaylistManageWindow::on_btnImportSongs_clicked(bool)
 {
+    QStringList songs = QFileDialog::getOpenFileNames(this, tr("Import song(s)"), "", tr("Songs (*.m3u *.m3u8 *.mp3 *.wav *.ogg *.ape *.flac)"));
     Q_ASSERT(m_songlistModel);
 }

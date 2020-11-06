@@ -215,9 +215,13 @@ jobs:
       - run: go version && go env
 
       - name: Set up clang for Windows
+        shell: cmd
         run: |
+          mkdir llvm
+          cd llvm
           curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
           7z.exe x LLVM.exe
+          cd ..
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -268,7 +272,11 @@ jobs:
           mkdir build
           cd build
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          set PATH=%PATH%;%CD%\bin
+          set PATH=%PATH%;%CD%\llvm\bin
+          path
+          dir
+          dir %CD%\llvm
+          dir %CD%\llvm\bin
           qmake -r CONFIG+=release -spec win32-clang-msvc ..
           mkdir -p desktop\release\translations
           nmake

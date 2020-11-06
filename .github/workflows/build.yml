@@ -211,7 +211,8 @@ jobs:
         with:
           go-version: ${{ env.go_version }}
         id: go
-        run: go version && go env
+        
+      - run: go version && go env
 
       - name: Set up clang for Windows
         run: |

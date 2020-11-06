@@ -68,7 +68,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btnSavePlaylist">
+           <widget class="QPushButton" name="btnExportPlaylist">
             <property name="toolTip">
              <string>Save Playlist</string>
             </property>
@@ -162,7 +162,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

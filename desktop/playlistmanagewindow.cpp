@@ -1,5 +1,6 @@
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QInputDialog>
 
 #include "playlistmanagewindow.h"
 
@@ -72,7 +73,7 @@ void PlaylistManageWindow::on_edtPlaylistFilter_textChanged(const QString &s)
     ui->btnAddPlaylist->setEnabled(!isFiltered);
     ui->btnDeletePlaylist->setEnabled(!isFiltered);
     ui->btnImportPlaylist->setEnabled(!isFiltered);
-    ui->btnSavePlaylist->setEnabled(!isFiltered);
+    ui->btnExportPlaylist->setEnabled(!isFiltered);
 }
 
 void PlaylistManageWindow::on_tblSongs_activated(const QModelIndex &index)
@@ -102,19 +103,25 @@ void PlaylistManageWindow::on_btnImportPlaylist_clicked(bool)
     Q_ASSERT(m_playlistModel);
 }
 
-void PlaylistManageWindow::on_btnSavePlaylist_clicked(bool)
+void PlaylistManageWindow::on_btnExportPlaylist_clicked(bool)
 {
+    QString fn = QFileDialog::getSaveFileName(this, tr("Export playlist"), "", tr("Playlist (*.m3u)"));
     Q_ASSERT(m_playlistModel);
 }
 
 void PlaylistManageWindow::on_btnAddSongs_clicked(bool)
 {
+    QString lines = QInputDialog::getMultiLineText(this, tr("Add song(s)"), tr("Input song url, one url per line:"));
     Q_ASSERT(m_songlistModel);
 }
 
 void PlaylistManageWindow::on_btnDeleteSongs_clicked(bool)
 {
-    Q_ASSERT(m_songlistModel);
+    auto model = ui->tblSongs->selectionModel();
+    if (model->hasSelection())
+    {
+        Q_ASSERT(m_songlistModel);
+    }
 }
 
 void PlaylistManageWindow::on_btnImportSongs_clicked(bool)

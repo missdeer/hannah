@@ -40,6 +40,8 @@ public:
 
     void clearAndAddToSonglistFile(const QStringList &s);
 
+    void deleteSongs(QList<int> rows);
+
 private:
     QStringList m_songs;
 };

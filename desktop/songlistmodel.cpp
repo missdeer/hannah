@@ -100,3 +100,5 @@ void SonglistModel::clearAndAddToSonglist(const QStringList &s) {}
 void SonglistModel::appendToSonglistFile(const QStringList &s) {}
 
 void SonglistModel::clearAndAddToSonglistFile(const QStringList &s) {}
+
+void SonglistModel::deleteSongs(QList<int> rows) {}

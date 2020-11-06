@@ -37,7 +37,7 @@ private slots:
 
     void on_btnImportPlaylist_clicked(bool checked);
 
-    void on_btnSavePlaylist_clicked(bool checked);
+    void on_btnExportPlaylist_clicked(bool checked);
 
     void on_btnAddSongs_clicked(bool checked);
 

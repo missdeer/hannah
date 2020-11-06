@@ -235,22 +235,42 @@
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="101"/>
+        <location filename="../playlistmanagewindow.cpp" line="102"/>
         <source>Import playlist</source>
         <translation>导入播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="101"/>
+        <location filename="../playlistmanagewindow.cpp" line="102"/>
         <source>Playlist (*.m3u *.m3u8)</source>
         <translation>播放列表(*.m3u *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="122"/>
+        <location filename="../playlistmanagewindow.cpp" line="108"/>
+        <source>Export playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="108"/>
+        <source>Playlist (*.m3u)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="114"/>
+        <source>Add song(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="114"/>
+        <source>Input song url, one url per line:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../playlistmanagewindow.cpp" line="129"/>
         <source>Import song(s)</source>
         <translation>导入歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="122"/>
+        <location filename="../playlistmanagewindow.cpp" line="129"/>
         <source>Songs (*.m3u *.m3u8 *.mp3 *.wav *.ogg *.ape *.flac)</source>
         <translation>歌曲 (*.m3u *.m3u8 *.mp3 *.wav *.ogg *.ape *.flac)</translation>
     </message>

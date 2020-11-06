@@ -12,12 +12,13 @@
 #if defined(Q_OS_MACOS)
 #    include "application.h"
 #    include "serviceslots.h"
+#elif defined(Q_OS_WIN)
+#    include <Windows.h>
+#    include <shellapi.h>
+#    include <tchar.h>
+
+#    include <QtPlatformHeaders/QWindowsWindowFunctions>
 #else
-#    if defined(Q_OS_WIN)
-#        include <Windows.h>
-#        include <shellapi.h>
-#        include <tchar.h>
-#    endif
 #    include "qtsingleapplication.h"
 #endif
 
@@ -115,6 +116,11 @@ int main(int argc, char *argv[])
 {
     QTranslator translator;
     QTranslator qtTranslator;
+
+#if defined(Q_OS_WIN)
+    QWindowsWindowFunctions::setWindowActivationBehavior(QWindowsWindowFunctions::AlwaysActivateWindow);
+#endif
+
 #if defined(Q_OS_MACOS)
     Application a(argc, argv);
     i18n(translator, qtTranslator);

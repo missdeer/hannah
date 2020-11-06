@@ -268,15 +268,15 @@ jobs:
         env:
           vc_arch: ${{ matrix.msvc_arch }}
         run: |
-          mkdir -p ${{ matrix.qt_arch }}\gui
-          mkdir build
-          cd build
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           set PATH=%PATH%;%CD%\llvm\bin
           path
           dir
           dir %CD%\llvm
           dir %CD%\llvm\bin
+          mkdir -p ${{ matrix.qt_arch }}\gui
+          mkdir build
+          cd build
           qmake -r CONFIG+=release -spec win32-clang-msvc ..
           mkdir -p desktop\release\translations
           nmake

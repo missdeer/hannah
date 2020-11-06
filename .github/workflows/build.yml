@@ -268,7 +268,7 @@ jobs:
           mkdir build
           cd build
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          set PATH=%PATH%;
+          set PATH=%PATH%;%CD%\bin
           qmake -r CONFIG+=release -spec win32-clang-msvc ..
           mkdir -p desktop\release\translations
           nmake

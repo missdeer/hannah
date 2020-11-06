@@ -216,8 +216,8 @@ jobs:
 
       - name: Set up clang for Windows
         run: |
-          curl -o LLVM.exe -L ${{ matrix.clang_link }}
-          7zip x LLVM.exe
+          curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
+          7z.exe x LLVM.exe
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -299,7 +299,7 @@ jobs:
       - name: Upload artifact hannah-${{ matrix.qt_arch }}
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: hannah-${{ matrix.qt_arch }}
+          name: hannah-${{ matrix.qt_arch }}-clang
           path: ${{ matrix.qt_arch }}
 
   Windows-MinGW:

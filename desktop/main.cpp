@@ -12,13 +12,14 @@
 #if defined(Q_OS_MACOS)
 #    include "application.h"
 #    include "serviceslots.h"
-#elif defined(Q_OS_WIN)
-#    include <Windows.h>
-#    include <shellapi.h>
-#    include <tchar.h>
-
-#    include <QtPlatformHeaders/QWindowsWindowFunctions>
 #else
+#    if defined(Q_OS_WIN)
+#        include <Windows.h>
+#        include <shellapi.h>
+#        include <tchar.h>
+
+#        include <QtPlatformHeaders/QWindowsWindowFunctions>
+#    endif
 #    include "qtsingleapplication.h"
 #endif
 

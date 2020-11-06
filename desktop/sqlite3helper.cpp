@@ -8,8 +8,6 @@ Sqlite3Helper::~Sqlite3Helper()
     if (isDatabaseOpened())
         closeDatabaseConnection();
     m_db = nullptr;
-
-    QFile::remove(m_dbFile);
 }
 
 void Sqlite3Helper::bind(sqlite3_stmt *pVM, int nParam, const QString &sValue)

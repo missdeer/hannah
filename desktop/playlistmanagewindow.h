@@ -9,6 +9,7 @@ namespace Ui {
 class QCloseEvent;
 class PlaylistModel;
 class SonglistModel;
+class Sqlite3Helper;
 
 class PlaylistManageWindow : public QMainWindow
 {
@@ -49,6 +50,9 @@ private:
     Ui::PlaylistManageWindow *ui;
     PlaylistModel *           m_playlistModel;
     SonglistModel *           m_songlistModel;
+    Sqlite3Helper *           m_sqlite3Helper;
+
+    void createDataTables();
 };
 
 inline PlaylistManageWindow *playlistManageWindow = nullptr;

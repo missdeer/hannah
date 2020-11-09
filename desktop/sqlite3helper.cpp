@@ -282,7 +282,7 @@ bool Sqlite3Helper::closeDatabaseConnection()
     return true;
 }
 
-int Sqlite3Helper::checkExists(const QString &field, const QString &name)
+int Sqlite3Helper::checkTableIndexExists(const QString &field, const QString &name)
 {
     int nRet = 0;
     do
@@ -292,7 +292,7 @@ int Sqlite3Helper::checkExists(const QString &field, const QString &name)
         {
             return -1;
         }
-        bind(pVM, 1, field.toStdString().c_str());
+        bind(pVM, 1, field.toStdString().c_str()); // "table", "index"
         bind(pVM, 2, name.toStdString().c_str());
         bool eof = false;
         nRet     = execQuery(pVM, eof);

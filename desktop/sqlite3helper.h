@@ -8,7 +8,7 @@
 class Sqlite3Helper
 {
 public:
-    Sqlite3Helper();
+    Sqlite3Helper() = default;
     ~Sqlite3Helper();
     void bind(sqlite3_stmt *pVM, int nParam, const QString &sValue);
     void bind(sqlite3_stmt *pVM, int nParam, const char *szValue);
@@ -37,7 +37,7 @@ public:
     bool isDatabaseOpened();
     bool closeDatabaseConnection();
 
-    int  checkExists(const QString &field, const QString &name);
+    int  checkTableIndexExists(const QString &field, const QString &name);
     bool openDatabase(const QString &name);
     bool createDatabase(const QString &name);
 

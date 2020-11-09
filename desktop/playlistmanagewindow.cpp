@@ -1,26 +1,44 @@
 #include <QCloseEvent>
+#include <QDir>
+#include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QStandardPaths>
+#include <map>
 
 #include "playlistmanagewindow.h"
 
 #include "playlistmodel.h"
 #include "songlistmodel.h"
+#include "sqlite3helper.h"
 #include "ui_playlistmanagewindow.h"
 
-PlaylistManageWindow::PlaylistManageWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::PlaylistManageWindow)
+PlaylistManageWindow::PlaylistManageWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::PlaylistManageWindow)
+    , m_playlistModel(new PlaylistModel(this))
+    , m_songlistModel(new SonglistModel(this))
+    , m_sqlite3Helper(new Sqlite3Helper)
 {
     ui->setupUi(this);
-    m_playlistModel = new PlaylistModel(this);
     ui->lstPlaylist->setModel(m_playlistModel);
-    m_songlistModel = new SonglistModel(this);
     ui->tblSongs->setModel(m_songlistModel);
+
+    QString fn = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/default.hpls");
+    if (QFile::exists(fn))
+    {
+        m_sqlite3Helper->openDatabase(fn);
+    }
+    else
+    {
+        m_sqlite3Helper->createDatabase(fn);
+    }
+    createDataTables();
 }
 
 PlaylistManageWindow::~PlaylistManageWindow()
 {
+    delete m_sqlite3Helper;
     delete ui;
 }
 
@@ -129,4 +147,20 @@ void PlaylistManageWindow::on_btnImportSongs_clicked(bool)
     QStringList songs = QFileDialog::getOpenFileNames(
         this, tr("Import song(s)"), "", tr("Songs (*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)"));
     Q_ASSERT(m_songlistModel);
+}
+
+void PlaylistManageWindow::createDataTables()
+{
+    std::map<QString, QString> tablesCreationMap = {
+        {"playlist", "CREATE TABLE IF NOT EXISTS playlist(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);"},
+        {"song", "CREATE TABLE IF NOT EXISTS song(id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT);"},
+        {"playlist_song_map", "CREATE TABLE IF NOT EXISTS playlist_song_map(id INTEGER PRIMARY KEY AUTOINCREMENT, playlist INTEGER, song INTEGER);"}};
+    std::map<QString, QString> tablesMap = {{"table", "playlist"}, {"table", "song"}, {"table", "playlist_song_map"}};
+    for (const auto &[type, name] : tablesMap)
+    {
+        if (!m_sqlite3Helper->checkTableIndexExists(type, name))
+        {
+            m_sqlite3Helper->execDML(tablesCreationMap[name]);
+        }
+    }
 }

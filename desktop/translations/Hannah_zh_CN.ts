@@ -235,42 +235,42 @@
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="102"/>
+        <location filename="../playlistmanagewindow.cpp" line="120"/>
         <source>Import playlist</source>
         <translation>导入播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="102"/>
+        <location filename="../playlistmanagewindow.cpp" line="120"/>
         <source>Playlist (*.m3u *.m3u8)</source>
         <translation>播放列表(*.m3u *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="108"/>
+        <location filename="../playlistmanagewindow.cpp" line="126"/>
         <source>Export playlist</source>
         <translation>导出播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="108"/>
+        <location filename="../playlistmanagewindow.cpp" line="126"/>
         <source>Playlist (*.m3u)</source>
         <translation>播放列表(*.m3u)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="114"/>
+        <location filename="../playlistmanagewindow.cpp" line="132"/>
         <source>Add song(s)</source>
         <translation>添加歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="114"/>
+        <location filename="../playlistmanagewindow.cpp" line="132"/>
         <source>Input song url, one url per line:</source>
         <translation>输入歌曲URL，一行一条URL：</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="130"/>
+        <location filename="../playlistmanagewindow.cpp" line="148"/>
         <source>Import song(s)</source>
         <translation>导入歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="130"/>
+        <location filename="../playlistmanagewindow.cpp" line="148"/>
         <source>Songs (*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)</source>
         <translation>歌曲(*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)</translation>
     </message>

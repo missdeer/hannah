@@ -126,6 +126,7 @@ void PlaylistManageWindow::on_btnDeleteSongs_clicked(bool)
 
 void PlaylistManageWindow::on_btnImportSongs_clicked(bool)
 {
-    QStringList songs = QFileDialog::getOpenFileNames(this, tr("Import song(s)"), "", tr("Songs (*.m3u *.m3u8 *.mp3 *.wav *.ogg *.ape *.flac)"));
+    QStringList songs = QFileDialog::getOpenFileNames(
+        this, tr("Import song(s)"), "", tr("Songs (*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)"));
     Q_ASSERT(m_songlistModel);
 }

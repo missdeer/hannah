@@ -16,9 +16,9 @@
 PlaylistManageWindow::PlaylistManageWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::PlaylistManageWindow)
+    , m_sqlite3Helper(new Sqlite3Helper)
     , m_playlistModel(new PlaylistModel(this))
     , m_songlistModel(new SonglistModel(this))
-    , m_sqlite3Helper(new Sqlite3Helper)
 {
     ui->setupUi(this);
     ui->lstPlaylist->setModel(m_playlistModel);

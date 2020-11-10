@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QRegularExpression>
 #include <QStandardPaths>
 #include <map>
 
@@ -111,7 +112,11 @@ void PlaylistManageWindow::on_btnDeletePlaylist_clicked(bool)
     if (model->hasSelection())
     {
         Q_ASSERT(m_playlistModel);
-        m_playlistModel->deletePlaylist(model->currentIndex().row());
+        auto selections = model->selectedRows();
+        for (const auto &selection : selections)
+        {
+            m_playlistModel->deletePlaylist(selection.row());
+        }
     }
 }
 
@@ -130,7 +135,11 @@ void PlaylistManageWindow::on_btnExportPlaylist_clicked(bool)
 void PlaylistManageWindow::on_btnAddSongs_clicked(bool)
 {
     QString lines = QInputDialog::getMultiLineText(this, tr("Add song(s)"), tr("Input song url, one url per line:"));
-    Q_ASSERT(m_songlistModel);
+    if (!lines.isEmpty())
+    {
+        Q_ASSERT(m_songlistModel);
+        m_songlistModel->appendToSonglist(lines.split(QRegularExpression("\n|\r\n|\r")));
+    }
 }
 
 void PlaylistManageWindow::on_btnDeleteSongs_clicked(bool)
@@ -138,7 +147,14 @@ void PlaylistManageWindow::on_btnDeleteSongs_clicked(bool)
     auto model = ui->tblSongs->selectionModel();
     if (model->hasSelection())
     {
+        QList<int> rows;
+        auto       selections = model->selectedRows();
+        for (const auto &selection : selections)
+        {
+            rows.append(selection.row());
+        }
         Q_ASSERT(m_songlistModel);
+        m_songlistModel->deleteSongs(rows);
     }
 }
 

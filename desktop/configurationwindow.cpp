@@ -10,6 +10,7 @@
 #include <QNetworkInterface>
 #include <QProcess>
 #include <QSettings>
+#include <QStandardPaths>
 
 #include "configurationwindow.h"
 

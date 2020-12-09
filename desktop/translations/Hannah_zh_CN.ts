@@ -56,7 +56,7 @@
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="135"/>
-        <location filename="../configurationwindow.cpp" line="43"/>
+        <location filename="../configurationwindow.cpp" line="44"/>
         <source>-- Default --</source>
         <translation>--默认--</translation>
     </message>
@@ -77,21 +77,21 @@
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="165"/>
-        <location filename="../configurationwindow.cpp" line="44"/>
+        <location filename="../configurationwindow.cpp" line="45"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="170"/>
-        <location filename="../configurationwindow.cpp" line="282"/>
-        <location filename="../configurationwindow.cpp" line="306"/>
+        <location filename="../configurationwindow.cpp" line="283"/>
+        <location filename="../configurationwindow.cpp" line="307"/>
         <source>Http</source>
         <translation>Http</translation>
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="175"/>
-        <location filename="../configurationwindow.cpp" line="287"/>
-        <location filename="../configurationwindow.cpp" line="311"/>
+        <location filename="../configurationwindow.cpp" line="288"/>
+        <location filename="../configurationwindow.cpp" line="312"/>
         <source>Socks5</source>
         <translation>Socks5</translation>
     </message>
@@ -101,93 +101,93 @@
         <translation>代理地址</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="78"/>
+        <location filename="../configurationwindow.cpp" line="79"/>
         <source>&amp;Configuration</source>
         <translation>设置(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="81"/>
+        <location filename="../configurationwindow.cpp" line="82"/>
         <source>Playlist Manage</source>
         <translation>播放列表管理</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="84"/>
+        <location filename="../configurationwindow.cpp" line="85"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="88"/>
+        <location filename="../configurationwindow.cpp" line="89"/>
         <source>Netease</source>
         <translation>网易云音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="89"/>
+        <location filename="../configurationwindow.cpp" line="90"/>
         <source>QQ</source>
         <translation>QQ音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="90"/>
+        <location filename="../configurationwindow.cpp" line="91"/>
         <source>Xiami</source>
         <translation>虾米</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="91"/>
+        <location filename="../configurationwindow.cpp" line="92"/>
         <source>Migu</source>
         <translation>咪咕音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="92"/>
+        <location filename="../configurationwindow.cpp" line="93"/>
         <source>Kugou</source>
         <translation>酷狗音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="93"/>
+        <location filename="../configurationwindow.cpp" line="94"/>
         <source>Kuwo</source>
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="200"/>
+        <location filename="../configurationwindow.cpp" line="201"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="221"/>
+        <location filename="../configurationwindow.cpp" line="222"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="230"/>
+        <location filename="../configurationwindow.cpp" line="231"/>
         <source>Starting reverse proxy failed!</source>
         <translation>启动反向代理失败！</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="469"/>
+        <location filename="../configurationwindow.cpp" line="470"/>
         <source>Erorr</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="469"/>
+        <location filename="../configurationwindow.cpp" line="470"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="230"/>
-        <location filename="../configurationwindow.cpp" line="488"/>
+        <location filename="../configurationwindow.cpp" line="231"/>
+        <location filename="../configurationwindow.cpp" line="489"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="488"/>
+        <location filename="../configurationwindow.cpp" line="489"/>
         <source>Can&apos;t get song(s), maybe VIP is requested.</source>
         <translation>不能获取歌曲信息，可能需要VIP。</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="493"/>
+        <location filename="../configurationwindow.cpp" line="494"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="493"/>
+        <location filename="../configurationwindow.cpp" line="494"/>
         <source>Play song(s) by %1?</source>
         <translation>使用%1播放歌曲？</translation>
     </message>
@@ -200,37 +200,37 @@
         <translation>播放列表管理</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="40"/>
+        <location filename="../playlistmanagewindow.ui" line="44"/>
         <source>Add Playlist</source>
         <translation>添加播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="51"/>
+        <location filename="../playlistmanagewindow.ui" line="55"/>
         <source>Delete Playlist</source>
         <translation>删除播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="62"/>
+        <location filename="../playlistmanagewindow.ui" line="66"/>
         <source>Import Playlist (*.m3u; *.m3u8)</source>
         <translation>导入播放列表(*.m3u; *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="73"/>
+        <location filename="../playlistmanagewindow.ui" line="77"/>
         <source>Save Playlist</source>
         <translation>保存播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="108"/>
+        <location filename="../playlistmanagewindow.ui" line="125"/>
         <source>Add Song(s)</source>
         <translation>添加歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="119"/>
+        <location filename="../playlistmanagewindow.ui" line="136"/>
         <source>Delete Song(s)</source>
         <translation>删除歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="130"/>
+        <location filename="../playlistmanagewindow.ui" line="147"/>
         <source>Import Song(s) From Playlist (*.m3u; *.m3u8)</source>
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
     </message>

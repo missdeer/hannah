@@ -17,8 +17,9 @@
 #        include <Windows.h>
 #        include <shellapi.h>
 #        include <tchar.h>
-
-#        include <QtPlatformHeaders/QWindowsWindowFunctions>
+#        if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#            include <QtPlatformHeaders/QWindowsWindowFunctions>
+#        endif
 #    endif
 #    include "qtsingleapplication.h"
 #endif
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
     QTranslator translator;
     QTranslator qtTranslator;
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QWindowsWindowFunctions::setWindowActivationBehavior(QWindowsWindowFunctions::AlwaysActivateWindow);
 #endif
 

@@ -121,7 +121,10 @@ ConfigurationWindow::~ConfigurationWindow()
     delete ui;
 }
 
-void ConfigurationWindow::onSearch(const QString &s) {}
+void ConfigurationWindow::onSearch(const QString &s)
+{
+    Q_UNUSED(s);
+}
 
 void ConfigurationWindow::onOpenUrl(const QString &s)
 {

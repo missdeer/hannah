@@ -2,8 +2,6 @@ package util
 
 import (
 	"bytes"
-	"compress/flate"
-	"compress/gzip"
 	"context"
 	"errors"
 	"fmt"
@@ -19,6 +17,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/klauspost/compress/flate"
+	"github.com/klauspost/compress/gzip"
 
 	"github.com/andybalholm/brotli"
 	"github.com/gin-contrib/location"

@@ -14,6 +14,7 @@ require (
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/gomodule/redigo v1.8.2
 	github.com/json-iterator/go v1.1.10
+	github.com/klauspost/compress v1.11.7
 	github.com/mattn/go-pointer v0.0.1
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/missdeer/golib v1.0.3

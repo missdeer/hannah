@@ -410,7 +410,7 @@ jobs:
           cd build
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
           mkdir -p $PWD/desktop/release/translations
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j %NUMBER_OF_PROCESSORS%
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j $NUMBER_OF_PROCESSORS
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
           ${{ matrix.windeployqt }} $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe

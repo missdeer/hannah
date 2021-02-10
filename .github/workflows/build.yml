@@ -370,7 +370,7 @@ jobs:
             windeployqt: windeployqt.exe
             GOARCH: 386
     env:
-      go_version: 1.15.7
+      go_version: 1.15.8
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -410,7 +410,7 @@ jobs:
           cd build
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
           mkdir -p $PWD/desktop/release/translations
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j %NUMBER_OF_PROCESSORS%
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
           ${{ matrix.windeployqt }} $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
@@ -482,7 +482,7 @@ jobs:
           mkdir build
           cd build
           qmake -r CONFIG+=release CONFIG+=qtquickcompiler ..
-          make -j 2
+          make -j `sysctl -n hw.logicalcpu`
           cd ..
       
       - name: package desktop

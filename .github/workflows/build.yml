@@ -12,10 +12,10 @@ jobs:
             LIBPATH: x86_64-linux-gnu
 
     steps:
-      - name: Set up Go 1.15
+      - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15
+          go-version: 1.16
         id: go
 
       - run: go version && go env
@@ -74,7 +74,7 @@ jobs:
             BUILDRP: build-x86.bat
             msvc_arch: x86
     env:
-      go_version: 1.15.7
+      go_version: 1.16
       qt_ver: 5.15.2
       qt_target: desktop
     steps:
@@ -84,7 +84,7 @@ jobs:
           msystem: ${{ matrix.mingw_arch }}
           install: zip make git ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-zstd
 
-      - name: Set up Go 1.15
+      - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.go_version }}
@@ -196,7 +196,7 @@ jobs:
             msvc_arch: x86
             clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/LLVM-11.0.0-win32.exe
     env:
-      go_version: 1.15.7
+      go_version: 1.16
       qt_ver: 5.15.2
       qt_target: desktop
     steps:
@@ -206,7 +206,7 @@ jobs:
           msystem: ${{ matrix.mingw_arch }}
           install: zip make git ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-zstd
 
-      - name: Set up Go 1.15
+      - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.go_version }}
@@ -370,7 +370,7 @@ jobs:
             windeployqt: windeployqt.exe
             GOARCH: 386
     env:
-      go_version: 1.15.8
+      go_version: 1.16
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -378,7 +378,7 @@ jobs:
           msystem: ${{ matrix.mingw_arch }}
           install: zip make git ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd
 
-      - name: Set up Go 1.15
+      - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.go_version }}
@@ -445,10 +445,10 @@ jobs:
         qt_target: [desktop]
         qt_arch: [clang_64]
     steps:
-      - name: Set up Go 1.15
+      - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15
+          go-version: 1.16
         id: go
 
       - run: go version && go env

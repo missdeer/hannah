@@ -132,6 +132,15 @@ jobs:
           host: 'windows'
           install-deps: 'true'
 
+      - name: Set up jom
+        shell: cmd
+        run: |
+          mkdir jom
+          cd jom
+          curl.exe -o jom.zip -L https://download.qt.io/official_releases/jom/jom_1_1_3.zip
+          if exist jom.zip 7z.exe x jom.zip
+          cd ..
+
       - name: Build GUI executables
         shell: cmd
         env:
@@ -143,7 +152,8 @@ jobs:
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           qmake -r CONFIG+=release ..
           mkdir -p desktop\release\translations
-          nmake
+          if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
+          if not exist %CD%\jom\jom.exe nmake
           copy desktop\release\Hannah.exe ..\${{ matrix.qt_arch }}\gui\
           windeployqt.exe ..\${{ matrix.qt_arch }}\gui\Hannah.exe
           copy registerProtocolHandler\release\registerProtocolHandler.exe ..\${{ matrix.qt_arch }}\gui\
@@ -186,7 +196,7 @@ jobs:
             GOARCH: amd64
             BUILDRP: build-x64.bat
             msvc_arch: x64
-            clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/LLVM-11.0.0-win64.exe
+            clang_link: llvm-win-x64.7z
           - qt_arch: win32_msvc2019
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
@@ -194,7 +204,7 @@ jobs:
             GOARCH: 386
             BUILDRP: build-x86.bat
             msvc_arch: x86
-            clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/LLVM-11.0.0-win32.exe
+            clang_link: llvm-win-x86.7z
     env:
       go_version: 1.16.0
       qt_ver: 5.15.2
@@ -225,8 +235,8 @@ jobs:
         run: |
           mkdir llvm
           cd llvm
-          curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
-          7z.exe x LLVM.exe
+          curl.exe -o LLVM.7z -L ${{ secrets.CLANG_SERVER }}/${{ matrix.clang_link }}
+          7z.exe x LLVM.7z
           cd ..
 
       - name: Build Go executables
@@ -263,13 +273,22 @@ jobs:
           host: 'windows'
           install-deps: 'true'
 
+      - name: Set up jom
+        shell: cmd
+        run: |
+          mkdir jom
+          cd jom
+          curl.exe -o jom.zip -L https://download.qt.io/official_releases/jom/jom_1_1_3.zip
+          if exist jom.zip 7z.exe x jom.zip
+          cd ..
+
       - name: Build GUI executables
         shell: cmd
         env:
           vc_arch: ${{ matrix.msvc_arch }}
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          set PATH=%PATH%;%CD%\llvm\bin
+          set PATH=%PATH%;%CD%\llvm;%CD%\llvm\bin
           path
           dir
           dir %CD%\llvm
@@ -279,7 +298,8 @@ jobs:
           cd build
           qmake -r CONFIG+=release -spec win32-clang-msvc ..
           mkdir -p desktop\release\translations
-          nmake
+          if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
+          if not exist %CD%\jom\jom.exe nmake
           copy desktop\release\Hannah.exe ..\${{ matrix.qt_arch }}\gui\
           windeployqt.exe ..\${{ matrix.qt_arch }}\gui\Hannah.exe
           copy registerProtocolHandler\release\registerProtocolHandler.exe ..\${{ matrix.qt_arch }}\gui\
@@ -410,7 +430,7 @@ jobs:
           cd build
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
           mkdir -p $PWD/desktop/release/translations
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j $NUMBER_OF_PROCESSORS
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j `nproc`
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
           ${{ matrix.windeployqt }} $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe

@@ -48,7 +48,7 @@ func main() {
 	flag.BoolVarP(&config.Repeat, "repeat", "r", config.Repeat, "repeat playing")
 	flag.StringVarP(&config.AudioDriver, "driver", "d", config.AudioDriver, "set audio deriver, values: "+strings.Join(config.AudioDriverList, ", "))
 	flag.StringVarP(&config.Action, "action", "a", config.Action, "play(play songs in file/playlist), search(search songs and play), search-save(search songs and append to m3u file), hot(get hot playlists), playlist(play songs in the specified playlist), playlist-save(parse playlist and append to m3u file)")
-	flag.StringVarP(&config.Provider, "provider", "p", config.Provider, "netease, xiami, qq, kugou, kuwo, bilibili, migu")
+	flag.StringVarP(&config.Provider, "provider", "p", config.Provider, "netease, qq, kugou, kuwo, bilibili, migu")
 	flag.StringVarP(&config.Socks5Proxy, "socks5", "s", config.Socks5Proxy, "set socks5 proxy, for example: 127.0.0.1:1080")
 	flag.StringVarP(&config.HttpProxy, "http-proxy", "t", config.HttpProxy, "set http/https proxy, for example: http://127.0.0.1:1080, https://127.0.0.1:1080 etc.")
 	flag.StringVarP(&config.Player, "player", "", config.Player, "specify external player path, use it when the media type is not supported by builtin decoders")

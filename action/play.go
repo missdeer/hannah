@@ -29,7 +29,6 @@ var (
 	supportedService = map[string]struct{}{
 		"netease":  {},
 		"qq":       {},
-		"xiami":    {},
 		"bilibili": {},
 		"kugou":    {},
 		"kuwo":     {},
@@ -41,7 +40,6 @@ var (
 		"https://":    {},
 		"netease://":  {},
 		"qq://":       {},
-		"xiami://":    {},
 		"bilibili://": {},
 		"kugou://":    {},
 		"kuwo://":     {},

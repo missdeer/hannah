@@ -7,7 +7,6 @@ import (
 func TestGetProvider(t *testing.T) {
 	names := []string{
 		"netease",
-		"xiami",
 		"qq",
 		"kugou",
 		"kuwo",

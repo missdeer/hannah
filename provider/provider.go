@@ -82,7 +82,6 @@ var (
 	providers          = providerMap{m: make(map[string]IProvider)}
 	providerCreatorMap = map[string]providerGetter{
 		"netease":  func() IProvider { return &netease{} },
-		"xiami":    func() IProvider { return &xiami{} },
 		"qq":       func() IProvider { return &qq{} },
 		"kugou":    func() IProvider { return &kugou{} },
 		"kuwo":     func() IProvider { return &kuwo{} },
@@ -91,7 +90,6 @@ var (
 	}
 	providerIDPatternMap = map[string]*regexp.Regexp{
 		"netease":  regexp.MustCompile(`^[0-9]+$`),
-		"xiami":    regexp.MustCompile(`^[0-9]+$`),
 		"qq":       regexp.MustCompile(`^[0-9a-zA-Z]+$`),
 		"kugou":    regexp.MustCompile(`^[0-9A-F]+$`),
 		"kuwo":     regexp.MustCompile(`^[0-9]+$`),

@@ -88,7 +88,6 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     m_trayIconMenu = new QMenu(this);
     m_trayIconMenu->addAction(tr("Netease"), []() { QDesktopServices::openUrl(QUrl("https://music.163.com")); });
     m_trayIconMenu->addAction(tr("QQ"), []() { QDesktopServices::openUrl(QUrl("https://y.qq.com")); });
-    m_trayIconMenu->addAction(tr("Xiami"), []() { QDesktopServices::openUrl(QUrl("https://www.xiami.com")); });
     m_trayIconMenu->addAction(tr("Migu"), []() { QDesktopServices::openUrl(QUrl("https://music.migu.cn/v3")); });
     m_trayIconMenu->addAction(tr("Kugou"), []() { QDesktopServices::openUrl(QUrl("https://www.kugou.com")); });
     m_trayIconMenu->addAction(tr("Kuwo"), []() { QDesktopServices::openUrl(QUrl("http://kuwo.cn")); });
@@ -331,13 +330,11 @@ void ConfigurationWindow::openLink(const QString &text)
     QStringList patterns = {"^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?discover\\/toplist\\?id=(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?playlist\\?id=(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?my\\/m\\/music\\/playlist\\?id=(\\d+)",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/collect\\/(\\d+)",
                             "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/playlist\\/(\\d+)\\.html",
                             "^https?:\\/\\/www\\.kugou\\.com\\/yy\\/special\\/single\\/(\\d+)\\.html",
                             "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/playlist_detail\\/(\\d+)",
                             "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/playlist\\/(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?song\\?id=(\\d+)",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/song\\/(\\w+)",
                             "^https?:\\/\\/y\\.qq\\.com/n\\/yqq\\/song\\/(\\w+)\\.html",
                             "^https?:\\/\\/www\\.kugou\\.com\\/song\\/#hash=([0-9A-F]+)",
                             "^https?:\\/\\/(?:www\\.)kuwo.cn\\/play_detail\\/(\\d+)",
@@ -345,15 +342,11 @@ void ConfigurationWindow::openLink(const QString &text)
                             "^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/artist\\/(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?artist\\?id=(\\d+)",
                             "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/singer\\/(\\w+)\\.html",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/artist\\/(\\w+)",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/list\\?scene=artist&type=\\w+&query={%22artistId%22:%22(\\d+)%22}",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/list\\?scene=artist&type=\\w+&query={\"artistId\":\"(\\d+)\"}",
                             "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/singer_detail\\/(\\d+)",
                             "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/artist\\/(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/album\\/(\\d+)",
                             "^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?album\\?id=(\\d+)",
                             "^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/album\\/(\\w+)\\.html",
-                            "^https?:\\/\\/www\\.xiami\\.com\\/album\\/(\\w+)",
                             "^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/album_detail\\/(\\d+)",
                             "^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/album\\/(\\d+)"};
     for (const auto &p : patterns)

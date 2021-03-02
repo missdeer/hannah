@@ -38,9 +38,7 @@ CHECKS:=go.mod go.sum \
     provider/provider.go \
     provider/kuwo.go \
     provider/provider_test.go \
-    provider/xiami_test.go \
     provider/migu_test.go \
-    provider/xiami.go \
     provider/qq.go \
     provider/kuwo_test.go \
     provider/migu.go \

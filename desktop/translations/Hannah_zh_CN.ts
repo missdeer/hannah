@@ -126,11 +126,6 @@
         <translation>QQ音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="91"/>
-        <source>Xiami</source>
-        <translation>虾米</translation>
-    </message>
-    <message>
         <location filename="../configurationwindow.cpp" line="92"/>
         <source>Migu</source>
         <translation>咪咕音乐</translation>

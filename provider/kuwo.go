@@ -30,6 +30,7 @@ const (
 )
 
 var (
+	ErrEmptyTrackList = errors.New("empty track list")
 	ErrEmptyKuwoToken = errors.New("empty kuwo token")
 	ErrEmptyKuwoLRC   = errors.New("empty kuwo lyric")
 )
@@ -561,7 +562,7 @@ func (p *kuwo) Login() error {
 }
 
 func (p *kuwo) RefreshToken() error {
-	return  ErrNotImplemented
+	return ErrNotImplemented
 }
 
 func (p *kuwo) Name() string {

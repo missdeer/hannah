@@ -83,15 +83,15 @@
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="170"/>
-        <location filename="../configurationwindow.cpp" line="283"/>
-        <location filename="../configurationwindow.cpp" line="307"/>
+        <location filename="../configurationwindow.cpp" line="285"/>
+        <location filename="../configurationwindow.cpp" line="309"/>
         <source>Http</source>
         <translation>Http</translation>
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="175"/>
-        <location filename="../configurationwindow.cpp" line="288"/>
-        <location filename="../configurationwindow.cpp" line="312"/>
+        <location filename="../configurationwindow.cpp" line="290"/>
+        <location filename="../configurationwindow.cpp" line="314"/>
         <source>Socks5</source>
         <translation>Socks5</translation>
     </message>
@@ -126,63 +126,63 @@
         <translation>QQ音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="92"/>
+        <location filename="../configurationwindow.cpp" line="91"/>
         <source>Migu</source>
         <translation>咪咕音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="93"/>
+        <location filename="../configurationwindow.cpp" line="92"/>
         <source>Kugou</source>
         <translation>酷狗音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="94"/>
+        <location filename="../configurationwindow.cpp" line="93"/>
         <source>Kuwo</source>
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="201"/>
+        <location filename="../configurationwindow.cpp" line="203"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="222"/>
+        <location filename="../configurationwindow.cpp" line="224"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="231"/>
+        <location filename="../configurationwindow.cpp" line="233"/>
         <source>Starting reverse proxy failed!</source>
         <translation>启动反向代理失败！</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="470"/>
+        <location filename="../configurationwindow.cpp" line="466"/>
         <source>Erorr</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="470"/>
+        <location filename="../configurationwindow.cpp" line="466"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="231"/>
-        <location filename="../configurationwindow.cpp" line="489"/>
+        <location filename="../configurationwindow.cpp" line="233"/>
+        <location filename="../configurationwindow.cpp" line="485"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="489"/>
+        <location filename="../configurationwindow.cpp" line="485"/>
         <source>Can&apos;t get song(s), maybe VIP is requested.</source>
         <translation>不能获取歌曲信息，可能需要VIP。</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="494"/>
+        <location filename="../configurationwindow.cpp" line="490"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="494"/>
+        <location filename="../configurationwindow.cpp" line="490"/>
         <source>Play song(s) by %1?</source>
         <translation>使用%1播放歌曲？</translation>
     </message>

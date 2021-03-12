@@ -41,7 +41,6 @@ HEADERS += \
     $$PWD/player/player.h \
     $$PWD/player/shadowlabel.h \
     $$PWD/player/spslider.h \
-    $$PWD/player/tags.h \
     $$PWD/playlistmanagewindow.h \
     $$PWD/playlistmodel.h \
     $$PWD/qtlocalpeer.h \

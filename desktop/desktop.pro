@@ -92,19 +92,10 @@ win32: {
             qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../translations/qt_zh_CN.qm) $$shell_path($$OUT_PWD/release/translations/)'
         }
     }
-    win32-*msvc: {
-        contains(QMAKE_HOST.arch, x86_64): {
-            LIBS += -L$$PWD/3rdparty/bass/lib/windows/msvc/amd64
-        } else: {
-            LIBS += -L$$PWD/3rdparty/bass/lib/windows/msvc/386
-        }
-    }
-    win32-*gcc: {
-        contains(QMAKE_HOST.arch, x86_64): {
-            LIBS += -L$$PWD/3rdparty/bass/lib/windows/mingw/amd64
-        } else: {
-            LIBS += -L$$PWD/3rdparty/bass/lib/windows/mingw/386
-        }
+    contains(QMAKE_HOST.arch, x86_64): {
+        LIBS += -L$$PWD/3rdparty/bass/lib/windows/amd64
+    } else: {
+        LIBS += -L$$PWD/3rdparty/bass/lib/windows/386
     }
 }
 

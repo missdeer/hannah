@@ -25,7 +25,7 @@ Player::Player()
     for (auto &p : plugins)
     {
         QString plugin = QDir::toNativeSeparators(bassPluginsPath + "/" + p);
-        BASS_PluginLoad(plugin.toStdWString().c_str(), 0);
+        BASS_PluginLoad(plugin.toStdString().c_str(), 0);
     }
 }
 

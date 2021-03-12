@@ -26,7 +26,7 @@ OSD::OSD(QWidget *parent) : QWidget(parent), ui(new Ui::OSD)
     hideAnimation->setDuration(600);
     hideAnimation->setStartValue(1);
     hideAnimation->setEndValue(0);
-    connect(hideAnimation, SIGNAL(finished()), this, SLOT(hide())); //动画效果结束后隐藏
+    connect(hideAnimation, SIGNAL(finished()), this, SLOT(hide()));
 
     titleAnimation = new QPropertyAnimation(ui->titleLabel, "geometry");
     titleAnimation->setEasingCurve(QEasingCurve::OutCirc);
@@ -56,7 +56,6 @@ void OSD::paintEvent(QPaintEvent *)
     painter.drawPixmap(0, 0, backGround);
 }
 
-//倒计时隐藏
 void OSD::timeRoll()
 {
     timeleft--;
@@ -68,11 +67,10 @@ void OSD::timeRoll()
     }
 }
 
-//显示此OSD
 void OSD::showOSD(QString tags, QString totalTime)
 {
     timeleft = 4;
-    hideAnimation->stop(); //如果正在淡出窗口，中止淡出动画
+    hideAnimation->stop();
     titleAnimation->stop();
     titleAnimation->start();
     timeAnimation->stop();
@@ -98,7 +96,6 @@ void OSD::showOSD(QString tags, QString totalTime)
     update();
 }
 
-//点击后立即隐藏
 void OSD::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)

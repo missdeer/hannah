@@ -3,19 +3,16 @@
 #include <QTextStream>
 
 #include "lyrics.h"
-//歌词解析，传入参数：音频文件名
+
 bool Lyrics::resolve(const QString &fileName, bool isLrc)
 {
-    //解决乱码：http://blog.csdn.net/locky1218/article/details/10568261
-    // Lrc文件读入QMap：http://www.cnblogs.com/tornadomeet/archive/2012/09/23/2699077.html
-    //解析方式和我原想的方式非常接近……
+    if (fileName.isEmpty())
+        return false;
+
     curLrcTime  = 0;
     nextLrcTime = 0;
     lrcMap.clear();
     timeList.clear();
-    if (fileName.isEmpty())
-        return false; //文件名不正确
-
     QFileInfo fileInfo(fileName);
     QString   lrcFileName;
 
@@ -32,27 +29,26 @@ bool Lyrics::resolve(const QString &fileName, bool isLrc)
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        return false; //打开lrc文件失败（歌词不存在，歌词文件被独占）
+        return false;
     }
 
-    QTextStream textIn(&file);                       //使用QTextStream读取文本，即可解决ANSI编码问题
-    QString     allText = QString(textIn.readAll()); //全部读取
+    QTextStream textIn(&file);
+    QString     allText = textIn.readAll();
     file.close();
-    QStringList lines = allText.split("\n"); //按行分割文本;
+    QStringList lines = allText.split("\n");
 
-    QRegExp rx("\\[\\d{2}:\\d{2}\\.\\d{2}\\]"); //正则表达式匹配歌词时间（不支持[xxx:xx.xx]以上
+    QRegExp rx("\\[\\d{2}:\\d{2}\\.\\d{2}\\]");
 
-    foreach (QString oneline, lines)
+    for (const auto &oneline : lines)
     {
         QString text = oneline;
 
-        text.replace(rx, "");             //删除正则表达式匹配部分（时间标签），此时text内容为歌词文本
-        int pos = rx.indexIn(oneline, 0); //返回匹配位置，-1表示匹配失败
+        text.replace(rx, "");
+        int pos = rx.indexIn(oneline, 0);
 
-        //分段读取，写入Map
         while (pos != -1)
         {
-            QString cap = rx.cap(0); //返回第0个表达式匹配的内容
+            QString cap = rx.cap(0);
             QRegExp rx2;
             rx2.setPattern("\\d{2}(?=:)");
             rx2.indexIn(cap);
@@ -66,19 +62,18 @@ bool Lyrics::resolve(const QString &fileName, bool isLrc)
             int totalTime   = minute * 60000 + second * 1000 + millisecond * 10;
             lrcMap.insert(totalTime, text);
             pos += rx.matchedLength();
-            pos = rx.indexIn(oneline, pos); //更改位置继续匹配
+            pos = rx.indexIn(oneline, pos);
         }
     }
 
     if (!lrcMap.isEmpty())
     {
-        timeList = lrcMap.uniqueKeys(); //得到时间列表以便搜索
+        timeList = lrcMap.keys();
         return true;
     }
     return false;
 }
 
-//载入程序目录下歌词文件夹中的歌词，文件存在返回true
 bool Lyrics::loadFromLrcDir(const QString &fileName)
 {
     QFileInfo fileInfo(fileName);
@@ -87,12 +82,9 @@ bool Lyrics::loadFromLrcDir(const QString &fileName)
     if (QFile::exists(fn))
     {
         resolve(fn, true);
-        return true; //文件存在
+        return true;
     }
-    else
-    {
-        return false; //文件不存在
-    }
+    return false;
 }
 
 bool Lyrics::loadFromFileRelativePath(const QString &fileName, const QString &path)
@@ -103,23 +95,20 @@ bool Lyrics::loadFromFileRelativePath(const QString &fileName, const QString &pa
     if (QFile::exists(fn))
     {
         resolve(fn, true);
-        return true; //文件存在
+        return true;
     }
-    else
-    {
-        return false; //文件不存在
-    }
+    return false;
 }
 
-//更新歌词显示时间
 void Lyrics::updateTime(int curms, int totalms)
 {
     if (!lrcMap.isEmpty())
     {
         int time     = 0;
         int nextTime = 0;
-        // keys()方法返回lrcMap列表
-        foreach (int value, lrcMap.keys())
+
+        auto keys = lrcMap.keys();
+        for (int value : keys)
         {
             if (curms >= value)
             {
@@ -140,7 +129,6 @@ void Lyrics::updateTime(int curms, int totalms)
     }
 }
 
-//取得curLrcTime下，指定偏移量的歌词
 QString Lyrics::getLrcString(int offset)
 {
     if (!lrcMap.isEmpty())
@@ -151,19 +139,10 @@ QString Lyrics::getLrcString(int offset)
         if (index + offset >= 0 && index + offset < timeList.size())
         {
             showTime = timeList[index + offset]; //取得偏移后，要显示的歌词时间
+            return lrcMap.value(showTime);       //返回要显示的歌词
         }
-        else
-        {
-            return ""; //如果没有此索引，返回空字符串
-        }
-
-        return lrcMap.value(showTime); //返回要显示的歌词
     }
-    else
-    {
-        return ""; //如果没有歌词，返回空字符串
-    }
-    return ""; //空Map返回空字符串
+    return "";
 }
 
 //返回输入时间在当前句子中的百分比，取值0~1
@@ -175,19 +154,14 @@ double Lyrics::getTimePos(int ms)
         {
             return 0;
         }
-        else if (ms > nextLrcTime)
+        if (ms > nextLrcTime)
         {
             return 1;
         }
-        else
-        {
-            return (double)(ms - curLrcTime) / (nextLrcTime - curLrcTime);
-        }
+
+        return (double)(ms - curLrcTime) / (nextLrcTime - curLrcTime);
     }
-    else
-    {
-        return 0; //使“Shadow Player”文本未填充
-    }
+    return 0;
 }
 
 bool Lyrics::isLrcEmpty()

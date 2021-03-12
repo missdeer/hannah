@@ -36,7 +36,6 @@ Player::~Player()
 
 QString Player::openFile(QString fileName)
 {
-    //打开新文件前停止播放
     QString ext = QFileInfo(fileName).suffix();
     if (ext.compare("mp3", Qt::CaseInsensitive) == 0 || ext.compare("mp2", Qt::CaseInsensitive) == 0 ||
         ext.compare("mp1", Qt::CaseInsensitive) == 0 || ext.compare("wav", Qt::CaseInsensitive) == 0 ||
@@ -47,43 +46,36 @@ QString Player::openFile(QString fileName)
         ext.compare("tta", Qt::CaseInsensitive) == 0 || ext.compare("flac", Qt::CaseInsensitive) == 0 ||
         ext.compare("wma", Qt::CaseInsensitive) == 0 || ext.compare("wv", Qt::CaseInsensitive) == 0)
     {
-        BASS_ChannelStop(nowPlay);
-        BASS_StreamFree(nowPlay);
-        nowPlay = BASS_StreamCreateFile(false,
-                                        fileName.toStdWString().c_str(),
-                                        0,
-                                        0,
-                                        BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
+        BASS_ChannelStop(m_hNowPlay);
+        BASS_StreamFree(m_hNowPlay);
+        m_hNowPlay = BASS_StreamCreateFile(false,
+                                           fileName.toStdWString().c_str(),
+                                           0,
+                                           0,
+                                           BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
 
         if (BASS_ErrorGetCode() != 0)
         {
-            return "err"; //打开文件失败
+            return "err";
         }
 
-        if (nowPlay) //如果流创建成功
+        if (m_hNowPlay)
         {
-            //创建反向流
-            nowPlay = BASS_FX_ReverseCreate(nowPlay, 2, BASS_FX_FREESOURCE | BASS_SAMPLE_FLOAT /*|BASS_SAMPLE_FX*/);
-            //转为正向播放
-            BASS_ChannelSetAttribute(nowPlay, BASS_ATTRIB_REVERSE_DIR, BASS_FX_RVS_FORWARD);
+            m_hNowPlay = BASS_FX_ReverseCreate(m_hNowPlay, 2, BASS_FX_FREESOURCE | BASS_SAMPLE_FLOAT /*|BASS_SAMPLE_FX*/);
+            BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, BASS_FX_RVS_FORWARD);
         }
 
-        //创建混响效果
-        reverbFX = BASS_ChannelSetFX(nowPlay, BASS_FX_DX8_REVERB, 1);
-        //此时默认开启混响……需要关闭
+        m_hReverbFX = BASS_ChannelSetFX(m_hNowPlay, BASS_FX_DX8_REVERB, 1);
         return "ok";
     }
-    else
-    {
-        return "err";
-    }
+    return "err";
 }
 
 void Player::eqReady()
 {
     BASS_BFX_PEAKEQ peakEQ;
 
-    eqFX = BASS_ChannelSetFX(nowPlay, BASS_FX_BFX_PEAKEQ, 2);
+    m_hEqFX = BASS_ChannelSetFX(m_hNowPlay, BASS_FX_BFX_PEAKEQ, 2);
 
     peakEQ.fGain      = 0;
     peakEQ.fQ         = 0;
@@ -92,48 +84,48 @@ void Player::eqReady()
 
     peakEQ.lBand   = 0;
     peakEQ.fCenter = 31;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 1;
     peakEQ.fCenter = 62;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 2;
     peakEQ.fCenter = 125;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 3;
     peakEQ.fCenter = 250;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 4;
     peakEQ.fCenter = 500;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 5;
     peakEQ.fCenter = 1000;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 6;
     peakEQ.fCenter = 2000;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 7;
     peakEQ.fCenter = 4000;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 8;
     peakEQ.fCenter = 8000;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 
     peakEQ.lBand   = 9;
     peakEQ.fCenter = 16000;
-    BASS_FXSetParameters(eqFX, &peakEQ);
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 }
 
 void Player::disableEQ()
 {
-    BASS_ChannelRemoveFX(nowPlay, eqFX);
+    BASS_ChannelRemoveFX(m_hNowPlay, m_hEqFX);
 }
 
 void Player::setEQ(int id, int gain)
@@ -141,29 +133,29 @@ void Player::setEQ(int id, int gain)
     BASS_BFX_PEAKEQ peakEQ; //均衡器参数结构
     // id对应均衡器段编号
     peakEQ.lBand = id;
-    BASS_FXGetParameters(eqFX, &peakEQ);
+    BASS_FXGetParameters(m_hEqFX, &peakEQ);
     peakEQ.fGain = gain;                 //-15~15，EQ参数
-    BASS_FXSetParameters(eqFX, &peakEQ); //变更参数
+    BASS_FXSetParameters(m_hEqFX, &peakEQ); //变更参数
 }
 
 void Player::setVol(int vol)
 {
     //设置音量，0最小，100最大
     float v = (float)vol / 100;
-    BASS_ChannelSetAttribute(nowPlay, BASS_ATTRIB_VOL, v);
+    BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_VOL, v);
 }
 
 int Player::getVol()
 {
     //取得音量，0最小，100最大
     float vol;
-    BASS_ChannelGetAttribute(nowPlay, BASS_ATTRIB_VOL, &vol);
+    BASS_ChannelGetAttribute(m_hNowPlay, BASS_ATTRIB_VOL, &vol);
     return (int)(vol * 100);
 }
 
 bool Player::isPlaying()
 {
-    if (BASS_ChannelIsActive(nowPlay) == BASS_ACTIVE_PLAYING)
+    if (BASS_ChannelIsActive(m_hNowPlay) == BASS_ACTIVE_PLAYING)
         return true;
     else
         return false;
@@ -171,24 +163,24 @@ bool Player::isPlaying()
 
 void Player::getFFT(float *array)
 {
-    if (BASS_ChannelIsActive(nowPlay) == BASS_ACTIVE_PLAYING)
-        BASS_ChannelGetData(nowPlay, array, BASS_DATA_FFT4096);
+    if (BASS_ChannelIsActive(m_hNowPlay) == BASS_ACTIVE_PLAYING)
+        BASS_ChannelGetData(m_hNowPlay, array, BASS_DATA_FFT4096);
 }
 
 void Player::play()
 {
-    BASS_ChannelPlay(nowPlay, false);
+    BASS_ChannelPlay(m_hNowPlay, false);
 }
 
 void Player::stop()
 {
-    BASS_ChannelStop(nowPlay);
-    BASS_ChannelSetPosition(nowPlay, 0, BASS_POS_BYTE);
+    BASS_ChannelStop(m_hNowPlay);
+    BASS_ChannelSetPosition(m_hNowPlay, 0, BASS_POS_BYTE);
 }
 
 void Player::pause()
 {
-    BASS_ChannelPause(nowPlay);
+    BASS_ChannelPause(m_hNowPlay);
 }
 
 //初始化音频设备
@@ -205,30 +197,30 @@ QString Player::getTags()
     //很少见到只有艺术家没有标题的音频
     //故修改为下列表达式，若只有艺术家没有标题会是“艺术家 - ”的形式……喵
     //（末尾为" - "应该删去3个字符？）
-    QString tags = TAGS_Read(nowPlay, "%IFV2(%ARTI,%UTF8(%ARTI) - ,)%IFV2(%TITL,%UTF8(%TITL),)");
+    QString tags = TAGS_Read(m_hNowPlay, "%IFV2(%ARTI,%UTF8(%ARTI) - ,)%IFV2(%TITL,%UTF8(%TITL),)");
     if (tags.trimmed().isEmpty())
         return "Show_File_Name"; //如果标签是空字符，直接显示文件名
-    else
-        return tags; //返回标签
+
+    return tags; //返回标签
 }
 
 int Player::getPos()
 {
     //返回当前播放位置，取值范围0~1000
-    return (int)(BASS_ChannelGetPosition(nowPlay, BASS_POS_BYTE) * 1000 / BASS_ChannelGetLength(nowPlay, BASS_POS_BYTE));
+    return (int)(BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE) * 1000 / BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
 }
 
 void Player::setPos(int pos)
 {
     //跳转进度到指定位置，0~1000
-    BASS_ChannelSetPosition(nowPlay, pos * BASS_ChannelGetLength(nowPlay, BASS_POS_BYTE) / 1000, BASS_POS_BYTE);
+    BASS_ChannelSetPosition(m_hNowPlay, pos * BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE) / 1000, BASS_POS_BYTE);
 }
 
 //取得音频比特率
 int Player::getBitRate()
 {
-    float time    = BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetLength(nowPlay, BASS_POS_BYTE)); // 播放时间
-    DWORD len     = BASS_StreamGetFilePosition(nowPlay, BASS_FILEPOS_END);                             // 文件长度
+    float time    = BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE)); // 播放时间
+    DWORD len     = BASS_StreamGetFilePosition(m_hNowPlay, BASS_FILEPOS_END);                                // 文件长度
     int   bitrate = (int)(len / (125 * time) + 0.5);                                                   // 比特率/编码率 (Kbps)
     return bitrate;
 }
@@ -237,14 +229,14 @@ int Player::getBitRate()
 int Player::getFreq()
 {
     BASS_CHANNELINFO cInfo;
-    BASS_ChannelGetInfo(nowPlay, &cInfo);
+    BASS_ChannelGetInfo(m_hNowPlay, &cInfo);
     return cInfo.freq;
 }
 
 //设置音频采样率
 void Player::setFreq(float freq)
 {
-    BASS_ChannelSetAttribute(nowPlay, BASS_ATTRIB_FREQ, freq);
+    BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_FREQ, freq);
 }
 
 QString Player::getNowPlayInfo()
@@ -252,7 +244,7 @@ QString Player::getNowPlayInfo()
     QString           fmt;
     BASS_CHANNELINFO  cInfo;
     BASS_CHANNELINFO *info = &cInfo;
-    BASS_ChannelGetInfo(nowPlay, info);
+    BASS_ChannelGetInfo(m_hNowPlay, info);
 
     if (info->ctype == BASS_CTYPE_STREAM_AIFF)
         fmt = " AIFF";
@@ -287,83 +279,65 @@ QString Player::getNowPlayInfo()
     //    else if (info->ctype == BASS_CTYPE_STREAM_WV)
     //        fmt = QString::fromUtf8(" WV");
 
-    if (info->chans == 1)
-        return QString::number(info->freq) + "Hz " + QString::number(this->getBitRate()) + "Kbps " + QObject::tr("mono") + fmt;
-    else
-        return QString::number(info->freq) + "Hz " + QString::number(this->getBitRate()) + "Kbps " + QObject::tr("stereo") + fmt;
+    return QString("%1Hz %2Kbps %3%4").arg(info->freq).arg(getBitRate()).arg((info->chans == 1) ? QObject::tr("mono") : QObject::tr("stereo"), fmt);
 }
 
 QString Player::getCurTime()
 {
-    int totalSec = (int)BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetPosition(nowPlay, BASS_POS_BYTE));
+    int totalSec = (int)BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE));
     int minute   = totalSec / 60;
     int second   = totalSec % 60;
     if (second != -1)
     {
-        if (second < 10)
-            return QString::number(minute) + ":0" + QString::number(second);
-        else
-            return QString::number(minute) + ":" + QString::number(second);
+        return QString("%1:%2").arg(minute).arg(second, 2, 10, QChar('0'));
     }
-    else
-    {
-        return "0:00";
-    }
+    return "0:00";
 }
 
 QString Player::getTotalTime()
 {
-    int totalSec = (int)BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetLength(nowPlay, BASS_POS_BYTE));
+    int totalSec = (int)BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
     int minute   = totalSec / 60;
     int second   = totalSec % 60;
     if (second != -1)
     {
-        if (second < 10)
-            return QString::number(minute) + ":0" + QString::number(second);
-        else
-            return QString::number(minute) + ":" + QString::number(second);
+        return QString("%1:%2").arg(minute).arg(second, 2, 10, QChar('0'));
     }
-    else
-    {
-        return "0:00";
-    }
+    return "0:00";
 }
 
 int Player::getCurTimeMS()
 {
-    return (int)(BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetPosition(nowPlay, BASS_POS_BYTE)) * 1000);
+    return (int)(BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE)) * 1000);
 }
 
 int Player::getTotalTimeMS()
 {
-    return (int)(BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetLength(nowPlay, BASS_POS_BYTE)) * 1000);
+    return (int)(BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE)) * 1000);
 }
 
 double Player::getCurTimeSec()
 {
-    return BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetPosition(nowPlay, BASS_POS_BYTE));
+    return BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE));
 }
 
 double Player::getTotalTimeSec()
 {
-    return BASS_ChannelBytes2Seconds(nowPlay, BASS_ChannelGetLength(nowPlay, BASS_POS_BYTE));
+    return BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
 }
 
 DWORD Player::getLevel()
 {
     //返回声道电平，低16位左声道，高16位右声道
-    DWORD level = BASS_ChannelGetLevel(nowPlay);
-    if (level != -1)
+    DWORD level = BASS_ChannelGetLevel(m_hNowPlay);
+    if (level != (DWORD)-1)
     {
         return level;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
-QString Player::getFileTotalTime(QString fileName)
+QString Player::getFileTotalTime(const QString &fileName)
 {
     HSTREAM fileStream = BASS_StreamCreateFile(false, fileName.toStdWString().c_str(), 0, 0, BASS_UNICODE);
     int     totalSec   = (int)BASS_ChannelBytes2Seconds(fileStream, BASS_ChannelGetLength(fileStream, BASS_POS_BYTE));
@@ -372,18 +346,12 @@ QString Player::getFileTotalTime(QString fileName)
     int second = totalSec % 60;
     if (second != -1)
     {
-        if (second < 10)
-            return QString::number(minute) + ":0" + QString::number(second);
-        else
-            return QString::number(minute) + ":" + QString::number(second);
+        return QString("%1:%2").arg(minute).arg(second, 2, 10, QChar('0'));
     }
-    else
-    {
-        return "0:00";
-    }
+    return "0:00";
 }
 
-double Player::getFileSecond(QString fileName)
+double Player::getFileSecond(const QString &fileName)
 {
     HSTREAM fileStream = BASS_StreamCreateFile(false, fileName.toStdWString().c_str(), 0, 0, BASS_UNICODE);
     double  totalSec   = BASS_ChannelBytes2Seconds(fileStream, BASS_ChannelGetLength(fileStream, BASS_POS_BYTE));
@@ -394,17 +362,14 @@ double Player::getFileSecond(QString fileName)
 //更改播放方向（false正、true反）
 void Player::setReverse(bool isEnable)
 {
-    if (isEnable)
-        BASS_ChannelSetAttribute(nowPlay, BASS_ATTRIB_REVERSE_DIR, BASS_FX_RVS_REVERSE);
-    else
-        BASS_ChannelSetAttribute(nowPlay, BASS_ATTRIB_REVERSE_DIR, BASS_FX_RVS_FORWARD);
+    BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, isEnable ? BASS_FX_RVS_REVERSE : BASS_FX_RVS_FORWARD);
 }
 
 //更新混响效果，参数取值范围：-20~0
 void Player::updateReverb(int value)
 {
     BASS_DX8_REVERB p;
-    BASS_FXGetParameters(reverbFX, &p);
+    BASS_FXGetParameters(m_hReverbFX, &p);
     p.fReverbMix = 0.012f * (value * value * value); //参数取值范围：-96~0
-    BASS_FXSetParameters(reverbFX, &p);
+    BASS_FXSetParameters(m_hReverbFX, &p);
 }

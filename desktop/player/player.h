@@ -36,18 +36,18 @@ public:
     double getCurTimeSec();
     double getTotalTimeSec();
     DWORD getLevel();
-    QString getFileTotalTime(QString fileName);//计算文件时间
-    double getFileSecond(QString fileName);
+    QString getFileTotalTime(const QString &fileName); //计算文件时间
+    double  getFileSecond(const QString &fileName);
     void setReverse(bool isEnable);
     void updateReverb(int value);//更新混响效果，参数取值范围：0~20
     void setJumpPoint(double timeFrom, double timeTo);
     void removeJumpPoint();
 
 private:
-    HSTREAM nowPlay;//播放流句柄
-    HFX eqFX;//10段均衡器效果
-    HFX     reverbFX; //混响效果
-    HSYNC jumping;
-    bool    playNextEnable {true}; //暂时无用
+    HSTREAM m_hNowPlay;  //播放流句柄
+    HFX     m_hEqFX;     // 10段均衡器效果
+    HFX     m_hReverbFX; //混响效果
+    HSYNC   m_hJumping;
+    bool    m_bPlayNextEnable {true}; //暂时无用
 };
 #endif // PLAYER_H

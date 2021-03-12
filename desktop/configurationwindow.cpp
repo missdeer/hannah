@@ -46,7 +46,15 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     ui->reverseProxyProxyAddress->setText(m_settings->value("reverseProxyProxyAddress").toString());
     auto state = m_settings->value("useExternalPlayer", 2).toInt(&ok);
     if (ok)
-        ui->useExternalPlayer->setCheckState(Qt::CheckState(state));
+    {
+        ui->useExternalPlayer->setChecked(state);
+        ui->useBuiltinPlayer->setChecked(!state);
+    }
+    else
+    {
+        ui->useExternalPlayer->setChecked(false);
+        ui->useBuiltinPlayer->setChecked(true);
+    }
     state = m_settings->value("reverseProxyAutoRedirect", 2).toInt(&ok);
     if (ok)
         ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
@@ -61,7 +69,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
             &QComboBox::currentTextChanged,
             this,
             &ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged);
-    connect(ui->useExternalPlayer, &QCheckBox::stateChanged, this, &ConfigurationWindow::onUseExternalPlayerStateChanged);
+    connect(ui->useExternalPlayer, &QRadioButton::toggled, this, &ConfigurationWindow::onUseExternalPlayerStateChanged);
     connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &ConfigurationWindow::onBrowseExternalPlayerClicked);
     connect(ui->externalPlayerPath, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerPathTextChanged);
     connect(ui->externalPlayerArguments, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerArgumentsTextChanged);
@@ -79,6 +87,9 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     auto configAction = new QAction(tr("&Configuration"), this);
     connect(configAction, &QAction::triggered, this, &ConfigurationWindow::onShowConfiguration);
 
+    auto showHidePlayerAction = new QAction(tr("Show/Hide &Player"), this);
+    connect(showHidePlayerAction, &QAction::triggered, this, &ConfigurationWindow::onShowHideBuiltinPlayer);
+
     auto playlistManageAction = new QAction(tr("Playlist Manage"), this);
     connect(playlistManageAction, &QAction::triggered, this, &ConfigurationWindow::onShowPlaylistManage);
 
@@ -93,6 +104,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     m_trayIconMenu->addAction(tr("Kuwo"), []() { QDesktopServices::openUrl(QUrl("http://kuwo.cn")); });
     m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(configAction);
+    m_trayIconMenu->addAction(showHidePlayerAction);
     m_trayIconMenu->addAction(playlistManageAction);
     m_trayIconMenu->addAction(quitAction);
 
@@ -170,16 +182,16 @@ void ConfigurationWindow::onApplicationMessageReceived(const QString &message)
     }
 }
 
-void ConfigurationWindow::onUseExternalPlayerStateChanged(int state)
+void ConfigurationWindow::onUseExternalPlayerStateChanged(bool checked)
 {
-    ui->externalPlayerArguments->setEnabled(state == Qt::Checked);
-    ui->externalPlayerPath->setEnabled(state == Qt::Checked);
-    ui->externalPlayerWorkingDir->setEnabled(state == Qt::Checked);
-    ui->browseExternalPlayer->setEnabled(state == Qt::Checked);
-    ui->browseExternalPlayerWorkingDir->setEnabled(state == Qt::Checked);
+    ui->externalPlayerArguments->setEnabled(checked);
+    ui->externalPlayerPath->setEnabled(checked);
+    ui->externalPlayerWorkingDir->setEnabled(checked);
+    ui->browseExternalPlayer->setEnabled(checked);
+    ui->browseExternalPlayerWorkingDir->setEnabled(checked);
 
     Q_ASSERT(m_settings);
-    m_settings->setValue("useExternalPlayer", state);
+    m_settings->setValue("useExternalPlayer", checked);
     m_settings->sync();
 }
 
@@ -451,6 +463,8 @@ void ConfigurationWindow::onShowPlaylistManage()
     playlistManageWindow->activateWindow();
     playlistManageWindow->raise();
 }
+
+void ConfigurationWindow::onShowHideBuiltinPlayer() {}
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)
 {

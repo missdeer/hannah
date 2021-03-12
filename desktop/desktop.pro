@@ -6,35 +6,54 @@ TARGET = Hannah
 
 include($$PWD/3rdparty/sqlite3/sqlite3.pri)
 
-INCLUDEPATH += $$PWD/../lib/reverseProxy
+INCLUDEPATH += $$PWD/../lib/reverseProxy $$PWD $$PWD/player $$PWD/3rdparty/bass/include
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    main.cpp \
-    configurationwindow.cpp \
-    playlistmanagewindow.cpp \
-    playlistmodel.cpp \
-    qtlocalpeer.cpp \
-    qtlockedfile.cpp \
-    qtlockedfile_unix.cpp \
-    qtlockedfile_win.cpp \
-    songlistmodel.cpp \
-    sqlite3helper.cpp
+    $$PWD/main.cpp \
+    $$PWD/configurationwindow.cpp \
+    $$PWD/player/fftdisplay.cpp \
+    $$PWD/player/lrcbar.cpp \
+    $$PWD/player/lyrics.cpp \
+    $$PWD/player/osd.cpp \
+    $$PWD/player/player.cpp \
+    $$PWD/player/shadowlabel.cpp \
+    $$PWD/player/spslider.cpp \
+    $$PWD/playlistmanagewindow.cpp \
+    $$PWD/playlistmodel.cpp \
+    $$PWD/qtlocalpeer.cpp \
+    $$PWD/qtlockedfile.cpp \
+    $$PWD/qtlockedfile_unix.cpp \
+    $$PWD/qtlockedfile_win.cpp \
+    $$PWD/songlistmodel.cpp \
+    $$PWD/sqlite3helper.cpp
 
 HEADERS += \
-    configurationwindow.h \
-    playlistmanagewindow.h \
-    playlistmodel.h \
-    qtlocalpeer.h \
-    qtlockedfile.h \
-    songlistmodel.h \
-    sqlite3helper.h
+    $$PWD/configurationwindow.h \
+    $$PWD/player/FlacPic.h \
+    $$PWD/player/ID3v2Pic.h \
+    $$PWD/player/fftdisplay.h \
+    $$PWD/player/lrcbar.h \
+    $$PWD/player/lyrics.h \
+    $$PWD/player/osd.h \
+    $$PWD/player/player.h \
+    $$PWD/player/shadowlabel.h \
+    $$PWD/player/spslider.h \
+    $$PWD/player/tags.h \
+    $$PWD/playlistmanagewindow.h \
+    $$PWD/playlistmodel.h \
+    $$PWD/qtlocalpeer.h \
+    $$PWD/qtlockedfile.h \
+    $$PWD/songlistmodel.h \
+    $$PWD/sqlite3helper.h
 
 FORMS += \
-    configurationwindow.ui \
-    playlistmanagewindow.ui
+    $$PWD/configurationwindow.ui \
+    $$PWD/playlistmanagewindow.ui \
+    $$PWD/player/lrcbar.ui \
+    $$PWD/player/osd.ui
     
 RC_FILE = Hannah.rc
 
@@ -74,9 +93,23 @@ win32: {
             qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../translations/qt_zh_CN.qm) $$shell_path($$OUT_PWD/release/translations/)'
         }
     }
+    win32-*msvc: {
+        contains(QMAKE_HOST.arch, x86_64): {
+            LIBS += -L$$PWD/3rdparty/bass/lib/windows/msvc/amd64
+        } else: {
+            LIBS += -L$$PWD/3rdparty/bass/lib/windows/msvc/386
+        }
+    }
+    win32-*gcc: {
+        contains(QMAKE_HOST.arch, x86_64): {
+            LIBS += -L$$PWD/3rdparty/bass/lib/windows/mingw/amd64
+        } else: {
+            LIBS += -L$$PWD/3rdparty/bass/lib/windows/mingw/386
+        }
+    }
 }
 
-LIBS += -L$$PWD/../lib/reverseProxy -lrp
+LIBS += -L$$PWD/../lib/reverseProxy -lrp -lbass -lbass_fx -ltags
 
 macx : {
     HEADERS += \
@@ -93,7 +126,8 @@ macx : {
     ICON = hannah.icns
     icon.path = $$PWD
     INSTALLS += icon
-    LIBS += -framework Security 
+    LIBS += -framework Security
+    LIBS += -L$$PWD/3rdparty/bass/lib/mac
     
     CONFIG(release, debug|release) : {
         MACDEPLOYQT = $$[QT_INSTALL_BINS]/macdeployqt

@@ -15,176 +15,232 @@
     </message>
     <message>
         <location filename="../configurationwindow.ui" line="31"/>
+        <source>Use Builtin Player</source>
+        <translation>使用内置播放器</translation>
+    </message>
+    <message>
+        <location filename="../configurationwindow.ui" line="38"/>
         <source>Use External Player</source>
         <translation>使用外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="38"/>
+        <location filename="../configurationwindow.ui" line="45"/>
         <source>External Player Path</source>
         <translation>外部播放器路径</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="50"/>
-        <location filename="../configurationwindow.ui" line="81"/>
+        <location filename="../configurationwindow.ui" line="57"/>
+        <location filename="../configurationwindow.ui" line="88"/>
         <source>...</source>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="59"/>
+        <location filename="../configurationwindow.ui" line="66"/>
         <source>External Player Commandline Arguments</source>
         <translation>外部播放器命令行参数</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="69"/>
+        <location filename="../configurationwindow.ui" line="76"/>
         <source>External Player Working Directory</source>
         <translation>外部播放器工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="104"/>
+        <location filename="../configurationwindow.ui" line="111"/>
         <source>Reverse Proxy</source>
         <translation>反向代理</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="110"/>
+        <location filename="../configurationwindow.ui" line="117"/>
         <source>Listen Port</source>
         <translation>监听端口</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="127"/>
+        <location filename="../configurationwindow.ui" line="134"/>
         <source>Bind Network Interface</source>
         <translation>绑定网络接口</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="135"/>
+        <location filename="../configurationwindow.ui" line="142"/>
         <location filename="../configurationwindow.cpp" line="44"/>
         <source>-- Default --</source>
         <translation>--默认--</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="143"/>
+        <location filename="../configurationwindow.ui" line="150"/>
         <source>Auto Redirect</source>
         <translation>自动重定向</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="150"/>
+        <location filename="../configurationwindow.ui" line="157"/>
         <source>Redirect</source>
         <translation>重定向</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="157"/>
+        <location filename="../configurationwindow.ui" line="164"/>
         <source>Proxy Type</source>
         <translation>代理类型</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="165"/>
+        <location filename="../configurationwindow.ui" line="172"/>
         <location filename="../configurationwindow.cpp" line="45"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="170"/>
-        <location filename="../configurationwindow.cpp" line="285"/>
-        <location filename="../configurationwindow.cpp" line="309"/>
+        <location filename="../configurationwindow.ui" line="177"/>
+        <location filename="../configurationwindow.cpp" line="297"/>
+        <location filename="../configurationwindow.cpp" line="321"/>
         <source>Http</source>
         <translation>Http</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="175"/>
-        <location filename="../configurationwindow.cpp" line="290"/>
-        <location filename="../configurationwindow.cpp" line="314"/>
+        <location filename="../configurationwindow.ui" line="182"/>
+        <location filename="../configurationwindow.cpp" line="302"/>
+        <location filename="../configurationwindow.cpp" line="326"/>
         <source>Socks5</source>
         <translation>Socks5</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="183"/>
+        <location filename="../configurationwindow.ui" line="190"/>
         <source>Proxy Address</source>
         <translation>代理地址</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="79"/>
+        <location filename="../configurationwindow.cpp" line="87"/>
         <source>&amp;Configuration</source>
         <translation>设置(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="82"/>
+        <location filename="../configurationwindow.cpp" line="93"/>
         <source>Playlist Manage</source>
         <translation>播放列表管理</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="85"/>
+        <location filename="../configurationwindow.cpp" line="96"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="89"/>
+        <location filename="../configurationwindow.cpp" line="100"/>
         <source>Netease</source>
         <translation>网易云音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="90"/>
+        <location filename="../configurationwindow.cpp" line="101"/>
         <source>QQ</source>
         <translation>QQ音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="91"/>
+        <location filename="../configurationwindow.cpp" line="102"/>
         <source>Migu</source>
         <translation>咪咕音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="92"/>
+        <location filename="../configurationwindow.cpp" line="103"/>
         <source>Kugou</source>
         <translation>酷狗音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="93"/>
+        <location filename="../configurationwindow.cpp" line="104"/>
         <source>Kuwo</source>
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="203"/>
+        <location filename="../configurationwindow.cpp" line="215"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="224"/>
+        <location filename="../configurationwindow.cpp" line="236"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="233"/>
+        <location filename="../configurationwindow.cpp" line="245"/>
         <source>Starting reverse proxy failed!</source>
         <translation>启动反向代理失败！</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="466"/>
+        <location filename="../configurationwindow.cpp" line="480"/>
         <source>Erorr</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="466"/>
+        <location filename="../configurationwindow.cpp" line="480"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="233"/>
-        <location filename="../configurationwindow.cpp" line="485"/>
+        <location filename="../configurationwindow.cpp" line="245"/>
+        <location filename="../configurationwindow.cpp" line="499"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="485"/>
+        <location filename="../configurationwindow.cpp" line="90"/>
+        <source>Show/Hide &amp;Player</source>
+        <translation>显示/隐藏播放器(&amp;P)</translation>
+    </message>
+    <message>
+        <location filename="../configurationwindow.cpp" line="499"/>
         <source>Can&apos;t get song(s), maybe VIP is requested.</source>
         <translation>不能获取歌曲信息，可能需要VIP。</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="490"/>
+        <location filename="../configurationwindow.cpp" line="504"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="490"/>
+        <location filename="../configurationwindow.cpp" line="504"/>
         <source>Play song(s) by %1?</source>
         <translation>使用%1播放歌曲？</translation>
+    </message>
+</context>
+<context>
+    <name>LrcBar</name>
+    <message>
+        <location filename="../player/lrcbar.ui" line="17"/>
+        <source>歌词</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/lrcbar.cpp" line="239"/>
+        <source>Font Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/lrcbar.cpp" line="240"/>
+        <source>Shadow Mode(TTPlayer)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/lrcbar.cpp" line="241"/>
+        <source>Stroke Mode(Kugou Music)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/lrcbar.cpp" line="249"/>
+        <source>Select Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OSD</name>
+    <message>
+        <location filename="../player/osd.ui" line="14"/>
+        <source>SPOSD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/osd.ui" line="37"/>
+        <source>标题信息</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/osd.ui" line="64"/>
+        <source>0:00</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -268,6 +324,19 @@
         <location filename="../playlistmanagewindow.cpp" line="164"/>
         <source>Songs (*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)</source>
         <translation>歌曲(*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../player/player.cpp" line="291"/>
+        <source>mono</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/player.cpp" line="293"/>
+        <source>stereo</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -26,7 +26,14 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QCheckBox" name="useExternalPlayer">
+         <widget class="QRadioButton" name="useBuiltinPlayer">
+          <property name="text">
+           <string>Use Builtin Player</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="useExternalPlayer">
           <property name="text">
            <string>Use External Player</string>
           </property>

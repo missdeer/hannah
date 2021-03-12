@@ -37,7 +37,7 @@ public slots:
 
     void onApplicationMessageReceived(const QString &message);
 private slots:
-    void onUseExternalPlayerStateChanged(int state);
+    void onUseExternalPlayerStateChanged(bool state);
 
     void onExternalPlayerPathTextChanged(const QString &text);
 
@@ -76,6 +76,8 @@ private slots:
     void onShowConfiguration();
 
     void onShowPlaylistManage();
+
+    void onShowHideBuiltinPlayer();
 
 private:
     Ui::ConfigurationWindow *ui;

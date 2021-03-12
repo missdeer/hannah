@@ -9,5 +9,6 @@
         <file>rc/images/import.png</file>
         <file>rc/images/import-playlist.png</file>
         <file>rc/images/save-playlist.png</file>
+        <file>rc/images/OSD.png</file>
     </qresource>
 </RCC>

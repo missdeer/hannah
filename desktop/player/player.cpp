@@ -4,7 +4,6 @@
 #include <QMessageBox>
 
 #include "player.h"
-
 #include "bass_fx.h"
 #include "tags.h"
 
@@ -15,7 +14,6 @@
 
 Player::Player()
 {
-    //加载解码插件
     QString bassPluginsPath = QCoreApplication::applicationDirPath() + "/bassplugins";
     QDir    dir(bassPluginsPath);
     auto    plugins = dir.entryList(QStringList() <<
@@ -41,15 +39,26 @@ Player::~Player()
 
 QString Player::openFile(const QString &fileName)
 {
-    QString ext = QFileInfo(fileName).suffix();
-    if (ext.compare("mp3", Qt::CaseInsensitive) == 0 || ext.compare("mp2", Qt::CaseInsensitive) == 0 ||
-        ext.compare("mp1", Qt::CaseInsensitive) == 0 || ext.compare("wav", Qt::CaseInsensitive) == 0 ||
-        ext.compare("ogg", Qt::CaseInsensitive) == 0 || ext.compare("aiff", Qt::CaseInsensitive) == 0 ||
-        ext.compare("ape", Qt::CaseInsensitive) == 0 || ext.compare("mp4", Qt::CaseInsensitive) == 0 ||
-        ext.compare("m4a", Qt::CaseInsensitive) == 0 || ext.compare("m4v", Qt::CaseInsensitive) == 0 ||
-        ext.compare("aac", Qt::CaseInsensitive) == 0 || ext.compare("alac", Qt::CaseInsensitive) == 0 ||
-        ext.compare("tta", Qt::CaseInsensitive) == 0 || ext.compare("flac", Qt::CaseInsensitive) == 0 ||
-        ext.compare("wma", Qt::CaseInsensitive) == 0 || ext.compare("wv", Qt::CaseInsensitive) == 0)
+    QString     ext       = QFileInfo(fileName).suffix().toLower();
+    QStringList audioExts = {
+        "mp3",
+        "mp2",
+        "mp1",
+        "ogg",
+        "wav",
+        "aiff",
+        "ape",
+        "m4a",
+        "aac",
+        "tta",
+        "wma",
+        "mp4",
+        "m4v",
+        "alac",
+        "flac",
+        "wv",
+    };
+    if (audioExts.contains(ext))
     {
         BASS_ChannelStop(m_hNowPlay);
         BASS_StreamFree(m_hNowPlay);
@@ -135,24 +144,22 @@ void Player::disableEQ()
 
 void Player::setEQ(int id, int gain)
 {
-    BASS_BFX_PEAKEQ peakEQ; //均衡器参数结构
-    // id对应均衡器段编号
+    BASS_BFX_PEAKEQ peakEQ;
+
     peakEQ.lBand = id;
     BASS_FXGetParameters(m_hEqFX, &peakEQ);
-    peakEQ.fGain = gain;                 //-15~15，EQ参数
-    BASS_FXSetParameters(m_hEqFX, &peakEQ); //变更参数
+    peakEQ.fGain = gain;
+    BASS_FXSetParameters(m_hEqFX, &peakEQ);
 }
 
 void Player::setVol(int vol)
 {
-    //设置音量，0最小，100最大
     float v = (float)vol / 100;
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_VOL, v);
 }
 
 int Player::getVol()
 {
-    //取得音量，0最小，100最大
     float vol;
     BASS_ChannelGetAttribute(m_hNowPlay, BASS_ATTRIB_VOL, &vol);
     return (int)(vol * 100);
@@ -188,7 +195,6 @@ void Player::pause()
     BASS_ChannelPause(m_hNowPlay);
 }
 
-//初始化音频设备
 bool Player::devInit()
 {
     return BASS_Init(-1, 48000, 0, 0, NULL);
@@ -196,41 +202,31 @@ bool Player::devInit()
 
 QString Player::getTags()
 {
-    // QString tags = TAGS_Read(nowPlay, "%IFV2(%ARTI,%UTF8(%ARTI),未知艺术家) - %IFV2(%TITL,%UTF8(%TITL),无标题)");
-
-    //有一些音频把艺术家写到了标题里
-    //很少见到只有艺术家没有标题的音频
-    //故修改为下列表达式，若只有艺术家没有标题会是“艺术家 - ”的形式……喵
-    //（末尾为" - "应该删去3个字符？）
     QString tags = TAGS_Read(m_hNowPlay, "%IFV2(%ARTI,%UTF8(%ARTI) - ,)%IFV2(%TITL,%UTF8(%TITL),)");
     if (tags.trimmed().isEmpty())
-        return "Show_File_Name"; //如果标签是空字符，直接显示文件名
+        return "Show_File_Name";
 
-    return tags; //返回标签
+    return tags;
 }
 
 int Player::getPos()
 {
-    //返回当前播放位置，取值范围0~1000
     return (int)(BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE) * 1000 / BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
 }
 
 void Player::setPos(int pos)
 {
-    //跳转进度到指定位置，0~1000
     BASS_ChannelSetPosition(m_hNowPlay, pos * BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE) / 1000, BASS_POS_BYTE);
 }
 
-//取得音频比特率
 int Player::getBitRate()
 {
-    float time    = BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE)); // 播放时间
-    DWORD len     = BASS_StreamGetFilePosition(m_hNowPlay, BASS_FILEPOS_END);                                // 文件长度
-    int   bitrate = (int)(len / (125 * time) + 0.5);                                                   // 比特率/编码率 (Kbps)
+    float time    = BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
+    DWORD len     = BASS_StreamGetFilePosition(m_hNowPlay, BASS_FILEPOS_END);
+    int   bitrate = (int)(len / (125 * time) + 0.5);
     return bitrate;
 }
 
-//取得音频采样率
 int Player::getFreq()
 {
     BASS_CHANNELINFO cInfo;
@@ -238,7 +234,6 @@ int Player::getFreq()
     return cInfo.freq;
 }
 
-//设置音频采样率
 void Player::setFreq(float freq)
 {
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_FREQ, freq);
@@ -333,7 +328,6 @@ double Player::getTotalTimeSec()
 
 DWORD Player::getLevel()
 {
-    //返回声道电平，低16位左声道，高16位右声道
     DWORD level = BASS_ChannelGetLevel(m_hNowPlay);
     if (level != (DWORD)-1)
     {
@@ -364,17 +358,15 @@ double Player::getFileSecond(const QString &fileName)
     return totalSec;
 }
 
-//更改播放方向（false正、true反）
 void Player::setReverse(bool isEnable)
 {
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, isEnable ? BASS_FX_RVS_REVERSE : BASS_FX_RVS_FORWARD);
 }
 
-//更新混响效果，参数取值范围：-20~0
 void Player::updateReverb(int value)
 {
     BASS_DX8_REVERB p;
     BASS_FXGetParameters(m_hReverbFX, &p);
-    p.fReverbMix = 0.012f * (value * value * value); //参数取值范围：-96~0
+    p.fReverbMix = 0.012f * (value * value * value);
     BASS_FXSetParameters(m_hReverbFX, &p);
 }

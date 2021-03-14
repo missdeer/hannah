@@ -151,7 +151,7 @@ ShadowPlayer::ShadowPlayer(QWidget *parent)
     playListShowAnimation->setEndValue(QRect(370, 30, 331, 361));
 
     connect(playListHideAnimation, SIGNAL(finished()), this, SLOT(update()));
-    connect(playListShowAnimation, SIGNAL(finished()), this, SLOT(update())); //动画完成后刷新窗口
+    connect(playListShowAnimation, SIGNAL(finished()), this, SLOT(update()));
 
     fadeOutAnimation = new QPropertyAnimation(this, "windowOpacity");
     fadeOutAnimation->setDuration(400);
@@ -206,10 +206,9 @@ void ShadowPlayer::dropEvent(QDropEvent *event)
         return;
 
     QFileInfo fi(fileName);
-    QString   ext = fi.suffix();
-
-    if (ext.compare("jpg", Qt::CaseInsensitive) == 0 || ext.compare("jpeg", Qt::CaseInsensitive) == 0 ||
-        ext.compare("png", Qt::CaseInsensitive) == 0 || ext.compare("gif", Qt::CaseInsensitive) == 0 || ext.compare("bmp", Qt::CaseInsensitive) == 0)
+    QString     ext       = fi.suffix().toLower();
+    QStringList imageExts = {"jpg", "jpeg", "png", "gif", "bmp"};
+    if (imageExts.contains(ext))
     {
         loadSkin(fileName);
     }

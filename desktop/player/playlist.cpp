@@ -21,16 +21,26 @@ PlayList::~PlayList()
 
 bool PlayList::fixSuffix(const QString &fileName)
 {
-    QFileInfo fi(fileName);
-    QString   ext = fi.suffix();
-    return (ext.compare("mp3", Qt::CaseInsensitive) == 0 || ext.compare("mp2", Qt::CaseInsensitive) == 0 ||
-            ext.compare("mp1", Qt::CaseInsensitive) == 0 || ext.compare("wav", Qt::CaseInsensitive) == 0 ||
-            ext.compare("ogg", Qt::CaseInsensitive) == 0 || ext.compare("aiff", Qt::CaseInsensitive) == 0 ||
-            ext.compare("ape", Qt::CaseInsensitive) == 0 || ext.compare("mp4", Qt::CaseInsensitive) == 0 ||
-            ext.compare("m4a", Qt::CaseInsensitive) == 0 || ext.compare("m4v", Qt::CaseInsensitive) == 0 ||
-            ext.compare("aac", Qt::CaseInsensitive) == 0 || ext.compare("alac", Qt::CaseInsensitive) == 0 ||
-            ext.compare("tta", Qt::CaseInsensitive) == 0 || ext.compare("flac", Qt::CaseInsensitive) == 0 ||
-            ext.compare("wma", Qt::CaseInsensitive) == 0 || ext.compare("wv", Qt::CaseInsensitive) == 0);
+    QString     ext       = QFileInfo(fileName).suffix().toLower();
+    QStringList audioExts = {
+        "mp3",
+        "mp1",
+        "ogg",
+        "ape",
+        "m4a",
+        "aac",
+        "tta",
+        "wma",
+        "mp2",
+        "wav",
+        "aiff",
+        "mp4",
+        "m4v",
+        "alac",
+        "flac",
+        "wv",
+    };
+    return audioExts.contains(ext);
 }
 
 bool PlayList::isEmpty()

@@ -1,13 +1,4 @@
-﻿/*
-FLAC标签图片提取库 Ver 1.0
-从FLAC文件中稳定、快捷、高效、便捷地提取出图片数据
-支持BMP、JPEG、PNG、GIF图片格式
-可将图片数据提取到文件或内存中，并能安全地释放内存
-使用方式与ID3v2版本相同
-ShadowPower 于2014/8/1 夜间
-*/
-
-#ifndef _ShadowPower_FLACPIC___
+﻿#ifndef _ShadowPower_FLACPIC___
 #define _ShadowPower_FLACPIC___
 #define _CRT_SECURE_NO_WARNINGS
 #ifndef NULL

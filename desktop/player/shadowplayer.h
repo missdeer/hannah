@@ -2,13 +2,18 @@
 #define SHADOWPLAYER_H
 #include <math.h>
 
+#include <QLinearGradient>
+#include <QList>
 #include <QMainWindow>
+#include <QUrl>
+
 #if defined(Q_OS_WIN)
 #    include <QtWinExtras>
 #endif
 #include "bass.h"
 
 QT_FORWARD_DECLARE_CLASS(QTimer);
+QT_FORWARD_DECLARE_CLASS(QPropertyAnimation);
 
 class Player;
 class PlayList;

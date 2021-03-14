@@ -329,12 +329,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../player/player.cpp" line="282"/>
+        <location filename="../player/player.cpp" line="287"/>
         <source>mono</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/player.cpp" line="282"/>
+        <location filename="../player/player.cpp" line="287"/>
         <source>stereo</source>
         <translation type="unfinished"></translation>
     </message>

@@ -8,6 +8,11 @@
 #include "bass_fx.h"
 #include "tags.h"
 
+#if defined(Q_OS_WIN)
+#    include "bassasio.h"
+#    include "basswasapi.h"
+#endif
+
 Player::Player()
 {
     //加载解码插件

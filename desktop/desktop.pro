@@ -97,6 +97,7 @@ win32: {
     } else: {
         LIBS += -L$$PWD/3rdparty/bass/lib/windows/386
     }
+    LIBS += -lbasswasapi -lbassasio
 }
 
 LIBS += -L$$PWD/../lib/reverseProxy -lrp -lbass -lbass_fx -ltags

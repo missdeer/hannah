@@ -267,7 +267,6 @@ void ConfigurationWindow::initOutputDevices()
     item->setFont(font);
     model->appendRow(item);
 
-    BASS_SetConfig(BASS_CONFIG_UNICODE, TRUE);
     BASS_DEVICEINFO info;
     for (int a = 1; BASS_GetDeviceInfo(a, &info); a++)
     {

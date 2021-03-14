@@ -6,9 +6,9 @@
 #include <QSettings>
 #include <QtCore>
 
+#include "bass.h"
 #include "configurationwindow.h"
 #include "playlistmanagewindow.h"
-
 #if defined(Q_OS_MACOS)
 #    include "application.h"
 #    include "serviceslots.h"
@@ -122,6 +122,8 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_WIN) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QWindowsWindowFunctions::setWindowActivationBehavior(QWindowsWindowFunctions::AlwaysActivateWindow);
 #endif
+
+    BASS_SetConfig(BASS_CONFIG_UNICODE, TRUE);
 
 #if defined(Q_OS_MACOS)
     Application a(argc, argv);

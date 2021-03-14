@@ -9,6 +9,7 @@
 #include "bass.h"
 #include "configurationwindow.h"
 #include "playlistmanagewindow.h"
+#include "shadowplayer.h"
 #if defined(Q_OS_MACOS)
 #    include "application.h"
 #    include "serviceslots.h"
@@ -188,6 +189,9 @@ int main(int argc, char *argv[])
     }
 #    endif
 #endif
+
+    ShadowPlayer player;
+    shadowPlayer = &player;
 
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;

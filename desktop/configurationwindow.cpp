@@ -23,11 +23,11 @@
 #    include "bassasio.h"
 #    include "basswasapi.h"
 #endif
-
 #include "comboboxdelegate.h"
 #include "configurationwindow.h"
 #include "librp.h"
 #include "playlistmanagewindow.h"
+#include "shadowplayer.h"
 #include "ui_configurationwindow.h"
 
 ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::ConfigurationWindow)
@@ -48,18 +48,12 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     ui->reverseProxyBindNetworkInterface->setCurrentText(m_settings->value("reverseProxyBindNetworkInterface", tr("-- Default --")).toString());
     ui->reverseProxyProxyType->setCurrentText(m_settings->value("reverseProxyProxyType", tr("None")).toString());
     ui->reverseProxyProxyAddress->setText(m_settings->value("reverseProxyProxyAddress").toString());
-    auto state = m_settings->value("useExternalPlayer", 2).toInt(&ok);
-    if (ok)
-    {
-        ui->useExternalPlayer->setChecked(state);
-        ui->useBuiltinPlayer->setChecked(!state);
-    }
-    else
-    {
-        ui->useExternalPlayer->setChecked(false);
-        ui->useBuiltinPlayer->setChecked(true);
-    }
-    state = m_settings->value("reverseProxyAutoRedirect", 2).toInt(&ok);
+    bool bUseExternalPlayer = m_settings->value("useExternalPlayer", false).toBool();
+    ui->useExternalPlayer->setChecked(bUseExternalPlayer);
+    onUseExternalPlayerStateChanged(bUseExternalPlayer);
+    ui->useBuiltinPlayer->setChecked(!bUseExternalPlayer);
+    onUseBuiltinPlayerStateChanged(!bUseExternalPlayer);
+    auto state = m_settings->value("reverseProxyAutoRedirect", 2).toInt(&ok);
     if (ok)
         ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
     state = m_settings->value("reverseProxyRedirect", 2).toInt(&ok);
@@ -549,7 +543,14 @@ void ConfigurationWindow::onShowPlaylistManage()
     playlistManageWindow->raise();
 }
 
-void ConfigurationWindow::onShowHideBuiltinPlayer() {}
+void ConfigurationWindow::onShowHideBuiltinPlayer()
+{
+    Q_ASSERT(shadowPlayer);
+    if (shadowPlayer->isVisible())
+        shadowPlayer->hide();
+    else
+        shadowPlayer->show();
+}
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)
 {

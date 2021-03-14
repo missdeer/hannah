@@ -39,7 +39,7 @@ Player::~Player()
     BASS_Free();
 }
 
-QString Player::openFile(QString fileName)
+QString Player::openFile(const QString &fileName)
 {
     QString ext = QFileInfo(fileName).suffix();
     if (ext.compare("mp3", Qt::CaseInsensitive) == 0 || ext.compare("mp2", Qt::CaseInsensitive) == 0 ||

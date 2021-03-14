@@ -29,7 +29,9 @@ SOURCES += \
     $$PWD/qtlockedfile_win.cpp \
     $$PWD/songlistmodel.cpp \
     $$PWD/sqlite3helper.cpp \
-    comboboxdelegate.cpp
+    $$PWD/comboboxdelegate.cpp \
+    $$PWD/player/playlist.cpp \
+    $$PWD/player/shadowplayer.cpp
 
 HEADERS += \
     $$PWD/configurationwindow.h \
@@ -48,13 +50,17 @@ HEADERS += \
     $$PWD/qtlockedfile.h \
     $$PWD/songlistmodel.h \
     $$PWD/sqlite3helper.h \
-    comboboxdelegate.h
+    $$PWD/comboboxdelegate.h \
+    $$PWD/player/playlist.h \
+    $$PWD/player/shadowplayer.h
 
 FORMS += \
     $$PWD/configurationwindow.ui \
     $$PWD/playlistmanagewindow.ui \
     $$PWD/player/lrcbar.ui \
-    $$PWD/player/osd.ui
+    $$PWD/player/osd.ui \
+    $$PWD/player/playlist.ui \
+    $$PWD/player/shadowplayer.ui
     
 RC_FILE = Hannah.rc
 
@@ -79,6 +85,7 @@ QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n
 POST_TARGETDEPS += translate qti18n
 
 win32: {
+    QT += winextras
     CONFIG(release, debug|release) : {
         WINDEPLOYQT = $$shell_path($$[QT_INSTALL_BINS]/windeployqt.exe)
         QMAKE_EXTRA_TARGETS += mkdir

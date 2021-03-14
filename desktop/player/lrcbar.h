@@ -31,26 +31,26 @@ private slots:
     void enableStroke();
 
 private:
-    Ui::LrcBar *ui;
-    QTimer *timer;
-    Lyrics *lyrics;
-    Player *player;
-    QPoint pos;//用于窗口拖动，存储鼠标坐标
-    bool clickOnFrame;
+    Ui::LrcBar *    ui;
+    QTimer *        timer;
+    Lyrics *        lyrics;
+    Player *        player;
+    QPoint          pos;
+    bool            clickOnFrame;
     bool            mouseEnter = {false};
     QLinearGradient linearGradient;
     QLinearGradient maskLinearGradient;
-    QFont font;//字体
-    int             shadowMode {0}; //阴影模式'
+    QFont           font;
+    int             shadowMode {0};
 
 protected:
-    void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent *event);//窗体拖动相关
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *);
-    void enterEvent(QEvent *);
-    void leaveEvent(QEvent *);
-    void contextMenuEvent(QContextMenuEvent *event);//右键菜单
+    void paintEvent(QPaintEvent *) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *) override;
+    void enterEvent(QEvent *) override;
+    void leaveEvent(QEvent *) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 };
 
 #endif // LRCBAR_H

@@ -1,0 +1,1820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShadowPlayer</class>
+ <widget class="QMainWindow" name="ShadowPlayer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>360</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>360</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>710</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Hannah</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+	font-family: &quot;Arial&quot;, &quot;宋体&quot;, &quot;Segoe UI&quot;, &quot;微软雅黑&quot;;
+	color: black;
+}
+
+QLabel#curTimeLabel {
+	color: white;
+	font-family: &quot;Segoe UI&quot;;
+	font-size :20px;
+}
+
+QLabel#totalTimeLabel {
+	color: white;
+	font-family: &quot;Segoe UI&quot;;
+	font-size :20px;
+}
+
+QLabel#lrcLabel_1 {
+	color: rgba(0, 0, 0, 128);
+}
+
+QLabel#lrcLabel_4 {
+	font-weight: 500;
+	color: rgb(85, 0, 255);
+}
+
+QLabel#lrcLabel_7 {
+	color: rgba(0, 0, 0, 128);
+}
+
+/*以上为字体设置*/
+
+QToolTip {
+    opacity: 220;
+}
+
+QSlider::groove:horizontal {
+	border: 1px solid grey;
+	border-radius: 3px;
+	height: 4px;
+	margin: 0px 0;
+}
+
+QSlider::handle:horizontal {
+/*
+	border-radius: 3px;
+	margin: -5px -5px -5px -5px;
+	left: 5px; right: 5px;
+*/
+}
+
+QSlider::handle:horizontal:hover {
+/*
+	border-radius: 3px;
+	margin: -5px -5px -5px -5px;
+	left: 5px; right: 5px;
+*/
+}
+
+QSlider::sub-page:horizontal {
+	border-radius: 3px;
+	background: rgb(85, 170, 0);
+}
+
+QSlider::groove:vertical {
+	border: 1px solid grey;
+	border-radius: 3px;
+	width: 4px;
+	margin: 0px 0;
+} 
+
+QSlider::handle:vertical {
+	border-radius: 3px;
+	border: 0px solid #5c5c5c;
+	background: rgb(85, 170, 0);
+	margin: -5px -5px -5px -5px;
+	top: 5px; bottom: 5px;
+}
+
+QSlider::handle:vertical:hover {
+	border-radius: 3px;
+	border: 0px solid #5c5c5c;
+	background: rgb(85, 255, 0);
+	margin: -5px -5px -5px -5px;
+	top: 5px; bottom: 5px;
+}
+
+QSlider::add-page:vertical {
+	border-radius: 3px;
+	background: rgb(85, 170, 0);
+}
+
+QLabel {
+	background: transparent;
+}
+
+QLabel:hover {
+	/*background: rgba(255, 255, 255, 180);*/
+}
+
+QLabel#tagLabel {
+	color: white;
+	font-family: &quot;Segoe UI&quot;, &quot;宋体&quot;;
+	background: rgba(255, 255, 255, 0);
+}
+
+QLabel#coverLabel{
+	border: 1px solid grey;
+}
+
+QLabel#mediaInfoLabel {
+	color: white;
+	font-family: &quot;Segoe UI&quot;, &quot;宋体&quot;;
+	background: rgba(255, 255, 255, 0);
+}
+
+QGroupBox {
+	background: rgba(255, 255, 255, 80);
+}
+
+QGroupBox#eqGroupBox {
+	background: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(255, 255, 255, 150), stop:1 rgba(255, 255, 255, 70));
+}
+
+QGroupBox {
+	border: 0px solid white;
+	border-radius: 5px;
+	margin-top: 0ex; /* leave space at the top for the title */
+}
+
+QProgressBar{
+/*进度条外框*/
+	border-radius: 0px;
+	background: transparent;
+	text-align: center;
+}
+
+QProgressBar::chunk {
+/*进度条内容*/
+	border-radius: 0px;
+/*border: 1px solid black;*/
+	background: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(85, 130, 255, 255), stop:1 rgba(170, 255, 236, 255));
+}
+
+QProgressBar:horizontal {
+	border-radius: 0px;
+	border: 1px solid grey;
+	background: transparent;
+	text-align: center;
+}
+
+QProgressBar::chunk:horizontal {
+/*水平进度条内容*/
+	border-radius: 0px;
+	background: rgb(85, 170, 0);
+}
+
+QProgressBar#leftdB:horizontal {
+	border-radius: 0px;
+	border: 1px solid grey;
+	background: rgba(255, 255, 255, 120);
+	text-align: center;
+}
+
+QProgressBar#leftdB::chunk:horizontal {
+	border-radius: 0px;
+	background: rgb(85, 200, 100);
+}
+
+QProgressBar#rightdB:horizontal {
+	border-radius: 0px;
+	border: 1px solid grey;
+	background: rgba(255, 255, 255, 120);
+	text-align: center;
+}
+
+QProgressBar#rightdB::chunk:horizontal {
+	border-radius: 0px;
+	background: rgb(85, 200, 100);
+}
+
+QPushButton {
+	border: 0px solid grey;
+	background-color: rgba(255, 255, 255, 170);
+	padding: -8px -8px;
+}
+
+QPushButton:hover {
+	background-color: rgba(255, 255, 255, 220);
+}
+
+QPushButton:pressed {
+	background-color: rgba(255, 255, 255, 250);
+}
+
+QPushButton#closeButton {
+	color: white;
+	background-color: rgb(230, 0, 0);
+}
+
+QPushButton#closeButton:hover {
+	background-color: rgb(255, 0, 0);
+}
+
+QPushButton#miniSizeButton {
+	color: white;
+	background-color: transparent;
+	border-width: 0px;
+}
+
+QPushButton#miniSizeButton:hover {
+	color: white;
+	background-color: rgb(0, 85, 255);
+	border-width: 0px;
+}
+
+QPushButton#setSkinButton:hover {
+	background-color: rgb(0, 85, 255);
+}
+
+QPushButton#setSkinButton {
+	background-color: transparent;
+}
+
+QPushButton#playButton {
+	background-color: transparent;
+}
+
+QPushButton#playButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#stopButton {
+	background-color: transparent;
+}
+
+QPushButton#stopButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#openButton {
+	background-color: transparent;
+}
+
+QPushButton#openButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#muteButton {
+	background-color: transparent;
+}
+
+QPushButton#muteButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#playModeButton {
+	background-color: transparent;
+}
+
+QPushButton#playModeButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#playPreButton {
+	background-color: transparent;
+}
+
+QPushButton#playPreButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#playNextButton {
+	background-color: transparent;
+}
+
+QPushButton#playNextButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}
+
+QPushButton#playListButton {
+	background-color: transparent;
+}
+
+QPushButton#playListButton:hover {
+	background-color: rgba(0, 85, 255, 120);
+}</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="playButton">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>120</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>播放（Ctrl+F2）</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Play.png</normaloff>:/icon/ICO/Play.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>22</width>
+      <height>22</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="stopButton">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>120</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>停止（Ctrl+F3）</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Stop.png</normaloff>:/icon/ICO/Stop.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>22</width>
+      <height>22</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="SPSlider" name="playSlider">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>90</y>
+      <width>221</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>播放进度</string>
+    </property>
+    <property name="maximum">
+     <number>1000</number>
+    </property>
+    <property name="singleStep">
+     <number>0</number>
+    </property>
+    <property name="pageStep">
+     <number>0</number>
+    </property>
+    <property name="tracking">
+     <bool>true</bool>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="SPSlider" name="volSlider">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>156</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="value">
+     <number>100</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="ShadowLabel" name="tagLabel">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>25</y>
+      <width>221</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>←这里能显示目录下的专辑封面(cover)</string>
+    </property>
+   </widget>
+   <widget class="ShadowLabel" name="mediaInfoLabel">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>45</y>
+      <width>221</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+     </font>
+    </property>
+    <property name="text">
+     <string>你可以把音频文件拖进来哦~</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="openButton">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>150</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>打开</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Open.png</normaloff>:/icon/ICO/Open.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="muteButton">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>150</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="toolTip">
+     <string>静音（Ctrl+F4）</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Vol.png</normaloff>:/icon/ICO/Vol.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="leftLevel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="maximum">
+     <number>32768</number>
+    </property>
+    <property name="value">
+     <number>10000</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="rightLevel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>32768</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="LLevelLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>129</y>
+      <width>8</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>L</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="RLevelLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>149</y>
+      <width>8</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>R</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="coverLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>111</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>ShadowPlayer By:暗影夜光</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="ShadowLabel" name="curTimeLabel">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>70</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>-1</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0:00</string>
+    </property>
+   </widget>
+   <widget class="FFTDisplay" name="FFTGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>70</y>
+      <width>337</width>
+      <height>321</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>音乐 抛面饼</string>
+    </property>
+   </widget>
+   <widget class="SPSlider" name="freqSlider">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>210</y>
+      <width>341</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>-5000</number>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::NoTicks</enum>
+    </property>
+    <property name="tickInterval">
+     <number>1000</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="resetFreqButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>重置</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="textLabel1">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>182</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>回放速度 (x1)</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="eqGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>30</y>
+      <width>331</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>均衡器</string>
+    </property>
+    <widget class="QSlider" name="eqSlider_1">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_2">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_3">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_4">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_5">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_6">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_7">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_8">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_9">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QSlider" name="eqSlider_10">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>30</y>
+       <width>22</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-15</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="pageStep">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_1">
+     <property name="geometry">
+      <rect>
+       <x>24</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>31</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_2">
+     <property name="geometry">
+      <rect>
+       <x>54</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>62</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_3">
+     <property name="geometry">
+      <rect>
+       <x>82</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>125</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_4">
+     <property name="geometry">
+      <rect>
+       <x>112</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>250</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_5">
+     <property name="geometry">
+      <rect>
+       <x>142</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>500</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_6">
+     <property name="geometry">
+      <rect>
+       <x>174</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1K</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_7">
+     <property name="geometry">
+      <rect>
+       <x>204</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2K</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_8">
+     <property name="geometry">
+      <rect>
+       <x>234</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>4K</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_9">
+     <property name="geometry">
+      <rect>
+       <x>264</x>
+       <y>140</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>8K</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="textLabel2_10">
+     <property name="geometry">
+      <rect>
+       <x>292</x>
+       <y>140</y>
+       <width>22</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>16K</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="eqComboBox">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>0</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QComboBox {
+    border: 0px solid white;
+    border-radius: 5px;
+    padding: 0px 8px 0px 8px;
+    min-width: 2em;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+    background: rgba(255, 255, 255, 170);
+}
+
+/* QComboBox gets the &quot;on&quot; state when the popup is open */
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background: rgba(255, 255, 255, 255);
+}
+
+QComboBox:on {
+    
+}
+
+QComboBox::drop-down {
+    width: 0px;
+}
+
+QComboBox::down-arrow {
+    
+}
+
+QComboBox::down-arrow:on {
+    top: 1px;
+    left: 1px;
+}</string>
+     </property>
+     <property name="maxVisibleItems">
+      <number>15</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>默认</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>流行</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>摇滚</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>电子</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>古典</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>金属</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>舞曲</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>乡村</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>爵士</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>布鲁斯</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>怀旧</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>歌剧</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>语音</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QDial" name="reverbDial">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>0</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-20</number>
+     </property>
+     <property name="maximum">
+      <number>0</number>
+     </property>
+     <property name="pageStep">
+      <number>5</number>
+     </property>
+     <property name="value">
+      <number>-20</number>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="eqEnableCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>0</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="lyricsBox">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>210</y>
+      <width>331</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>歌词秀</string>
+    </property>
+    <widget class="QLabel" name="lrcLabel_1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>25</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+	color: rgba(0, 0, 0, 128);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lrcLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>45</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lrcLabel_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>65</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="ShadowLabel" name="lrcLabel_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>85</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <weight>62</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lrcLabel_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>105</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lrcLabel_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>125</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lrcLabel_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>145</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+	color: rgba(0, 0, 0, 128);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="showDskLrcButton">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>0</y>
+       <width>61</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>桌面歌词</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="loadLrcButton">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>0</y>
+       <width>61</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>选择文件</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="extraButton">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>0</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-family: &quot;Microsoft Yahei&quot;, &quot;Simsun&quot;, &quot;Arial&quot;;</string>
+    </property>
+    <property name="text">
+     <string>→</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="closeButton">
+    <property name="geometry">
+     <rect>
+      <x>295</x>
+      <y>0</y>
+      <width>40</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Close.png</normaloff>:/rc/images/player/Close.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>18</width>
+      <height>18</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="setSkinButton">
+    <property name="geometry">
+     <rect>
+      <x>245</x>
+      <y>0</y>
+      <width>25</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/CSkin.png</normaloff>:/rc/images/player/CSkin.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="miniSizeButton">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>0</y>
+      <width>25</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Mini.png</normaloff>:/rc/images/player/Mini.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>18</width>
+      <height>18</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playModeButton">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>150</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>顺序播放</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Order.png</normaloff>:/icon/ICO/Order.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playPreButton">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>120</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>上一曲（Ctrl+F5）</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Pre.png</normaloff>:/icon/ICO/Pre.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>22</width>
+      <height>22</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playNextButton">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>120</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>下一曲（Ctrl+F6）</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/Next.png</normaloff>:/icon/ICO/Next.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>22</width>
+      <height>22</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playListButton">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>150</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>播放列表</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icon/ICO/PlayList.png</normaloff>:/icon/ICO/PlayList.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="leftdB">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>-60</number>
+    </property>
+    <property name="maximum">
+     <number>0</number>
+    </property>
+    <property name="value">
+     <number>-20</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+    <property name="format">
+     <string>%vdB</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="rightdB">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>-60</number>
+    </property>
+    <property name="maximum">
+     <number>0</number>
+    </property>
+    <property name="value">
+     <number>-60</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+    <property name="format">
+     <string>%vdB</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="reverseButton">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>180</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>正放</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="playerListArea" native="true">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>0</y>
+      <width>331</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+   </widget>
+   <widget class="ShadowLabel" name="totalTimeLabel">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>70</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>-1</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0:00</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::AutoText</enum>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <zorder>FFTGroupBox</zorder>
+   <zorder>rightdB</zorder>
+   <zorder>leftdB</zorder>
+   <zorder>coverLabel</zorder>
+   <zorder>playSlider</zorder>
+   <zorder>volSlider</zorder>
+   <zorder>tagLabel</zorder>
+   <zorder>mediaInfoLabel</zorder>
+   <zorder>leftLevel</zorder>
+   <zorder>rightLevel</zorder>
+   <zorder>LLevelLabel</zorder>
+   <zorder>RLevelLabel</zorder>
+   <zorder>curTimeLabel</zorder>
+   <zorder>playButton</zorder>
+   <zorder>stopButton</zorder>
+   <zorder>openButton</zorder>
+   <zorder>muteButton</zorder>
+   <zorder>freqSlider</zorder>
+   <zorder>resetFreqButton</zorder>
+   <zorder>textLabel1</zorder>
+   <zorder>eqGroupBox</zorder>
+   <zorder>lyricsBox</zorder>
+   <zorder>extraButton</zorder>
+   <zorder>closeButton</zorder>
+   <zorder>setSkinButton</zorder>
+   <zorder>miniSizeButton</zorder>
+   <zorder>playModeButton</zorder>
+   <zorder>playPreButton</zorder>
+   <zorder>playNextButton</zorder>
+   <zorder>playListButton</zorder>
+   <zorder>reverseButton</zorder>
+   <zorder>playerListArea</zorder>
+   <zorder>totalTimeLabel</zorder>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SPSlider</class>
+   <extends>QSlider</extends>
+   <header>spslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FFTDisplay</class>
+   <extends>QGroupBox</extends>
+   <header>fftdisplay.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ShadowLabel</class>
+   <extends>QLabel</extends>
+   <header>shadowlabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>openButton</tabstop>
+  <tabstop>stopButton</tabstop>
+  <tabstop>playButton</tabstop>
+  <tabstop>muteButton</tabstop>
+  <tabstop>volSlider</tabstop>
+  <tabstop>playListButton</tabstop>
+  <tabstop>playPreButton</tabstop>
+  <tabstop>playNextButton</tabstop>
+  <tabstop>playModeButton</tabstop>
+  <tabstop>playSlider</tabstop>
+  <tabstop>setSkinButton</tabstop>
+  <tabstop>resetFreqButton</tabstop>
+  <tabstop>freqSlider</tabstop>
+  <tabstop>miniSizeButton</tabstop>
+  <tabstop>closeButton</tabstop>
+  <tabstop>extraButton</tabstop>
+  <tabstop>eqComboBox</tabstop>
+  <tabstop>eqSlider_1</tabstop>
+  <tabstop>eqSlider_2</tabstop>
+  <tabstop>eqSlider_3</tabstop>
+  <tabstop>eqSlider_4</tabstop>
+  <tabstop>eqSlider_5</tabstop>
+  <tabstop>eqSlider_6</tabstop>
+  <tabstop>eqSlider_7</tabstop>
+  <tabstop>eqSlider_8</tabstop>
+  <tabstop>eqSlider_9</tabstop>
+  <tabstop>eqSlider_10</tabstop>
+  <tabstop>loadLrcButton</tabstop>
+  <tabstop>showDskLrcButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../hannah.qrc"/>
+ </resources>
+ <connections/>
+</ui>

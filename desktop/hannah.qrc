@@ -10,5 +10,29 @@
         <file>rc/images/import-playlist.png</file>
         <file>rc/images/save-playlist.png</file>
         <file>rc/images/OSD.png</file>
+        <file>rc/images/player/AllRepeat.png</file>
+        <file>rc/images/player/Close.png</file>
+        <file>rc/images/player/CSkin.png</file>
+        <file>rc/images/player/Mini.png</file>
+        <file>rc/images/player/Mute.png</file>
+        <file>rc/images/player/Next.png</file>
+        <file>rc/images/player/Open.png</file>
+        <file>rc/images/player/Order.png</file>
+        <file>rc/images/player/Pause.png</file>
+        <file>rc/images/player/Play.png</file>
+        <file>rc/images/player/PlayList.png</file>
+        <file>rc/images/player/Pre.png</file>
+        <file>rc/images/player/Repeat.png</file>
+        <file>rc/images/player/Shuffle.png</file>
+        <file>rc/images/player/Single.png</file>
+        <file>rc/images/player/Stop.png</file>
+        <file>rc/images/player/Vol.png</file>
+        <file>rc/images/player/backup/Mute.png</file>
+        <file>rc/images/player/backup/Open.png</file>
+        <file>rc/images/player/backup/Pause.png</file>
+        <file>rc/images/player/backup/Play.png</file>
+        <file>rc/images/player/backup/Stop.png</file>
+        <file>rc/images/player/backup/Vol.png</file>
+        <file>rc/images/Skin1.jpg</file>
     </qresource>
 </RCC>

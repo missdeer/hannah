@@ -18,7 +18,7 @@ bool Lyrics::resolve(const QString &fileName, bool isLrc)
 
     if (!isLrc)
     {
-        lrcFileName = fileInfo.path() + "/" + fileInfo.completeBaseName() + ".lrc"; //打开同名lrc
+        lrcFileName = fileInfo.path() + "/" + fileInfo.completeBaseName() + ".lrc";
     }
     else
     {
@@ -120,12 +120,12 @@ void Lyrics::updateTime(int curms, int totalms)
                 break;
             }
         }
-        curLrcTime = time; //记录要显示的歌词所在的时间
+        curLrcTime = time;
 
         if (nextTime != 0)
-            nextLrcTime = nextTime; //如果有下一句歌词的话，设置时间
+            nextLrcTime = nextTime;
         else
-            nextLrcTime = totalms; //否则设置下一句为总时间
+            nextLrcTime = totalms;
     }
 }
 
@@ -135,17 +135,16 @@ QString Lyrics::getLrcString(int offset)
     {
         int showTime = 0;
 
-        int index = timeList.indexOf(curLrcTime); //取得当前歌词索引
+        int index = timeList.indexOf(curLrcTime);
         if (index + offset >= 0 && index + offset < timeList.size())
         {
-            showTime = timeList[index + offset]; //取得偏移后，要显示的歌词时间
-            return lrcMap.value(showTime);       //返回要显示的歌词
+            showTime = timeList[index + offset];
+            return lrcMap.value(showTime);
         }
     }
     return "";
 }
 
-//返回输入时间在当前句子中的百分比，取值0~1
 double Lyrics::getTimePos(int ms)
 {
     if (!lrcMap.isEmpty())

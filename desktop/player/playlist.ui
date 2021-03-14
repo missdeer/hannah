@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlayList</class>
+ <widget class="QWidget" name="PlayList">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>331</width>
+    <height>361</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>播放列表（拖入文件添至末尾，双击启动播放）</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QScrollBar:vertical {
+    /*border: 1px solid white;*/
+    /*background: rgba(255, 255, 255, 80);*/
+	background: transparent;
+    width: 18px;
+    margin: 18px 0 18px 0;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(0, 0, 0, 128);
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover
+{
+	background: rgba(0, 255, 0, 128);
+}
+
+QScrollBar::add-line:vertical {
+    border: 0px solid grey;
+    background: rgba(255, 255, 255, 128);
+    height: 18px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    border: 0px solid grey;
+    background: rgba(255, 255, 255, 128);
+    height: 18px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    border: 1px solid grey;
+	border-radius: 2px;
+    width: 3px;
+    height: 3px;
+    background: grey;
+}
+
+QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical
+{
+    background:rgba(255, 255, 255, 128);
+}</string>
+  </property>
+  <widget class="QTableWidget" name="playListTable">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>331</width>
+     <height>281</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">* {
+	gridline-color: rgba(255, 255, 255, 200);
+}
+QTableWidget{
+	border: none;
+	background: rgba(255, 255, 255, 100);
+}
+QTableWidget::item:selected{
+	color: black;
+	background: rgba(255, 255, 255, 128);    
+}
+QHeaderView {
+	color: white;
+	font: bold 10pt;
+	background-color: rgba(255, 255, 255, 80);
+	border: 0px solid rgb(144, 144, 144);
+	border:0px solid rgb(191,191,191);
+	border-left-color: rgba(255, 255, 255, 0);
+	border-top-color: rgba(255, 255, 255, 0);
+	border-radius:0px;
+	min-height:29px;
+}
+
+QHeaderView::section {
+	color: black;
+	background-color: rgba(255, 255, 255, 100);
+	border: 3px solid #000000;
+	border-radius:0px;
+	border-color: rgba(255, 255, 255, 0);
+}</string>
+   </property>
+   <property name="horizontalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOff</enum>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
+   </property>
+   <property name="verticalScrollMode">
+    <enum>QAbstractItemView::ScrollPerPixel</enum>
+   </property>
+   <property name="gridStyle">
+    <enum>Qt::SolidLine</enum>
+   </property>
+   <property name="rowCount">
+    <number>0</number>
+   </property>
+   <property name="columnCount">
+    <number>2</number>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>235</number>
+   </attribute>
+   <attribute name="verticalHeaderDefaultSectionSize">
+    <number>18</number>
+   </attribute>
+   <attribute name="verticalHeaderMinimumSectionSize">
+    <number>18</number>
+   </attribute>
+   <column/>
+   <column/>
+  </widget>
+  <widget class="QPushButton" name="deleteButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>290</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>删除当前选中的项</string>
+   </property>
+   <property name="text">
+    <string>删除</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="addButton">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>290</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>将文件添加到播放列表末尾</string>
+   </property>
+   <property name="text">
+    <string>添加</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="insertButton">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>290</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>在当前选中的项（单项）前插入文件（无选择=第一项）</string>
+   </property>
+   <property name="text">
+    <string>插入</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="clearButton">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>290</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>清空播放列表</string>
+   </property>
+   <property name="text">
+    <string>清空</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="searchEdit">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>330</y>
+     <width>121</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit {
+	border: 1px solid rgb(0, 170, 255);
+	border-radius: 2px;
+	background: rgba(255, 255, 255, 255);
+}
+
+QLineEdit:focus {
+	border: 1px solid rgb(0, 170, 255);
+	border-radius: 2px;
+	background: rgb(230, 239, 255);
+}</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="searchButton">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>330</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>查找</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="searchNextButton">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>330</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>下一个</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="setLenFilButton">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>290</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>最短长度过滤</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="isCaseSensitive">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>330</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QCheckBox {
+    spacing: 3px;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+    height: 13px;
+	border: 1px solid rgb(0, 170, 255);
+	border-radius: 4px;
+}
+
+QCheckBox::indicator:unchecked {
+    background-color: white;
+}
+
+QCheckBox::indicator:checked {
+    background-color: rgb(178, 203, 255);
+}</string>
+   </property>
+   <property name="text">
+    <string>区分大小写</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>playListTable</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>insertButton</tabstop>
+  <tabstop>addButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

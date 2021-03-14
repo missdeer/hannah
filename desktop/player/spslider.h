@@ -1,6 +1,3 @@
-/*
- * 重写的播放进度条，点击后立即跳转到指定位置
- */
 #ifndef SPSLIDER_H
 #define SPSLIDER_H
 

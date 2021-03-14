@@ -1,5 +1,6 @@
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QComboBox>
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QEventLoop>
@@ -10,19 +11,24 @@
 #include <QNetworkInterface>
 #include <QProcess>
 #include <QSettings>
+#include <QStandardItem>
 #include <QStandardPaths>
 
-#include "configurationwindow.h"
-
-#include "librp.h"
-#include "playlistmanagewindow.h"
-#include "ui_configurationwindow.h"
-
+#include "bass.h"
 #if defined(Q_OS_WIN)
 #    include <Windows.h>
 #    include <shellapi.h>
 #    include <tchar.h>
+
+#    include "bassasio.h"
+#    include "basswasapi.h"
 #endif
+
+#include "comboboxdelegate.h"
+#include "configurationwindow.h"
+#include "librp.h"
+#include "playlistmanagewindow.h"
+#include "ui_configurationwindow.h"
 
 ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::ConfigurationWindow)
 {
@@ -30,12 +36,10 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     m_nam      = new QNetworkAccessManager(this);
     ui->setupUi(this);
 
-    auto interfaces = QNetworkInterface::allInterfaces();
-    for (const auto &i : interfaces)
-    {
-        if (i.type() == QNetworkInterface::Ethernet || i.type() == QNetworkInterface::Wifi || i.type() == QNetworkInterface::Ppp)
-            ui->reverseProxyBindNetworkInterface->addItem(i.humanReadableName());
-    }
+    ui->cbOutputDevices->setItemDelegate(new ComboBoxDelegate);
+
+    initNetworkInterfaces();
+    initOutputDevices();
 
     bool ok = true;
     ui->externalPlayerPath->setText(m_settings->value("externalPlayerPath").toString());
@@ -69,6 +73,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
             &QComboBox::currentTextChanged,
             this,
             &ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged);
+    connect(ui->useBuiltinPlayer, &QRadioButton::toggled, this, &ConfigurationWindow::onUseBuiltinPlayerStateChanged);
     connect(ui->useExternalPlayer, &QRadioButton::toggled, this, &ConfigurationWindow::onUseExternalPlayerStateChanged);
     connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &ConfigurationWindow::onBrowseExternalPlayerClicked);
     connect(ui->externalPlayerPath, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerPathTextChanged);
@@ -182,6 +187,11 @@ void ConfigurationWindow::onApplicationMessageReceived(const QString &message)
     }
 }
 
+void ConfigurationWindow::onUseBuiltinPlayerStateChanged(bool checked)
+{
+    ui->cbOutputDevices->setEnabled(checked);
+}
+
 void ConfigurationWindow::onUseExternalPlayerStateChanged(bool checked)
 {
     ui->externalPlayerArguments->setEnabled(checked);
@@ -245,6 +255,82 @@ void ConfigurationWindow::startReverseProxy()
         QMessageBox::critical(this, tr("Error"), tr("Starting reverse proxy failed!"));
 }
 
+void ConfigurationWindow::initOutputDevices()
+{
+    auto *model = new QStandardItemModel;
+
+    auto *item = new QStandardItem(tr("Default Driver"));
+    item->setFlags(item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable));
+    item->setData("parent", Qt::AccessibleDescriptionRole);
+    QFont font = item->font();
+    font.setBold(true);
+    item->setFont(font);
+    model->appendRow(item);
+
+    BASS_SetConfig(BASS_CONFIG_UNICODE, TRUE);
+    BASS_DEVICEINFO info;
+    for (int a = 1; BASS_GetDeviceInfo(a, &info); a++)
+    {
+        if (info.flags & BASS_DEVICE_ENABLED)
+        {
+            auto *item = new QStandardItem(QString::fromUtf8(info.name) + QString(4, QChar(' ')));
+            item->setData("child", Qt::AccessibleDescriptionRole);
+            model->appendRow(item);
+        }
+    }
+#if defined(Q_OS_WIN)
+
+    BASS_ASIO_DEVICEINFO asioinfo;
+    for (int a = 0; BASS_ASIO_GetDeviceInfo(a, &asioinfo); a++)
+    {
+        if (a == 0)
+        {
+            item = new QStandardItem("ASIO");
+            item->setFlags(item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable));
+            item->setData("parent", Qt::AccessibleDescriptionRole);
+            font.setBold(true);
+            item->setFont(font);
+            model->appendRow(item);
+        }
+        auto *item = new QStandardItem(QString::fromUtf8(asioinfo.name) + QString(4, QChar(' ')));
+        item->setData("child", Qt::AccessibleDescriptionRole);
+        model->appendRow(item);
+    }
+
+    BASS_WASAPI_DEVICEINFO wasapiinfo;
+    for (int a = 0; BASS_WASAPI_GetDeviceInfo(a, &wasapiinfo); a++)
+    {
+        if (a == 0)
+        {
+            item = new QStandardItem("WASAPI");
+            item->setFlags(item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable));
+            item->setData("parent", Qt::AccessibleDescriptionRole);
+            font.setBold(true);
+            item->setFont(font);
+            model->appendRow(item);
+        }
+        if (!(wasapiinfo.flags & BASS_DEVICE_INPUT)      // device is an output device (not input)
+            && (wasapiinfo.flags & BASS_DEVICE_ENABLED)) // and it is enabled
+        {
+            auto *item = new QStandardItem(QString::fromUtf8(wasapiinfo.name) + QString(4, QChar(' ')));
+            item->setData("child", Qt::AccessibleDescriptionRole);
+            model->appendRow(item);
+        }
+    }
+
+#endif
+    ui->cbOutputDevices->setModel(model);
+}
+
+void ConfigurationWindow::initNetworkInterfaces()
+{
+    auto interfaces = QNetworkInterface::allInterfaces();
+    for (const auto &i : interfaces)
+    {
+        if (i.type() == QNetworkInterface::Ethernet || i.type() == QNetworkInterface::Wifi || i.type() == QNetworkInterface::Ppp)
+            ui->reverseProxyBindNetworkInterface->addItem(i.humanReadableName());
+    }
+}
 void ConfigurationWindow::restartReverseProxy()
 {
     StopReverseProxy();

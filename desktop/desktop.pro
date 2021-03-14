@@ -28,7 +28,8 @@ SOURCES += \
     $$PWD/qtlockedfile_unix.cpp \
     $$PWD/qtlockedfile_win.cpp \
     $$PWD/songlistmodel.cpp \
-    $$PWD/sqlite3helper.cpp
+    $$PWD/sqlite3helper.cpp \
+    comboboxdelegate.cpp
 
 HEADERS += \
     $$PWD/configurationwindow.h \
@@ -46,7 +47,8 @@ HEADERS += \
     $$PWD/qtlocalpeer.h \
     $$PWD/qtlockedfile.h \
     $$PWD/songlistmodel.h \
-    $$PWD/sqlite3helper.h
+    $$PWD/sqlite3helper.h \
+    comboboxdelegate.h
 
 FORMS += \
     $$PWD/configurationwindow.ui \

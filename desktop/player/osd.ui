@@ -34,7 +34,7 @@
     <string notr="true">color: white;</string>
    </property>
    <property name="text">
-    <string>标题信息</string>
+    <string>Title</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

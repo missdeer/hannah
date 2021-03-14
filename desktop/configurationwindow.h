@@ -37,7 +37,9 @@ public slots:
 
     void onApplicationMessageReceived(const QString &message);
 private slots:
-    void onUseExternalPlayerStateChanged(bool state);
+    void onUseBuiltinPlayerStateChanged(bool checked);
+
+    void onUseExternalPlayerStateChanged(bool checked);
 
     void onExternalPlayerPathTextChanged(const QString &text);
 
@@ -92,6 +94,8 @@ private:
     void openLink(const QString &text);
     void restartReverseProxy();
     void startReverseProxy();
+    void initOutputDevices();
+    void initNetworkInterfaces();
 };
 
 inline ConfigurationWindow *configurationWindow = nullptr;

@@ -1,8 +1,6 @@
 #ifndef SHADOWPLAYER_H
 #define SHADOWPLAYER_H
 #include <math.h>
-#include <omp.h>
-#include <spslider.h>
 
 #include <QMainWindow>
 #if defined(Q_OS_WIN)

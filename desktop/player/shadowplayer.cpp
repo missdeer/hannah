@@ -430,11 +430,13 @@ void ShadowPlayer::loadFile(QString file)
             playing = true;
             ui->playButton->setIcon(QIcon(":/rc/images/player/Pause.png"));
             ui->playButton->setToolTip(tr("Pause"));
+#if defined(Q_OS_WIN)
             taskbarProgress->show();
             taskbarProgress->resume();
             taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Play.png"));
             playToolButton->setIcon(QIcon(":/rc/images/player/Pause.png"));
             playToolButton->setToolTip(tr("Pause"));
+#endif
         }
 
         if (!lyrics->resolve(file))
@@ -498,10 +500,12 @@ void ShadowPlayer::UpdateTime()
             playing = false;
             ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
             ui->playButton->setToolTip(tr("Play"));
+#if defined(Q_OS_WIN)
             taskbarProgress->hide();
             taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Stop.png"));
             playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
             playToolButton->setToolTip(tr("Play"));
+#endif
             break;
         case 1:
             if (playing)
@@ -519,10 +523,12 @@ void ShadowPlayer::UpdateTime()
                     playing = false;
                     ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
                     ui->playButton->setToolTip(tr("Play"));
+#if defined(Q_OS_WIN)
                     taskbarProgress->hide();
                     taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Stop.png"));
                     playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
                     playToolButton->setToolTip(tr("Play"));
+#endif
                 }
                 else
                 {
@@ -651,11 +657,13 @@ void ShadowPlayer::on_playButton_clicked()
             playing = true;
             ui->playButton->setIcon(QIcon(":/rc/images/player/Pause.png"));
             ui->playButton->setToolTip(tr("Pause"));
+#if defined(Q_OS_WIN)
             taskbarProgress->show();
             taskbarProgress->resume();
             taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Play.png"));
             playToolButton->setIcon(QIcon(":/rc/images/player/Pause.png"));
             playToolButton->setToolTip(tr("Pause"));
+#endif
         }
         else
         {
@@ -669,11 +677,13 @@ void ShadowPlayer::on_playButton_clicked()
         playing = false;
         ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
         ui->playButton->setToolTip(tr("Play"));
+#if defined(Q_OS_WIN)
         taskbarProgress->show();
         taskbarProgress->pause();
         taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Pause.png"));
         playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
         playToolButton->setToolTip(tr("Play"));
+#endif
     }
 }
 
@@ -683,10 +693,12 @@ void ShadowPlayer::on_stopButton_clicked()
     playing = false;
     ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
     ui->playButton->setToolTip(tr("Play"));
+#if defined(Q_OS_WIN)
     taskbarProgress->hide();
     taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Stop.png"));
     playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
     playToolButton->setToolTip(tr("Play"));
+#endif
 }
 
 void ShadowPlayer::on_volSlider_valueChanged(int value)

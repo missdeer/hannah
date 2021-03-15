@@ -899,33 +899,17 @@ void ShadowPlayer::on_miniSizeButton_clicked()
 
 void ShadowPlayer::on_playModeButton_clicked()
 {
-    playMode = ++playMode % 5;
+    const QStringList icons    = {":/rc/images/player/Single.png",
+                               ":/rc/images/player/Repeat.png",
+                               ":/rc/images/player/Order.png",
+                               ":/rc/images/player/AllRepeat.png",
+                               ":/rc/images/player/Shuffle.png"};
+    const QStringList tooltips = {tr("Track Play"), tr("Track Repeat"), tr("Playlist Order"), tr("Playlist Repeat"), tr("Shuffle")};
+    playMode                   = ++playMode % 5;
+    Q_ASSERT(playMode >= 0 && playMode <= 4);
 
-    switch (playMode)
-    {
-    case 0:
-        ui->playModeButton->setIcon(QIcon(":/rc/images/player/Single.png"));
-        ui->playModeButton->setToolTip(tr("Track Play"));
-        break;
-    case 1:
-        ui->playModeButton->setIcon(QIcon(":/rc/images/player/Repeat.png"));
-        ui->playModeButton->setToolTip(tr("Track Repeat"));
-        break;
-    case 2:
-        ui->playModeButton->setIcon(QIcon(":/rc/images/player/Order.png"));
-        ui->playModeButton->setToolTip(tr("Playlist Order"));
-        break;
-    case 3:
-        ui->playModeButton->setIcon(QIcon(":/rc/images/player/AllRepeat.png"));
-        ui->playModeButton->setToolTip(tr("Playlist Repeat"));
-        break;
-    case 4:
-        ui->playModeButton->setIcon(QIcon(":/rc/images/player/Shuffle.png"));
-        ui->playModeButton->setToolTip(tr("Shuffle"));
-        break;
-    default:
-        break;
-    }
+    ui->playModeButton->setIcon(QIcon(icons[playMode]));
+    ui->playModeButton->setToolTip(tooltips[playMode]);
     QToolTip::showText(QCursor::pos(), ui->playModeButton->toolTip());
 }
 
@@ -1290,31 +1274,17 @@ void ShadowPlayer::loadConfig()
         stream >> dataInt;
         ui->reverbDial->setValue(dataInt);
         stream >> playMode;
-        switch (playMode)
-        {
-        case 0:
-            ui->playModeButton->setIcon(QIcon(":/rc/images/player/Single.png"));
-            ui->playModeButton->setToolTip(tr("Track"));
-            break;
-        case 1:
-            ui->playModeButton->setIcon(QIcon(":/rc/images/player/Repeat.png"));
-            ui->playModeButton->setToolTip(tr("Track Repeat"));
-            break;
-        case 2:
-            ui->playModeButton->setIcon(QIcon(":/rc/images/player/Order.png"));
-            ui->playModeButton->setToolTip(tr("Order"));
-            break;
-        case 3:
-            ui->playModeButton->setIcon(QIcon(":/rc/images/player/AllRepeat.png"));
-            ui->playModeButton->setToolTip(tr("Playlist Repeat"));
-            break;
-        case 4:
-            ui->playModeButton->setIcon(QIcon(":/rc/images/player/Shuffle.png"));
-            ui->playModeButton->setToolTip(tr("Shuffle"));
-            break;
-        default:
-            break;
-        }
+        playMode %= 5;
+        const QStringList icons    = {":/rc/images/player/Single.png",
+                                   ":/rc/images/player/Repeat.png",
+                                   ":/rc/images/player/Order.png",
+                                   ":/rc/images/player/AllRepeat.png",
+                                   ":/rc/images/player/Shuffle.png"};
+        const QStringList tooltips = {tr("Track Play"), tr("Track Repeat"), tr("Playlist Order"), tr("Playlist Repeat"), tr("Shuffle")};
+        Q_ASSERT(playMode >= 0 && playMode <= 4);
+        ui->playModeButton->setIcon(QIcon(icons[playMode]));
+        ui->playModeButton->setToolTip(tooltips[playMode]);
+
         stream >> skinMode;
         stream >> skinPos;
         stream >> skinDrawPos;

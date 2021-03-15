@@ -45,7 +45,7 @@ bool PlayList::fixSuffix(const QString &fileName)
 
 bool PlayList::isEmpty()
 {
-    if (trackList.isEmpty())
+    if (m_trackList.isEmpty())
         return true;
     else
         return false;
@@ -55,10 +55,10 @@ void PlayList::add(const QString &fileName)
 {
     if (fixSuffix(fileName))
     {
-        if ((int)(m_player->getFileSecond(fileName)) >= lengthFilter)
+        if ((int)(m_player->getFileSecond(fileName)) >= m_lengthFilter)
         {
-            trackList.append(fileName);
-            timeList.append(m_player->getFileTotalTime(fileName));
+            m_trackList.append(fileName);
+            m_timeList.append(m_player->getFileTotalTime(fileName));
         }
     }
     tableUpdate();
@@ -68,12 +68,12 @@ void PlayList::insert(int index, const QString &fileName)
 {
     if (fixSuffix(fileName))
     {
-        if ((int)(m_player->getFileSecond(fileName)) >= lengthFilter)
+        if ((int)(m_player->getFileSecond(fileName)) >= m_lengthFilter)
         {
-            if (index < curIndex)
-                ++curIndex;
-            trackList.insert(index, fileName);
-            timeList.insert(index, m_player->getFileTotalTime(fileName));
+            if (index < m_curIndex)
+                ++m_curIndex;
+            m_trackList.insert(index, fileName);
+            m_timeList.insert(index, m_player->getFileTotalTime(fileName));
         }
     }
     tableUpdate();
@@ -81,31 +81,31 @@ void PlayList::insert(int index, const QString &fileName)
 
 void PlayList::remove(int index)
 {
-    if (index <= curIndex && index > -1)
-        --curIndex;
-    trackList.removeAt(index);
-    timeList.removeAt(index);
+    if (index <= m_curIndex && index > -1)
+        --m_curIndex;
+    m_trackList.removeAt(index);
+    m_timeList.removeAt(index);
     tableUpdate();
 }
 
 void PlayList::clearAll()
 {
-    trackList.clear();
-    timeList.clear();
-    curIndex = 0;
+    m_trackList.clear();
+    m_timeList.clear();
+    m_curIndex = 0;
     tableUpdate();
 }
 
 int PlayList::getLength()
 {
-    return trackList.length();
+    return m_trackList.length();
 }
 
 int PlayList::getIndex()
 {
-    if (!trackList.isEmpty())
+    if (!m_trackList.isEmpty())
     {
-        return curIndex;
+        return m_curIndex;
     }
     else
     {
@@ -115,30 +115,30 @@ int PlayList::getIndex()
 
 QString PlayList::next(bool isLoop)
 {
-    if (!trackList.isEmpty())
+    if (!m_trackList.isEmpty())
     {
         if (isLoop)
         {
-            if (curIndex < trackList.length() - 1)
+            if (m_curIndex < m_trackList.length() - 1)
             {
-                ++curIndex;
+                ++m_curIndex;
             }
             else
             {
-                curIndex = 0;
+                m_curIndex = 0;
             }
-            ui->playListTable->selectRow(curIndex);
+            ui->playListTable->selectRow(m_curIndex);
             tableUpdate();
-            return trackList[curIndex];
+            return m_trackList[m_curIndex];
         }
         else
         {
-            if (curIndex < trackList.length() - 1)
+            if (m_curIndex < m_trackList.length() - 1)
             {
-                ++curIndex;
-                ui->playListTable->selectRow(curIndex);
+                ++m_curIndex;
+                ui->playListTable->selectRow(m_curIndex);
                 tableUpdate();
-                return trackList[curIndex];
+                return m_trackList[m_curIndex];
             }
             else
             {
@@ -151,30 +151,30 @@ QString PlayList::next(bool isLoop)
 
 QString PlayList::previous(bool isLoop)
 {
-    if (!trackList.isEmpty())
+    if (!m_trackList.isEmpty())
     {
         if (isLoop)
         {
-            if (curIndex == 0)
+            if (m_curIndex == 0)
             {
-                curIndex = trackList.length() - 1;
+                m_curIndex = m_trackList.length() - 1;
             }
             else
             {
-                --curIndex;
+                --m_curIndex;
             }
-            ui->playListTable->selectRow(curIndex);
+            ui->playListTable->selectRow(m_curIndex);
             tableUpdate();
-            return trackList[curIndex];
+            return m_trackList[m_curIndex];
         }
         else
         {
-            if (curIndex > 0)
+            if (m_curIndex > 0)
             {
-                --curIndex;
-                ui->playListTable->selectRow(curIndex);
+                --m_curIndex;
+                ui->playListTable->selectRow(m_curIndex);
                 tableUpdate();
-                return trackList[curIndex];
+                return m_trackList[m_curIndex];
             }
             else
             {
@@ -185,32 +185,32 @@ QString PlayList::previous(bool isLoop)
     return "";
 }
 
-QString PlayList::playIndex(int index)
+const QString &PlayList::playIndex(int index)
 {
-    curIndex = index;
-    ui->playListTable->selectRow(curIndex);
+    m_curIndex = index;
+    ui->playListTable->selectRow(m_curIndex);
     tableUpdate();
-    return trackList[curIndex];
+    return m_trackList[m_curIndex];
 }
 
-QString PlayList::getFileNameForIndex(int index)
+const QString &PlayList::getFileNameForIndex(int index)
 {
-    return trackList[index];
+    return m_trackList[index];
 }
 
-QString PlayList::getCurFile()
+const QString &PlayList::getCurFile()
 {
-    return trackList[curIndex];
+    return m_trackList[m_curIndex];
 }
 
 QString PlayList::playLast()
 {
-    if (!trackList.isEmpty())
+    if (!m_trackList.isEmpty())
     {
-        curIndex = trackList.length() - 1;
-        ui->playListTable->selectRow(curIndex);
+        m_curIndex = m_trackList.length() - 1;
+        ui->playListTable->selectRow(m_curIndex);
         tableUpdate();
-        return trackList[curIndex];
+        return m_trackList[m_curIndex];
     }
     return "";
 }
@@ -219,16 +219,16 @@ void PlayList::tableUpdate()
 {
     ui->playListTable->clear();
     ui->playListTable->setRowCount(getLength());
-    int count = trackList.size();
+    int count = m_trackList.size();
     for (int i = 0; i < count; i++)
     {
-        QString   fileName = trackList[i];
+        QString   fileName = m_trackList[i];
         QFileInfo fileInfo(fileName);
 
         QTableWidgetItem *item     = new QTableWidgetItem(fileInfo.fileName());
-        QTableWidgetItem *timeItem = new QTableWidgetItem(timeList[i]);
+        QTableWidgetItem *timeItem = new QTableWidgetItem(m_timeList[i]);
 
-        if (i == curIndex)
+        if (i == m_curIndex)
         {
             item->setBackgroundColor(QColor(128, 255, 0, 128));
             timeItem->setBackgroundColor(QColor(128, 255, 0, 128));
@@ -284,7 +284,7 @@ void PlayList::dropEvent(QDropEvent *event)
 
 void PlayList::on_playListTable_cellDoubleClicked(int row, int)
 {
-    curIndex = row;
+    m_curIndex = row;
     emit callPlayer();
     tableUpdate();
 }
@@ -329,13 +329,13 @@ void PlayList::on_addButton_clicked()
 
 void PlayList::on_searchButton_clicked()
 {
-    if (!trackList.isEmpty() && !ui->searchEdit->text().isEmpty())
+    if (!m_trackList.isEmpty() && !ui->searchEdit->text().isEmpty())
     {
         int resultIndex = -1;
-        int count       = trackList.size();
+        int count       = m_trackList.size();
         for (int i = 0; i < count; i++)
         {
-            QString   fileName = trackList[i];
+            QString   fileName = m_trackList[i];
             QFileInfo fileInfo(fileName);
 
             if (ui->isCaseSensitive->isChecked())
@@ -377,16 +377,16 @@ void PlayList::on_searchButton_clicked()
 
 void PlayList::on_searchNextButton_clicked()
 {
-    if (!trackList.isEmpty() && !ui->searchEdit->text().isEmpty())
+    if (!m_trackList.isEmpty() && !ui->searchEdit->text().isEmpty())
     {
         int resultIndex = -1;
         int start       = ui->playListTable->currentRow() + 1;
-        int count       = trackList.size();
+        int count       = m_trackList.size();
 
         if (start < count)
             for (int i = start; i < count; i++)
             {
-                QString   fileName = trackList[i];
+                QString   fileName = m_trackList[i];
                 QFileInfo fileInfo(fileName);
 
                 if (ui->isCaseSensitive->isChecked())
@@ -432,13 +432,13 @@ void PlayList::on_setLenFilButton_clicked()
     int  set = QInputDialog::getInt(0,
                                    tr("Minimum Playback Length"),
                                    tr("Audio files smaller than this length will not be accepted \n unit: seconds"),
-                                   lengthFilter,
+                                   m_lengthFilter,
                                    0,
                                    2147483647,
                                    1,
                                    &ok);
     if (ok)
-        lengthFilter = set;
+        m_lengthFilter = set;
 }
 
 void PlayList::saveToFile(const QString &fileName)
@@ -446,7 +446,7 @@ void PlayList::saveToFile(const QString &fileName)
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     QDataStream stream(&file);
-    stream << (quint32)0x61727487 << trackList << timeList << curIndex;
+    stream << (quint32)0x61727487 << m_trackList << m_timeList << m_curIndex;
     file.close();
 }
 
@@ -459,9 +459,9 @@ void PlayList::readFromFile(const QString &fileName)
     stream >> magic;
     if (magic == 0x61727487)
     {
-        stream >> trackList;
-        stream >> timeList;
-        stream >> curIndex;
+        stream >> m_trackList;
+        stream >> m_timeList;
+        stream >> m_curIndex;
     }
     file.close();
     tableUpdate();

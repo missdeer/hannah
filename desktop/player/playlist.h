@@ -30,9 +30,9 @@ public:
     int     getIndex();
     QString next(bool isLoop = false);
     QString previous(bool isLoop = false);
-    QString playIndex(int index);
-    QString getFileNameForIndex(int index);
-    QString getCurFile();
+    const QString &playIndex(int index);
+    const QString &getFileNameForIndex(int index);
+    const QString &getCurFile();
     QString playLast();
     void    tableUpdate();
     void    saveToFile(const QString &fileName);
@@ -53,11 +53,11 @@ signals:
 
 private:
     Ui::PlayList * ui;
-    QList<QString> trackList;
-    QList<QString> timeList;
+    QList<QString> m_trackList;
+    QList<QString> m_timeList;
     Player *       m_player;
-    int            curIndex {0};
-    int            lengthFilter {0};
+    int            m_curIndex {0};
+    int            m_lengthFilter {0};
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;

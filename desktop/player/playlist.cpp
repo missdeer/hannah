@@ -45,10 +45,7 @@ bool PlayList::fixSuffix(const QString &fileName)
 
 bool PlayList::isEmpty()
 {
-    if (m_trackList.isEmpty())
-        return true;
-    else
-        return false;
+    return m_trackList.isEmpty();
 }
 
 void PlayList::add(const QString &fileName)
@@ -107,10 +104,7 @@ int PlayList::getIndex()
     {
         return m_curIndex;
     }
-    else
-    {
-        return -1;
-    }
+    return -1;
 }
 
 QString PlayList::next(bool isLoop)
@@ -131,20 +125,14 @@ QString PlayList::next(bool isLoop)
             tableUpdate();
             return m_trackList[m_curIndex];
         }
-        else
+        if (m_curIndex < m_trackList.length() - 1)
         {
-            if (m_curIndex < m_trackList.length() - 1)
-            {
-                ++m_curIndex;
-                ui->playListTable->selectRow(m_curIndex);
-                tableUpdate();
-                return m_trackList[m_curIndex];
-            }
-            else
-            {
-                return "stop";
-            }
+            ++m_curIndex;
+            ui->playListTable->selectRow(m_curIndex);
+            tableUpdate();
+            return m_trackList[m_curIndex];
         }
+        return "stop";
     }
     return "";
 }
@@ -167,20 +155,14 @@ QString PlayList::previous(bool isLoop)
             tableUpdate();
             return m_trackList[m_curIndex];
         }
-        else
+        if (m_curIndex > 0)
         {
-            if (m_curIndex > 0)
-            {
-                --m_curIndex;
-                ui->playListTable->selectRow(m_curIndex);
-                tableUpdate();
-                return m_trackList[m_curIndex];
-            }
-            else
-            {
-                return "stop";
-            }
+            --m_curIndex;
+            ui->playListTable->selectRow(m_curIndex);
+            tableUpdate();
+            return m_trackList[m_curIndex];
         }
+        return "stop";
     }
     return "";
 }
@@ -230,8 +212,8 @@ void PlayList::tableUpdate()
 
         if (i == m_curIndex)
         {
-            item->setBackgroundColor(QColor(128, 255, 0, 128));
-            timeItem->setBackgroundColor(QColor(128, 255, 0, 128));
+            item->setBackground(QColor(128, 255, 0, 128));
+            timeItem->setBackground(QColor(128, 255, 0, 128));
         }
 
         ui->playListTable->setItem(i, 0, item);
@@ -242,9 +224,9 @@ void PlayList::tableUpdate()
 void PlayList::on_deleteButton_clicked()
 {
     QItemSelectionModel *selectionModel = ui->playListTable->selectionModel();
-    QModelIndexList selected = selectionModel->selectedIndexes();
+    QModelIndexList      selected       = selectionModel->selectedIndexes();
     QMap<int, int>       rowMap;
-    foreach (QModelIndex index, selected)
+    for (const auto &index : selected)
     {
         rowMap.insert(index.row(), 0);
     }
@@ -265,16 +247,13 @@ void PlayList::dragEnterEvent(QDragEnterEvent *event)
 
 void PlayList::dropEvent(QDropEvent *event)
 {
-    QList<QUrl> urls = event->mimeData()->urls();
+    auto urls = event->mimeData()->urls();
     if (urls.isEmpty())
         return;
 
-    int     urlCount = urls.size();
-    QString fileName;
-
-    for (int i = 0; i < urlCount; i++)
+    for (const auto &u : urls)
     {
-        fileName = urls[i].toLocalFile();
+        auto fileName = u.toLocalFile();
         if (fixSuffix(fileName))
         {
             add(fileName);
@@ -319,10 +298,8 @@ void PlayList::on_addButton_clicked()
         tr("Add audio"),
         0,
         tr("Audio file (*.mp3 *.mp2 *.mp1 *.wav *.aiff *.ogg *.ape *.mp4 *.m4a *.m4v *.aac *.alac *.tta *.flac *.wma *.wv)"));
-    int count = fileNames.size();
-    for (int i = 0; i < count; i++)
+    for (const auto &fileName : fileNames)
     {
-        QString fileName = fileNames[i];
         add(fileName);
     }
 }

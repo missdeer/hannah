@@ -33,7 +33,7 @@ class ShadowPlayer : public QMainWindow
 public:
     explicit ShadowPlayer(QWidget *parent = 0);
     ~ShadowPlayer();
-    void loadFile(const QString &file);
+    void loadAudio(const QString &uri);
     void loadSkin(const QString &image, bool save = true);
     int  cutInt(int i);
     void addToListAndPlay(const QList<QUrl> &files);
@@ -100,7 +100,6 @@ private:
     void  infoLabelAnimation();
     void  drawFFTBar(QWidget *parent, int x, int y, int width, int height, double percent);
     void  drawFFTBarPeak(QWidget *parent, int x, int y, int width, int height, double percent);
-    void  fullZero(int length, float *array);
     void  saveConfig();
     void  loadConfig();
     void  saveSkinData();

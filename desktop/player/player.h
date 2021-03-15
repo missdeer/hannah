@@ -13,7 +13,7 @@ public:
     QString getTags();
     void    setVol(int vol);
     int     getVol();
-    QString openFile(const QString &fileName);
+    QString openAudio(const QString &uri);
     void    play();
     void    pause();
     void    stop();

@@ -410,12 +410,12 @@ void ShadowPlayer::infoLabelAnimation()
     update();
 }
 
-void ShadowPlayer::loadFile(const QString &file)
+void ShadowPlayer::loadAudio(const QString &uri)
 {
-    if (player->openFile(file) != "err")
+    if (player->openAudio(uri) != "err")
     {
-        QFileInfo fileinfo(file);
-        showCoverPic(file);
+        QFileInfo fileinfo(uri);
+        showCoverPic(uri);
 
         ui->mediaInfoLabel->setText(player->getNowPlayInfo());
         ui->totalTimeLabel->setText(player->getTotalTime());
@@ -445,10 +445,10 @@ void ShadowPlayer::loadFile(const QString &file)
 #endif
         }
 
-        if (!lyrics->resolve(file))
-            if (!lyrics->loadFromLrcDir(file))
-                if (!lyrics->loadFromFileRelativePath(file, "/Lyrics/"))
-                    lyrics->loadFromFileRelativePath(file, "/../Lyrics/");
+        if (!lyrics->resolve(uri))
+            if (!lyrics->loadFromLrcDir(uri))
+                if (!lyrics->loadFromFileRelativePath(uri, "/Lyrics/"))
+                    lyrics->loadFromFileRelativePath(uri, "/../Lyrics/");
 
         if (player->getTags() == tr("Show_File_Name"))
             ui->tagLabel->setText(fileinfo.fileName());
@@ -538,21 +538,21 @@ void ShadowPlayer::UpdateTime()
                 }
                 else
                 {
-                    loadFile(nextFile);
+                    loadAudio(nextFile);
                 }
             }
             break;
         case 3:
             if (playing)
             {
-                loadFile(playList->next(true));
+                loadAudio(playList->next(true));
             }
             break;
         case 4:
             if (playing)
             {
                 int index = QRandomGenerator::global()->bounded(playList->getLength());
-                loadFile(playList->playIndex(index));
+                loadAudio(playList->playIndex(index));
             }
         default:
             break;
@@ -638,17 +638,13 @@ void ShadowPlayer::on_openButton_clicked()
     QStringList files = QFileDialog::getOpenFileNames(
         this, tr("Open"), 0, tr("Audio file (*.mp3 *.mp2 *.mp1 *.wav *.aiff *.ogg *.ape *.mp4 *.m4a *.m4v *.aac *.alac *.tta *.flac *.wma *.wv)"));
     int newIndex = playList->getLength();
-    int length   = files.length();
-    if (!files.isEmpty())
+    for (const auto &f : files)
     {
-        for (int i = 0; i < length; i++)
-        {
-            playList->add(files[i]);
-        }
-        if (playList->getLength() > newIndex)
-        {
-            loadFile(playList->playIndex(newIndex));
-        }
+        playList->add(f);
+    }
+    if (playList->getLength() > newIndex)
+    {
+        loadAudio(playList->playIndex(newIndex));
     }
 }
 
@@ -674,7 +670,7 @@ void ShadowPlayer::on_playButton_clicked()
         else
         {
             if (playList->getLength() > 0)
-                loadFile(playList->playIndex(playList->getIndex()));
+                loadAudio(playList->playIndex(playList->getIndex()));
         }
     }
     else
@@ -741,14 +737,6 @@ float ShadowPlayer::arraySUM(int start, int end, float *array)
     return sum;
 }
 
-void ShadowPlayer::fullZero(int length, float *array)
-{
-    for (int i = 0; i < length; i++)
-    {
-        array[i] = 0;
-    }
-}
-
 void ShadowPlayer::updateFFT()
 {
     if (player->isPlaying())
@@ -756,7 +744,7 @@ void ShadowPlayer::updateFFT()
         if (ui->leftLevel->value() > 6 || ui->rightLevel->value() > 6)
             player->getFFT(fftData);
         else
-            fullZero(2048, fftData);
+            memset(&fftData, 0, sizeof(fftData));
 
         double start = 5;
         for (int i = 0; i < 29; i++)
@@ -986,7 +974,7 @@ void ShadowPlayer::addToListAndPlay(const QList<QUrl> &files)
             playList->add(files[i].toLocalFile());
         }
         if (playList->getLength() > newIndex)
-            loadFile(playList->playIndex(newIndex));
+            loadAudio(playList->playIndex(newIndex));
     }
 }
 
@@ -1001,7 +989,7 @@ void ShadowPlayer::addToListAndPlay(const QStringList &files)
             playList->add(files[i]);
         }
         if (playList->getLength() > newIndex)
-            loadFile(playList->playIndex(newIndex));
+            loadAudio(playList->playIndex(newIndex));
     }
 }
 
@@ -1010,7 +998,7 @@ void ShadowPlayer::addToListAndPlay(const QString &file)
     int newIndex = playList->getLength();
     playList->add(file);
     if (playList->getLength() > newIndex)
-        loadFile(playList->playIndex(newIndex));
+        loadAudio(playList->playIndex(newIndex));
 }
 
 void ShadowPlayer::showPlayer()
@@ -1023,19 +1011,19 @@ void ShadowPlayer::on_playPreButton_clicked()
 {
     if (playMode == 3)
     {
-        loadFile(playList->previous(true));
+        loadAudio(playList->previous(true));
     }
     else if (playMode == 4)
     {
         if (!playList->isEmpty())
         {
             int index = QRandomGenerator::global()->bounded(playList->getLength());
-            loadFile(playList->playIndex(index));
+            loadAudio(playList->playIndex(index));
         }
     }
     else
     {
-        loadFile(playList->previous(false));
+        loadAudio(playList->previous(false));
     }
 }
 
@@ -1043,19 +1031,19 @@ void ShadowPlayer::on_playNextButton_clicked()
 {
     if (playMode == 3)
     {
-        loadFile(playList->next(true));
+        loadAudio(playList->next(true));
     }
     else if (playMode == 4)
     {
         if (!playList->isEmpty())
         {
             int index = QRandomGenerator::global()->bounded(playList->getLength());
-            loadFile(playList->playIndex(index));
+            loadAudio(playList->playIndex(index));
         }
     }
     else
     {
-        loadFile(playList->next(false));
+        loadAudio(playList->next(false));
     }
 }
 
@@ -1092,7 +1080,7 @@ void ShadowPlayer::on_playListButton_clicked()
 
 void ShadowPlayer::callFromPlayList()
 {
-    loadFile(playList->getCurFile());
+    loadAudio(playList->getCurFile());
 }
 
 void ShadowPlayer::on_reverseButton_clicked()

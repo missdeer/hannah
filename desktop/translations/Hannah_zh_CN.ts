@@ -331,72 +331,72 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="304"/>
+        <location filename="../player/playlist.cpp" line="283"/>
         <source>Insert before selected item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="306"/>
-        <location filename="../player/playlist.cpp" line="321"/>
+        <location filename="../player/playlist.cpp" line="285"/>
+        <location filename="../player/playlist.cpp" line="300"/>
         <source>Audio file (*.mp3 *.mp2 *.mp1 *.wav *.aiff *.ogg *.ape *.mp4 *.m4a *.m4v *.aac *.alac *.tta *.flac *.wma *.wv)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="319"/>
+        <location filename="../player/playlist.cpp" line="298"/>
         <source>Add audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="365"/>
+        <location filename="../player/playlist.cpp" line="342"/>
         <source>Sorry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="365"/>
+        <location filename="../player/playlist.cpp" line="342"/>
         <source>Cannot find.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="370"/>
-        <location filename="../player/playlist.cpp" line="421"/>
+        <location filename="../player/playlist.cpp" line="347"/>
+        <location filename="../player/playlist.cpp" line="398"/>
         <source>Hello</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="370"/>
-        <location filename="../player/playlist.cpp" line="421"/>
+        <location filename="../player/playlist.cpp" line="347"/>
+        <location filename="../player/playlist.cpp" line="398"/>
         <source>What are you looking for?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="374"/>
-        <location filename="../player/playlist.cpp" line="425"/>
+        <location filename="../player/playlist.cpp" line="351"/>
+        <location filename="../player/playlist.cpp" line="402"/>
         <source>What&apos;s this</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="374"/>
-        <location filename="../player/playlist.cpp" line="425"/>
+        <location filename="../player/playlist.cpp" line="351"/>
+        <location filename="../player/playlist.cpp" line="402"/>
         <source>Why I should search in the empty list?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="416"/>
+        <location filename="../player/playlist.cpp" line="393"/>
         <source>Searching done!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="416"/>
+        <location filename="../player/playlist.cpp" line="393"/>
         <source>All things are searched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="433"/>
+        <location filename="../player/playlist.cpp" line="410"/>
         <source>Minimum Playback Length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="434"/>
+        <location filename="../player/playlist.cpp" line="411"/>
         <source>Audio files smaller than this length will not be accepted 
  unit: seconds</source>
         <translation type="unfinished"></translation>
@@ -488,12 +488,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../player/player.cpp" line="282"/>
+        <location filename="../player/player.cpp" line="275"/>
         <source>mono</source>
         <translation>单声道</translation>
     </message>
     <message>
-        <location filename="../player/player.cpp" line="282"/>
+        <location filename="../player/player.cpp" line="275"/>
         <source>stereo</source>
         <translation>立体声</translation>
     </message>
@@ -850,8 +850,8 @@
     <message>
         <location filename="../player/shadowplayer.cpp" line="438"/>
         <location filename="../player/shadowplayer.cpp" line="444"/>
-        <location filename="../player/shadowplayer.cpp" line="665"/>
-        <location filename="../player/shadowplayer.cpp" line="671"/>
+        <location filename="../player/shadowplayer.cpp" line="661"/>
+        <location filename="../player/shadowplayer.cpp" line="667"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
@@ -865,11 +865,11 @@
         <location filename="../player/shadowplayer.cpp" line="513"/>
         <location filename="../player/shadowplayer.cpp" line="531"/>
         <location filename="../player/shadowplayer.cpp" line="536"/>
-        <location filename="../player/shadowplayer.cpp" line="685"/>
-        <location filename="../player/shadowplayer.cpp" line="691"/>
-        <location filename="../player/shadowplayer.cpp" line="701"/>
-        <location filename="../player/shadowplayer.cpp" line="706"/>
-        <location filename="../player/shadowplayer.cpp" line="1103"/>
+        <location filename="../player/shadowplayer.cpp" line="681"/>
+        <location filename="../player/shadowplayer.cpp" line="687"/>
+        <location filename="../player/shadowplayer.cpp" line="697"/>
+        <location filename="../player/shadowplayer.cpp" line="702"/>
+        <location filename="../player/shadowplayer.cpp" line="1091"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
@@ -884,93 +884,93 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="888"/>
+        <location filename="../player/shadowplayer.cpp" line="876"/>
         <source>Choose skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="888"/>
+        <location filename="../player/shadowplayer.cpp" line="876"/>
         <source>Image file (*.bmp *.jpg *.jpeg *.png *.gif)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="907"/>
-        <location filename="../player/shadowplayer.cpp" line="1283"/>
+        <location filename="../player/shadowplayer.cpp" line="895"/>
+        <location filename="../player/shadowplayer.cpp" line="1271"/>
         <source>Track Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="907"/>
-        <location filename="../player/shadowplayer.cpp" line="1283"/>
+        <location filename="../player/shadowplayer.cpp" line="895"/>
+        <location filename="../player/shadowplayer.cpp" line="1271"/>
         <source>Track Repeat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="907"/>
-        <location filename="../player/shadowplayer.cpp" line="1283"/>
+        <location filename="../player/shadowplayer.cpp" line="895"/>
+        <location filename="../player/shadowplayer.cpp" line="1271"/>
         <source>Playlist Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="907"/>
-        <location filename="../player/shadowplayer.cpp" line="1283"/>
+        <location filename="../player/shadowplayer.cpp" line="895"/>
+        <location filename="../player/shadowplayer.cpp" line="1271"/>
         <source>Playlist Repeat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="907"/>
-        <location filename="../player/shadowplayer.cpp" line="1283"/>
+        <location filename="../player/shadowplayer.cpp" line="895"/>
+        <location filename="../player/shadowplayer.cpp" line="1271"/>
         <source>Shuffle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="926"/>
+        <location filename="../player/shadowplayer.cpp" line="914"/>
         <source>Load lyric</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="926"/>
+        <location filename="../player/shadowplayer.cpp" line="914"/>
         <source>Lyric file (*.lrc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="943"/>
+        <location filename="../player/shadowplayer.cpp" line="931"/>
         <source>Playback speed (x%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1109"/>
+        <location filename="../player/shadowplayer.cpp" line="1097"/>
         <source>Reverse Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1125"/>
+        <location filename="../player/shadowplayer.cpp" line="1113"/>
         <source>Acceleration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1126"/>
+        <location filename="../player/shadowplayer.cpp" line="1114"/>
         <source>Gravitational acceleration 
  [parameters are ratios, 1 = total length of spectrum bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1138"/>
+        <location filename="../player/shadowplayer.cpp" line="1126"/>
         <source>Maximum drop speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1138"/>
+        <location filename="../player/shadowplayer.cpp" line="1126"/>
         <source>The maximum velocity of the object falling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1145"/>
+        <location filename="../player/shadowplayer.cpp" line="1133"/>
         <source>Base speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1146"/>
+        <location filename="../player/shadowplayer.cpp" line="1134"/>
         <source>Overall speed, force multiplier 
  This value affects the elasticity, throwing force 
  The initial version was used for falling speed, when there was no physical effect 
@@ -978,23 +978,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1159"/>
+        <location filename="../player/shadowplayer.cpp" line="1147"/>
         <source>Throwing force multiplication factor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1160"/>
+        <location filename="../player/shadowplayer.cpp" line="1148"/>
         <source>The coefficient of multiplication of the intensity of the throwing force of the spectrum bar on the object 
  the throwing force will be doubled by this multiplier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1174"/>
+        <location filename="../player/shadowplayer.cpp" line="1162"/>
         <source>Elasticity factor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1175"/>
+        <location filename="../player/shadowplayer.cpp" line="1163"/>
         <source>The amount of kinetic energy retained after landing 
  the object falls to the ground, part of the kinetic energy into sound and heat 
  this parameter determines the percentage of kinetic energy remaining after the collision 
@@ -1004,24 +1004,24 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1190"/>
+        <location filename="../player/shadowplayer.cpp" line="1178"/>
         <source>Elasticity Threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1191"/>
+        <location filename="../player/shadowplayer.cpp" line="1179"/>
         <source>When the percentage of objects falling in one frame (considered to be penetrable) is less than this value 
  does not calculate the elasticity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/shadowplayer.ui" line="26"/>
-        <location filename="../player/shadowplayer.cpp" line="1234"/>
+        <location filename="../player/shadowplayer.cpp" line="1222"/>
         <source>Hannah</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.cpp" line="1234"/>
+        <location filename="../player/shadowplayer.cpp" line="1222"/>
         <source>Simple Music Player</source>
         <translation type="unfinished"></translation>
     </message>

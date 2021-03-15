@@ -1,7 +1,9 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QMap>
 #include <QMessageBox>
+#include <QUrl>
 
 #include "player.h"
 #include "bass_fx.h"
@@ -37,52 +39,59 @@ Player::~Player()
     BASS_Free();
 }
 
-QString Player::openFile(const QString &fileName)
+QString Player::openAudio(const QString &uri)
 {
-    QString     ext       = QFileInfo(fileName).suffix().toLower();
-    QStringList audioExts = {
-        "mp3",
-        "mp2",
-        "mp1",
-        "ogg",
-        "wav",
-        "aiff",
-        "ape",
-        "m4a",
-        "aac",
-        "tta",
-        "wma",
-        "mp4",
-        "m4v",
-        "alac",
-        "flac",
-        "wv",
-    };
-    if (audioExts.contains(ext))
-    {
-        BASS_ChannelStop(m_hNowPlay);
-        BASS_StreamFree(m_hNowPlay);
-        m_hNowPlay = BASS_StreamCreateFile(false,
-                                           fileName.toStdWString().c_str(),
-                                           0,
-                                           0,
-                                           BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
+    BASS_ChannelStop(m_hNowPlay);
+    BASS_StreamFree(m_hNowPlay);
 
-        if (BASS_ErrorGetCode() != 0)
+    QUrl u = QUrl::fromUserInput(uri);
+    if (u.isLocalFile())
+    {
+        QString     ext       = QFileInfo(uri).suffix().toLower();
+        QStringList audioExts = {
+            "mp3",
+            "mp2",
+            "mp1",
+            "ogg",
+            "wav",
+            "aiff",
+            "ape",
+            "m4a",
+            "aac",
+            "tta",
+            "wma",
+            "mp4",
+            "m4v",
+            "alac",
+            "flac",
+            "wv",
+        };
+        if (!audioExts.contains(ext))
         {
             return "err";
         }
-
-        if (m_hNowPlay)
-        {
-            m_hNowPlay = BASS_FX_ReverseCreate(m_hNowPlay, 2, BASS_FX_FREESOURCE | BASS_SAMPLE_FLOAT /*|BASS_SAMPLE_FX*/);
-            BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, BASS_FX_RVS_FORWARD);
-        }
-
-        m_hReverbFX = BASS_ChannelSetFX(m_hNowPlay, BASS_FX_DX8_REVERB, 1);
-        return "ok";
+        m_hNowPlay = BASS_StreamCreateFile(
+            false, uri.toStdWString().c_str(), 0, 0, BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
     }
-    return "err";
+    else
+    {
+        m_hNowPlay = BASS_StreamCreateURL(
+            uri.toStdWString().c_str(), BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN, 0, nullptr, 0);
+    }
+
+    if (BASS_ErrorGetCode() != 0)
+    {
+        return "err";
+    }
+
+    if (m_hNowPlay)
+    {
+        m_hNowPlay = BASS_FX_ReverseCreate(m_hNowPlay, 2, BASS_FX_FREESOURCE | BASS_SAMPLE_FLOAT /*|BASS_SAMPLE_FX*/);
+        BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, BASS_FX_RVS_FORWARD);
+    }
+
+    m_hReverbFX = BASS_ChannelSetFX(m_hNowPlay, BASS_FX_DX8_REVERB, 1);
+    return "ok";
 }
 
 void Player::eqReady()
@@ -167,10 +176,7 @@ int Player::getVol()
 
 bool Player::isPlaying()
 {
-    if (BASS_ChannelIsActive(m_hNowPlay) == BASS_ACTIVE_PLAYING)
-        return true;
-    else
-        return false;
+    return (BASS_ChannelIsActive(m_hNowPlay) == BASS_ACTIVE_PLAYING);
 }
 
 void Player::getFFT(float *array)
@@ -246,39 +252,26 @@ QString Player::getNowPlayInfo()
     BASS_CHANNELINFO *info = &cInfo;
     BASS_ChannelGetInfo(m_hNowPlay, info);
 
-    if (info->ctype == BASS_CTYPE_STREAM_AIFF)
-        fmt = " AIFF";
-    else if (info->ctype == BASS_CTYPE_STREAM_MP3)
-        fmt = " MP3";
-    else if (info->ctype == BASS_CTYPE_STREAM_MP2)
-        fmt = " MP2";
-    else if (info->ctype == BASS_CTYPE_STREAM_MP1)
-        fmt = " MP1";
-    else if (info->ctype == BASS_CTYPE_STREAM_OGG)
-        fmt = " OGG";
-    else if (info->ctype == BASS_CTYPE_STREAM_WAV_PCM)
-        fmt = " Wave PCM";
-    else if (info->ctype == BASS_CTYPE_STREAM_WAV_FLOAT)
-        fmt = QString::fromUtf8(" Wave Float Point");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_APE)
-    //        fmt = QString::fromUtf8(" APE");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_MP4)
-    //        fmt = QString::fromUtf8(" MP4");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_AAC)
-    //        fmt = QString::fromUtf8(" AAC");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_ALAC)
-    //        fmt = QString::fromUtf8(" ALAC");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_TTA)
-    //        fmt = QString::fromUtf8(" TTA");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_FLAC)
-    //        fmt = QString::fromUtf8(" FLAC");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_WMA)
-    //        fmt = QString::fromUtf8(" WMA");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_WMA_MP3)
-    //        fmt = QString::fromUtf8(" WMA");
-    //    else if (info->ctype == BASS_CTYPE_STREAM_WV)
-    //        fmt = QString::fromUtf8(" WV");
+    QMap<DWORD, QString> types = {
+        {BASS_CTYPE_STREAM_AIFF, " AIFF"},
+        {BASS_CTYPE_STREAM_MP3, " MP3"},
+        {BASS_CTYPE_STREAM_MP2, " MP2"},
+        {BASS_CTYPE_STREAM_MP1, " MP1"},
+        {BASS_CTYPE_STREAM_OGG, " OGG"},
+        {BASS_CTYPE_STREAM_WAV_PCM, " Wave PCM"},
+        {BASS_CTYPE_STREAM_WAV_FLOAT, " Wave Float Point"},
+        //        {BASS_CTYPE_STREAM_APE, " APE"},
+        //        {BASS_CTYPE_STREAM_MP4, " MP4"},
+        //        {BASS_CTYPE_STREAM_AAC, " AAC"},
+        //        {BASS_CTYPE_STREAM_ALAC, " ALAC"},
+        //        {BASS_CTYPE_STREAM_TTA, " TTA"},
+        //        {BASS_CTYPE_STREAM_FLAC, " FLAC"},
+        //        {BASS_CTYPE_STREAM_WMA, " WMA"},
+        //        {BASS_CTYPE_STREAM_WMA_MP3, " WMA"},
+        //        {BASS_CTYPE_STREAM_WV, " WV"},
+    };
 
+    fmt = types.value(info->ctype, "");
     return QString("%1Hz %2Kbps %3%4").arg(info->freq).arg(getBitRate()).arg((info->chans == 1) ? QObject::tr("mono") : QObject::tr("stereo"), fmt);
 }
 

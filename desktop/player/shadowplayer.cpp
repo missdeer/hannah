@@ -409,7 +409,7 @@ void ShadowPlayer::infoLabelAnimation()
     update();
 }
 
-void ShadowPlayer::loadFile(QString file)
+void ShadowPlayer::loadFile(const QString &file)
 {
     if (player->openFile(file) != "err")
     {
@@ -459,7 +459,7 @@ void ShadowPlayer::loadFile(QString file)
     }
 }
 
-void ShadowPlayer::loadSkin(QString image, bool save)
+void ShadowPlayer::loadSkin(const QString &image, bool save)
 {
     skin        = QPixmap(image);
     skinLeft    = skin.scaledToWidth(360, Qt::SmoothTransformation);
@@ -604,7 +604,7 @@ void ShadowPlayer::UpdateLrc()
     // ui->lrcLabel_7->setStyleSheet(QString("color: rgba(0, 0, 0, %1)").arg(235 * curTimePos + 10));
 }
 
-void ShadowPlayer::showCoverPic(QString filePath)
+void ShadowPlayer::showCoverPic(const QString &filePath)
 {
     QFileInfo fileinfo(filePath);
     QString   path = fileinfo.path();
@@ -1136,7 +1136,7 @@ void ShadowPlayer::on_eqComboBox_currentIndexChanged(int index)
     }
 }
 
-void ShadowPlayer::addToListAndPlay(QList<QUrl> files)
+void ShadowPlayer::addToListAndPlay(const QList<QUrl> &files)
 {
     int newIndex = playList->getLength();
     int length   = files.length();
@@ -1151,7 +1151,7 @@ void ShadowPlayer::addToListAndPlay(QList<QUrl> files)
     }
 }
 
-void ShadowPlayer::addToListAndPlay(QStringList files)
+void ShadowPlayer::addToListAndPlay(const QStringList &files)
 {
     int newIndex = playList->getLength();
     int length   = files.length();
@@ -1166,7 +1166,7 @@ void ShadowPlayer::addToListAndPlay(QStringList files)
     }
 }
 
-void ShadowPlayer::addToListAndPlay(QString file)
+void ShadowPlayer::addToListAndPlay(const QString &file)
 {
     int newIndex = playList->getLength();
     playList->add(file);

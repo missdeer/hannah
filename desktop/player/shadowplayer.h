@@ -33,12 +33,12 @@ class ShadowPlayer : public QMainWindow
 public:
     explicit ShadowPlayer(QWidget *parent = 0);
     ~ShadowPlayer();
-    void loadFile(QString file);
-    void loadSkin(QString image, bool save = true);
+    void loadFile(const QString &file);
+    void loadSkin(const QString &image, bool save = true);
     int  cutInt(int i);
-    void addToListAndPlay(QList<QUrl> files);
-    void addToListAndPlay(QStringList files);
-    void addToListAndPlay(QString file);
+    void addToListAndPlay(const QList<QUrl> &files);
+    void addToListAndPlay(const QStringList &files);
+    void addToListAndPlay(const QString &file);
     void showPlayer();
 private slots:
     void UpdateTime();
@@ -96,7 +96,7 @@ private:
 
     float arraySUM(int start, int end, float *array);
     void  updateFFT();
-    void  showCoverPic(QString filePath);
+    void  showCoverPic(const QString &filePath);
     void  infoLabelAnimation();
     void  drawFFTBar(QWidget *parent, int x, int y, int width, int height, double percent);
     void  drawFFTBarPeak(QWidget *parent, int x, int y, int width, int height, double percent);

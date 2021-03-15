@@ -497,6 +497,16 @@
         <source>stereo</source>
         <translation>立体声</translation>
     </message>
+    <message>
+        <location filename="../main.cpp" line="130"/>
+        <source>Critical Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="130"/>
+        <source>An incorrect version of BASS.DLL was loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShadowPlayer</name>

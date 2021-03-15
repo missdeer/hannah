@@ -53,7 +53,7 @@ signals:
 
 private:
     Ui::PlayList * ui;
-    QList<QString> fileList;
+    QList<QString> trackList;
     QList<QString> timeList;
     Player *       m_player;
     int            curIndex {0};

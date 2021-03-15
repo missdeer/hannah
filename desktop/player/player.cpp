@@ -78,12 +78,12 @@ QString Player::openAudio(const QString &uri)
             return "err";
         }
         m_hNowPlay = BASS_StreamCreateFile(
-            false, uri.toStdWString().c_str(), 0, 0, BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
+            false, uri.toStdString().c_str(), 0, 0, BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
     }
     else
     {
         m_hNowPlay = BASS_StreamCreateURL(
-            uri.toStdWString().c_str(), BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN, 0, nullptr, 0);
+            uri.toStdString().c_str(), BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN, 0, nullptr, 0);
     }
 
     if (BASS_ErrorGetCode() != 0)

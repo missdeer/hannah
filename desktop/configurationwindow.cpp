@@ -546,10 +546,12 @@ void ConfigurationWindow::onShowPlaylistManage()
 void ConfigurationWindow::onShowHideBuiltinPlayer()
 {
     Q_ASSERT(shadowPlayer);
-    if (shadowPlayer->isVisible())
-        shadowPlayer->hide();
+    if (!shadowPlayer->isVisible() || shadowPlayer->isHidden())
+    {
+        shadowPlayer->showPlayer();
+    }
     else
-        shadowPlayer->show();
+        shadowPlayer->hide();
 }
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)

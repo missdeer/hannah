@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>Hannah</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../hannah.qrc">
+    <normaloff>:/hannah.png</normaloff>:/hannah.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
 	font-family: &quot;Arial&quot;, &quot;宋体&quot;, &quot;Segoe UI&quot;, &quot;微软雅黑&quot;;

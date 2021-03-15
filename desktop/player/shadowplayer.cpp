@@ -26,7 +26,6 @@ ShadowPlayer::ShadowPlayer(QWidget *parent)
 
     playList = new PlayList(player, ui->playerListArea);
 
-    setWindowIcon(QIcon(":/rc/images/player/ShadowPlayer.ico"));
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     ui->coverLabel->setScaledContents(true);
@@ -164,7 +163,13 @@ ShadowPlayer::ShadowPlayer(QWidget *parent)
     fadeInAnimation->setStartValue(0);
     fadeInAnimation->setEndValue(1);
     fadeInAnimation->start();
-    connect(fadeInAnimation, SIGNAL(finished()), this, SLOT(setTaskbarButtonWindow()));
+    connect(fadeInAnimation, &QPropertyAnimation::finished, [this] {
+        activateWindow();
+        raise();
+#if defined(Q_OS_WIN)
+        setTaskbarButtonWindow();
+#endif
+    });
 }
 
 ShadowPlayer::~ShadowPlayer()
@@ -870,8 +875,11 @@ void ShadowPlayer::closeEvent(QCloseEvent *event)
         return;
     }
 #endif
-    hide();
-    event->ignore();
+    if (isVisible())
+    {
+        hide();
+        event->ignore();
+    }
 }
 
 void ShadowPlayer::on_setSkinButton_clicked()
@@ -1164,6 +1172,12 @@ void ShadowPlayer::addToListAndPlay(QString file)
     playList->add(file);
     if (playList->getLength() > newIndex)
         loadFile(playList->playIndex(newIndex));
+}
+
+void ShadowPlayer::showPlayer()
+{
+    show();
+    fadeInAnimation->start();
 }
 
 void ShadowPlayer::on_playPreButton_clicked()

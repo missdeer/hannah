@@ -39,7 +39,7 @@ public:
     void addToListAndPlay(QList<QUrl> files);
     void addToListAndPlay(QStringList files);
     void addToListAndPlay(QString file);
-
+    void showPlayer();
 private slots:
     void UpdateTime();
     void UpdateLrc();

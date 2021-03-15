@@ -11,6 +11,7 @@
 
 #if defined(Q_OS_WIN)
 #    include "bassasio.h"
+#    include "bassmix.h"
 #    include "basswasapi.h"
 #endif
 
@@ -36,6 +37,12 @@ Player::Player()
 
 Player::~Player()
 {
+#if defined(Q_OS_WIN)
+    if (m_asioInitialized)
+        BASS_ASIO_Free();
+    if (m_wasapiInitialized)
+        BASS_WASAPI_Free();
+#endif
     BASS_Free();
 }
 
@@ -363,3 +370,88 @@ void Player::updateReverb(int value)
     p.fReverbMix = 0.012f * (value * value * value);
     BASS_FXSetParameters(m_hReverbFX, &p);
 }
+
+BassDriver Player::getDriver() const
+{
+    return m_driver;
+}
+
+void Player::setDriver(BassDriver &driver)
+{
+    m_driver = driver;
+}
+#if defined(Q_OS_WIN)
+bool Player::asioInit()
+{
+    if (!BASS_ASIO_Init(-1, 0))
+    {
+        return false;
+    }
+    // initialize BASS "no sound" device
+    BASS_Init(0, 48000, 0, 0, NULL);
+    // create a dummy stream for reserving ASIO channels
+    auto dummy = BASS_StreamCreate(2, 48000, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE, STREAMPROC_DUMMY, NULL);
+    {
+        // prepare ASIO output channel pairs (up to 4)
+        int            a;
+        BASS_ASIO_INFO i;
+        BASS_ASIO_GetInfo(&i);
+        for (a = 0; a < 4; a++)
+        {
+            BASS_ASIO_CHANNELINFO i, i2;
+            if (BASS_ASIO_ChannelGetInfo(FALSE, a * 2, &i) && BASS_ASIO_ChannelGetInfo(FALSE, a * 2 + 1, &i2))
+            {
+                char name[200];
+                sprintf(name, "%s + %s", i.name, i2.name);
+                // MESS(30 + a, WM_SETTEXT, 0, name);                  // display channel names
+                BASS_ASIO_ChannelEnableBASS(FALSE, 0, dummy, TRUE); // enable ASIO channels using the dummy stream
+                BASS_ASIO_ChannelPause(FALSE, a * 2);               // not playing anything immediately, so pause the channel
+            }
+        }
+    }
+    // start the device using default buffer/latency and 2 threads for parallel processing
+    if (!BASS_ASIO_Start(0, 2))
+    {
+        return false;
+    }
+    m_asioInitialized = true;
+    return true;
+}
+
+DWORD Player::WasapiProc(void *buffer, DWORD length, void *user)
+{
+    Player *pThis = (Player *)user;
+    DWORD   c     = BASS_ChannelGetData(pThis->m_mixer, buffer, length);
+    if (c == -1)
+        c = 0; // an error, no data
+    return c;
+}
+
+bool Player::wasapiInit()
+{
+    // not playing anything via BASS, so don't need an update thread
+    BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 0);
+    // setup BASS - "no sound" device
+    BASS_Init(0, 48000, 0, 0, NULL);
+    { // initialize the default WASAPI device (400ms buffer, 50ms update period, auto-select format)
+        if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT | BASS_WASAPI_EXCLUSIVE, 0.4, 0.05, &Player::WasapiProc, (void *)this))
+        {
+            // exclusive mode failed, try shared mode
+            if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT, 0.4, 0.05, &Player::WasapiProc, (void *)this))
+            {
+                return false;
+            }
+        }
+        {
+            BASS_WASAPI_INFO wi;
+            BASS_WASAPI_GetInfo(&wi);
+            // create a mixer with same format as the output
+            m_mixer = BASS_Mixer_StreamCreate(wi.freq, wi.chans, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE);
+            // start the output
+            BASS_WASAPI_Start();
+        }
+    }
+    m_wasapiInitialized = true;
+    return true;
+}
+#endif

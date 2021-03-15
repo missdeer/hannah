@@ -4,6 +4,13 @@
 
 #include "bass.h"
 
+enum BassDriver
+{
+    BD_Default,
+    BD_ASIO,
+    BD_WASAPI,
+};
+
 class Player
 {
 public:
@@ -42,11 +49,24 @@ public:
     void    setJumpPoint(double timeFrom, double timeTo);
     void    removeJumpPoint();
 
+    BassDriver getDriver() const;
+    void       setDriver(BassDriver &driver);
+    // WASAPI function
+    static DWORD CALLBACK WasapiProc(void *buffer, DWORD length, void *user);
+
 private:
     HSTREAM m_hNowPlay;
     HFX     m_hEqFX;
     HFX     m_hReverbFX;
     HSYNC   m_hJumping;
     bool    m_bPlayNextEnable {true};
+#if defined(Q_OS_WIN)
+    HSTREAM m_mixer;
+    bool    m_asioInitialized {false};
+    bool    m_wasapiInitialized {false};
+    bool    asioInit();
+    bool    wasapiInit();
+#endif
+    BassDriver m_driver {BD_Default};
 };
 #endif // PLAYER_H

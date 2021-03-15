@@ -124,6 +124,12 @@ int main(int argc, char *argv[])
     QWindowsWindowFunctions::setWindowActivationBehavior(QWindowsWindowFunctions::AlwaysActivateWindow);
 #endif
 
+    // check the correct BASS was loaded
+    if (HIWORD(BASS_GetVersion()) != BASSVERSION)
+    {
+        QMessageBox::critical(0, QObject::tr("Critical Error"), QObject::tr("An incorrect version of BASS.DLL was loaded"));
+        return -1;
+    }
     BASS_SetConfig(BASS_CONFIG_UNICODE, TRUE);
 
 #if defined(Q_OS_MACOS)

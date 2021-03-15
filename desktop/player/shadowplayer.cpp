@@ -1,3 +1,4 @@
+#include <QFile>
 #include <QFileInfo>
 #include <QRandomGenerator>
 
@@ -620,13 +621,13 @@ void ShadowPlayer::showCoverPic(const QString &filePath)
         ui->coverLabel->setPixmap(QPixmap::fromImage(QImage::fromData(picData)));
         spFLAC::freePictureData();
     }
-    else if (QFileInfo(path + "/cover.jpg").exists())
+    else if (QFile::exists(path + "/cover.jpg"))
         ui->coverLabel->setPixmap(QPixmap(path + "/cover.jpg"));
-    else if (QFileInfo(path + "/cover.jpeg").exists())
+    else if (QFile::exists(path + "/cover.jpeg"))
         ui->coverLabel->setPixmap(QPixmap(path + "/cover.jpeg"));
-    else if (QFileInfo(path + "/cover.png").exists())
+    else if (QFile::exists(path + "/cover.png"))
         ui->coverLabel->setPixmap(QPixmap(path + "/cover.png"));
-    else if (QFileInfo(path + "/cover.gif").exists())
+    else if (QFile::exists(path + "/cover.gif"))
         ui->coverLabel->setPixmap(QPixmap(path + "/cover.gif"));
     else
         ui->coverLabel->setPixmap(QPixmap(":image/image/ShadowPlayer.png"));
@@ -960,179 +961,33 @@ void ShadowPlayer::on_freqSlider_valueChanged(int value)
 
 void ShadowPlayer::on_eqComboBox_currentIndexChanged(int index)
 {
-    switch (index)
+    QVector<QVector<int>> presets = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                     {3, 1, 0, -2, -4, -4, -2, 0, 1, 2},
+                                     {-2, 0, 2, 4, -2, -2, 0, 0, 4, 4},
+                                     {-6, 1, 4, -2, -2, -4, 0, 0, 6, 6},
+                                     {0, 8, 8, 4, 0, 0, 0, 0, 2, 2},
+                                     {-6, 0, 0, 0, 0, 0, 4, 0, 4, 0},
+                                     {-2, 3, 4, 1, -2, -2, 0, 0, 4, 4},
+                                     {-2, 0, 0, 2, 2, 0, 0, 0, 4, 4},
+                                     {0, 0, 0, 4, 4, 4, 0, 2, 3, 4},
+                                     {-2, 0, 2, 1, 0, 0, 0, 0, -2, -4},
+                                     {-4, 0, 2, 1, 0, 0, 0, 0, -4, -6},
+                                     {0, 0, 0, 4, 5, 3, 6, 3, 0, 0},
+                                     {-4, 0, 2, 0, 0, 0, 0, 0, -4, -6}};
+    if (index >= 0 && index < presets.length())
     {
-    case 0:
-        ui->eqSlider_1->setSliderPosition(0);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(0);
-        ui->eqSlider_4->setSliderPosition(0);
-        ui->eqSlider_5->setSliderPosition(0);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(0);
-        ui->eqSlider_10->setSliderPosition(0);
+        auto &preset = presets[index];
+        ui->eqSlider_1->setSliderPosition(preset[0]);
+        ui->eqSlider_2->setSliderPosition(preset[1]);
+        ui->eqSlider_3->setSliderPosition(preset[2]);
+        ui->eqSlider_4->setSliderPosition(preset[3]);
+        ui->eqSlider_5->setSliderPosition(preset[4]);
+        ui->eqSlider_6->setSliderPosition(preset[5]);
+        ui->eqSlider_7->setSliderPosition(preset[6]);
+        ui->eqSlider_8->setSliderPosition(preset[7]);
+        ui->eqSlider_9->setSliderPosition(preset[8]);
+        ui->eqSlider_10->setSliderPosition(preset[9]);
         applyEQ();
-        break;
-    case 1:
-        ui->eqSlider_1->setSliderPosition(3);
-        ui->eqSlider_2->setSliderPosition(1);
-        ui->eqSlider_3->setSliderPosition(0);
-        ui->eqSlider_4->setSliderPosition(-2);
-        ui->eqSlider_5->setSliderPosition(-4);
-        ui->eqSlider_6->setSliderPosition(-4);
-        ui->eqSlider_7->setSliderPosition(-2);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(1);
-        ui->eqSlider_10->setSliderPosition(2);
-        applyEQ();
-        break;
-    case 2:
-        ui->eqSlider_1->setSliderPosition(-2);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(2);
-        ui->eqSlider_4->setSliderPosition(4);
-        ui->eqSlider_5->setSliderPosition(-2);
-        ui->eqSlider_6->setSliderPosition(-2);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(4);
-        ui->eqSlider_10->setSliderPosition(4);
-        applyEQ();
-        break;
-    case 3:
-        ui->eqSlider_1->setSliderPosition(-6);
-        ui->eqSlider_2->setSliderPosition(1);
-        ui->eqSlider_3->setSliderPosition(4);
-        ui->eqSlider_4->setSliderPosition(-2);
-        ui->eqSlider_5->setSliderPosition(-2);
-        ui->eqSlider_6->setSliderPosition(-4);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(6);
-        ui->eqSlider_10->setSliderPosition(6);
-        applyEQ();
-        break;
-    case 4:
-        ui->eqSlider_1->setSliderPosition(0);
-        ui->eqSlider_2->setSliderPosition(8);
-        ui->eqSlider_3->setSliderPosition(8);
-        ui->eqSlider_4->setSliderPosition(4);
-        ui->eqSlider_5->setSliderPosition(0);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(2);
-        ui->eqSlider_10->setSliderPosition(2);
-        applyEQ();
-        break;
-    case 5:
-        ui->eqSlider_1->setSliderPosition(-6);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(0);
-        ui->eqSlider_4->setSliderPosition(0);
-        ui->eqSlider_5->setSliderPosition(0);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(4);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(4);
-        ui->eqSlider_10->setSliderPosition(0);
-        applyEQ();
-        break;
-    case 6:
-        ui->eqSlider_1->setSliderPosition(-2);
-        ui->eqSlider_2->setSliderPosition(3);
-        ui->eqSlider_3->setSliderPosition(4);
-        ui->eqSlider_4->setSliderPosition(1);
-        ui->eqSlider_5->setSliderPosition(-2);
-        ui->eqSlider_6->setSliderPosition(-2);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(4);
-        ui->eqSlider_10->setSliderPosition(4);
-        applyEQ();
-        break;
-    case 7:
-        ui->eqSlider_1->setSliderPosition(-2);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(0);
-        ui->eqSlider_4->setSliderPosition(2);
-        ui->eqSlider_5->setSliderPosition(2);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(4);
-        ui->eqSlider_10->setSliderPosition(4);
-        applyEQ();
-        break;
-    case 8:
-        ui->eqSlider_1->setSliderPosition(0);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(0);
-        ui->eqSlider_4->setSliderPosition(4);
-        ui->eqSlider_5->setSliderPosition(4);
-        ui->eqSlider_6->setSliderPosition(4);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(2);
-        ui->eqSlider_9->setSliderPosition(3);
-        ui->eqSlider_10->setSliderPosition(4);
-        applyEQ();
-        break;
-    case 9:
-        ui->eqSlider_1->setSliderPosition(-2);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(2);
-        ui->eqSlider_4->setSliderPosition(1);
-        ui->eqSlider_5->setSliderPosition(0);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(-2);
-        ui->eqSlider_10->setSliderPosition(-4);
-        applyEQ();
-        break;
-    case 10:
-        ui->eqSlider_1->setSliderPosition(-4);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(2);
-        ui->eqSlider_4->setSliderPosition(1);
-        ui->eqSlider_5->setSliderPosition(0);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(-4);
-        ui->eqSlider_10->setSliderPosition(-6);
-        applyEQ();
-        break;
-    case 11:
-        ui->eqSlider_1->setSliderPosition(0);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(0);
-        ui->eqSlider_4->setSliderPosition(4);
-        ui->eqSlider_5->setSliderPosition(5);
-        ui->eqSlider_6->setSliderPosition(3);
-        ui->eqSlider_7->setSliderPosition(6);
-        ui->eqSlider_8->setSliderPosition(3);
-        ui->eqSlider_9->setSliderPosition(0);
-        ui->eqSlider_10->setSliderPosition(0);
-        applyEQ();
-        break;
-    case 12:
-        ui->eqSlider_1->setSliderPosition(-4);
-        ui->eqSlider_2->setSliderPosition(0);
-        ui->eqSlider_3->setSliderPosition(2);
-        ui->eqSlider_4->setSliderPosition(0);
-        ui->eqSlider_5->setSliderPosition(0);
-        ui->eqSlider_6->setSliderPosition(0);
-        ui->eqSlider_7->setSliderPosition(0);
-        ui->eqSlider_8->setSliderPosition(0);
-        ui->eqSlider_9->setSliderPosition(-4);
-        ui->eqSlider_10->setSliderPosition(-6);
-        applyEQ();
-        break;
-    default:
-        break;
     }
 }
 

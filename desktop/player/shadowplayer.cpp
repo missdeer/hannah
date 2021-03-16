@@ -1,6 +1,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QRandomGenerator>
+#include <QStandardPaths>
 
 #include "shadowplayer.h"
 #include "FlacPic.h"
@@ -1224,112 +1225,134 @@ void ShadowPlayer::showDeveloperInfo()
 
 void ShadowPlayer::saveConfig()
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/config.dat");
-    file.open(QIODevice::WriteOnly);
-    QDataStream stream(&file);
-    stream << (quint32)0x61727480 << ui->freqSlider->value() << ui->volSlider->value() << isMute << ui->reverbDial->value() << playMode << skinMode
-           << skinPos << skinDrawPos << ui->eqComboBox->currentIndex() << ui->eqEnableCheckBox->isChecked() << ui->eqSlider_1->value()
-           << ui->eqSlider_2->value() << ui->eqSlider_3->value() << ui->eqSlider_4->value() << ui->eqSlider_5->value() << ui->eqSlider_6->value()
-           << ui->eqSlider_7->value() << ui->eqSlider_8->value() << ui->eqSlider_9->value() << ui->eqSlider_10->value() << lb->isVisible();
-    file.close();
+    auto dirPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QDir dir(dirPath);
+    if (!dir.exists())
+    {
+        dir.mkdir(dirPath);
+    }
+    QFile file(dirPath + "/config.dat");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QDataStream stream(&file);
+        stream << (quint32)0x61727480 << ui->freqSlider->value() << ui->volSlider->value() << isMute << ui->reverbDial->value() << playMode
+               << skinMode << skinPos << skinDrawPos << ui->eqComboBox->currentIndex() << ui->eqEnableCheckBox->isChecked() << ui->eqSlider_1->value()
+               << ui->eqSlider_2->value() << ui->eqSlider_3->value() << ui->eqSlider_4->value() << ui->eqSlider_5->value() << ui->eqSlider_6->value()
+               << ui->eqSlider_7->value() << ui->eqSlider_8->value() << ui->eqSlider_9->value() << ui->eqSlider_10->value() << lb->isVisible();
+        file.close();
+    }
 }
 
 void ShadowPlayer::loadConfig()
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/config.dat");
-    file.open(QIODevice::ReadOnly);
-    QDataStream stream(&file);
-    quint32     magic;
-    stream >> magic;
-    if (magic == 0x61727480)
+    auto  dirPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QFile file(dirPath + "/config.dat");
+    if (file.open(QIODevice::ReadOnly))
     {
-        int dataInt = 0;
-        stream >> dataInt;
-        ui->freqSlider->setValue(dataInt);
-        stream >> dataInt;
-        ui->volSlider->setValue(dataInt);
-        bool dataBool = false;
-        stream >> dataBool;
-        isMute = dataBool;
-        if (isMute)
+        QDataStream stream(&file);
+        quint32     magic;
+        stream >> magic;
+        if (magic == 0x61727480)
         {
-            ui->muteButton->setIcon(QIcon(":/rc/images/player/Mute.png"));
-        }
-        else
-        {
-            ui->muteButton->setIcon(QIcon(":/rc/images/player/Vol.png"));
-        }
-        stream >> dataInt;
-        ui->reverbDial->setValue(dataInt);
-        stream >> playMode;
-        playMode %= 5;
-        const QStringList icons    = {":/rc/images/player/Single.png",
-                                   ":/rc/images/player/Repeat.png",
-                                   ":/rc/images/player/Order.png",
-                                   ":/rc/images/player/AllRepeat.png",
-                                   ":/rc/images/player/Shuffle.png"};
-        const QStringList tooltips = {tr("Track Play"), tr("Track Repeat"), tr("Playlist Order"), tr("Playlist Repeat"), tr("Shuffle")};
-        Q_ASSERT(playMode >= 0 && playMode <= 4);
-        ui->playModeButton->setIcon(QIcon(icons[playMode]));
-        ui->playModeButton->setToolTip(tooltips[playMode]);
+            int dataInt = 0;
+            stream >> dataInt;
+            ui->freqSlider->setValue(dataInt);
+            stream >> dataInt;
+            ui->volSlider->setValue(dataInt);
+            bool dataBool = false;
+            stream >> dataBool;
+            isMute = dataBool;
+            if (isMute)
+            {
+                ui->muteButton->setIcon(QIcon(":/rc/images/player/Mute.png"));
+            }
+            else
+            {
+                ui->muteButton->setIcon(QIcon(":/rc/images/player/Vol.png"));
+            }
+            stream >> dataInt;
+            ui->reverbDial->setValue(dataInt);
+            stream >> playMode;
+            playMode %= 5;
+            const QStringList icons    = {":/rc/images/player/Single.png",
+                                       ":/rc/images/player/Repeat.png",
+                                       ":/rc/images/player/Order.png",
+                                       ":/rc/images/player/AllRepeat.png",
+                                       ":/rc/images/player/Shuffle.png"};
+            const QStringList tooltips = {tr("Track Play"), tr("Track Repeat"), tr("Playlist Order"), tr("Playlist Repeat"), tr("Shuffle")};
+            Q_ASSERT(playMode >= 0 && playMode <= 4);
+            ui->playModeButton->setIcon(QIcon(icons[playMode]));
+            ui->playModeButton->setToolTip(tooltips[playMode]);
 
-        stream >> skinMode;
-        stream >> skinPos;
-        stream >> skinDrawPos;
-        stream >> dataInt;
-        ui->eqComboBox->setCurrentIndex(dataInt);
-        stream >> dataBool;
-        ui->eqEnableCheckBox->setChecked(dataBool);
-        stream >> dataInt;
-        ui->eqSlider_1->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_2->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_3->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_4->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_5->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_6->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_7->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_8->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_9->setValue(dataInt);
-        stream >> dataInt;
-        ui->eqSlider_10->setValue(dataInt);
-        stream >> dataBool;
-        lb->setVisible(dataBool);
+            stream >> skinMode;
+            stream >> skinPos;
+            stream >> skinDrawPos;
+            stream >> dataInt;
+            ui->eqComboBox->setCurrentIndex(dataInt);
+            stream >> dataBool;
+            ui->eqEnableCheckBox->setChecked(dataBool);
+            stream >> dataInt;
+            ui->eqSlider_1->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_2->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_3->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_4->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_5->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_6->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_7->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_8->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_9->setValue(dataInt);
+            stream >> dataInt;
+            ui->eqSlider_10->setValue(dataInt);
+            stream >> dataBool;
+            lb->setVisible(dataBool);
+        }
+        file.close();
     }
-    file.close();
 }
 
 void ShadowPlayer::saveSkinData()
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/skin.dat");
-    file.open(QIODevice::WriteOnly);
-    QDataStream stream(&file);
-    stream << (quint32)0x61727481 << skin;
-    file.close();
+    auto dirPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QDir dir(dirPath);
+    if (!dir.exists())
+    {
+        dir.mkdir(dirPath);
+    }
+    QFile file(dirPath + "/skin.dat");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QDataStream stream(&file);
+        stream << (quint32)0x61727481 << skin;
+        file.close();
+    }
 }
 
 void ShadowPlayer::loadSkinData()
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/skin.dat");
-    file.open(QIODevice::ReadOnly);
-    QDataStream stream(&file);
-    quint32     magic;
-    stream >> magic;
-    if (magic == 0x61727481)
+    auto  dirPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QFile file(dirPath + "/skin.dat");
+    if (file.open(QIODevice::ReadOnly))
     {
-        stream >> skin;
-        skinLeft    = skin.scaledToWidth(360, Qt::SmoothTransformation);
-        skinFull    = skin.scaledToWidth(710, Qt::SmoothTransformation);
-        aspectRatio = (double)skin.height() / skin.width();
+        QDataStream stream(&file);
+        quint32     magic;
+        stream >> magic;
+        if (magic == 0x61727481)
+        {
+            stream >> skin;
+            skinLeft    = skin.scaledToWidth(360, Qt::SmoothTransformation);
+            skinFull    = skin.scaledToWidth(710, Qt::SmoothTransformation);
+            aspectRatio = (double)skin.height() / skin.width();
+        }
+        file.close();
     }
-    file.close();
 }
 
 #if defined(Q_OS_WIN)

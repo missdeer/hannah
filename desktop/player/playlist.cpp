@@ -440,16 +440,18 @@ void PlayList::saveToFile(const QString &fileName)
 void PlayList::readFromFile(const QString &fileName)
 {
     QFile file(fileName);
-    file.open(QIODevice::ReadOnly);
-    QDataStream stream(&file);
-    quint32     magic;
-    stream >> magic;
-    if (magic == 0x61727487)
+    if (file.open(QIODevice::ReadOnly))
     {
-        stream >> m_trackList;
-        stream >> m_timeList;
-        stream >> m_curIndex;
+        QDataStream stream(&file);
+        quint32     magic;
+        stream >> magic;
+        if (magic == 0x61727487)
+        {
+            stream >> m_trackList;
+            stream >> m_timeList;
+            stream >> m_curIndex;
+        }
+        file.close();
+        tableUpdate();
     }
-    file.close();
-    tableUpdate();
 }

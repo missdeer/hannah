@@ -264,6 +264,53 @@
     </message>
 </context>
 <context>
+    <name>ParserCsv</name>
+    <message>
+        <location filename="../parsercsv.cpp" line="42"/>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ParserM3u</name>
+    <message>
+        <location filename="../parserm3u.cpp" line="144"/>
+        <location filename="../parserm3u.cpp" line="156"/>
+        <source>Playlist Export Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../parserm3u.cpp" line="145"/>
+        <source>File path contains characters, not allowed in m3u playlists.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../parserm3u.cpp" line="147"/>
+        <source>Export a m3u8 playlist instead!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../parserm3u.cpp" line="156"/>
+        <source>Could not create file</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ParserPls</name>
+    <message>
+        <location filename="../parserpls.cpp" line="144"/>
+        <source>Playlist Export Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../parserpls.cpp" line="144"/>
+        <source>Could not create file</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PlayList</name>
     <message>
         <location filename="../player/playlist.ui" line="149"/>

@@ -31,7 +31,12 @@ SOURCES += \
     $$PWD/sqlite3helper.cpp \
     $$PWD/comboboxdelegate.cpp \
     $$PWD/player/playlist.cpp \
-    $$PWD/player/shadowplayer.cpp
+    $$PWD/player/shadowplayer.cpp \
+    $$PWD/parser.cpp \
+    $$PWD/parsercsv.cpp \
+    $$PWD/parserm3u.cpp \
+    $$PWD/parserpls.cpp \
+    $$PWD/trackfile.cpp
 
 HEADERS += \
     $$PWD/configurationwindow.h \
@@ -52,7 +57,12 @@ HEADERS += \
     $$PWD/sqlite3helper.h \
     $$PWD/comboboxdelegate.h \
     $$PWD/player/playlist.h \
-    $$PWD/player/shadowplayer.h
+    $$PWD/player/shadowplayer.h \
+    $$PWD/parser.h \
+    $$PWD/parsercsv.h \
+    $$PWD/parserm3u.h \
+    $$PWD/parserpls.h \
+    $$PWD/trackfile.h
 
 FORMS += \
     $$PWD/configurationwindow.ui \
@@ -113,17 +123,17 @@ LIBS += -L$$PWD/../lib/reverseProxy -lrp -lbass -lbass_fx -ltags
 
 macx : {
     HEADERS += \
-        serviceslots.h \
-        application.h
+        $$PWD/serviceslots.h \
+        $$PWD/application.h
     SOURCES += \
-        application.cpp 
+        $$PWD/application.cpp
     OBJECTIVE_HEADERS += \
-        service.h
+        $$PWD/service.h
     OBJECTIVE_SOURCES += \
-        service.mm
+        $$PWD/service.mm
     DESTDIR = $$OUT_PWD
-    QMAKE_INFO_PLIST = macInfo.plist
-    ICON = hannah.icns
+    QMAKE_INFO_PLIST = $$PWD/macInfo.plist
+    ICON = $$PWD/hannah.icns
     icon.path = $$PWD
     INSTALLS += icon
     LIBS += -framework Security

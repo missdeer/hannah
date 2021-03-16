@@ -69,7 +69,6 @@ void FFTDisplay::peakSlideDown()
         }
         else
         {
-            //下落
             if (fftBarPeakValue[i] > realityDown)
             {
                 fftBarPeakValue[i] -= realityDown;

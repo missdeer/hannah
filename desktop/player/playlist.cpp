@@ -347,16 +347,16 @@ void PlayList::on_searchButton_clicked()
         }
         else
         {
-            QMessageBox::information(this, tr("Sorry"), tr("Cannot find."));
+            QMessageBox::warning(this, tr("Sorry"), tr("Cannot find."), QMessageBox::Ok);
         }
     }
     else if (ui->searchEdit->text().isEmpty())
     {
-        QMessageBox::question(this, tr("Hello"), tr("What are you looking for?"));
+        QMessageBox::question(this, tr("Hello"), tr("What are you looking for?"), QMessageBox::Ok);
     }
     else
     {
-        QMessageBox::question(this, tr("What's this"), tr("Why I should search in the empty list?"));
+        QMessageBox::question(this, tr("What's this"), tr("Why I should search in the empty list?"), QMessageBox::Ok);
     }
 }
 
@@ -398,16 +398,16 @@ void PlayList::on_searchNextButton_clicked()
         }
         else
         {
-            QMessageBox::information(0, tr("Searching done!"), tr("All things are searched."));
+            QMessageBox::information(0, tr("Searching done!"), tr("All things are searched."), QMessageBox::Ok);
         }
     }
     else if (ui->searchEdit->text().isEmpty())
     {
-        QMessageBox::question(0, tr("Hello"), tr("What are you looking for?"));
+        QMessageBox::question(0, tr("Hello"), tr("What are you looking for?"), QMessageBox::Ok);
     }
     else
     {
-        QMessageBox::question(this, tr("What's this"), tr("Why I should search in the empty list?"));
+        QMessageBox::question(this, tr("What's this"), tr("Why I should search in the empty list?"), QMessageBox::Ok);
     }
 }
 

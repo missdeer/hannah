@@ -315,7 +315,7 @@ void ShadowPlayer::contextMenuEvent(QContextMenuEvent *)
     QMenu menu;
     menu.addAction(tr("Load default skin"), this, SLOT(loadDefaultSkin()));
     menu.addSeparator();
-    menu.addAction(tr("Fix skin to size side"), this, SLOT(fixSkinSizeLeft()));
+    menu.addAction(tr("Fix skin to left side"), this, SLOT(fixSkinSizeLeft()));
     menu.addAction(tr("Fix skin to full window"), this, SLOT(fixSkinSizeFull()));
     menu.addAction(tr("Original skin size"), this, SLOT(originalSkinSize()));
     menu.addAction(tr("Auto resize skin"), this, SLOT(autoSkinSize()));

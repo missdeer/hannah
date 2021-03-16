@@ -1,3 +1,5 @@
+#include <QStandardPaths>
+
 #include "playlist.h"
 #include "ui_playlist.h"
 
@@ -10,12 +12,12 @@ PlayList::PlayList(Player *player, QWidget *parent) : QWidget(parent), ui(new Ui
 
     connect(ui->searchEdit, SIGNAL(returnPressed()), this, SLOT(on_searchButton_clicked()));
 
-    readFromFile(QCoreApplication::applicationDirPath() + "/PlayList.sdpl");
+    readFromFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/default.hpl");
 }
 
 PlayList::~PlayList()
 {
-    saveToFile(QCoreApplication::applicationDirPath() + "/PlayList.sdpl");
+    saveToFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/default.hpl");
     delete ui;
 }
 

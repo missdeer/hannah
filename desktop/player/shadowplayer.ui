@@ -31,7 +31,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
-	font-family: &quot;Arial&quot;, &quot;宋体&quot;, &quot;Segoe UI&quot;, &quot;微软雅黑&quot;;
+	font-family: &quot;Arial&quot;, &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;;
 	color: black;
 }
 
@@ -59,8 +59,6 @@ QLabel#lrcLabel_4 {
 QLabel#lrcLabel_7 {
 	color: rgba(0, 0, 0, 128);
 }
-
-/*以上为字体设置*/
 
 QToolTip {
     opacity: 220;
@@ -132,7 +130,7 @@ QLabel:hover {
 
 QLabel#tagLabel {
 	color: white;
-	font-family: &quot;Segoe UI&quot;, &quot;宋体&quot;;
+	font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei UI&quot;;
 	background: rgba(255, 255, 255, 0);
 }
 
@@ -142,7 +140,7 @@ QLabel#coverLabel{
 
 QLabel#mediaInfoLabel {
 	color: white;
-	font-family: &quot;Segoe UI&quot;, &quot;宋体&quot;;
+	font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei UI&quot;;
 	background: rgba(255, 255, 255, 0);
 }
 
@@ -161,14 +159,12 @@ QGroupBox {
 }
 
 QProgressBar{
-/*进度条外框*/
 	border-radius: 0px;
 	background: transparent;
 	text-align: center;
 }
 
 QProgressBar::chunk {
-/*进度条内容*/
 	border-radius: 0px;
 /*border: 1px solid black;*/
 	background: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(85, 130, 255, 255), stop:1 rgba(170, 255, 236, 255));
@@ -182,7 +178,6 @@ QProgressBar:horizontal {
 }
 
 QProgressBar::chunk:horizontal {
-/*水平进度条内容*/
 	border-radius: 0px;
 	background: rgb(85, 170, 0);
 }
@@ -329,14 +324,14 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="toolTip">
-     <string>播放（Ctrl+F2）</string>
+     <string>Play</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Play.png</normaloff>:/icon/ICO/Play.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Play.png</normaloff>:/rc/images/player/Play.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -355,14 +350,14 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="toolTip">
-     <string>停止（Ctrl+F3）</string>
+     <string>Stop</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Stop.png</normaloff>:/icon/ICO/Stop.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Stop.png</normaloff>:/rc/images/player/Stop.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -381,7 +376,7 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="toolTip">
-     <string>播放进度</string>
+     <string>Play Progress</string>
     </property>
     <property name="maximum">
      <number>1000</number>
@@ -428,7 +423,7 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="text">
-     <string>←这里能显示目录下的专辑封面(cover)</string>
+     <string>←Show album covers in directory(cover)</string>
     </property>
    </widget>
    <widget class="ShadowLabel" name="mediaInfoLabel">
@@ -446,7 +441,7 @@ QPushButton#playListButton:hover {
      </font>
     </property>
     <property name="text">
-     <string>你可以把音频文件拖进来哦~</string>
+     <string>Drag &amp; drop audio files here</string>
     </property>
    </widget>
    <widget class="QPushButton" name="openButton">
@@ -459,14 +454,14 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="toolTip">
-     <string>打开</string>
+     <string>Open</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Open.png</normaloff>:/icon/ICO/Open.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Open.png</normaloff>:/rc/images/player/Open.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -491,14 +486,14 @@ QPushButton#playListButton:hover {
      </sizepolicy>
     </property>
     <property name="toolTip">
-     <string>静音（Ctrl+F4）</string>
+     <string>Mute</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Vol.png</normaloff>:/icon/ICO/Vol.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Vol.png</normaloff>:/rc/images/player/Vol.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -587,7 +582,7 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="toolTip">
-     <string>ShadowPlayer By:暗影夜光</string>
+     <string>Hannah</string>
     </property>
     <property name="text">
      <string/>
@@ -622,7 +617,7 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="title">
-     <string>音乐 抛面饼</string>
+     <string>Music</string>
     </property>
    </widget>
    <widget class="SPSlider" name="freqSlider">
@@ -663,7 +658,7 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="text">
-     <string>重置</string>
+     <string>Reset</string>
     </property>
    </widget>
    <widget class="QLabel" name="textLabel1">
@@ -671,12 +666,12 @@ QPushButton#playListButton:hover {
      <rect>
       <x>50</x>
       <y>182</y>
-      <width>111</width>
+      <width>201</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>回放速度 (x1)</string>
+     <string>Playback Speed (x1)</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="eqGroupBox">
@@ -689,7 +684,7 @@ QPushButton#playListButton:hover {
      </rect>
     </property>
     <property name="title">
-     <string>均衡器</string>
+     <string>Equalizer</string>
     </property>
     <widget class="QSlider" name="eqSlider_1">
      <property name="geometry">
@@ -1156,67 +1151,67 @@ QComboBox::down-arrow:on {
      </property>
      <item>
       <property name="text">
-       <string>默认</string>
+       <string>Default</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>流行</string>
+       <string>Pop</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>摇滚</string>
+       <string>Rocks</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>电子</string>
+       <string>Electronic</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>古典</string>
+       <string>Classical</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>金属</string>
+       <string>Metal</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>舞曲</string>
+       <string>Dance</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>乡村</string>
+       <string>Country</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>爵士</string>
+       <string>Jazz</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>布鲁斯</string>
+       <string>Bruce</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>怀旧</string>
+       <string>Nostalgia</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>歌剧</string>
+       <string>Opera</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>语音</string>
+       <string>Voice</string>
       </property>
      </item>
     </widget>
@@ -1266,7 +1261,7 @@ QComboBox::down-arrow:on {
      </rect>
     </property>
     <property name="title">
-     <string>歌词秀</string>
+     <string>Lyric Show</string>
     </property>
     <widget class="QLabel" name="lrcLabel_1">
      <property name="geometry">
@@ -1407,7 +1402,7 @@ QComboBox::down-arrow:on {
       </rect>
      </property>
      <property name="text">
-      <string>桌面歌词</string>
+      <string>Desktop Lyric</string>
      </property>
     </widget>
     <widget class="QPushButton" name="loadLrcButton">
@@ -1420,7 +1415,7 @@ QComboBox::down-arrow:on {
       </rect>
      </property>
      <property name="text">
-      <string>选择文件</string>
+      <string>Choose file</string>
      </property>
     </widget>
    </widget>
@@ -1537,14 +1532,14 @@ QComboBox::down-arrow:on {
      </rect>
     </property>
     <property name="toolTip">
-     <string>顺序播放</string>
+     <string>Play in order</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Order.png</normaloff>:/icon/ICO/Order.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Order.png</normaloff>:/rc/images/player/Order.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -1563,14 +1558,14 @@ QComboBox::down-arrow:on {
      </rect>
     </property>
     <property name="toolTip">
-     <string>上一曲（Ctrl+F5）</string>
+     <string>Previous</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Pre.png</normaloff>:/icon/ICO/Pre.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Pre.png</normaloff>:/rc/images/player/Pre.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -1589,14 +1584,14 @@ QComboBox::down-arrow:on {
      </rect>
     </property>
     <property name="toolTip">
-     <string>下一曲（Ctrl+F6）</string>
+     <string>Next</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/Next.png</normaloff>:/icon/ICO/Next.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/Next.png</normaloff>:/rc/images/player/Next.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -1615,14 +1610,14 @@ QComboBox::down-arrow:on {
      </rect>
     </property>
     <property name="toolTip">
-     <string>播放列表</string>
+     <string>Playlist</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="icon">
-     <iconset>
-      <normaloff>:/icon/ICO/PlayList.png</normaloff>:/icon/ICO/PlayList.png</iconset>
+     <iconset resource="../hannah.qrc">
+      <normaloff>:/rc/images/player/PlayList.png</normaloff>:/rc/images/player/PlayList.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -1691,7 +1686,7 @@ QComboBox::down-arrow:on {
      </rect>
     </property>
     <property name="text">
-     <string>正放</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QWidget" name="playerListArea" native="true">

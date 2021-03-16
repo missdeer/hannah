@@ -272,131 +272,131 @@
     </message>
     <message>
         <location filename="../player/playlist.ui" line="153"/>
-        <source>删除当前选中的项</source>
+        <source>Delete selected item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="156"/>
-        <source>删除</source>
+        <source>Del</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="169"/>
-        <source>将文件添加到播放列表末尾</source>
+        <source>Append file at the end</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="172"/>
-        <source>添加</source>
+        <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="185"/>
-        <source>在当前选中的项（单项）前插入文件（无选择=第一项）</source>
+        <source>Insert file before selected one(in the beginning if none is selected)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="188"/>
-        <source>插入</source>
+        <source>Ins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="201"/>
-        <source>清空播放列表</source>
+        <source>Clear playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="204"/>
-        <source>清空</source>
+        <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="240"/>
-        <source>查找</source>
+        <source>Find</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="253"/>
-        <source>下一个</source>
+        <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="266"/>
-        <source>最短长度过滤</source>
+        <source>Filter shortest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.ui" line="299"/>
-        <source>区分大小写</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.cpp" line="283"/>
-        <source>Insert before selected item</source>
+        <source>Case sensitive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../player/playlist.cpp" line="285"/>
-        <location filename="../player/playlist.cpp" line="300"/>
+        <source>Insert before selected item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/playlist.cpp" line="287"/>
+        <location filename="../player/playlist.cpp" line="302"/>
         <source>Audio file (*.mp3 *.mp2 *.mp1 *.wav *.aiff *.ogg *.ape *.mp4 *.m4a *.m4v *.aac *.alac *.tta *.flac *.wma *.wv)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="298"/>
+        <location filename="../player/playlist.cpp" line="300"/>
         <source>Add audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="342"/>
+        <location filename="../player/playlist.cpp" line="344"/>
         <source>Sorry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="342"/>
+        <location filename="../player/playlist.cpp" line="344"/>
         <source>Cannot find.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="347"/>
-        <location filename="../player/playlist.cpp" line="398"/>
+        <location filename="../player/playlist.cpp" line="349"/>
+        <location filename="../player/playlist.cpp" line="400"/>
         <source>Hello</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="347"/>
-        <location filename="../player/playlist.cpp" line="398"/>
+        <location filename="../player/playlist.cpp" line="349"/>
+        <location filename="../player/playlist.cpp" line="400"/>
         <source>What are you looking for?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="351"/>
-        <location filename="../player/playlist.cpp" line="402"/>
+        <location filename="../player/playlist.cpp" line="353"/>
+        <location filename="../player/playlist.cpp" line="404"/>
         <source>What&apos;s this</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="351"/>
-        <location filename="../player/playlist.cpp" line="402"/>
+        <location filename="../player/playlist.cpp" line="353"/>
+        <location filename="../player/playlist.cpp" line="404"/>
         <source>Why I should search in the empty list?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="393"/>
+        <location filename="../player/playlist.cpp" line="395"/>
         <source>Searching done!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="393"/>
+        <location filename="../player/playlist.cpp" line="395"/>
         <source>All things are searched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="410"/>
+        <location filename="../player/playlist.cpp" line="412"/>
         <source>Minimum Playback Length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="411"/>
+        <location filename="../player/playlist.cpp" line="413"/>
         <source>Audio files smaller than this length will not be accepted 
  unit: seconds</source>
         <translation type="unfinished"></translation>
@@ -511,246 +511,116 @@
 <context>
     <name>ShadowPlayer</name>
     <message>
-        <location filename="../player/shadowplayer.ui" line="332"/>
-        <source>播放（Ctrl+F2）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="358"/>
-        <source>停止（Ctrl+F3）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="384"/>
-        <source>播放进度</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="431"/>
-        <source>←这里能显示目录下的专辑封面(cover)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="449"/>
-        <source>你可以把音频文件拖进来哦~</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="462"/>
-        <source>打开</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="494"/>
-        <source>静音（Ctrl+F4）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="564"/>
+        <location filename="../player/shadowplayer.ui" line="559"/>
         <source>L</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="577"/>
+        <location filename="../player/shadowplayer.ui" line="572"/>
         <source>R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="590"/>
-        <source>ShadowPlayer By:暗影夜光</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="612"/>
-        <location filename="../player/shadowplayer.ui" line="1726"/>
+        <location filename="../player/shadowplayer.ui" line="607"/>
+        <location filename="../player/shadowplayer.ui" line="1721"/>
         <source>0:00</source>
         <translation type="unfinished">0:00</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="625"/>
-        <source>音乐 抛面饼</source>
+        <location filename="../player/shadowplayer.ui" line="426"/>
+        <source>←Show album covers in directory(cover)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="666"/>
-        <source>重置</source>
+        <location filename="../player/shadowplayer.ui" line="444"/>
+        <source>Drag &amp; drop audio files here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="679"/>
-        <source>回放速度 (x1)</source>
+        <location filename="../player/shadowplayer.ui" line="489"/>
+        <source>Mute</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="692"/>
-        <source>均衡器</source>
+        <location filename="../player/shadowplayer.ui" line="620"/>
+        <source>Music</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="987"/>
+        <location filename="../player/shadowplayer.ui" line="661"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="674"/>
+        <source>Playback Speed (x1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="982"/>
         <source>31</source>
         <translation type="unfinished">31</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1000"/>
+        <location filename="../player/shadowplayer.ui" line="995"/>
         <source>62</source>
         <translation type="unfinished">62</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1013"/>
+        <location filename="../player/shadowplayer.ui" line="1008"/>
         <source>125</source>
         <translation type="unfinished">125</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1026"/>
+        <location filename="../player/shadowplayer.ui" line="1021"/>
         <source>250</source>
         <translation type="unfinished">250</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1039"/>
+        <location filename="../player/shadowplayer.ui" line="1034"/>
         <source>500</source>
         <translation type="unfinished">500</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1052"/>
+        <location filename="../player/shadowplayer.ui" line="1047"/>
         <source>1K</source>
         <translation type="unfinished">1K</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1065"/>
+        <location filename="../player/shadowplayer.ui" line="1060"/>
         <source>2K</source>
         <translation type="unfinished">2K</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1078"/>
+        <location filename="../player/shadowplayer.ui" line="1073"/>
         <source>4K</source>
         <translation type="unfinished">4K</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1091"/>
+        <location filename="../player/shadowplayer.ui" line="1086"/>
         <source>8K</source>
         <translation type="unfinished">8K</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1104"/>
+        <location filename="../player/shadowplayer.ui" line="1099"/>
         <source>16K</source>
         <translation type="unfinished">16K</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1159"/>
-        <source>默认</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1164"/>
-        <source>流行</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1169"/>
-        <source>摇滚</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1174"/>
-        <source>电子</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1179"/>
-        <source>古典</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1184"/>
-        <source>金属</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1189"/>
-        <source>舞曲</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1194"/>
-        <source>乡村</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1199"/>
-        <source>爵士</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1204"/>
-        <source>布鲁斯</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1209"/>
-        <source>怀旧</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1214"/>
-        <source>歌剧</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1219"/>
-        <source>语音</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1269"/>
-        <source>歌词秀</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1410"/>
-        <source>桌面歌词</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1423"/>
-        <source>选择文件</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1440"/>
+        <location filename="../player/shadowplayer.ui" line="1435"/>
         <source>→</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1540"/>
-        <source>顺序播放</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1566"/>
-        <source>上一曲（Ctrl+F5）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1592"/>
-        <source>下一曲（Ctrl+F6）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1618"/>
-        <source>播放列表</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/shadowplayer.ui" line="1656"/>
-        <location filename="../player/shadowplayer.ui" line="1681"/>
+        <location filename="../player/shadowplayer.ui" line="1651"/>
+        <location filename="../player/shadowplayer.ui" line="1676"/>
         <source>%vdB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1694"/>
-        <source>正放</source>
-        <translation type="unfinished"></translation>
+        <location filename="../player/shadowplayer.ui" line="1689"/>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
     </message>
     <message>
         <location filename="../player/shadowplayer.cpp" line="88"/>
@@ -758,18 +628,121 @@
         <translation type="unfinished">播放器</translation>
     </message>
     <message>
+        <location filename="../player/shadowplayer.ui" line="353"/>
         <location filename="../player/shadowplayer.cpp" line="90"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../player/shadowplayer.ui" line="379"/>
+        <source>Play Progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="687"/>
+        <source>Equalizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1154"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1159"/>
+        <source>Pop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1164"/>
+        <source>Rocks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1169"/>
+        <source>Electronic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1174"/>
+        <source>Classical</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1179"/>
+        <source>Metal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1184"/>
+        <source>Dance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1189"/>
+        <source>Country</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1194"/>
+        <source>Jazz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1199"/>
+        <source>Bruce</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1204"/>
+        <source>Nostalgia</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1209"/>
+        <source>Opera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1214"/>
+        <source>Voice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1264"/>
+        <source>Lyric Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1405"/>
+        <source>Desktop Lyric</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1418"/>
+        <source>Choose file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1535"/>
+        <source>Play in order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1561"/>
         <location filename="../player/shadowplayer.cpp" line="92"/>
         <source>Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../player/shadowplayer.ui" line="1587"/>
         <location filename="../player/shadowplayer.cpp" line="94"/>
         <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/shadowplayer.ui" line="1613"/>
+        <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -861,6 +834,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../player/shadowplayer.ui" line="327"/>
         <location filename="../player/shadowplayer.cpp" line="508"/>
         <location filename="../player/shadowplayer.cpp" line="513"/>
         <location filename="../player/shadowplayer.cpp" line="531"/>
@@ -874,6 +848,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../player/shadowplayer.ui" line="457"/>
         <location filename="../player/shadowplayer.cpp" line="639"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
@@ -1016,6 +991,7 @@
     </message>
     <message>
         <location filename="../player/shadowplayer.ui" line="26"/>
+        <location filename="../player/shadowplayer.ui" line="585"/>
         <location filename="../player/shadowplayer.cpp" line="1222"/>
         <source>Hannah</source>
         <translation type="unfinished"></translation>

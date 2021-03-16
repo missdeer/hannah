@@ -131,10 +131,10 @@ QHeaderView::section {
    <attribute name="horizontalHeaderDefaultSectionSize">
     <number>235</number>
    </attribute>
-   <attribute name="verticalHeaderDefaultSectionSize">
+   <attribute name="verticalHeaderMinimumSectionSize">
     <number>18</number>
    </attribute>
-   <attribute name="verticalHeaderMinimumSectionSize">
+   <attribute name="verticalHeaderDefaultSectionSize">
     <number>18</number>
    </attribute>
    <column/>
@@ -150,10 +150,10 @@ QHeaderView::section {
     </rect>
    </property>
    <property name="toolTip">
-    <string>删除当前选中的项</string>
+    <string>Delete selected item</string>
    </property>
    <property name="text">
-    <string>删除</string>
+    <string>Del</string>
    </property>
   </widget>
   <widget class="QPushButton" name="addButton">
@@ -166,10 +166,10 @@ QHeaderView::section {
     </rect>
    </property>
    <property name="toolTip">
-    <string>将文件添加到播放列表末尾</string>
+    <string>Append file at the end</string>
    </property>
    <property name="text">
-    <string>添加</string>
+    <string>Add</string>
    </property>
   </widget>
   <widget class="QPushButton" name="insertButton">
@@ -182,10 +182,10 @@ QHeaderView::section {
     </rect>
    </property>
    <property name="toolTip">
-    <string>在当前选中的项（单项）前插入文件（无选择=第一项）</string>
+    <string>Insert file before selected one(in the beginning if none is selected)</string>
    </property>
    <property name="text">
-    <string>插入</string>
+    <string>Ins</string>
    </property>
   </widget>
   <widget class="QPushButton" name="clearButton">
@@ -198,10 +198,10 @@ QHeaderView::section {
     </rect>
    </property>
    <property name="toolTip">
-    <string>清空播放列表</string>
+    <string>Clear playlist</string>
    </property>
    <property name="text">
-    <string>清空</string>
+    <string>Clear</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="searchEdit">
@@ -237,7 +237,7 @@ QLineEdit:focus {
     </rect>
    </property>
    <property name="text">
-    <string>查找</string>
+    <string>Find</string>
    </property>
   </widget>
   <widget class="QPushButton" name="searchNextButton">
@@ -250,7 +250,7 @@ QLineEdit:focus {
     </rect>
    </property>
    <property name="text">
-    <string>下一个</string>
+    <string>Next</string>
    </property>
   </widget>
   <widget class="QPushButton" name="setLenFilButton">
@@ -263,7 +263,7 @@ QLineEdit:focus {
     </rect>
    </property>
    <property name="text">
-    <string>最短长度过滤</string>
+    <string>Filter shortest</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="isCaseSensitive">
@@ -296,7 +296,7 @@ QCheckBox::indicator:checked {
 }</string>
    </property>
    <property name="text">
-    <string>区分大小写</string>
+    <string>Case sensitive</string>
    </property>
   </widget>
  </widget>

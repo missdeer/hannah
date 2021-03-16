@@ -266,73 +266,43 @@
 <context>
     <name>PlayList</name>
     <message>
-        <location filename="../player/playlist.ui" line="17"/>
-        <source>播放列表（拖入文件添至末尾，双击启动播放）</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.ui" line="153"/>
+        <location filename="../player/playlist.ui" line="149"/>
         <source>Delete selected item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="156"/>
-        <source>Del</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.ui" line="169"/>
+        <location filename="../player/playlist.ui" line="244"/>
         <source>Append file at the end</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="172"/>
-        <source>Add</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.ui" line="185"/>
+        <location filename="../player/playlist.ui" line="198"/>
         <source>Insert file before selected one(in the beginning if none is selected)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="188"/>
-        <source>Ins</source>
+        <location filename="../player/playlist.ui" line="17"/>
+        <source>Playlist(Drag and drop file to append at the end, double click to play)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="201"/>
+        <location filename="../player/playlist.ui" line="175"/>
         <source>Clear playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="204"/>
-        <source>Clear</source>
+        <location filename="../player/playlist.ui" line="267"/>
+        <source>Append URL at the end</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="240"/>
-        <source>Find</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.ui" line="253"/>
-        <source>Next</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.ui" line="266"/>
+        <location filename="../player/playlist.ui" line="306"/>
         <source>Filter shortest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.ui" line="299"/>
+        <location filename="../player/playlist.ui" line="367"/>
         <source>Case sensitive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../player/playlist.cpp" line="291"/>
-        <source>Insert before selected item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -342,61 +312,78 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="306"/>
-        <source>Add audio</source>
+        <location filename="../player/playlist.cpp" line="291"/>
+        <source>Insert audio file before selected item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="350"/>
+        <location filename="../player/playlist.cpp" line="306"/>
+        <source>Add audio file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/playlist.cpp" line="317"/>
+        <location filename="../player/playlist.cpp" line="326"/>
+        <source>Add remote audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/playlist.cpp" line="317"/>
+        <location filename="../player/playlist.cpp" line="326"/>
+        <source>Remote audio URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../player/playlist.cpp" line="365"/>
         <source>Sorry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="350"/>
+        <location filename="../player/playlist.cpp" line="365"/>
         <source>Cannot find.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="355"/>
-        <location filename="../player/playlist.cpp" line="406"/>
+        <location filename="../player/playlist.cpp" line="370"/>
+        <location filename="../player/playlist.cpp" line="421"/>
         <source>Hello</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="355"/>
-        <location filename="../player/playlist.cpp" line="406"/>
+        <location filename="../player/playlist.cpp" line="370"/>
+        <location filename="../player/playlist.cpp" line="421"/>
         <source>What are you looking for?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="359"/>
-        <location filename="../player/playlist.cpp" line="410"/>
+        <location filename="../player/playlist.cpp" line="374"/>
+        <location filename="../player/playlist.cpp" line="425"/>
         <source>What&apos;s this</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="359"/>
-        <location filename="../player/playlist.cpp" line="410"/>
+        <location filename="../player/playlist.cpp" line="374"/>
+        <location filename="../player/playlist.cpp" line="425"/>
         <source>Why I should search in the empty list?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="401"/>
+        <location filename="../player/playlist.cpp" line="416"/>
         <source>Searching done!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="401"/>
+        <location filename="../player/playlist.cpp" line="416"/>
         <source>All things are searched.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="418"/>
+        <location filename="../player/playlist.cpp" line="433"/>
         <source>Minimum Playback Length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../player/playlist.cpp" line="419"/>
+        <location filename="../player/playlist.cpp" line="434"/>
         <source>Audio files smaller than this length will not be accepted 
  unit: seconds</source>
         <translation type="unfinished"></translation>
@@ -498,12 +485,12 @@
         <translation>立体声</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="130"/>
+        <location filename="../main.cpp" line="135"/>
         <source>Critical Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="130"/>
+        <location filename="../main.cpp" line="135"/>
         <source>An incorrect version of BASS.DLL was loaded</source>
         <translation type="unfinished"></translation>
     </message>

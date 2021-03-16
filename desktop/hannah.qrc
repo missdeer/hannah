@@ -34,5 +34,13 @@
         <file>rc/images/player/backup/Stop.png</file>
         <file>rc/images/player/backup/Vol.png</file>
         <file>rc/images/Skin1.jpg</file>
+        <file>rc/images/append.png</file>
+        <file>rc/images/clear.png</file>
+        <file>rc/images/filter.png</file>
+        <file>rc/images/insert.png</file>
+        <file>rc/images/next.png</file>
+        <file>rc/images/search.png</file>
+        <file>rc/images/append-url.png</file>
+        <file>rc/images/insert-url.png</file>
     </qresource>
 </RCC>

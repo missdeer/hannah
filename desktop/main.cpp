@@ -117,6 +117,11 @@ void i18n(QTranslator &translator, QTranslator &qtTranslator)
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QCoreApplication::setApplicationName("Hannah");
+    QCoreApplication::setApplicationVersion("1.0");
+
     QTranslator translator;
     QTranslator qtTranslator;
 
@@ -144,8 +149,6 @@ int main(int argc, char *argv[])
     registerHannahService();
 #else
     QtSingleApplication a(argc, argv);
-    QCoreApplication::setApplicationName("Hannah");
-    QCoreApplication::setApplicationVersion("1.0");
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Hannah");

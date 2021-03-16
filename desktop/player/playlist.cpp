@@ -288,7 +288,7 @@ void PlayList::on_insertButton_clicked()
         index = 0;
     QStringList fileNames = QFileDialog::getOpenFileNames(
         this,
-        tr("Insert before selected item"),
+        tr("Insert audio file before selected item"),
         0,
         tr("Audio file (*.mp3 *.mp2 *.mp1 *.wav *.aiff *.ogg *.ape *.mp4 *.m4a *.m4v *.aac *.alac *.tta *.flac *.wma *.wv)"));
     int count = fileNames.size();
@@ -303,13 +303,28 @@ void PlayList::on_addButton_clicked()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(
         this,
-        tr("Add audio"),
+        tr("Add audio file"),
         0,
         tr("Audio file (*.mp3 *.mp2 *.mp1 *.wav *.aiff *.ogg *.ape *.mp4 *.m4a *.m4v *.aac *.alac *.tta *.flac *.wma *.wv)"));
     for (const auto &fileName : fileNames)
     {
         add(fileName);
     }
+}
+
+void PlayList::on_insertUrlButton_clicked()
+{
+    QString u     = QInputDialog::getText(this, tr("Add remote audio"), tr("Remote audio URL"));
+    int     index = ui->playListTable->currentRow();
+    if (index < 0)
+        index = 0;
+    insert(index, u);
+}
+
+void PlayList::on_addUrlButton_clicked()
+{
+    QString u = QInputDialog::getText(this, tr("Add remote audio"), tr("Remote audio URL"));
+    add(u);
 }
 
 void PlayList::on_searchButton_clicked()

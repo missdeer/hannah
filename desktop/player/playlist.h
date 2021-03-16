@@ -44,6 +44,8 @@ private slots:
     void on_clearButton_clicked();
     void on_insertButton_clicked();
     void on_addButton_clicked();
+    void on_insertUrlButton_clicked();
+    void on_addUrlButton_clicked();
     void on_searchButton_clicked();
     void on_searchNextButton_clicked();
     void on_setLenFilButton_clicked();

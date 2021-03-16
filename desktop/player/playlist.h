@@ -20,23 +20,23 @@ class PlayList : public QWidget
 public:
     explicit PlayList(Player *player, QWidget *parent = 0);
     ~PlayList();
-    bool    fixSuffix(const QString &fileName);
-    bool    isEmpty();
-    void    add(const QString &fileName);
-    void    insert(int index, const QString &fileName);
-    void    remove(int index);
-    void    clearAll();
-    int     getLength();
-    int     getIndex();
-    QString next(bool isLoop = false);
-    QString previous(bool isLoop = false);
+    bool           fixSuffix(const QString &uri);
+    bool           isEmpty();
+    void           add(const QString &fileName);
+    void           insert(int index, const QString &fileName);
+    void           remove(int index);
+    void           clearAll();
+    int            getLength();
+    int            getIndex();
+    QString        next(bool isLoop = false);
+    QString        previous(bool isLoop = false);
     const QString &playIndex(int index);
     const QString &getFileNameForIndex(int index);
     const QString &getCurFile();
-    QString playLast();
-    void    tableUpdate();
-    void    saveToFile(const QString &fileName);
-    void    readFromFile(const QString &fileName);
+    QString        playLast();
+    void           tableUpdate();
+    void           saveToFile(const QString &fileName);
+    void           readFromFile(const QString &fileName);
 
 private slots:
     void on_deleteButton_clicked();

@@ -475,12 +475,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../player/player.cpp" line="282"/>
+        <location filename="../player/player.cpp" line="302"/>
         <source>mono</source>
         <translation>单声道</translation>
     </message>
     <message>
-        <location filename="../player/player.cpp" line="282"/>
+        <location filename="../player/player.cpp" line="302"/>
         <source>stereo</source>
         <translation>立体声</translation>
     </message>

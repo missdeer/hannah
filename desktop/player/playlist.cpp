@@ -27,9 +27,9 @@ PlayList::~PlayList()
     delete ui;
 }
 
-bool PlayList::fixSuffix(const QString &fileName)
+bool PlayList::fixSuffix(const QString &uri)
 {
-    QString     ext       = QFileInfo(fileName).suffix().toLower();
+    QString     ext       = QFileInfo(uri).suffix().toLower();
     QStringList audioExts = {
         "mp3",
         "mp1",
@@ -48,7 +48,7 @@ bool PlayList::fixSuffix(const QString &fileName)
         "flac",
         "wv",
     };
-    return audioExts.contains(ext);
+    return (audioExts.contains(ext));
 }
 
 bool PlayList::isEmpty()

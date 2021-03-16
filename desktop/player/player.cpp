@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QMessageBox>
 #include <QUrl>
+#include <QtCore>
 
 #include "player.h"
 #include "bass_fx.h"
@@ -17,7 +18,12 @@
 
 Player::Player()
 {
-    QString bassPluginsPath = QCoreApplication::applicationDirPath() + "/bassplugins";
+    QString bassPluginsPath = QCoreApplication::applicationDirPath() +
+#if defined(Q_OS_MAC)
+                              "/../Plugins";
+#else
+                              "/bassplugins";
+#endif
     QDir    dir(bassPluginsPath);
     auto    plugins = dir.entryList(QStringList() <<
 #if defined(Q_OS_WIN)
@@ -51,8 +57,7 @@ QString Player::openAudio(const QString &uri)
     BASS_ChannelStop(m_hNowPlay);
     BASS_StreamFree(m_hNowPlay);
 
-    QUrl u = QUrl::fromUserInput(uri);
-    if (u.isLocalFile())
+    if (QFile::exists(uri))
     {
         QString     ext       = QFileInfo(uri).suffix().toLower();
         QStringList audioExts = {
@@ -77,13 +82,28 @@ QString Player::openAudio(const QString &uri)
         {
             return "err";
         }
-        m_hNowPlay = BASS_StreamCreateFile(
-            false, uri.toStdString().c_str(), 0, 0, BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
+        m_hNowPlay = BASS_StreamCreateFile(false,
+#if defined(Q_OS_WIN)
+                                           uri.toStdWString().c_str(),
+#else
+                                           uri.toStdString().c_str(),
+#endif
+                                           0,
+                                           0,
+                                           BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN);
     }
-    else
+    else if (uri.startsWith("https://", Qt::CaseInsensitive) || uri.startsWith("http://", Qt::CaseInsensitive))
     {
         m_hNowPlay = BASS_StreamCreateURL(
-            uri.toStdString().c_str(), BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN, 0, nullptr, 0);
+#if defined(Q_OS_WIN)
+            uri.toStdWString().c_str(),
+#else
+            uri.toStdString().c_str(),
+#endif
+            BASS_UNICODE | BASS_SAMPLE_FLOAT | BASS_SAMPLE_FX | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN,
+            0,
+            nullptr,
+            0);
     }
 
     if (BASS_ErrorGetCode() != 0)

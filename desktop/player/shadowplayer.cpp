@@ -413,7 +413,7 @@ void ShadowPlayer::infoLabelAnimation()
 
 void ShadowPlayer::loadAudio(const QString &uri)
 {
-    if (player->openAudio(uri) != "err")
+    if (player->openAudio(QDir::toNativeSeparators(uri)) != "err")
     {
         QFileInfo fileinfo(uri);
         showCoverPic(uri);

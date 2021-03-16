@@ -338,7 +338,7 @@ void ShadowPlayer::contextMenuEvent(QContextMenuEvent *)
 
 void ShadowPlayer::loadDefaultSkin()
 {
-    loadSkin(":/image/image/Skin1.jpg", false);
+    loadSkin(":/rc/images/Skin1.jpg", false);
     QFile skinFile(QCoreApplication::applicationDirPath() + "/skin.dat");
     skinFile.remove();
 }

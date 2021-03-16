@@ -17,7 +17,13 @@ PlayList::PlayList(Player *player, QWidget *parent) : QWidget(parent), ui(new Ui
 
 PlayList::~PlayList()
 {
-    saveToFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/default.hpl");
+    auto dirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir dir(dirPath);
+    if (!dir.exists())
+    {
+        dir.mkdir(dirPath);
+    }
+    saveToFile(dirPath + "/default.hpl");
     delete ui;
 }
 
@@ -423,10 +429,12 @@ void PlayList::on_setLenFilButton_clicked()
 void PlayList::saveToFile(const QString &fileName)
 {
     QFile file(fileName);
-    file.open(QIODevice::WriteOnly);
-    QDataStream stream(&file);
-    stream << (quint32)0x61727487 << m_trackList << m_timeList << m_curIndex;
-    file.close();
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QDataStream stream(&file);
+        stream << (quint32)0x61727487 << m_trackList << m_timeList << m_curIndex;
+        file.close();
+    }
 }
 
 void PlayList::readFromFile(const QString &fileName)

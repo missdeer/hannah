@@ -17,7 +17,6 @@
 #include <QtDebug>
 
 #include "parserpls.h"
-#include "moc_parserpls.cpp"
 
 /**
    ToDo:

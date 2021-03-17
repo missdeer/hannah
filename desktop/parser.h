@@ -28,6 +28,7 @@ it afterwards for proper functioning
 
 class Parser : public QObject
 {
+    Q_OBJECT
 public:
     static bool isPlaylistFilenameSupported(const QString &fileName)
     {

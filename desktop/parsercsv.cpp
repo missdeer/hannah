@@ -18,7 +18,6 @@
 #include <QtDebug>
 
 #include "parsercsv.h"
-#include "moc_parsercsv.cpp"
 
 QList<QString> ParserCsv::parse(const QString &sFilename)
 {

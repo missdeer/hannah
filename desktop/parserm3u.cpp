@@ -18,7 +18,6 @@
 #include <QtDebug>
 
 #include "parserm3u.h"
-#include "moc_parserm3u.cpp"
 
 /**
    ToDo:

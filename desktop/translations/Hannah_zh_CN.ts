@@ -266,7 +266,7 @@
 <context>
     <name>ParserCsv</name>
     <message>
-        <location filename="../parsercsv.cpp" line="42"/>
+        <location filename="../parsercsv.cpp" line="41"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
@@ -274,25 +274,25 @@
 <context>
     <name>ParserM3u</name>
     <message>
-        <location filename="../parserm3u.cpp" line="144"/>
-        <location filename="../parserm3u.cpp" line="156"/>
+        <location filename="../parserm3u.cpp" line="143"/>
+        <location filename="../parserm3u.cpp" line="155"/>
         <source>Playlist Export Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="145"/>
+        <location filename="../parserm3u.cpp" line="144"/>
         <source>File path contains characters, not allowed in m3u playlists.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="147"/>
+        <location filename="../parserm3u.cpp" line="146"/>
         <source>Export a m3u8 playlist instead!
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="156"/>
+        <location filename="../parserm3u.cpp" line="155"/>
         <source>Could not create file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -300,12 +300,12 @@
 <context>
     <name>ParserPls</name>
     <message>
-        <location filename="../parserpls.cpp" line="144"/>
+        <location filename="../parserpls.cpp" line="143"/>
         <source>Playlist Export Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserpls.cpp" line="144"/>
+        <location filename="../parserpls.cpp" line="143"/>
         <source>Could not create file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -653,11 +653,6 @@
         <translation>%vdB</translation>
     </message>
     <message>
-        <location filename="../player/shadowplayer.ui" line="1689"/>
-        <source>0</source>
-        <translation>0</translation>
-    </message>
-    <message>
         <location filename="../player/shadowplayer.cpp" line="89"/>
         <source>Player</source>
         <translation>播放器</translation>
@@ -865,6 +860,7 @@
     </message>
     <message>
         <location filename="../player/shadowplayer.ui" line="327"/>
+        <location filename="../player/shadowplayer.ui" line="1689"/>
         <location filename="../player/shadowplayer.cpp" line="509"/>
         <location filename="../player/shadowplayer.cpp" line="514"/>
         <location filename="../player/shadowplayer.cpp" line="532"/>

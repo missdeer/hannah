@@ -505,7 +505,7 @@ QPushButton#playListButton:hover {
    <widget class="QProgressBar" name="leftLevel">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>130</y>
       <width>91</width>
       <height>16</height>
@@ -530,7 +530,7 @@ QPushButton#playListButton:hover {
    <widget class="QProgressBar" name="rightLevel">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>150</y>
       <width>91</width>
       <height>16</height>
@@ -551,7 +551,7 @@ QPushButton#playListButton:hover {
      <rect>
       <x>10</x>
       <y>129</y>
-      <width>8</width>
+      <width>16</width>
       <height>21</height>
      </rect>
     </property>
@@ -564,7 +564,7 @@ QPushButton#playListButton:hover {
      <rect>
       <x>10</x>
       <y>149</y>
-      <width>8</width>
+      <width>16</width>
       <height>21</height>
      </rect>
     </property>
@@ -1629,7 +1629,7 @@ QComboBox::down-arrow:on {
    <widget class="QProgressBar" name="leftdB">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>130</y>
       <width>91</width>
       <height>16</height>
@@ -1654,7 +1654,7 @@ QComboBox::down-arrow:on {
    <widget class="QProgressBar" name="rightdB">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>150</y>
       <width>91</width>
       <height>16</height>
@@ -1679,14 +1679,14 @@ QComboBox::down-arrow:on {
    <widget class="QPushButton" name="reverseButton">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>290</x>
       <y>180</y>
-      <width>31</width>
+      <width>61</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>0</string>
+     <string>Play</string>
     </property>
    </widget>
    <widget class="QWidget" name="playerListArea" native="true">

@@ -10,12 +10,13 @@ jobs:
           - GOARCH: amd64
             GOOS: linux
             LIBPATH: x86_64-linux-gnu
-
+    env:
+      go_version: 1.16.3
     steps:
       - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: ${{ env.go_version }}
         id: go
 
       - run: go version && go env
@@ -74,7 +75,7 @@ jobs:
             BUILDRP: build-x86.bat
             msvc_arch: x86
     env:
-      go_version: 1.16.0
+      go_version: 1.16.3
       qt_ver: 5.15.2
       qt_target: desktop
     steps:
@@ -196,7 +197,7 @@ jobs:
             GOARCH: amd64
             BUILDRP: build-x64.bat
             msvc_arch: x64
-            clang_link: llvm-win-x64.7z
+            clang_link: llvm-win-x64.zip
           - qt_arch: win32_msvc2019
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
@@ -204,9 +205,9 @@ jobs:
             GOARCH: 386
             BUILDRP: build-x86.bat
             msvc_arch: x86
-            clang_link: llvm-win-x86.7z
+            clang_link: llvm-win-x86.zip
     env:
-      go_version: 1.16.0
+      go_version: 1.16.3
       qt_ver: 5.15.2
       qt_target: desktop
     steps:
@@ -235,8 +236,8 @@ jobs:
         run: |
           mkdir llvm
           cd llvm
-          curl.exe -o LLVM.7z -L ${{ secrets.CLANG_SERVER }}/${{ matrix.clang_link }}
-          7z.exe x LLVM.7z
+          curl.exe -o LLVM.zip -L ${{ secrets.CLANG_SERVER }}/${{ matrix.clang_link }}
+          7z.exe x LLVM.zip
           cd ..
 
       - name: Build Go executables
@@ -390,7 +391,7 @@ jobs:
             windeployqt: windeployqt.exe
             GOARCH: 386
     env:
-      go_version: 1.16.0
+      go_version: 1.16.3
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -464,11 +465,13 @@ jobs:
         qt_ver: [5.15.2]
         qt_target: [desktop]
         qt_arch: [clang_64]
+    env:
+      go_version: 1.16.3
     steps:
       - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: ${{ env.go_version }}
         id: go
 
       - run: go version && go env

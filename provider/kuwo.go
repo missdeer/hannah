@@ -6,10 +6,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/lyric"
@@ -435,8 +438,10 @@ func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 	token, err := p.getToken()
 	for page := config.Page; ; page++ {
 		u := fmt.Sprintf(kuwoAPIArtistSongs, id, page, config.Limit)
+		log.Println("kuwo artist songs page", page)
 		req, e := http.NewRequest("GET", u, nil)
 		if e != nil {
+			log.Println("new request failed", e)
 			err = e
 			break
 		}
@@ -452,18 +457,28 @@ func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 		httpClient := util.GetHttpClient()
 		resp, e := httpClient.Do(req)
 		if e != nil {
+			log.Println("http client do request failed", e)
 			err = e
 			break
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != 200 {
+			log.Println("http response code != 200", resp.StatusCode)
+			if resp.StatusCode == 504 {
+				second := rand.Intn(8) + 3
+				time.Sleep(time.Duration(second * int(time.Second)))
+				page--
+				// try again
+				continue
+			}
 			err = ErrStatusNotOK
 			break
 		}
 
 		content, e := util.ReadHttpResponseBody(resp)
 		if e != nil {
+			log.Println("read http response body failed", e)
 			err = e
 			break
 		}
@@ -471,9 +486,11 @@ func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 		var artistSongs kuwoArtistSongs
 		err = json.Unmarshal(content, &artistSongs)
 		if err != nil {
+			log.Println("unmarshal content failed", e, string(content))
 			break
 		}
 		if len(artistSongs.Data.List) == 0 {
+			log.Println("empty music list")
 			break
 		}
 		for _, song := range artistSongs.Data.List {
@@ -490,6 +507,7 @@ func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 	if len(res) == 0 {
 		return nil, ErrEmptyTrackList
 	} else {
+		log.Printf("got %d songs totally\n", len(res))
 		err = nil
 	}
 	return
@@ -521,6 +539,7 @@ func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
 	token, err := p.getToken()
 	for page := config.Page; ; page++ {
 		u := fmt.Sprintf(kuwoAPIAlbumSongs, id, page, config.Limit)
+		log.Println("kuwo album songs page", page)
 		req, e := http.NewRequest("GET", u, nil)
 		if e != nil {
 			err = e

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -170,6 +171,7 @@ func makeM3U(c *gin.Context, u string, patternMatch patternMatchFunc, make makeF
 	if matched {
 		b, err := make(c, id, providerName)
 		if err != nil {
+			log.Println(err)
 			c.Data(http.StatusNotFound, "text/html; charset=UTF-8", notFoundPage)
 		} else {
 			c.Writer.Header().Set(`Content-Disposition`, `attachment; filename="playlist.m3u"`)

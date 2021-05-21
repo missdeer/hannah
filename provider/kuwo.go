@@ -433,52 +433,64 @@ type kuwoArtistSongs struct {
 
 func (p *kuwo) ArtistSongs(id string) (res Songs, err error) {
 	token, err := p.getToken()
-	u := fmt.Sprintf(kuwoAPIArtistSongs, id, config.Page, config.Limit)
-	req, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
+	for page := config.Page; ; page++ {
+		u := fmt.Sprintf(kuwoAPIArtistSongs, id, page, config.Limit)
+		req, e := http.NewRequest("GET", u, nil)
+		if e != nil {
+			err = e
+			break
+		}
+
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0")
+		req.Header.Set("Accept", "application/json, text/plain, */*")
+		req.Header.Set("Referer", "http://www.kuwo.cn/")
+		req.Header.Set("Origin", "http://www.kuwo.cn/")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+		req.Header.Set("csrf", token)
+		req.Header.Set("cookie", "kw_token="+token)
+
+		httpClient := util.GetHttpClient()
+		resp, e := httpClient.Do(req)
+		if e != nil {
+			err = e
+			break
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			err = ErrStatusNotOK
+			break
+		}
+
+		content, e := util.ReadHttpResponseBody(resp)
+		if e != nil {
+			err = e
+			break
+		}
+
+		var artistSongs kuwoArtistSongs
+		err = json.Unmarshal(content, &artistSongs)
+		if err != nil {
+			break
+		}
+		if len(artistSongs.Data.List) == 0 {
+			break
+		}
+		for _, song := range artistSongs.Data.List {
+			res = append(res, Song{
+				ID:       strconv.Itoa(song.RID),
+				Title:    song.Name,
+				Artist:   song.Artist,
+				Image:    song.Pic,
+				Provider: "kuwo",
+			})
+		}
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0")
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Referer", "http://www.kuwo.cn/")
-	req.Header.Set("Origin", "http://www.kuwo.cn/")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	req.Header.Set("csrf", token)
-	req.Header.Set("cookie", "kw_token="+token)
-
-	httpClient := util.GetHttpClient()
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, ErrStatusNotOK
-	}
-
-	content, err := util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	var artistSongs kuwoArtistSongs
-	err = json.Unmarshal(content, &artistSongs)
-	if err != nil {
-		return nil, err
-	}
-	for _, song := range artistSongs.Data.List {
-		res = append(res, Song{
-			ID:       strconv.Itoa(song.RID),
-			Title:    song.Name,
-			Artist:   song.Artist,
-			Image:    song.Pic,
-			Provider: "kuwo",
-		})
-	}
 	if len(res) == 0 {
 		return nil, ErrEmptyTrackList
+	} else {
+		err = nil
 	}
 	return
 }
@@ -507,52 +519,63 @@ type kuwoAlbumSongs struct {
 
 func (p *kuwo) AlbumSongs(id string) (res Songs, err error) {
 	token, err := p.getToken()
-	u := fmt.Sprintf(kuwoAPIAlbumSongs, id, config.Page, config.Limit)
-	req, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
+	for page := config.Page; ; page++ {
+		u := fmt.Sprintf(kuwoAPIAlbumSongs, id, page, config.Limit)
+		req, e := http.NewRequest("GET", u, nil)
+		if e != nil {
+			err = e
+			break
+		}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0")
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Referer", "http://www.kuwo.cn/")
-	req.Header.Set("Origin", "http://www.kuwo.cn/")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	req.Header.Set("csrf", token)
-	req.Header.Set("cookie", "kw_token="+token)
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0")
+		req.Header.Set("Accept", "application/json, text/plain, */*")
+		req.Header.Set("Referer", "http://www.kuwo.cn/")
+		req.Header.Set("Origin", "http://www.kuwo.cn/")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+		req.Header.Set("csrf", token)
+		req.Header.Set("cookie", "kw_token="+token)
 
-	httpClient := util.GetHttpClient()
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+		httpClient := util.GetHttpClient()
+		resp, e := httpClient.Do(req)
+		if e != nil {
+			err = e
+			break
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return nil, ErrStatusNotOK
-	}
+		if resp.StatusCode != 200 {
+			err = ErrStatusNotOK
+			break
+		}
 
-	content, err := util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return nil, err
-	}
+		content, e := util.ReadHttpResponseBody(resp)
+		if e != nil {
+			err = e
+			break
+		}
 
-	var albumSongs kuwoAlbumSongs
-	err = json.Unmarshal(content, &albumSongs)
-	if err != nil {
-		return nil, err
-	}
-	for _, song := range albumSongs.Data.MusicList {
-		res = append(res, Song{
-			ID:       strconv.Itoa(song.RID),
-			Title:    song.Name,
-			Artist:   song.Artist,
-			Image:    song.Pic,
-			Provider: "kuwo",
-		})
+		var albumSongs kuwoAlbumSongs
+		err = json.Unmarshal(content, &albumSongs)
+		if err != nil {
+			break
+		}
+		if len(albumSongs.Data.MusicList) == 0 {
+			break
+		}
+		for _, song := range albumSongs.Data.MusicList {
+			res = append(res, Song{
+				ID:       strconv.Itoa(song.RID),
+				Title:    song.Name,
+				Artist:   song.Artist,
+				Image:    song.Pic,
+				Provider: "kuwo",
+			})
+		}
 	}
 	if len(res) == 0 {
 		return nil, ErrEmptyTrackList
+	} else {
+		err = nil
 	}
 	return
 }

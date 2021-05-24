@@ -35,7 +35,7 @@ var (
 	ReverseProxy         = "127.0.0.1:8123"
 	Action               = "play"
 	Provider             = "netease"
-	Limit                = 35
+	Limit                = 30
 	Page                 = 1
 	NetworkTimeout       = 60
 

@@ -565,7 +565,7 @@ void ConfigurationWindow::handle(const QString &url, bool needConfirm)
     if (!fi.exists())
     {
         if (!needConfirm)
-            QMessageBox::critical(this, tr("Erorr"), tr("External player path not configured properly"));
+            QMessageBox::critical(this, tr("Error"), tr("External player path not configured properly"));
         return;
     }
 

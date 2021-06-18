@@ -419,7 +419,7 @@ func (p *kuwo) PlaylistDetail(pl Playlist) (Songs, error) {
 type kuwoArtistSongs struct {
 	Code int `json:"code"`
 	Data struct {
-		Total string `json:"total"`
+		Total int `json:"total"`
 		List  []struct {
 			MusicRID    string `json:"musicrid"`
 			Artist      string `json:"artist"`
@@ -428,7 +428,7 @@ type kuwoArtistSongs struct {
 			RID         int    `json:"rid"`
 			HasLossless bool   `json:"hasLossless"`
 			Album       string `json:"album"`
-			AlbumID     int    `json:"albumid"`
+			AlbumID     string `json:"albumid"`
 			Name        string `json:"name"`
 		} `json:"list"`
 	} `json:"data"`

@@ -130,8 +130,3 @@ inline QDebug operator<<(QDebug debug, const TrackFile &trackFile)
     return debug << trackFile.location();
 #endif
 }
-
-inline uint qHash(const TrackFile &key, uint seed = 0)
-{
-    return qHash(key.location(), seed);
-}

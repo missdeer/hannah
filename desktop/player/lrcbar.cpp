@@ -1,15 +1,14 @@
-#include <QApplication>
 #include <QContextMenuEvent>
-#include <QDesktopWidget>
 #include <QFontDialog>
+#include <QGuiApplication>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QScreen>
 #include <QTimer>
 
 #include "lrcbar.h"
-
 #include "lyrics.h"
 #include "player.h"
 #include "ui_lrcbar.h"
@@ -35,8 +34,8 @@ LrcBar::LrcBar(Lyrics *lrc, Player *plr, QWidget *parent) : QWidget(parent), ui(
     connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer->start(30);
 
-    setGeometry((QApplication::desktop()->screenGeometry().width() - width()) / 2,
-                QApplication::desktop()->screenGeometry().height() - 130,
+    setGeometry((QGuiApplication::primaryScreen()->availableGeometry().width() - width()) / 2,
+                QGuiApplication::primaryScreen()->availableGeometry().height() - 130,
                 width(),
                 height());
     setFixedSize(width(), height());
@@ -111,11 +110,11 @@ void LrcBar::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QFontMetrics fm(font);
-    int          lrcWidth   = fm.width(curLrc);
+    int          lrcWidth   = fm.boundingRect(curLrc).width();
     double       curTimePos = lyrics->getTimePos(player->getCurTimeMS());
     int          maskWidth  = lrcWidth * curTimePos;
 
-    if (fm.width(curLrc) < width())
+    if (fm.boundingRect(curLrc).width() < width())
     {
         int startXPos = width() / 2 - lrcWidth / 2;
         switch (shadowMode)
@@ -191,11 +190,13 @@ void LrcBar::paintEvent(QPaintEvent *)
     }
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void LrcBar::enterEvent(QEvent *)
 {
     mouseEnter = true;
     repaint();
 }
+#endif
 
 void LrcBar::leaveEvent(QEvent *)
 {

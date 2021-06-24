@@ -1,12 +1,12 @@
-#include <QDesktopWidget>
+#include <QGuiApplication>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPropertyAnimation>
+#include <QScreen>
 #include <QTimer>
 
 #include "osd.h"
-
 #include "ui_osd.h"
 
 OSD::OSD(QWidget *parent) : QWidget(parent), ui(new Ui::OSD)
@@ -19,7 +19,7 @@ OSD::OSD(QWidget *parent) : QWidget(parent), ui(new Ui::OSD)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    setGeometry(QApplication::desktop()->screenGeometry().width() - width(), 80, width(), height());
+    setGeometry(QGuiApplication::primaryScreen()->availableGeometry().width() - width(), 80, width(), height());
     setFixedSize(width(), height());
 
     hideAnimation = new QPropertyAnimation(this, "windowOpacity");
@@ -78,7 +78,7 @@ void OSD::showOSD(QString tags, QString totalTime)
     setWindowOpacity(1);
 
     QFontMetrics titleFontMetrics(ui->titleLabel->font());
-    if (titleFontMetrics.width(tags) > 281)
+    if (titleFontMetrics.boundingRect(tags).width() > 281)
     {
         ui->titleLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
         ui->titleLabel->setWordWrap(true);

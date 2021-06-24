@@ -1,5 +1,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextStream>
 
 #include "lyrics.h"
@@ -43,7 +45,7 @@ bool Lyrics::resolve(const QString &fileName, bool isLrc)
     {
         QString text = oneline;
 
-        text.replace(rx, "");
+        text.replace(QRegularExpression(rx.pattern()), "");
         int pos = rx.indexIn(oneline, 0);
 
         while (pos != -1)

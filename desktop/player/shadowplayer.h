@@ -7,7 +7,7 @@
 #include <QMainWindow>
 #include <QUrl>
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #    include <QtWinExtras>
 #endif
 #include "bass.h"
@@ -82,7 +82,7 @@ private slots:
     void showDeveloperInfo();
     void on_reverbDial_valueChanged(int value);
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     void setTaskbarButtonWindow();
 #endif
 
@@ -135,7 +135,7 @@ private:
     double  skinDrawPos {0.0};
     bool    isReverse {false};
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QWinTaskbarButton *  taskbarButton;
     QWinTaskbarProgress *taskbarProgress;
 
@@ -172,7 +172,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent *) override;
     void closeEvent(QCloseEvent *) override;
     void resizeEvent(QResizeEvent *) override;
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
 #endif
 };

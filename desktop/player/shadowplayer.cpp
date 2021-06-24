@@ -74,7 +74,7 @@ ShadowPlayer::ShadowPlayer(QWidget *parent)
     bgLinearGradient.setStart(0, 0);
     bgLinearGradient.setFinalStop(0, height());
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     taskbarButton = new QWinTaskbarButton(this);
     taskbarButton->setWindow(windowHandle());
     taskbarProgress = taskbarButton->progress();
@@ -168,7 +168,7 @@ ShadowPlayer::ShadowPlayer(QWidget *parent)
     connect(fadeInAnimation, &QPropertyAnimation::finished, [this] {
         activateWindow();
         raise();
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         setTaskbarButtonWindow();
 #endif
     });
@@ -437,7 +437,7 @@ void ShadowPlayer::loadAudio(const QString &uri)
             playing = true;
             ui->playButton->setIcon(QIcon(":/rc/images/player/Pause.png"));
             ui->playButton->setToolTip(tr("Pause"));
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             taskbarProgress->show();
             taskbarProgress->resume();
             taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Play.png"));
@@ -507,7 +507,7 @@ void ShadowPlayer::UpdateTime()
             playing = false;
             ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
             ui->playButton->setToolTip(tr("Play"));
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             taskbarProgress->hide();
             taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Stop.png"));
             playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
@@ -530,7 +530,7 @@ void ShadowPlayer::UpdateTime()
                     playing = false;
                     ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
                     ui->playButton->setToolTip(tr("Play"));
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                     taskbarProgress->hide();
                     taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Stop.png"));
                     playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
@@ -660,7 +660,7 @@ void ShadowPlayer::on_playButton_clicked()
             playing = true;
             ui->playButton->setIcon(QIcon(":/rc/images/player/Pause.png"));
             ui->playButton->setToolTip(tr("Pause"));
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             taskbarProgress->show();
             taskbarProgress->resume();
             taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Play.png"));
@@ -680,7 +680,7 @@ void ShadowPlayer::on_playButton_clicked()
         playing = false;
         ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
         ui->playButton->setToolTip(tr("Play"));
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         taskbarProgress->show();
         taskbarProgress->pause();
         taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Pause.png"));
@@ -696,7 +696,7 @@ void ShadowPlayer::on_stopButton_clicked()
     playing = false;
     ui->playButton->setIcon(QIcon(":/rc/images/player/Play.png"));
     ui->playButton->setToolTip(tr("Play"));
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     taskbarProgress->hide();
     taskbarButton->setOverlayIcon(QIcon(":/rc/images/player/Stop.png"));
     playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
@@ -1355,7 +1355,7 @@ void ShadowPlayer::loadSkinData()
     }
 }
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 bool ShadowPlayer::nativeEvent(const QByteArray &eventType, void *message, long * /*result*/)
 {
     Q_UNUSED(eventType);

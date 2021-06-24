@@ -48,7 +48,9 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *) override;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     void enterEvent(QEvent *) override;
+#endif
     void leaveEvent(QEvent *) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
 };

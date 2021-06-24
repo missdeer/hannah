@@ -7,6 +7,8 @@ TARGET = Hannah
 
 include($$PWD/3rdparty/sqlite3/sqlite3.pri)
 
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050F00 _CRT_SECURE_NO_WARNINGS=
+
 INCLUDEPATH += $$PWD/../lib/reverseProxy $$PWD $$PWD/player $$PWD/3rdparty/bass/include
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -91,9 +93,9 @@ lupdate.commands = $$QMAKE_LUPDATE -no-obsolete $$shell_path($$PWD/desktop.pro)
 lupdates.depends = $$SOURCES $$HEADERS $$FORMS $$TRANSLATIONS
 lrelease.commands = $$QMAKE_LRELEASE $$shell_path($$PWD/desktop.pro)
 lrelease.depends = lupdate
-translate.depends = lrelease
-QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n 
-POST_TARGETDEPS += translate qti18n
+#translate.depends = lrelease
+#QMAKE_EXTRA_TARGETS += lupdate lrelease translate qti18n
+#POST_TARGETDEPS += translate qti18n
 
 win32: {
     lessThan(QT_MAJOR_VERSION, 6): QT += winextras
@@ -101,7 +103,7 @@ win32: {
         WINDEPLOYQT = $$shell_path($$[QT_INSTALL_BINS]/windeployqt.exe)
         QMAKE_EXTRA_TARGETS += mkdir
         
-        qti18n.depends = translate
+        #qti18n.depends = translate
         win32-*g++*: {
             translate.commands = '$(COPY_FILE) $$shell_path($$PWD/translations/*.qm) $$shell_path($$OUT_PWD/release/translations/)'
             qti18n.commands = '$(COPY_FILE) $$shell_path($$[QT_INSTALL_BINS]/../share/qt5/translations/qt_zh_CN.qm) $$shell_path($$OUT_PWD/release/translations/qt_zh_CN.qm)'

@@ -16,7 +16,9 @@
 #include <QTextCodec>
 #include <QUrl>
 #include <QtDebug>
-
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#    include <QStringConverter>
+#endif
 #include "parserm3u.h"
 
 /**
@@ -64,11 +66,19 @@ QList<QString> ParserM3u::parse(const QString &sFilename)
     QTextStream textstream(ba.constData());
     if (isUtf8(ba.constData()))
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        textstream.setEncoding(QStringConverter::Utf8);
+#else
         textstream.setCodec("UTF-8");
+#endif
     }
     else
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        textstream.setEncoding(QStringConverter::Utf8);
+#else
         textstream.setCodec("windows-1252");
+#endif
     }
 
     const auto basePath = sFilename.section('/', 0, -2);
@@ -162,7 +172,12 @@ bool ParserM3u::writeM3UFile(const QString &file_str, const QList<QString> &item
 
     qDebug() << "Basepath: " << base;
     QTextStream out(&file);
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     out.setCodec(codec);
+#else
+    out.setEncoding(QStringConverter::Utf8);
+#endif
     out << "#EXTM3U\n";
     for (int i = 0; i < items.size(); ++i)
     {

@@ -172,16 +172,12 @@
     </message>
     <message>
         <location filename="../configurationwindow.cpp" line="568"/>
-        <source>Erorr</source>
-        <translation>错误</translation>
-    </message>
-    <message>
-        <location filename="../configurationwindow.cpp" line="568"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
     <message>
         <location filename="../configurationwindow.cpp" line="249"/>
+        <location filename="../configurationwindow.cpp" line="568"/>
         <location filename="../configurationwindow.cpp" line="587"/>
         <source>Error</source>
         <translation>错误</translation>
@@ -274,25 +270,25 @@
 <context>
     <name>ParserM3u</name>
     <message>
-        <location filename="../parserm3u.cpp" line="143"/>
-        <location filename="../parserm3u.cpp" line="155"/>
+        <location filename="../parserm3u.cpp" line="153"/>
+        <location filename="../parserm3u.cpp" line="165"/>
         <source>Playlist Export Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="144"/>
+        <location filename="../parserm3u.cpp" line="154"/>
         <source>File path contains characters, not allowed in m3u playlists.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="146"/>
+        <location filename="../parserm3u.cpp" line="156"/>
         <source>Export a m3u8 playlist instead!
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="155"/>
+        <location filename="../parserm3u.cpp" line="165"/>
         <source>Could not create file</source>
         <translation type="unfinished"></translation>
     </message>

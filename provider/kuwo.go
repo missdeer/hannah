@@ -421,15 +421,12 @@ type kuwoArtistSongs struct {
 	Data struct {
 		Total int `json:"total"`
 		List  []struct {
-			MusicRID    string `json:"musicrid"`
-			Artist      string `json:"artist"`
-			ArtistID    int    `json:"artistid"`
-			Pic         string `json:"pic"`
-			RID         int    `json:"rid"`
-			HasLossless bool   `json:"hasLossless"`
-			Album       string `json:"album"`
-			AlbumID     string `json:"albumid"`
-			Name        string `json:"name"`
+			MusicRID string `json:"musicrid"`
+			Artist   string `json:"artist"`
+			ArtistID int    `json:"artistid"`
+			Pic      string `json:"pic"`
+			RID      int    `json:"rid"`
+			Name     string `json:"name"`
 		} `json:"list"`
 	} `json:"data"`
 }

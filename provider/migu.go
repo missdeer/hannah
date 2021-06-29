@@ -8,11 +8,12 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"net/url"
 	"regexp"
-	"strings"
+	"strconv"
 
 	"github.com/missdeer/hannah/config"
 	"github.com/missdeer/hannah/lyric"
@@ -28,12 +29,12 @@ const (
 var (
 	miguAPISearch         = `http://m.music.migu.cn/migu/remoting/scr_search_tag?type=2&keyword=%s&pgc=%d&rows=%d`
 	miguAPIHot            = `https://music.migu.cn/v3/music/playlist?page=%d`
-	miguAPIPlaylistDetail = `https://music.migu.cn/v3/music/playlist/%s`
-	miguAPIArtistSongs    = `https://music.migu.cn/v3/music/artist/%s/song?page=%d`
-	miguAPIAlbumSongs     = `https://music.migu.cn/v3/music/album/%s`
-	miguAPIGetPlayInfo    = `https://m.music.migu.cn/migu/remoting/cms_detail_tag?cpid=%s`
-	miguAPIGetLossless    = `http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?dataType=2&`
-	miguAPILyric          = `https://music.migu.cn/v3/api/music/audioPlayer/getLyric?copyrightId=%s`
+	miguAPIPlaylistInfo   = `https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=00&resourceType=2021&resourceId=%s`
+	miguAPIPlaylistDetail = `https://app.c.nf.migu.cn/MIGUM2.0/v1.0/user/queryMusicListSongs.do?musicListId=%s&pageNo=%d&pageSize=50`
+	miguAPIArtistSongs    = `https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/singer_songs.do?pageNo=%d&pageSize=50&resourceType=2&singerId=%s`
+	miguAPIAlbumInfo      = `https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=00&resourceType=2003&resourceId=%s`
+	miguAPIAlbumDetail    = `https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/queryAlbumSong?albumId=%s&pageNo=%d&pageSize=50`
+	miguAPIGetPlayInfo    = `https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?netType=01&resourceType=E&songId=%s&toneFlag=SQ`
 
 	regPlaylist     = regexp.MustCompile(`data\-share='([^']+)'`)
 	regPlaylistLink = regexp.MustCompile(`^\/v3\/music\/playlist\/([0-9]+)\?origin=[0-9]+$`)
@@ -129,18 +130,25 @@ func (p *migu) SearchSongs(keyword string, page int, limit int) (SearchResult, e
 
 type miguSongInfo struct {
 	Data struct {
-		ListenURL  string   `json:"listenUrl"`
-		Lyric      string   `json:"lyricLrc"`
-		SongName   string   `json:"songName"`
-		SingerName []string `json:"singerName"`
-		SongID     string   `json:"songId"`
-		PicL       string   `json:"picL"`
-	} `json:"data"`
-}
-
-type miguSongURL struct {
-	Data struct {
-		PlayURL string `json:"playUrl"`
+		SongItem struct {
+			ResourceType string `json:"resourceType"`
+			RefID        string `json:"refId"`
+			CopyrightID  string `json:"copyrightId"`
+			ContentID    string `json:"contentId"`
+			SongID       string `json:"songId"`
+			SongName     string `json:"songName"`
+			SingerID     string `json:"singerId"`
+			Singer       string `json:"singer"`
+			LrcURL       string `json:"lrcUrl"`
+			LandscapImg  string `json:"landscapImg"`
+			Artists      []struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			} `json:"artists"`
+		} `json:"songItem"`
+		URL        string `json:"url"`
+		Version    string `json:"version"`
+		FormatType string `json:"formatType"`
 	} `json:"data"`
 }
 
@@ -159,6 +167,8 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	req.Header.Set("Origin", "http://migu.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	req.Header.Set("channel", "0146951")
+	req.Header.Set("uid", "1234")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -180,64 +190,20 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	if err = json.Unmarshal(content, &si); err != nil {
 		return song, err
 	}
-	song.URL = si.Data.ListenURL
-	song.Title = si.Data.SongName
-	song.Artist = strings.Join(si.Data.SingerName, "/")
-	song.Image = si.Data.PicL
-
-	u = fmt.Sprintf("%s%s", miguAPIGetLossless, p.encrypt(fmt.Sprintf(`{"copyrightId":"%s", "type":3}`, song.ID)))
-
-	req, err = http.NewRequest("GET", u, nil)
-	if err != nil {
-		return song, err
-	}
-
-	req.Header.Set("User-Agent", config.UserAgent)
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "http://migu.cn/")
-	req.Header.Set("Origin", "http://migu.cn/")
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-
-	resp, err = httpClient.Do(req)
-	if err != nil {
-		return song, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return song, ErrStatusNotOK
-	}
-
-	content, err = util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return song, err
-	}
-
-	var songURL miguSongURL
-	if err = json.Unmarshal(content, &songURL); err != nil {
-		return song, err
-	}
-	if songURL.Data.PlayURL == "" {
-		return song, ErrEmptyPURL
-	}
-	song.URL = "http:" + songURL.Data.PlayURL
 	song.Provider = "migu"
-	return song, nil
-}
+	song.URL = si.Data.URL
+	song.Title = si.Data.SongItem.SongName
+	song.Artist = si.Data.SongItem.Singer
+	song.Image = si.Data.SongItem.LandscapImg
 
-type miguLyric struct {
-	ReturnCode string `json:"returncode"`
-	Msg        string `json:"msg"`
-	Lyric      string `json:"lyric"`
+	return song, nil
 }
 
 func (p *migu) ResolveSongLyric(song Song, format string) (Song, error) {
 	if song.Lyric != "" {
 		return song, nil
 	}
-	u := fmt.Sprintf(miguAPILyric, song.ID)
+	u := fmt.Sprintf(miguAPIGetPlayInfo, song.ID)
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -251,6 +217,8 @@ func (p *migu) ResolveSongLyric(song Song, format string) (Song, error) {
 	req.Header.Set("Origin", "http://migu.cn/")
 	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
 	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	req.Header.Set("channel", "0146951")
+	req.Header.Set("uid", "1234")
 
 	httpClient := util.GetHttpClient()
 	resp, err := httpClient.Do(req)
@@ -268,11 +236,16 @@ func (p *migu) ResolveSongLyric(song Song, format string) (Song, error) {
 		return song, err
 	}
 
-	var lrc miguLyric
-	if err = json.Unmarshal(content, &lrc); err != nil {
+	var si miguSongInfo
+	if err = json.Unmarshal(content, &si); err != nil {
 		return song, err
 	}
-	song.Lyric = lyric.LyricConvert("lrc", format, lrc.Lyric)
+	song.Provider = "migu"
+	song.URL = si.Data.URL
+	song.Title = si.Data.SongItem.SongName
+	song.Artist = si.Data.SongItem.Singer
+	song.Image = si.Data.SongItem.LandscapImg
+	song.Lyric = lyric.LyricConvert("lrc", format, song.Lyric)
 
 	return song, nil
 }
@@ -341,8 +314,40 @@ func (p *migu) HotPlaylist(page int, limit int) (res Playlists, err error) {
 	return res, nil
 }
 
+type miguPlaylistInfo struct {
+	Resource []struct {
+		ResourceType string `json:"resourceType"`
+		Title        string `json:"title"`
+		MusicListID  string `json:"musicListId"`
+		Summary      string `json:"summary"`
+		MusicNum     int    `json:"musicNum"`
+	} `json:"resource"`
+}
+
+type miguPlaylistDetail struct {
+	TotalCount int `json:"totalCount"`
+	List       []struct {
+		ResourceType string `json:"resourceType"`
+		CopyrightID  string `json:"copyrightId"`
+		ContentID    string `json:"contentId"`
+		SongID       string `json:"songId"`
+		SongName     string `jsoN:"songName"`
+		SingerID     string `json:"singerId"`
+		Singer       string `json:"singer"`
+		LrcURL       string `json:"lrcUrl"`
+		Copyright    string `json:"copyright"`
+		VIPFlag      string `json:"vipFlag"`
+		TopQuality   string `json:"topQuality"`
+		LandscapImg  string `json:"landscapImg"`
+		Artists      []struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"artists"`
+	} `json:"list"`
+}
+
 func (p *migu) PlaylistDetail(pl Playlist) (songs Songs, err error) {
-	u := fmt.Sprintf(miguAPIPlaylistDetail, pl.ID)
+	u := fmt.Sprintf(miguAPIPlaylistInfo, pl.ID)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
@@ -371,72 +376,188 @@ func (p *migu) PlaylistDetail(pl Playlist) (songs Songs, err error) {
 	if err != nil {
 		return nil, err
 	}
-	ss := regSongs.FindAllSubmatch(content, -1)
-	for _, s := range ss {
-		if len(s) == 5 {
-			songs = append(songs, Song{
-				ID:       string(s[1]),
-				Image:    "http:" + string(s[2]),
-				Title:    string(s[3]),
-				Artist:   string(s[4]),
+
+	var plInfo miguPlaylistInfo
+	if err = json.Unmarshal(content, &plInfo); err != nil {
+		return nil, err
+	}
+
+	if len(plInfo.Resource) == 0 {
+		return nil, ErrEmptyTrackList
+	}
+	for i := 0; i <= plInfo.Resource[0].MusicNum/50; i++ {
+		u := fmt.Sprintf(miguAPIPlaylistDetail, pl.ID, i)
+		req, err := http.NewRequest("GET", u, nil)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+		req.Header.Set("User-Agent", config.UserAgent)
+		req.Header.Set("Accept", "application/json, text/plain, */*")
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.Header.Set("Referer", "http://migu.cn/")
+		req.Header.Set("Origin", "http://migu.cn/")
+		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			break
+		}
+
+		content, err := util.ReadHttpResponseBody(resp)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+		var plDetail miguPlaylistDetail
+		if err = json.Unmarshal(content, &plDetail); err != nil {
+			log.Println(err)
+			break
+		}
+
+		for _, s := range plDetail.List {
+			song := Song{
 				Provider: "migu",
-			})
+				ID:       s.CopyrightID,
+				Title:    s.SongName,
+				Lyric:    s.LrcURL,
+			}
+			songs = append(songs, song)
 		}
 	}
+
 	return songs, nil
 }
 
-func (p *migu) ArtistSongs(id string) (res Songs, err error) {
-	u := fmt.Sprintf(miguAPIArtistSongs, id, config.Page)
+type miguSingerInfo struct {
+	SongNum string `json:"songNum"`
+	Singer  struct {
+		ReesourceType string `json:"resourceType"`
+		Summary       string `json:"summary"`
+		SingerID      string `json:"singerId"`
+		Singer        string `json:"singer"`
+	} `json:"singer"`
+	SongList []struct {
+		ReesourceType string `json:"resourceType"`
+		CopyrightID   string `json:"copyrightId"`
+		ContentID     string `json:"contentId"`
+		SongID        string `json:"songId"`
+		SongName      string `jsoN:"songName"`
+		SingerID      string `json:"singerId"`
+		Singer        string `json:"singer"`
+		LrcURL        string `json:"lrcUrl"`
+		Copyright     string `json:"copyright"`
+		VIPFlag       string `json:"vipFlag"`
+		TopQuality    string `json:"topQuality"`
+		LandscapImg   string `json:"landscapImg"`
+		Artists       []struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"artists"`
+	} `json:"songList"`
+}
 
-	req, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("User-Agent", config.UserAgent)
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "http://migu.cn/")
-	req.Header.Set("Origin", "http://migu.cn/")
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-
+func (p *migu) ArtistSongs(id string) (songs Songs, err error) {
+	totalCount := 1
 	httpClient := util.GetHttpClient()
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	for i := 1; i <= totalCount/50+1; i++ {
+		u := fmt.Sprintf(miguAPIArtistSongs, i, id)
 
-	if resp.StatusCode != 200 {
-		return nil, ErrStatusNotOK
-	}
+		req, err := http.NewRequest("GET", u, nil)
+		if err != nil {
+			return nil, err
+		}
 
-	content, err := util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return nil, err
-	}
-	ss := regSongs.FindAllSubmatch(content, -1)
-	for _, s := range ss {
-		if len(s) == 5 {
-			res = append(res, Song{
-				ID:       string(s[1]),
-				Image:    "http:" + string(s[2]),
-				Title:    string(s[3]),
-				Artist:   string(s[4]),
+		req.Header.Set("User-Agent", config.UserAgent)
+		req.Header.Set("Accept", "application/json, text/plain, */*")
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.Header.Set("Referer", "http://migu.cn/")
+		req.Header.Set("Origin", "http://migu.cn/")
+		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			return nil, ErrStatusNotOK
+		}
+
+		content, err := util.ReadHttpResponseBody(resp)
+		if err != nil {
+			return nil, err
+		}
+		log.Println(string(content))
+		var artistInfo miguSingerInfo
+		if err = json.Unmarshal(content, &artistInfo); err != nil {
+			return nil, err
+		}
+		totalCount, err = strconv.Atoi(artistInfo.SongNum)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, s := range artistInfo.SongList {
+			song := Song{
 				Provider: "migu",
-			})
+				ID:       s.CopyrightID,
+				Title:    s.SongName,
+				Lyric:    s.LrcURL,
+			}
+			songs = append(songs, song)
 		}
 	}
-	if len(res) == 0 {
+	if len(songs) == 0 {
 		return nil, ErrEmptyTrackList
 	}
 	return
 }
 
-func (p *migu) AlbumSongs(id string) (res Songs, err error) {
-	u := fmt.Sprintf(miguAPIAlbumSongs, id)
+type miguAlbumInfo struct {
+	Resource []struct {
+		ResourceType string `json:"resourceType"`
+		AlbumID      string `json:"albumId"`
+		Title        string `json:"title"`
+		Summary      string `json:"summary"`
+		TotalCount   string `json:"totalCount"`
+	} `json:"resource"`
+}
+
+type miguAlbumDetail struct {
+	SongList []struct {
+		ResourceType string `json:"resourceType"`
+		CopyrightID  string `json:"copyrightId"`
+		ContentID    string `json:"contentId"`
+		SongID       string `json:"songId"`
+		SongName     string `jsoN:"songName"`
+		SingerID     string `json:"singerId"`
+		Singer       string `json:"singer"`
+		LrcURL       string `json:"lrcUrl"`
+		Copyright    string `json:"copyright"`
+		VIPFlag      string `json:"vipFlag"`
+		TopQuality   string `json:"topQuality"`
+		LandscapImg  string `json:"landscapImg"`
+		Artists      []struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"artists"`
+	} `json:"songList"`
+}
+
+func (p *migu) AlbumSongs(id string) (songs Songs, err error) {
+	u := fmt.Sprintf(miguAPIAlbumInfo, id)
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -466,19 +587,70 @@ func (p *migu) AlbumSongs(id string) (res Songs, err error) {
 	if err != nil {
 		return nil, err
 	}
-	ss := regSongs.FindAllSubmatch(content, -1)
-	for _, s := range ss {
-		if len(s) == 5 {
-			res = append(res, Song{
-				ID:       string(s[1]),
-				Image:    "http:" + string(s[2]),
-				Title:    string(s[3]),
-				Artist:   string(s[4]),
+
+	var albumInfo miguAlbumInfo
+	if err = json.Unmarshal(content, &albumInfo); err != nil {
+		return nil, err
+	}
+
+	if len(albumInfo.Resource) == 0 {
+		return nil, ErrEmptyTrackList
+	}
+	totalCount, err := strconv.Atoi(albumInfo.Resource[0].TotalCount)
+	if err != nil {
+		return nil, err
+	}
+	for i := 1; i <= totalCount/50+1; i++ {
+		u = fmt.Sprintf(miguAPIAlbumDetail, id, i)
+
+		req, err := http.NewRequest("GET", u, nil)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+		req.Header.Set("User-Agent", config.UserAgent)
+		req.Header.Set("Accept", "application/json, text/plain, */*")
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.Header.Set("Referer", "http://migu.cn/")
+		req.Header.Set("Origin", "http://migu.cn/")
+		req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
+		req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			break
+		}
+
+		content, err := util.ReadHttpResponseBody(resp)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+		var albumDetail miguAlbumDetail
+		if err = json.Unmarshal(content, &albumDetail); err != nil {
+			log.Println(err)
+			break
+		}
+		for _, s := range albumDetail.SongList {
+			song := Song{
 				Provider: "migu",
-			})
+				ID:       s.CopyrightID,
+				Title:    s.SongName,
+				Lyric:    s.LrcURL,
+			}
+			songs = append(songs, song)
 		}
 	}
-	if len(res) == 0 {
+
+	if len(songs) == 0 {
 		return nil, ErrEmptyTrackList
 	}
 	return
@@ -489,7 +661,7 @@ func (p *migu) Login() error {
 }
 
 func (p *migu) RefreshToken() error {
-	return  ErrNotImplemented
+	return ErrNotImplemented
 }
 
 func (p *migu) Name() string {

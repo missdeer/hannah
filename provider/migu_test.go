@@ -18,6 +18,14 @@ func TestMigu_PlaylistDetail(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
+	songs, err := p.PlaylistDetail(Playlist{ID: `198136049`})
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(songs) == 0 {
+		t.Error("can't get playlist detail")
+	}
 }
 
 func TestMigu_Search(t *testing.T) {
@@ -43,7 +51,7 @@ func TestMigu_ResolveSongURL(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongURL(Song{ID: `6005752J00T`})
+	_, err := p.ResolveSongURL(Song{ID: `60054701988`})
 	if err != nil {
 		t.Error(err)
 	}
@@ -55,7 +63,7 @@ func TestMigu_ResolveSongLyric(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	_, err := p.ResolveSongLyric(Song{ID: `6005752J00T`}, "lrc")
+	_, err := p.ResolveSongLyric(Song{ID: `60054701988`}, "lrc")
 	if err != nil {
 		t.Error(err)
 	}

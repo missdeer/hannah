@@ -203,6 +203,7 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 	song.Title = si.Data.SongItem.SongName
 	song.Artist = si.Data.SongItem.Singer
 	song.Image = si.Data.SongItem.LandscapImg
+	song.Lyric = si.Data.SongItem.LrcURL
 
 	return song, nil
 }
@@ -211,57 +212,17 @@ func (p *migu) ResolveSongLyric(song Song, format string) (Song, error) {
 	if song.Lyric != "" {
 		return song, nil
 	}
-	u := fmt.Sprintf(miguAPIGetPlayInfo, song.ID)
-
-	req, err := http.NewRequest("GET", u, nil)
+	s, err := p.ResolveSongURL(song)
 	if err != nil {
 		return song, err
 	}
 
-	req.Header.Set("User-Agent", config.UserAgent)
-	req.Header.Set("Accept", "application/json, text/plain, */*")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "http://migu.cn/")
-	req.Header.Set("Origin", "http://migu.cn/")
-	req.Header.Set("Accept-Language", "zh-CN,zh-HK;q=0.8,zh-TW;q=0.6,en-US;q=0.4,en;q=0.2")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	req.Header.Set("channel", "0146951")
-	req.Header.Set("uid", "1234")
-
-	httpClient := util.GetHttpClient()
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return song, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return song, ErrStatusNotOK
-	}
-
-	content, err := util.ReadHttpResponseBody(resp)
-	if err != nil {
-		return song, err
-	}
-
-	var msg map[string]interface{}
-	if err = json.Unmarshal(content, &msg); err != nil {
-		return song, err
-	}
-	if code, ok := msg["code"].(string); !ok || code != "000000" {
-		return song, ErrEmptyPURL
-	}
-
-	var si miguSongInfo
-	if err = json.Unmarshal(content, &si); err != nil {
-		return song, err
-	}
 	song.Provider = "migu"
-	song.URL = si.Data.URL
-	song.Title = si.Data.SongItem.SongName
-	song.Artist = si.Data.SongItem.Singer
-	song.Image = si.Data.SongItem.LandscapImg
-	song.Lyric = lyric.LyricConvert("lrc", format, song.Lyric)
+	song.URL = s.URL
+	song.Title = s.Title
+	song.Artist = s.Artist
+	song.Image = s.Image
+	song.Lyric = lyric.LyricConvert("lrc", format, s.Lyric)
 
 	return song, nil
 }

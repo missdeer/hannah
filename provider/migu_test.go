@@ -55,6 +55,10 @@ func TestMigu_ResolveSongURL(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	_, err = p.ResolveSongURL(Song{ID: `6005759Z0TH`})
+	if err == nil {
+		t.Error(err)
+	}
 }
 
 func TestMigu_ResolveSongLyric(t *testing.T) {

@@ -186,6 +186,14 @@ func (p *migu) ResolveSongURL(song Song) (Song, error) {
 		return song, err
 	}
 
+	var msg map[string]interface{}
+	if err = json.Unmarshal(content, &msg); err != nil {
+		return song, err
+	}
+	if code, ok := msg["code"].(string); !ok || code != "000000" {
+		return song, ErrEmptyPURL
+	}
+
 	var si miguSongInfo
 	if err = json.Unmarshal(content, &si); err != nil {
 		return song, err
@@ -234,6 +242,14 @@ func (p *migu) ResolveSongLyric(song Song, format string) (Song, error) {
 	content, err := util.ReadHttpResponseBody(resp)
 	if err != nil {
 		return song, err
+	}
+
+	var msg map[string]interface{}
+	if err = json.Unmarshal(content, &msg); err != nil {
+		return song, err
+	}
+	if code, ok := msg["code"].(string); !ok || code != "000000" {
+		return song, ErrEmptyPURL
 	}
 
 	var si miguSongInfo

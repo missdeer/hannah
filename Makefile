@@ -85,11 +85,11 @@ $(RPFULLPATH): $(CHECKS) cmd/reverseProxy/main.go
 	cd cmd/reverseProxy && go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(RP)
 
 $(HANNAHFULLPATH): $(CHECKS) cmd/hannah/main.go
-	cd cmd/hannah && env CGO_ENABLED=1 go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(HANNAH)
+	cd cmd/hannah && env CGO_ENABLED=1 GOARCH=amd64 go build -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(HANNAH)
 	if [ "$(UNAME_S)" = "Darwin" ]; then install_name_tool -change @loader_path/libbass.dylib @executable_path/../../output/bass/lib/darwin/amd64/libbass.dylib cmd/hannah/hannah; fi
 
 $(LIBRPFULLPATH): $(CHECKS) lib/reverseProxy/main.go
-	cd lib/reverseProxy && CGO_ENABLED=1 go build $(LIBBUILDOPTS) -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(LIBRP)
+	cd lib/reverseProxy && CGO_ENABLED=1 GOARCH=amd64 go build $(LIBBUILDOPTS) -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(LIBRP)
 
 .PHONY: clean
 clean:

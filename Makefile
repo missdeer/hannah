@@ -5,10 +5,14 @@ LIBRP=librp.a
 LIBBUILDOPTS:=-v -buildmode=c-archive
 UNAME_S:=$(shell uname -s)
 UNAME_M:=$(shell uname -m)
-ifneq ($(UNAME_M),arm64)
-	GOARCH:=amd64
-else
+ifeq ($(UNAME_M),arm64)
 	GOARCH:=arm64
+else
+    ifeq ($(UNAME_M),x86_64)
+        GOARCH:=amd64
+    else
+        GOARCH:=386
+    endif
 endif
 ifneq ($(UNAME_S),Darwin)
 	UNAME_O:=$(shell uname -o)

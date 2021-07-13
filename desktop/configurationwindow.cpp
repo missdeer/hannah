@@ -70,6 +70,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->useBuiltinPlayer, &QRadioButton::toggled, this, &ConfigurationWindow::onUseBuiltinPlayerStateChanged);
     connect(ui->useExternalPlayer, &QRadioButton::toggled, this, &ConfigurationWindow::onUseExternalPlayerStateChanged);
     connect(ui->browseExternalPlayer, &QPushButton::clicked, this, &ConfigurationWindow::onBrowseExternalPlayerClicked);
+    connect(ui->browseExternalPlayerWorkingDir, &QPushButton::clicked, this, &ConfigurationWindow::onBrowseExternalPlayerWorkingDirClicked);
     connect(ui->externalPlayerPath, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerPathTextChanged);
     connect(ui->externalPlayerArguments, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerArgumentsTextChanged);
     connect(ui->externalPlayerWorkingDir, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalPlayerWorkingDirTextChanged);
@@ -218,7 +219,6 @@ void ConfigurationWindow::onBrowseExternalPlayerClicked()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("External Player"));
     ui->externalPlayerPath->setText(fn);
-    m_settings->sync();
 }
 
 void ConfigurationWindow::onExternalPlayerArgumentsTextChanged(const QString &text)
@@ -239,7 +239,6 @@ void ConfigurationWindow::onBrowseExternalPlayerWorkingDirClicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Working Directory"));
     ui->externalPlayerWorkingDir->setText(dir);
-    m_settings->sync();
 }
 
 void ConfigurationWindow::startReverseProxy()

@@ -104,6 +104,7 @@ $(LIBRPFULLPATH): $(CHECKS) lib/reverseProxy/main.go
 	if [ "$(UNAME_S)" = "Darwin" -a "$(UNAME_M)" = "arm64" ]; then cd lib/reverseProxy && env CGO_ENABLED=1 GOARCH=amd64 go build $(LIBBUILDOPTS) -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(LIBRP).alter.a; fi
 	if [ "$(UNAME_S)" = "Darwin" -a "$(UNAME_M)" = "x86_64" ]; then cd lib/reverseProxy && env CGO_ENABLED=1 GOARCH=arm64 go build $(LIBBUILDOPTS) -ldflags="-s -w -X main.GitCommit=$(GITCOMMIT)" -o $(LIBRP).alter.a; fi
 	if [ "$(UNAME_S)" = "Darwin" ]; then cd lib/reverseProxy && lipo -create -output $(LIBRP) $(LIBRP) $(LIBRP).alter.a; rm $(LIBRP).alter.a $(LIBRP).alter.h; fi
+	cd lib/reverseProxy && bash -c ./update-def.sh
 
 .PHONY: clean
 clean:

@@ -9,31 +9,31 @@ var (
 		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?discover\/toplist\?id=(\d+)`):      "netease",
 		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?playlist\?id=(\d+)`):               "netease",
 		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?my\/m\/music\/playlist\?id=(\d+)`): "netease",
-		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/r?yqq\/playlist\/([a-zA-Z0-9]+)`):            "qq",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/ryqq\/playlist\/(\d+)`):                      "qq",
 		regexp.MustCompile(`^https?:\/\/www\.kugou\.com\/yy\/special\/single\/(\d+)\.html`):         "kugou",
 		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo\.cn\/playlist_detail\/(\d+)`):                "kuwo",
 		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/playlist\/(\d+)`):               "migu",
 	}
 	songPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?song\?id=(\d+)`):              "netease",
-		regexp.MustCompile(`^https?:\/\/y\.qq\.com/n\/r?yqq\/song(?:Detail)?\/([a-zA-Z0-9]+)`): "qq",
-		regexp.MustCompile(`^https?:\/\/www\.kugou\.com\/song\/#hash=([0-9A-F]+)`):             "kugou",
-		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo.cn\/play_detail\/(\d+)`):                "kuwo",
-		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/song\/(\d+)`):              "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?song\?id=(\d+)`):        "netease",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com/n\/ryqq\/songDetail\/([a-zA-Z0-9]+)`): "qq",
+		regexp.MustCompile(`^https?:\/\/www\.kugou\.com\/song\/#hash=([0-9A-F]+)`):       "kugou",
+		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo.cn\/play_detail\/(\d+)`):          "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/song\/(\d+)`):        "migu",
 	}
 	artistPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music\.163\.com\/weapi\/v1\/artist\/(\d+)`):    "netease",
-		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?artist\?id=(\d+)`):    "netease",
-		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/r?yqq\/singer\/([a-zA-Z0-9]+)`): "qq",
-		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo\.cn\/singer_detail\/(\d+)`):     "kuwo",
-		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/artist\/(\d+)`):    "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/weapi\/v1\/artist\/(\d+)`):   "netease",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?artist\?id=(\d+)`):   "netease",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/ryqq\/singer\/([a-zA-Z0-9]+)`): "qq",
+		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo\.cn\/singer_detail\/(\d+)`):    "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/artist\/(\d+)`):   "migu",
 	}
 	albumPatterns = map[*regexp.Regexp]string{
-		regexp.MustCompile(`^https?:\/\/music\.163\.com\/weapi\/v1\/album\/(\d+)`):               "netease",
-		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?album\?id=(\d+)`):               "netease",
-		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/r?yqq\/album(?:Detail)?\/([a-zA-Z0-9]+)`): "qq",
-		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo\.cn\/album_detail\/(\d+)`):                "kuwo",
-		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/album\/(\d+)`):               "migu",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/weapi\/v1\/album\/(\d+)`):         "netease",
+		regexp.MustCompile(`^https?:\/\/music\.163\.com\/(?:#\/)?album\?id=(\d+)`):         "netease",
+		regexp.MustCompile(`^https?:\/\/y\.qq\.com\/n\/ryqq\/albumDetail\/([a-zA-Z0-9]+)`): "qq",
+		regexp.MustCompile(`^https?:\/\/(?:www\.)?kuwo\.cn\/album_detail\/(\d+)`):          "kuwo",
+		regexp.MustCompile(`^https?:\/\/music\.migu\.cn\/v3\/music\/album\/(\d+)`):         "migu",
 	}
 )
 

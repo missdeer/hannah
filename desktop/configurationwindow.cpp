@@ -10,6 +10,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkInterface>
 #include <QProcess>
+#include <QQmlApplicationEngine>
+#include <QQuickStyle>
 #include <QSettings>
 #include <QStandardItem>
 #include <QStandardPaths>
@@ -27,7 +29,7 @@
 #include "configurationwindow.h"
 #include "librp.h"
 #include "playlistmanagewindow.h"
-#include "shadowplayer.h"
+#include "qmldialog.h"
 #include "ui_configurationwindow.h"
 
 ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::ConfigurationWindow)
@@ -544,13 +546,13 @@ void ConfigurationWindow::onShowPlaylistManage()
 
 void ConfigurationWindow::onShowHideBuiltinPlayer()
 {
-    Q_ASSERT(shadowPlayer);
-    if (!shadowPlayer->isVisible() || shadowPlayer->isHidden())
-    {
-        shadowPlayer->showPlayer();
-    }
-    else
-        shadowPlayer->hide();
+    static QQmlApplicationEngine engine;
+    engine.load(QUrl("qrc:/rc/qml/musicplayer.qml"));
+
+    //    QmlDialog dlg;
+
+    //    dlg.loadQml(QUrl("qrc:/rc/qml/musicplayer.qml"));
+    //    dlg.exec();
 }
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)

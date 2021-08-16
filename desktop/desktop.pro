@@ -1,4 +1,4 @@
-QT       += core gui network widgets
+QT       += core gui network widgets quick quickwidgets quickcontrols2
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat
 
 CONFIG += c++17
@@ -39,7 +39,8 @@ SOURCES += \
     $$PWD/parsercsv.cpp \
     $$PWD/parserm3u.cpp \
     $$PWD/parserpls.cpp \
-    $$PWD/trackfile.cpp
+    $$PWD/trackfile.cpp \
+    $$PWD/qmldialog.cpp
 
 HEADERS += \
     $$PWD/configurationwindow.h \
@@ -65,9 +66,11 @@ HEADERS += \
     $$PWD/parsercsv.h \
     $$PWD/parserm3u.h \
     $$PWD/parserpls.h \
-    $$PWD/trackfile.h
+    $$PWD/trackfile.h \
+    $$PWD/qmldialog.h
 
-FORMS += \
+FORMS +=  \
+    $$PWD/qmldialog.ui \
     $$PWD/configurationwindow.ui \
     $$PWD/playlistmanagewindow.ui \
     $$PWD/player/lrcbar.ui \
@@ -194,4 +197,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    hannah.qrc
+    hannah.qrc \
+    rc/imagine-assets/imagine-assets.qrc

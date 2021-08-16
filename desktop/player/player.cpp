@@ -24,8 +24,8 @@ Player::Player()
 #else
                               "/bassplugins";
 #endif
-    QDir    dir(bassPluginsPath);
-    auto    plugins = dir.entryList(QStringList() <<
+    QDir dir(bassPluginsPath);
+    auto plugins = dir.entryList(QStringList() <<
 #if defined(Q_OS_WIN)
                                  "*.dll"
 #elif defined(Q_OS_MAC)
@@ -411,24 +411,24 @@ bool Player::asioInit()
     BASS_Init(0, 48000, 0, 0, NULL);
     // create a dummy stream for reserving ASIO channels
     auto dummy = BASS_StreamCreate(2, 48000, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE, STREAMPROC_DUMMY, NULL);
+
+    // prepare ASIO output channel pairs (up to 4)
+    int            a;
+    BASS_ASIO_INFO i;
+    BASS_ASIO_GetInfo(&i);
+    for (a = 0; a < 4; a++)
     {
-        // prepare ASIO output channel pairs (up to 4)
-        int            a;
-        BASS_ASIO_INFO i;
-        BASS_ASIO_GetInfo(&i);
-        for (a = 0; a < 4; a++)
+        BASS_ASIO_CHANNELINFO i, i2;
+        if (BASS_ASIO_ChannelGetInfo(FALSE, a * 2, &i) && BASS_ASIO_ChannelGetInfo(FALSE, a * 2 + 1, &i2))
         {
-            BASS_ASIO_CHANNELINFO i, i2;
-            if (BASS_ASIO_ChannelGetInfo(FALSE, a * 2, &i) && BASS_ASIO_ChannelGetInfo(FALSE, a * 2 + 1, &i2))
-            {
-                char name[200];
-                sprintf(name, "%s + %s", i.name, i2.name);
-                // MESS(30 + a, WM_SETTEXT, 0, name);                  // display channel names
-                BASS_ASIO_ChannelEnableBASS(FALSE, 0, dummy, TRUE); // enable ASIO channels using the dummy stream
-                BASS_ASIO_ChannelPause(FALSE, a * 2);               // not playing anything immediately, so pause the channel
-            }
+            char name[200];
+            sprintf_s(name, "%s + %s", i.name, i2.name);
+            // MESS(30 + a, WM_SETTEXT, 0, name);                  // display channel names
+            BASS_ASIO_ChannelEnableBASS(FALSE, 0, dummy, TRUE); // enable ASIO channels using the dummy stream
+            BASS_ASIO_ChannelPause(FALSE, a * 2);               // not playing anything immediately, so pause the channel
         }
     }
+
     // start the device using default buffer/latency and 2 threads for parallel processing
     if (!BASS_ASIO_Start(0, 2))
     {
@@ -453,24 +453,23 @@ bool Player::wasapiInit()
     BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 0);
     // setup BASS - "no sound" device
     BASS_Init(0, 48000, 0, 0, NULL);
-    { // initialize the default WASAPI device (400ms buffer, 50ms update period, auto-select format)
-        if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT | BASS_WASAPI_EXCLUSIVE, 0.4, 0.05, &Player::WasapiProc, (void *)this))
+
+    // initialize the default WASAPI device (400ms buffer, 50ms update period, auto-select format)
+    if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT | BASS_WASAPI_EXCLUSIVE, 0.4, 0.05, &Player::WasapiProc, (void *)this))
+    {
+        // exclusive mode failed, try shared mode
+        if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT, 0.4, 0.05, &Player::WasapiProc, (void *)this))
         {
-            // exclusive mode failed, try shared mode
-            if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT, 0.4, 0.05, &Player::WasapiProc, (void *)this))
-            {
-                return false;
-            }
-        }
-        {
-            BASS_WASAPI_INFO wi;
-            BASS_WASAPI_GetInfo(&wi);
-            // create a mixer with same format as the output
-            m_mixer = BASS_Mixer_StreamCreate(wi.freq, wi.chans, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE);
-            // start the output
-            BASS_WASAPI_Start();
+            return false;
         }
     }
+    BASS_WASAPI_INFO wi;
+    BASS_WASAPI_GetInfo(&wi);
+    // create a mixer with same format as the output
+    m_mixer = BASS_Mixer_StreamCreate(wi.freq, wi.chans, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE);
+    // start the output
+    BASS_WASAPI_Start();
+
     m_wasapiInitialized = true;
     return true;
 }

@@ -42,5 +42,7 @@
         <file>rc/images/search.png</file>
         <file>rc/images/append-url.png</file>
         <file>rc/images/insert-url.png</file>
+        <file>rc/qml/musicplayer.qml</file>
+        <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

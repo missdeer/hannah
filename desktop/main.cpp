@@ -122,14 +122,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
     QCoreApplication::setApplicationName("Hannah");
-    QCoreApplication::setApplicationVersion("1.0");
+    QCoreApplication::setApplicationVersion("2.0");
+    QCoreApplication::setOrganizationName("Minidump.Info");
+    QCoreApplication::setOrganizationDomain("Minidump.Info");
 
     QTranslator translator;
     QTranslator qtTranslator;
-
-#if defined(Q_OS_WIN) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QWindowsWindowFunctions::setWindowActivationBehavior(QWindowsWindowFunctions::AlwaysActivateWindow);
-#endif
 
     // check the correct BASS was loaded
     if (HIWORD(BASS_GetVersion()) != BASSVERSION)
@@ -169,6 +167,10 @@ int main(int argc, char *argv[])
         }
         return 0;
     }
+
+#    if defined(Q_OS_WIN) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    QWindowsWindowFunctions::setWindowActivationBehavior(QWindowsWindowFunctions::AlwaysActivateWindow);
+#    endif
 
     i18n(translator, qtTranslator);
     ConfigurationWindow w;

@@ -29,7 +29,7 @@
 #include "configurationwindow.h"
 #include "librp.h"
 #include "playlistmanagewindow.h"
-#include "qmldialog.h"
+#include "qmlplayer.h"
 #include "ui_configurationwindow.h"
 
 ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::ConfigurationWindow)
@@ -546,13 +546,11 @@ void ConfigurationWindow::onShowPlaylistManage()
 
 void ConfigurationWindow::onShowHideBuiltinPlayer()
 {
-    static QQmlApplicationEngine engine;
-    engine.load(QUrl("qrc:/rc/qml/musicplayer.qml"));
-
-    //    QmlDialog dlg;
-
-    //    dlg.loadQml(QUrl("qrc:/rc/qml/musicplayer.qml"));
-    //    dlg.exec();
+    if (!qmlPlayer)
+    {
+        qmlPlayer = new QmlPlayer();
+    }
+    qmlPlayer->Show();
 }
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)

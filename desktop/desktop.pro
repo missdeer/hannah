@@ -40,7 +40,8 @@ SOURCES += \
     $$PWD/parserm3u.cpp \
     $$PWD/parserpls.cpp \
     $$PWD/trackfile.cpp \
-    $$PWD/qmldialog.cpp
+    $$PWD/qmldialog.cpp \
+    qmlplayer.cpp
 
 HEADERS += \
     $$PWD/configurationwindow.h \
@@ -67,7 +68,8 @@ HEADERS += \
     $$PWD/parserm3u.h \
     $$PWD/parserpls.h \
     $$PWD/trackfile.h \
-    $$PWD/qmldialog.h
+    $$PWD/qmldialog.h \
+    qmlplayer.h
 
 FORMS +=  \
     $$PWD/qmldialog.ui \

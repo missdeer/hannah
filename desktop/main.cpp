@@ -137,6 +137,8 @@ int main(int argc, char *argv[])
     }
     BASS_SetConfig(BASS_CONFIG_UNICODE, TRUE);
 
+    QIcon::setThemeName("musicplayer");
+
 #if defined(Q_OS_MACOS)
     Application a(argc, argv);
     i18n(translator, qtTranslator);

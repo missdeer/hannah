@@ -104,16 +104,125 @@ ApplicationWindow {
                     }
                 }
 
-                Repeater {
-                    model: 7
+                Slider {
+                    id: eq0
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
 
-                    Slider {
-                        value: Math.random()
-                        orientation: Qt.Vertical
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq1
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
 
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq2
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq3
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq4
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq5
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq6
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq7
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq8
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Slider {
+                    id: eq9
+                    from: -15
+                    to: 15
+                    stepSize: 1.0
+                    snapMode: Slider.SnapAlways
+                    value: Math.random()*30-15
+                    orientation: Qt.Vertical
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                 }
             }
 
@@ -123,7 +232,7 @@ ApplicationWindow {
 
                 ComboBox {
                     currentIndex: 1
-                    model: ["Blues", "Classical", "Jazz", "Metal"]
+                    model: ["Default", "Pop", "Rocks", "Electronic","Classical","Metal","Dance","Country","Jazz","Bruce","Nostalgia","Opera","Voice"]
                     Layout.fillWidth: true
                 }
 
@@ -161,7 +270,7 @@ ApplicationWindow {
                 Image {
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectCrop
-                    //source: "images/album-cover.jpg"
+                    source: ""
                 }
             }
 

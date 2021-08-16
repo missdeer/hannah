@@ -198,4 +198,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     hannah.qrc \
+    rc/icons/icons.qrc \
     rc/imagine-assets/imagine-assets.qrc

@@ -470,7 +470,7 @@ jobs:
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '11.7'
+          xcode-version: 'latest-stable'
 
       - name: Set up Go 1.16
         uses: actions/setup-go@v2

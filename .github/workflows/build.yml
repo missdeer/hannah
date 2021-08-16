@@ -468,6 +468,10 @@ jobs:
     env:
       go_version: 1.16.5
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '11.7'
+
       - name: Set up Go 1.16
         uses: actions/setup-go@v2
         with:

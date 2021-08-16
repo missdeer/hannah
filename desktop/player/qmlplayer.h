@@ -5,6 +5,8 @@
 
 QT_FORWARD_DECLARE_CLASS(QQmlApplicationEngine);
 
+class Player;
+
 class QmlPlayer : public QObject
 {
     Q_OBJECT
@@ -14,8 +16,11 @@ public:
     void Show();
 
 signals:
+    void showPlayer();
 
 private:
+    Player *m_player {nullptr};
+
     bool InitQmlApplicationEngine();
 };
 

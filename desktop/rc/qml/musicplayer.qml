@@ -15,6 +15,13 @@ ApplicationWindow {
         y = Screen.height / 2 - height / 2
     }
 
+    Connections {
+        target: playerCore
+        onShowPlayer: {
+            window.show();
+        }
+    }
+
     Shortcut {
         sequence: "Ctrl+Q"
         onActivated: Qt.quit()
@@ -28,27 +35,35 @@ ApplicationWindow {
 
             ToolButton {
                 icon.name: "grid"
+                onClicked: playerCore.onShowPlaylists();
             }
             ToolButton {
                 icon.name: "settings"
+                onClicked: playerCore.onSettings();
             }
             ToolButton {
                 icon.name: "filter"
+                onClicked: playerCore.onFilter();
             }
             ToolButton {
                 icon.name: "message"
+                onClicked: playerCore.onMessage();
             }
             ToolButton {
                 icon.name: "music"
+                onClicked: playerCore.onMusic();
             }
             ToolButton {
                 icon.name: "cloud"
+                onClicked: playerCore.onCloud();
             }
             ToolButton {
                 icon.name: "bluetooth"
+                onClicked: playerCore.onBluetooth();
             }
             ToolButton {
                 icon.name: "cart"
+                onClicked: playerCore.onCart();
             }
 
             Item {
@@ -57,7 +72,7 @@ ApplicationWindow {
 
             ToolButton {
                 icon.name: "power"
-                onClicked: Qt.quit()
+                onClicked: playerCore.onQuit();
             }
         }
     }
@@ -110,7 +125,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq0
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -122,7 +137,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq1
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -134,7 +149,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq2
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -146,7 +161,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq3
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -158,7 +173,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq4
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -170,7 +185,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq5
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -182,7 +197,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq6
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -194,7 +209,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq7
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -206,7 +221,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq8
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -218,7 +233,7 @@ ApplicationWindow {
                     to: 15
                     stepSize: 1.0
                     snapMode: Slider.SnapAlways
-                    value: Math.random()*30-15
+                    value: playerCore.eq9
                     orientation: Qt.Vertical
 
                     Layout.fillWidth: true
@@ -238,17 +253,20 @@ ApplicationWindow {
 
                 Button {
                     icon.name: "folder"
+                    onClicked: playerCore.onOpenPreset();
                 }
 
                 Button {
                     icon.name: "save"
                     enabled: false
+                    onClicked: playerCore.onSavePreset();
                 }
             }
 
             Dial {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 50
+                value: playerCore.volume
             }
 
             Label {
@@ -270,7 +288,7 @@ ApplicationWindow {
                 Image {
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectCrop
-                    source: ""
+                    source: playerCore.coverUrl
                 }
             }
 
@@ -357,7 +375,7 @@ ApplicationWindow {
 
                 Label {
                     id: songNameLabel
-                    text: "Edvard Grieg - In the Hall of the Mountain King"
+                    text: playerCore.songName
                     font.pixelSize: Qt.application.font.pixelSize * 1.4
                 }
 
@@ -389,42 +407,49 @@ ApplicationWindow {
                     icon.name: "favorite"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onFavorite()
                 }
                 RoundButton {
                     icon.name: "stop"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onStop()
                 }
                 RoundButton {
                     icon.name: "previous"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onPrevious()
                 }
                 RoundButton {
                     icon.name: "pause"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onPause()
                 }
                 RoundButton {
                     icon.name: "next"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onNext();
                 }
                 RoundButton {
                     icon.name: "repeat"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onRepeat()
                 }
                 RoundButton {
                     icon.name: "shuffle"
                     icon.width: 32
                     icon.height: 32
+                    onClicked: playerCore.onShuffle()
                 }
             }
 
             Slider {
                 id: seekSlider
-                value: 113
+                value: playerCore.progress
                 to: 261
 
                 Layout.fillWidth: true
@@ -461,14 +486,17 @@ ApplicationWindow {
                 Button {
                     text: "Files"
                     checked: true
+                    onClicked: playerCore.onSwitchFiles()
                 }
                 Button {
                     text: "Playlists"
                     checkable: true
+                    onClicked: playerCore.onSwitchPlaylists()
                 }
                 Button {
                     text: "Favourites"
                     checkable: true
+                    onClicked: playerCore.onSwitchFavourites()
                 }
             }
 
@@ -478,6 +506,7 @@ ApplicationWindow {
                 }
                 Button {
                     icon.name: "folder"
+                    onClicked: playerCore.onOpenFile()
                 }
             }
 

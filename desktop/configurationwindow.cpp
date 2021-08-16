@@ -546,10 +546,6 @@ void ConfigurationWindow::onShowPlaylistManage()
 
 void ConfigurationWindow::onShowHideBuiltinPlayer()
 {
-    if (!qmlPlayer)
-    {
-        qmlPlayer = new QmlPlayer();
-    }
     qmlPlayer->Show();
 }
 

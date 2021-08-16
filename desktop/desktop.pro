@@ -1,7 +1,7 @@
 QT       += core gui network widgets quick quickwidgets quickcontrols2
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat
 
-CONFIG += c++17
+CONFIG += c++17 sdk_no_version_check
 
 TARGET = Hannah
 
@@ -41,7 +41,7 @@ SOURCES += \
     $$PWD/parserpls.cpp \
     $$PWD/trackfile.cpp \
     $$PWD/qmldialog.cpp \
-    qmlplayer.cpp
+    $$PWD/player/qmlplayer.cpp
 
 HEADERS += \
     $$PWD/configurationwindow.h \
@@ -69,7 +69,7 @@ HEADERS += \
     $$PWD/parserpls.h \
     $$PWD/trackfile.h \
     $$PWD/qmldialog.h \
-    qmlplayer.h
+    $$PWD/player/qmlplayer.h
 
 FORMS +=  \
     $$PWD/qmldialog.ui \

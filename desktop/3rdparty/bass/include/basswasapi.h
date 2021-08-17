@@ -28,7 +28,7 @@ extern "C" {
 typedef struct {
 	const char *name;
 	const char *id;
-	DWORD deviceType;
+	DWORD type;
 	DWORD flags;
 	float minperiod;
 	float defperiod;
@@ -153,11 +153,6 @@ DWORD BASSWASAPIDEF(BASS_WASAPI_PutData)(void *buffer, DWORD length);
 DWORD BASSWASAPIDEF(BASS_WASAPI_GetData)(void *buffer, DWORD length);
 DWORD BASSWASAPIDEF(BASS_WASAPI_GetLevel)();
 BOOL BASSWASAPIDEF(BASS_WASAPI_GetLevelEx)(float *levels, float length, DWORD flags);
-
-inline BOOL BASS_WASAPI_Init_Special(int device, DWORD freq, DWORD chans, DWORD flags, float buffer, float period, int proc, void *user)
-{
-    return BASS_WASAPI_Init(device, freq, chans, flags, buffer, period, (WASAPIPROC *)proc, user);
-}
 
 #ifdef __cplusplus
 }

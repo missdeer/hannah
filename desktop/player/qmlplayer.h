@@ -2,8 +2,17 @@
 #define QMLPLAYER_H
 
 #include <QObject>
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#    include <QtWinExtras>
+#endif
+
+QT_FORWARD_DECLARE_CLASS(QTimer);
 
 class Player;
+class PlayList;
+class Lyrics;
+class OSD;
+class LrcBar;
 
 class QmlPlayer : public QObject
 {
@@ -24,6 +33,15 @@ class QmlPlayer : public QObject
     Q_PROPERTY(QString songName READ getSongName WRITE setSongName NOTIFY songNameChanged)
 public:
     explicit QmlPlayer(QObject *parent = nullptr);
+    void Show();
+    void loadAudio(const QString &uri);
+    void addToListAndPlay(const QList<QUrl> &files);
+    void addToListAndPlay(const QStringList &files);
+    void addToListAndPlay(const QString &file);
+
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    void setTaskbarButtonWindow();
+#endif
 
     Q_INVOKABLE void onQuit();
     Q_INVOKABLE void onShowPlaylists();
@@ -48,8 +66,6 @@ public:
     Q_INVOKABLE void onSwitchPlaylists();
     Q_INVOKABLE void onSwitchFavourites();
     Q_INVOKABLE void onOpenFile();
-
-    void Show();
 
     qreal          getEq0() const;
     qreal          getEq1() const;
@@ -80,6 +96,15 @@ public:
     void setProgress(qreal progress);
     void setCoverUrl(const QString &u);
     void setSongName(const QString &n);
+
+private slots:
+    void onUpdateTime();
+    void onUpdateLrc();
+    void onPlay();
+    void onPlayStop();
+    void onPlayPrevious();
+    void onPlayNext();
+
 signals:
     void showPlayer();
     void eq0Changed();
@@ -98,7 +123,18 @@ signals:
     void songNameChanged();
 
 private:
+    QTimer *m_timer {nullptr};
+    QTimer *m_lrcTimer {nullptr};
     Player *m_player {nullptr};
+    Lyrics *m_lyrics {nullptr};
+    OSD *   m_osd {nullptr};
+    LrcBar *m_lb {nullptr};
+    float   fftData[2048];
+    double  fftBarValue[29];
+    double  fftBarPeakValue[29];
+    int     oriFreq {0};
+    bool    playing {false};
+
     qreal   m_eq0 {0.0};
     qreal   m_eq1 {0.0};
     qreal   m_eq2 {0.0};
@@ -114,7 +150,24 @@ private:
     QString m_coverUrl;
     QString m_songName;
 
-    void applyEQ();
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QWinTaskbarButton *  taskbarButton;
+    QWinTaskbarProgress *taskbarProgress;
+
+    QWinThumbnailToolBar *   thumbnailToolBar;
+    QWinThumbnailToolButton *playToolButton;
+    QWinThumbnailToolButton *stopToolButton;
+    QWinThumbnailToolButton *backwardToolButton;
+    QWinThumbnailToolButton *forwardToolButton;
+#endif
+
+    void  applyEQ();
+    float arraySUM(int start, int end, float *array);
+    void  updateFFT();
+    void  showCoverPic(const QString &filePath);
+    void  infoLabelAnimation();
+    void  drawFFTBar(QWidget *parent, int x, int y, int width, int height, double percent);
+    void  drawFFTBarPeak(QWidget *parent, int x, int y, int width, int height, double percent);
 };
 
 inline QmlPlayer *qmlPlayer = nullptr;

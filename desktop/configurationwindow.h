@@ -36,6 +36,8 @@ public slots:
     void onOpenUrl(QUrl url);
 
     void onApplicationMessageReceived(const QString &message);
+
+    void onShowConfiguration();
 private slots:
     void onUseBuiltinPlayerStateChanged(bool checked);
 
@@ -74,8 +76,6 @@ private slots:
     void onReplyReadyRead();
 
     void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
-
-    void onShowConfiguration();
 
     void onShowPlaylistManage();
 

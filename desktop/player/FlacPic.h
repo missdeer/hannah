@@ -19,11 +19,11 @@ namespace spFLAC
         unsigned char length[3];
     };
 
-    unsigned char *pPicData     = 0;
-    int            picLength    = 0;
-    char           picFormat[4] = {};
+    inline unsigned char *pPicData     = 0;
+    inline int            picLength    = 0;
+    inline char           picFormat[4] = {};
 
-    bool verificationPictureFormat(char *data)
+    inline bool verificationPictureFormat(char *data)
     {
         unsigned char jpeg[2] = {0xff, 0xd8};
         unsigned char png[8]  = {0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a};
@@ -55,7 +55,7 @@ namespace spFLAC
         return true;
     }
 
-    void freePictureData()
+    inline void freePictureData()
     {
         if (pPicData)
         {
@@ -66,7 +66,7 @@ namespace spFLAC
         memset(&picFormat, 0, 4);
     }
 
-    bool loadPictureData(const char *inFilePath)
+    inline bool loadPictureData(const char *inFilePath)
     {
         freePictureData();
         FILE *fp = NULL;
@@ -173,22 +173,22 @@ namespace spFLAC
         return true;
     }
 
-    int getPictureLength()
+    inline int getPictureLength()
     {
         return picLength;
     }
 
-    unsigned char *getPictureDataPtr()
+    inline unsigned char *getPictureDataPtr()
     {
         return pPicData;
     }
 
-    char *getPictureFormat()
+    inline char *getPictureFormat()
     {
         return picFormat;
     }
 
-    bool writePictureDataToFile(const char *outFilePath)
+    inline bool writePictureDataToFile(const char *outFilePath)
     {
         if (picLength > 0)
         {
@@ -203,7 +203,7 @@ namespace spFLAC
         return false;
     }
 
-    bool extractPicture(const char *inFilePath, const char *outFilePath)
+    inline bool extractPicture(const char *inFilePath, const char *outFilePath)
     {
         if (loadPictureData(inFilePath))
         {

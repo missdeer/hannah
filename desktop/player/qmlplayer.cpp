@@ -1,18 +1,82 @@
 #include <QCoreApplication>
+#include <QTimer>
 
 #include "qmlplayer.h"
+#include "FlacPic.h"
+#include "ID3v2Pic.h"
+#include "configurationwindow.h"
+#include "lrcbar.h"
+#include "lyrics.h"
+#include "osd.h"
 #include "player.h"
+#include "playlist.h"
+#include "playlistmanagewindow.h"
 
-QmlPlayer::QmlPlayer(QObject *parent) : QObject(parent), m_player(new Player) {}
+QmlPlayer::QmlPlayer(QObject *parent)
+    : QObject(parent),
+      m_timer(new QTimer()),
+      m_lrcTimer(new QTimer()),
+      m_player(new Player()),
+      m_lyrics(new Lyrics()),
+      m_osd(new OSD()),
+      m_lb(new LrcBar(m_lyrics, m_player))
+{
+    m_player->devInit();
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(onUpdateTime()));
+    connect(m_lrcTimer, SIGNAL(timeout()), this, SLOT(onUpdateLrc()));
+
+    m_timer->start(27);
+    m_lrcTimer->start(70);
+
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    taskbarButton = new QWinTaskbarButton(this);
+    taskbarButton->setWindow(windowHandle());
+    taskbarProgress = taskbarButton->progress();
+    taskbarProgress->setRange(0, 1000);
+
+    thumbnailToolBar   = new QWinThumbnailToolBar(this);
+    playToolButton     = new QWinThumbnailToolButton(thumbnailToolBar);
+    stopToolButton     = new QWinThumbnailToolButton(thumbnailToolBar);
+    backwardToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
+    forwardToolButton  = new QWinThumbnailToolButton(thumbnailToolBar);
+    playToolButton->setToolTip(tr("Player"));
+    playToolButton->setIcon(QIcon(":/rc/images/player/Play.png"));
+    stopToolButton->setToolTip(tr("Stop"));
+    stopToolButton->setIcon(QIcon(":/rc/images/player/Stop.png"));
+    backwardToolButton->setToolTip(tr("Previous"));
+    backwardToolButton->setIcon(QIcon(":/rc/images/player/Pre.png"));
+    forwardToolButton->setToolTip(tr("Next"));
+    forwardToolButton->setIcon(QIcon(":/rc/images/player/Next.png"));
+    thumbnailToolBar->addButton(playToolButton);
+    thumbnailToolBar->addButton(stopToolButton);
+    thumbnailToolBar->addButton(backwardToolButton);
+    thumbnailToolBar->addButton(forwardToolButton);
+    connect(playToolButton, SIGNAL(clicked()), this, SLOT(onPlay()));
+    connect(stopToolButton, SIGNAL(clicked()), this, SLOT(onPlayStop()));
+    connect(backwardToolButton, SIGNAL(clicked()), this, SLOT(onPlayPrevious()));
+    connect(forwardToolButton, SIGNAL(clicked()), this, SLOT(onPlayNext()));
+#endif
+}
 
 void QmlPlayer::onQuit()
 {
     QCoreApplication::quit();
 }
 
-void QmlPlayer::onShowPlaylists() {}
+void QmlPlayer::onShowPlaylists()
+{
+    Q_ASSERT(playlistManageWindow);
+    if (playlistManageWindow->isHidden())
+        playlistManageWindow->showNormal();
+    playlistManageWindow->raise();
+    playlistManageWindow->activateWindow();
+}
 
-void QmlPlayer::onSettings() {}
+void QmlPlayer::onSettings()
+{
+    Q_ASSERT(configurationWindow);
+    configurationWindow->onShowConfiguration();
+}
 
 void QmlPlayer::onFilter() {}
 
@@ -288,6 +352,18 @@ void QmlPlayer::setSongName(const QString &n)
         return;
     m_songName = n;
 }
+
+void QmlPlayer::onPlay() {}
+
+void QmlPlayer::onPlayStop() {}
+
+void QmlPlayer::onPlayPrevious() {}
+
+void QmlPlayer::onPlayNext() {}
+
+void QmlPlayer::onUpdateTime() {}
+
+void QmlPlayer::onUpdateLrc() {}
 
 void QmlPlayer::applyEQ()
 {

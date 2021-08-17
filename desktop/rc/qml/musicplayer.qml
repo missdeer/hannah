@@ -17,14 +17,14 @@ ApplicationWindow {
 
     Connections {
         target: playerCore
-        onShowPlayer: {
+        function onShowPlayer() {
             window.show();
         }
     }
 
     Shortcut {
         sequence: "Ctrl+Q"
-        onActivated: Qt.quit()
+        onActivated: playerCore.onQuit()
     }
 
     header: ToolBar {
@@ -98,11 +98,11 @@ ApplicationWindow {
 
                 ColumnLayout {
                     Label {
-                        text: "12 dB"
+                        text: "15 dB"
                         Layout.fillHeight: true
                     }
                     Label {
-                        text: "6 dB"
+                        text: "7 dB"
                         Layout.fillHeight: true
                     }
                     Label {
@@ -110,11 +110,11 @@ ApplicationWindow {
                         Layout.fillHeight: true
                     }
                     Label {
-                        text: "-6 dB"
+                        text: "-7 dB"
                         Layout.fillHeight: true
                     }
                     Label {
-                        text: "-12 dB"
+                        text: "-15 dB"
                         Layout.fillHeight: true
                     }
                 }
@@ -246,9 +246,10 @@ ApplicationWindow {
                 Layout.topMargin: 23
 
                 ComboBox {
-                    currentIndex: 1
+                    currentIndex: 0
                     model: ["Default", "Pop", "Rocks", "Electronic","Classical","Metal","Dance","Country","Jazz","Bruce","Nostalgia","Opera","Voice"]
                     Layout.fillWidth: true
+                    onCurrentIndexChanged: playerCore.presetEQChanged(currentIndex);
                 }
 
                 Button {
@@ -266,7 +267,7 @@ ApplicationWindow {
             Dial {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 50
-                value: playerCore.volume
+                value: playerCore.volumn
             }
 
             Label {

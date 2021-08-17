@@ -3,6 +3,8 @@
 #include <QDir>
 #include <QFileOpenEvent>
 #include <QMessageBox>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QSettings>
 #include <QtCore>
 
@@ -115,6 +117,8 @@ void i18n(QTranslator &translator, QTranslator &qtTranslator)
     }
 }
 
+inline QQmlApplicationEngine *gQmlApplicationEngine = nullptr;
+
 int main(int argc, char *argv[])
 {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -205,8 +209,12 @@ int main(int argc, char *argv[])
 #    endif
 #endif
 
-    QmlPlayer player;
-    qmlPlayer = &player;
+    qmlPlayer = new QmlPlayer;
+
+    gQmlApplicationEngine = new QQmlApplicationEngine;
+    QQmlContext *context  = gQmlApplicationEngine->rootContext();
+    context->setContextProperty("playerCore", qmlPlayer);
+    gQmlApplicationEngine->load(QUrl("qrc:/rc/qml/musicplayer.qml"));
 
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;

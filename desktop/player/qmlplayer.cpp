@@ -1,4 +1,5 @@
-#include <QCoreApplication>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 #include <QTimer>
 
 #include "qmlplayer.h"
@@ -9,7 +10,6 @@
 #include "lyrics.h"
 #include "osd.h"
 #include "player.h"
-#include "playlist.h"
 #include "playlistmanagewindow.h"
 
 QmlPlayer::QmlPlayer(QObject *parent)
@@ -29,8 +29,7 @@ QmlPlayer::QmlPlayer(QObject *parent)
     m_lrcTimer->start(70);
 
 #if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    taskbarButton = new QWinTaskbarButton(this);
-    taskbarButton->setWindow(windowHandle());
+    taskbarButton   = new QWinTaskbarButton(this);
     taskbarProgress = taskbarButton->progress();
     taskbarProgress->setRange(0, 1000);
 
@@ -55,6 +54,15 @@ QmlPlayer::QmlPlayer(QObject *parent)
     connect(stopToolButton, SIGNAL(clicked()), this, SLOT(onPlayStop()));
     connect(backwardToolButton, SIGNAL(clicked()), this, SLOT(onPlayPrevious()));
     connect(forwardToolButton, SIGNAL(clicked()), this, SLOT(onPlayNext()));
+#endif
+}
+
+void QmlPlayer::setTaskbarButtonWindow()
+{
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    auto *window = qobject_cast<QWindow *>(gQmlApplicationEngine->rootObjects().at(0));
+    taskbarButton->setWindow(window);
+    thumbnailToolBar->setWindow(window);
 #endif
 }
 
@@ -158,7 +166,23 @@ void QmlPlayer::onSwitchFavourites() {}
 
 void QmlPlayer::onOpenFile() {}
 
-void QmlPlayer::Show()
+int QmlPlayer::getPrimaryScreenWidth()
+{
+    auto *screen = QGuiApplication::primaryScreen();
+    Q_ASSERT(screen);
+    auto size = screen->availableSize();
+    return size.width();
+}
+
+int QmlPlayer::getPrimaryScreenHeight()
+{
+    auto *screen = QGuiApplication::primaryScreen();
+    Q_ASSERT(screen);
+    auto size = screen->availableSize();
+    return size.height();
+}
+
+void QmlPlayer::showNormal()
 {
     emit showPlayer();
 }

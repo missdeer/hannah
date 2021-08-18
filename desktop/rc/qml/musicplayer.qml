@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.15
-import QtQuick.Window 2.0
+import QtQuick.Window 2.15
 
 ApplicationWindow {
     id: window
@@ -11,8 +11,6 @@ ApplicationWindow {
     title: "Hannah's Builtin Music Player"
 
     Component.onCompleted: {
-        x = Screen.width / 2 - width / 2
-        y = Screen.height / 2 - height / 2
     }
 
     Connections {

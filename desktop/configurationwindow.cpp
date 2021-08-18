@@ -546,7 +546,7 @@ void ConfigurationWindow::onShowPlaylistManage()
 
 void ConfigurationWindow::onShowHideBuiltinPlayer()
 {
-    qmlPlayer->Show();
+    qmlPlayer->showNormal();
 }
 
 void ConfigurationWindow::handle(const QString &url, bool needConfirm)

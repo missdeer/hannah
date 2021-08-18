@@ -117,8 +117,6 @@ void i18n(QTranslator &translator, QTranslator &qtTranslator)
     }
 }
 
-inline QQmlApplicationEngine *gQmlApplicationEngine = nullptr;
-
 int main(int argc, char *argv[])
 {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -209,12 +207,14 @@ int main(int argc, char *argv[])
 #    endif
 #endif
 
-    qmlPlayer = new QmlPlayer;
-
     gQmlApplicationEngine = new QQmlApplicationEngine;
     QQmlContext *context  = gQmlApplicationEngine->rootContext();
+
+    qmlPlayer = new QmlPlayer;
     context->setContextProperty("playerCore", qmlPlayer);
     gQmlApplicationEngine->load(QUrl("qrc:/rc/qml/musicplayer.qml"));
+
+    qmlPlayer->setTaskbarButtonWindow();
 
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;

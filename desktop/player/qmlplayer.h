@@ -7,6 +7,7 @@
 #endif
 
 QT_FORWARD_DECLARE_CLASS(QTimer);
+QT_FORWARD_DECLARE_CLASS(QQmlApplicationEngine);
 
 class Player;
 class PlayList;
@@ -17,6 +18,8 @@ class LrcBar;
 class QmlPlayer : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int primaryScreenWidth READ getPrimaryScreenWidth NOTIFY primaryScreenWidthChanged)
+    Q_PROPERTY(int primaryScreenHeight READ getPrimaryScreenHeight NOTIFY primaryScreenHeightChanged)
     Q_PROPERTY(qreal eq0 READ getEq0 WRITE setEq0 NOTIFY eq0Changed)
     Q_PROPERTY(qreal eq1 READ getEq1 WRITE setEq1 NOTIFY eq1Changed)
     Q_PROPERTY(qreal eq2 READ getEq2 WRITE setEq2 NOTIFY eq2Changed)
@@ -33,15 +36,12 @@ class QmlPlayer : public QObject
     Q_PROPERTY(QString songName READ getSongName WRITE setSongName NOTIFY songNameChanged)
 public:
     explicit QmlPlayer(QObject *parent = nullptr);
-    void Show();
+    void showNormal();
     void loadAudio(const QString &uri);
     void addToListAndPlay(const QList<QUrl> &files);
     void addToListAndPlay(const QStringList &files);
     void addToListAndPlay(const QString &file);
-
-#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     void setTaskbarButtonWindow();
-#endif
 
     Q_INVOKABLE void onQuit();
     Q_INVOKABLE void onShowPlaylists();
@@ -66,6 +66,9 @@ public:
     Q_INVOKABLE void onSwitchPlaylists();
     Q_INVOKABLE void onSwitchFavourites();
     Q_INVOKABLE void onOpenFile();
+
+    int getPrimaryScreenWidth();
+    int getPrimaryScreenHeight();
 
     qreal          getEq0() const;
     qreal          getEq1() const;
@@ -121,6 +124,8 @@ signals:
     void progressChanged();
     void coverUrlChanged();
     void songNameChanged();
+    void primaryScreenWidthChanged();
+    void primaryScreenHeightChanged();
 
 private:
     QTimer *m_timer {nullptr};
@@ -171,5 +176,6 @@ private:
 };
 
 inline QmlPlayer *qmlPlayer = nullptr;
+inline QQmlApplicationEngine *gQmlApplicationEngine = nullptr;
 
 #endif // QMLPLAYER_H

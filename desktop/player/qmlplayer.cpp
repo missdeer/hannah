@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QScreen>
 #include <QTimer>
 
 #include "qmlplayer.h"

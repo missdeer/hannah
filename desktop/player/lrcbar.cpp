@@ -9,11 +9,11 @@
 #include <QTimer>
 
 #include "lrcbar.h"
+#include "bassplayer.h"
 #include "lyrics.h"
-#include "player.h"
 #include "ui_lrcbar.h"
 
-LrcBar::LrcBar(Lyrics *lrc, Player *plr, QWidget *parent) : QWidget(parent), ui(new Ui::LrcBar), timer(new QTimer), lyrics(lrc), player(plr)
+LrcBar::LrcBar(Lyrics *lrc, BassPlayer *plr, QWidget *parent) : QWidget(parent), ui(new Ui::LrcBar), timer(new QTimer), lyrics(lrc), player(plr)
 {
     ui->setupUi(this);
 

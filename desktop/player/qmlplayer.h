@@ -9,7 +9,6 @@
 QT_FORWARD_DECLARE_CLASS(QTimer);
 QT_FORWARD_DECLARE_CLASS(QQmlApplicationEngine);
 
-class Player;
 class PlayList;
 class Lyrics;
 class OSD;
@@ -38,9 +37,9 @@ public:
     explicit QmlPlayer(QObject *parent = nullptr);
     void showNormal();
     void loadAudio(const QString &uri);
-    void addToListAndPlay(const QList<QUrl> &files);
-    void addToListAndPlay(const QStringList &files);
-    void addToListAndPlay(const QString &file);
+    void addToListAndPlay(const QList<QUrl> &uris);
+    void addToListAndPlay(const QStringList &uris);
+    void addToListAndPlay(const QString &uri);
     void setTaskbarButtonWindow();
 
     Q_INVOKABLE void onQuit();
@@ -130,7 +129,6 @@ signals:
 private:
     QTimer *m_timer {nullptr};
     QTimer *m_lrcTimer {nullptr};
-    Player *m_player {nullptr};
     Lyrics *m_lyrics {nullptr};
     OSD *   m_osd {nullptr};
     LrcBar *m_lb {nullptr};
@@ -175,7 +173,7 @@ private:
     void  drawFFTBarPeak(QWidget *parent, int x, int y, int width, int height, double percent);
 };
 
-inline QmlPlayer *qmlPlayer = nullptr;
+inline QmlPlayer *            gQmlPlayer            = nullptr;
 inline QQmlApplicationEngine *gQmlApplicationEngine = nullptr;
 
 #endif // QMLPLAYER_H

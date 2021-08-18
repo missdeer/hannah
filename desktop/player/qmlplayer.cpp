@@ -6,23 +6,22 @@
 #include "qmlplayer.h"
 #include "FlacPic.h"
 #include "ID3v2Pic.h"
+#include "bassplayer.h"
 #include "configurationwindow.h"
 #include "lrcbar.h"
 #include "lyrics.h"
 #include "osd.h"
-#include "player.h"
 #include "playlistmanagewindow.h"
 
 QmlPlayer::QmlPlayer(QObject *parent)
     : QObject(parent),
       m_timer(new QTimer()),
       m_lrcTimer(new QTimer()),
-      m_player(new Player()),
       m_lyrics(new Lyrics()),
       m_osd(new OSD()),
-      m_lb(new LrcBar(m_lyrics, m_player))
+      m_lb(new LrcBar(m_lyrics, gBassPlayer))
 {
-    m_player->devInit();
+    gBassPlayer->devInit();
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onUpdateTime()));
     connect(m_lrcTimer, SIGNAL(timeout()), this, SLOT(onUpdateLrc()));
 
@@ -263,8 +262,8 @@ void QmlPlayer::setEq0(qreal value)
     if (m_eq0 == value)
         return;
     m_eq0 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(0, (int)m_eq0);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(0, (int)m_eq0);
 }
 
 void QmlPlayer::setEq1(qreal value)
@@ -272,8 +271,8 @@ void QmlPlayer::setEq1(qreal value)
     if (m_eq1 == value)
         return;
     m_eq1 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(1, (int)m_eq1);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(1, (int)m_eq1);
 }
 
 void QmlPlayer::setEq2(qreal value)
@@ -281,8 +280,8 @@ void QmlPlayer::setEq2(qreal value)
     if (m_eq2 == value)
         return;
     m_eq2 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(2, (int)m_eq2);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(2, (int)m_eq2);
 }
 
 void QmlPlayer::setEq3(qreal value)
@@ -290,8 +289,8 @@ void QmlPlayer::setEq3(qreal value)
     if (m_eq3 == value)
         return;
     m_eq3 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(3, (int)m_eq3);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(3, (int)m_eq3);
 }
 
 void QmlPlayer::setEq4(qreal value)
@@ -299,8 +298,8 @@ void QmlPlayer::setEq4(qreal value)
     if (m_eq4 == value)
         return;
     m_eq4 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(4, (int)m_eq4);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(4, (int)m_eq4);
 }
 
 void QmlPlayer::setEq5(qreal value)
@@ -308,8 +307,8 @@ void QmlPlayer::setEq5(qreal value)
     if (m_eq5 == value)
         return;
     m_eq5 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(5, (int)m_eq6);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(5, (int)m_eq6);
 }
 
 void QmlPlayer::setEq6(qreal value)
@@ -317,8 +316,8 @@ void QmlPlayer::setEq6(qreal value)
     if (m_eq6 == value)
         return;
     m_eq6 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(6, (int)m_eq6);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(6, (int)m_eq6);
 }
 
 void QmlPlayer::setEq7(qreal value)
@@ -326,8 +325,8 @@ void QmlPlayer::setEq7(qreal value)
     if (m_eq7 == value)
         return;
     m_eq7 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(7, (int)m_eq7);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(7, (int)m_eq7);
 }
 
 void QmlPlayer::setEq8(qreal value)
@@ -335,8 +334,8 @@ void QmlPlayer::setEq8(qreal value)
     if (m_eq8 == value)
         return;
     m_eq8 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(8, (int)m_eq8);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(8, (int)m_eq8);
 }
 
 void QmlPlayer::setEq9(qreal value)
@@ -344,8 +343,8 @@ void QmlPlayer::setEq9(qreal value)
     if (m_eq9 == value)
         return;
     m_eq9 = value;
-    Q_ASSERT(m_player);
-    m_player->setEQ(9, (int)m_eq9);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(9, (int)m_eq9);
 }
 
 void QmlPlayer::setVolumn(qreal value)
@@ -353,8 +352,8 @@ void QmlPlayer::setVolumn(qreal value)
     if (m_volumn == value)
         return;
     m_volumn = value;
-    Q_ASSERT(m_player);
-    m_player->setVol((int)m_volumn);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setVol((int)m_volumn);
 }
 
 void QmlPlayer::setProgress(qreal progress)
@@ -392,15 +391,15 @@ void QmlPlayer::onUpdateLrc() {}
 
 void QmlPlayer::applyEQ()
 {
-    Q_ASSERT(m_player);
-    m_player->setEQ(0, (int)m_eq0);
-    m_player->setEQ(1, (int)m_eq1);
-    m_player->setEQ(2, (int)m_eq2);
-    m_player->setEQ(3, (int)m_eq3);
-    m_player->setEQ(4, (int)m_eq4);
-    m_player->setEQ(5, (int)m_eq5);
-    m_player->setEQ(6, (int)m_eq6);
-    m_player->setEQ(7, (int)m_eq7);
-    m_player->setEQ(8, (int)m_eq8);
-    m_player->setEQ(9, (int)m_eq9);
+    Q_ASSERT(gBassPlayer);
+    gBassPlayer->setEQ(0, (int)m_eq0);
+    gBassPlayer->setEQ(1, (int)m_eq1);
+    gBassPlayer->setEQ(2, (int)m_eq2);
+    gBassPlayer->setEQ(3, (int)m_eq3);
+    gBassPlayer->setEQ(4, (int)m_eq4);
+    gBassPlayer->setEQ(5, (int)m_eq5);
+    gBassPlayer->setEQ(6, (int)m_eq6);
+    gBassPlayer->setEQ(7, (int)m_eq7);
+    gBassPlayer->setEQ(8, (int)m_eq8);
+    gBassPlayer->setEQ(9, (int)m_eq9);
 }

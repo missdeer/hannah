@@ -15,7 +15,7 @@
 QT_FORWARD_DECLARE_CLASS(QTimer);
 QT_FORWARD_DECLARE_CLASS(QPropertyAnimation);
 
-class Player;
+class BassPlayer;
 class PlayList;
 class Lyrics;
 class OSD;
@@ -107,7 +107,7 @@ private:
 
     QTimer *  timer;
     QTimer *  lrcTimer;
-    Player *  player;
+    BassPlayer *  player;
     Lyrics *  lyrics;
     OSD *     osd;
     LrcBar *  lb;

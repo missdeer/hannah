@@ -11,11 +11,11 @@ enum BassDriver
     BD_WASAPI,
 };
 
-class Player
+class BassPlayer
 {
 public:
-    Player();
-    ~Player();
+    BassPlayer();
+    ~BassPlayer();
     bool    devInit();
     QString getTags();
     void    setVol(int vol);
@@ -69,4 +69,7 @@ private:
 #endif
     BassDriver m_driver {BD_Default};
 };
+
+inline BassPlayer *gBassPlayer = nullptr;
+
 #endif // PLAYER_H

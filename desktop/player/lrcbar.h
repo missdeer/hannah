@@ -9,7 +9,7 @@ QT_FORWARD_DECLARE_CLASS(QMouseEvent);
 QT_FORWARD_DECLARE_CLASS(QContextMenuEvent);
 
 class Lyrics;
-class Player;
+class BassPlayer;
 
 namespace Ui
 {
@@ -21,7 +21,7 @@ class LrcBar : public QWidget
     Q_OBJECT
 
 public:
-    LrcBar(Lyrics *lrc, Player *plr, QWidget *parent = nullptr);
+    LrcBar(Lyrics *lrc, BassPlayer *plr, QWidget *parent = nullptr);
     ~LrcBar();
 
 private slots:
@@ -34,7 +34,7 @@ private:
     Ui::LrcBar *    ui;
     QTimer *        timer;
     Lyrics *        lyrics;
-    Player *        player;
+    BassPlayer *        player;
     QPoint          pos;
     bool            clickOnFrame;
     bool            mouseEnter = {false};

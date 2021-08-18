@@ -9,6 +9,7 @@
 #include <QtCore>
 
 #include "bass.h"
+#include "bassplayer.h"
 #include "configurationwindow.h"
 #include "playlistmanagewindow.h"
 #include "qmlplayer.h"
@@ -210,11 +211,12 @@ int main(int argc, char *argv[])
     gQmlApplicationEngine = new QQmlApplicationEngine;
     QQmlContext *context  = gQmlApplicationEngine->rootContext();
 
-    qmlPlayer = new QmlPlayer;
-    context->setContextProperty("playerCore", qmlPlayer);
+    gBassPlayer = new BassPlayer;
+    gQmlPlayer  = new QmlPlayer;
+    context->setContextProperty("playerCore", gQmlPlayer);
     gQmlApplicationEngine->load(QUrl("qrc:/rc/qml/musicplayer.qml"));
 
-    qmlPlayer->setTaskbarButtonWindow();
+    gQmlPlayer->setTaskbarButtonWindow();
 
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;

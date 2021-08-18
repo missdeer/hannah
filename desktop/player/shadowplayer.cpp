@@ -1,15 +1,26 @@
+#include <QDir>
 #include <QFile>
+#include <QFileDialog>
 #include <QFileInfo>
+#include <QInputDialog>
+#include <QMenu>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPropertyAnimation>
 #include <QRandomGenerator>
 #include <QStandardPaths>
+#include <QTimer>
+#include <QToolTip>
 
 #include "shadowplayer.h"
 #include "FlacPic.h"
 #include "ID3v2Pic.h"
+#include "bassplayer.h"
 #include "lrcbar.h"
 #include "lyrics.h"
 #include "osd.h"
-#include "player.h"
 #include "playlist.h"
 #include "ui_shadowplayer.h"
 
@@ -18,7 +29,7 @@ ShadowPlayer::ShadowPlayer(QWidget *parent)
       ui(new Ui::ShadowPlayer),
       timer(new QTimer()),
       lrcTimer(new QTimer()),
-      player(new Player()),
+      player(new BassPlayer()),
       lyrics(new Lyrics()),
       osd(new OSD()),
       lb(new LrcBar(lyrics, player, 0))

@@ -6,7 +6,7 @@
 #include <QUrl>
 #include <QtCore>
 
-#include "player.h"
+#include "bassplayer.h"
 #include "bass_fx.h"
 #include "tags.h"
 
@@ -16,7 +16,7 @@
 #    include "basswasapi.h"
 #endif
 
-Player::Player()
+BassPlayer::BassPlayer()
 {
     QString bassPluginsPath = QCoreApplication::applicationDirPath() +
 #if defined(Q_OS_MAC)
@@ -41,7 +41,7 @@ Player::Player()
     }
 }
 
-Player::~Player()
+BassPlayer::~BassPlayer()
 {
 #if defined(Q_OS_WIN)
     if (m_asioInitialized)
@@ -52,7 +52,7 @@ Player::~Player()
     BASS_Free();
 }
 
-QString Player::openAudio(const QString &uri)
+QString BassPlayer::openAudio(const QString &uri)
 {
     BASS_ChannelStop(m_hNowPlay);
     BASS_StreamFree(m_hNowPlay);
@@ -121,7 +121,7 @@ QString Player::openAudio(const QString &uri)
     return "ok";
 }
 
-void Player::eqReady()
+void BassPlayer::eqReady()
 {
     BASS_BFX_PEAKEQ peakEQ;
 
@@ -173,12 +173,12 @@ void Player::eqReady()
     BASS_FXSetParameters(m_hEqFX, &peakEQ);
 }
 
-void Player::disableEQ()
+void BassPlayer::disableEQ()
 {
     BASS_ChannelRemoveFX(m_hNowPlay, m_hEqFX);
 }
 
-void Player::setEQ(int id, int gain)
+void BassPlayer::setEQ(int id, int gain)
 {
     BASS_BFX_PEAKEQ peakEQ;
 
@@ -188,52 +188,52 @@ void Player::setEQ(int id, int gain)
     BASS_FXSetParameters(m_hEqFX, &peakEQ);
 }
 
-void Player::setVol(int vol)
+void BassPlayer::setVol(int vol)
 {
     float v = (float)vol / 100;
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_VOL, v);
 }
 
-int Player::getVol()
+int BassPlayer::getVol()
 {
     float vol;
     BASS_ChannelGetAttribute(m_hNowPlay, BASS_ATTRIB_VOL, &vol);
     return (int)(vol * 100);
 }
 
-bool Player::isPlaying()
+bool BassPlayer::isPlaying()
 {
     return (BASS_ChannelIsActive(m_hNowPlay) == BASS_ACTIVE_PLAYING);
 }
 
-void Player::getFFT(float *array)
+void BassPlayer::getFFT(float *array)
 {
     if (BASS_ChannelIsActive(m_hNowPlay) == BASS_ACTIVE_PLAYING)
         BASS_ChannelGetData(m_hNowPlay, array, BASS_DATA_FFT4096);
 }
 
-void Player::play()
+void BassPlayer::play()
 {
     BASS_ChannelPlay(m_hNowPlay, false);
 }
 
-void Player::stop()
+void BassPlayer::stop()
 {
     BASS_ChannelStop(m_hNowPlay);
     BASS_ChannelSetPosition(m_hNowPlay, 0, BASS_POS_BYTE);
 }
 
-void Player::pause()
+void BassPlayer::pause()
 {
     BASS_ChannelPause(m_hNowPlay);
 }
 
-bool Player::devInit()
+bool BassPlayer::devInit()
 {
     return BASS_Init(-1, 48000, 0, 0, NULL);
 }
 
-QString Player::getTags()
+QString BassPlayer::getTags()
 {
     QString tags = TAGS_Read(m_hNowPlay, "%IFV2(%ARTI,%UTF8(%ARTI) - ,)%IFV2(%TITL,%UTF8(%TITL),)");
     if (tags.trimmed().isEmpty())
@@ -242,17 +242,17 @@ QString Player::getTags()
     return tags;
 }
 
-int Player::getPos()
+int BassPlayer::getPos()
 {
     return (int)(BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE) * 1000 / BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
 }
 
-void Player::setPos(int pos)
+void BassPlayer::setPos(int pos)
 {
     BASS_ChannelSetPosition(m_hNowPlay, pos * BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE) / 1000, BASS_POS_BYTE);
 }
 
-int Player::getBitRate()
+int BassPlayer::getBitRate()
 {
     float time    = BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
     DWORD len     = BASS_StreamGetFilePosition(m_hNowPlay, BASS_FILEPOS_END);
@@ -260,19 +260,19 @@ int Player::getBitRate()
     return bitrate;
 }
 
-int Player::getFreq()
+int BassPlayer::getFreq()
 {
     BASS_CHANNELINFO cInfo;
     BASS_ChannelGetInfo(m_hNowPlay, &cInfo);
     return cInfo.freq;
 }
 
-void Player::setFreq(float freq)
+void BassPlayer::setFreq(float freq)
 {
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_FREQ, freq);
 }
 
-QString Player::getNowPlayInfo()
+QString BassPlayer::getNowPlayInfo()
 {
     QString           fmt;
     BASS_CHANNELINFO  cInfo;
@@ -302,7 +302,7 @@ QString Player::getNowPlayInfo()
     return QString("%1Hz %2Kbps %3%4").arg(info->freq).arg(getBitRate()).arg((info->chans == 1) ? QObject::tr("mono") : QObject::tr("stereo"), fmt);
 }
 
-QString Player::getCurTime()
+QString BassPlayer::getCurTime()
 {
     int totalSec = (int)BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE));
     int minute   = totalSec / 60;
@@ -314,7 +314,7 @@ QString Player::getCurTime()
     return "0:00";
 }
 
-QString Player::getTotalTime()
+QString BassPlayer::getTotalTime()
 {
     int totalSec = (int)BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
     int minute   = totalSec / 60;
@@ -326,27 +326,27 @@ QString Player::getTotalTime()
     return "0:00";
 }
 
-int Player::getCurTimeMS()
+int BassPlayer::getCurTimeMS()
 {
     return (int)(BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE)) * 1000);
 }
 
-int Player::getTotalTimeMS()
+int BassPlayer::getTotalTimeMS()
 {
     return (int)(BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE)) * 1000);
 }
 
-double Player::getCurTimeSec()
+double BassPlayer::getCurTimeSec()
 {
     return BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE));
 }
 
-double Player::getTotalTimeSec()
+double BassPlayer::getTotalTimeSec()
 {
     return BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
 }
 
-DWORD Player::getLevel()
+DWORD BassPlayer::getLevel()
 {
     DWORD level = BASS_ChannelGetLevel(m_hNowPlay);
     if (level != (DWORD)-1)
@@ -356,7 +356,7 @@ DWORD Player::getLevel()
     return 0;
 }
 
-QString Player::getFileTotalTime(const QString &fileName)
+QString BassPlayer::getFileTotalTime(const QString &fileName)
 {
     HSTREAM fileStream = BASS_StreamCreateFile(false, fileName.toStdWString().c_str(), 0, 0, BASS_UNICODE);
     int     totalSec   = (int)BASS_ChannelBytes2Seconds(fileStream, BASS_ChannelGetLength(fileStream, BASS_POS_BYTE));
@@ -370,7 +370,7 @@ QString Player::getFileTotalTime(const QString &fileName)
     return "0:00";
 }
 
-double Player::getFileSecond(const QString &fileName)
+double BassPlayer::getFileSecond(const QString &fileName)
 {
     HSTREAM fileStream = BASS_StreamCreateFile(false, fileName.toStdWString().c_str(), 0, 0, BASS_UNICODE);
     double  totalSec   = BASS_ChannelBytes2Seconds(fileStream, BASS_ChannelGetLength(fileStream, BASS_POS_BYTE));
@@ -378,12 +378,12 @@ double Player::getFileSecond(const QString &fileName)
     return totalSec;
 }
 
-void Player::setReverse(bool isEnable)
+void BassPlayer::setReverse(bool isEnable)
 {
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, isEnable ? BASS_FX_RVS_REVERSE : BASS_FX_RVS_FORWARD);
 }
 
-void Player::updateReverb(int value)
+void BassPlayer::updateReverb(int value)
 {
     BASS_DX8_REVERB p;
     BASS_FXGetParameters(m_hReverbFX, &p);
@@ -391,12 +391,12 @@ void Player::updateReverb(int value)
     BASS_FXSetParameters(m_hReverbFX, &p);
 }
 
-BassDriver Player::getDriver() const
+BassDriver BassPlayer::getDriver() const
 {
     return m_driver;
 }
 
-void Player::setDriver(BassDriver &driver)
+void BassPlayer::setDriver(BassDriver &driver)
 {
     m_driver = driver;
 }

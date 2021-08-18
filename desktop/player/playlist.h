@@ -2,23 +2,20 @@
 #define PLAYLIST_H
 
 #include <QWidget>
-#include <QtCore>
-#include <QtGui>
-#include <QtWidgets>
-
-#include "player.h"
 
 namespace Ui
 {
     class PlayList;
 }
 
+class BassPlayer;
+
 class PlayList : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlayList(Player *player, QWidget *parent = 0);
+    explicit PlayList(BassPlayer *player, QWidget *parent = 0);
     ~PlayList();
     bool           fixSuffix(const QString &uri);
     bool           isEmpty();
@@ -57,7 +54,7 @@ private:
     Ui::PlayList * ui;
     QList<QString> m_trackList;
     QList<QString> m_timeList;
-    Player *       m_player;
+    BassPlayer *   m_player {nullptr};
     int            m_curIndex {0};
     int            m_lengthFilter {0};
 

@@ -21,7 +21,7 @@ SOURCES += \
     $$PWD/player/lrcbar.cpp \
     $$PWD/player/lyrics.cpp \
     $$PWD/player/osd.cpp \
-    $$PWD/player/player.cpp \
+    $$PWD/player/bassplayer.cpp \
     $$PWD/player/shadowlabel.cpp \
     $$PWD/player/spslider.cpp \
     $$PWD/playlistmanagewindow.cpp \
@@ -51,7 +51,7 @@ HEADERS += \
     $$PWD/player/lrcbar.h \
     $$PWD/player/lyrics.h \
     $$PWD/player/osd.h \
-    $$PWD/player/player.h \
+    $$PWD/player/bassplayer.h \
     $$PWD/player/shadowlabel.h \
     $$PWD/player/spslider.h \
     $$PWD/playlistmanagewindow.h \

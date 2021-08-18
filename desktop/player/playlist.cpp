@@ -1,9 +1,19 @@
+#include <QDir>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QFontInfo>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QMimeData>
 #include <QStandardPaths>
 
 #include "playlist.h"
+#include "bassplayer.h"
 #include "ui_playlist.h"
 
-PlayList::PlayList(Player *player, QWidget *parent) : QWidget(parent), ui(new Ui::PlayList), m_player(player)
+PlayList::PlayList(BassPlayer *player, QWidget *parent) : QWidget(parent), ui(new Ui::PlayList), m_player(player)
 {
     ui->setupUi(this);
     ui->playListTable->horizontalHeader()->setStretchLastSection(true);

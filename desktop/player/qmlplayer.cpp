@@ -57,6 +57,15 @@ QmlPlayer::QmlPlayer(QObject *parent)
 #endif
 }
 
+QmlPlayer::~QmlPlayer()
+{
+    delete m_lb;
+    delete m_osd;
+    delete m_lyrics;
+    delete m_lrcTimer;
+    delete m_timer;
+}
+
 void QmlPlayer::setTaskbarButtonWindow()
 {
 #if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -186,6 +195,14 @@ void QmlPlayer::showNormal()
 {
     emit showPlayer();
 }
+
+void QmlPlayer::loadAudio(const QString &uri) {}
+
+void QmlPlayer::addToListAndPlay(const QList<QUrl> &uris) {}
+
+void QmlPlayer::addToListAndPlay(const QStringList &uris) {}
+
+void QmlPlayer::addToListAndPlay(const QString &uri) {}
 
 qreal QmlPlayer::getEq0() const
 {

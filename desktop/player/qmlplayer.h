@@ -35,6 +35,7 @@ class QmlPlayer : public QObject
     Q_PROPERTY(QString songName READ getSongName WRITE setSongName NOTIFY songNameChanged)
 public:
     explicit QmlPlayer(QObject *parent = nullptr);
+    ~QmlPlayer();
     void showNormal();
     void loadAudio(const QString &uri);
     void addToListAndPlay(const QList<QUrl> &uris);

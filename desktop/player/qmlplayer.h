@@ -132,11 +132,11 @@ private:
     Lyrics *m_lyrics {nullptr};
     OSD *   m_osd {nullptr};
     LrcBar *m_lb {nullptr};
-    float   fftData[2048];
-    double  fftBarValue[29];
-    double  fftBarPeakValue[29];
-    int     oriFreq {0};
-    bool    playing {false};
+    float   m_fftData[2048];
+    double  m_fftBarValue[29];
+    double  m_fftBarPeakValue[29];
+    int     m_oriFreq {0};
+    bool    m_playing {false};
 
     qreal   m_eq0 {0.0};
     qreal   m_eq1 {0.0};

@@ -8,7 +8,7 @@ ApplicationWindow {
     width: 1280
     height: 720
     visible: true
-    title: "Hannah's Builtin Music Player"
+    title: qsTr("Hannah's Builtin Music Player")
 
     Component.onCompleted: {
     }
@@ -76,7 +76,7 @@ ApplicationWindow {
     }
 
     Label {
-        text: "Hannah - Listen music"
+        text: qsTr("Hannah - Listen music")
         font.pixelSize: Qt.application.font.pixelSize * 1.3
         anchors.centerIn: header
         z: header.z + 1
@@ -245,7 +245,9 @@ ApplicationWindow {
 
                 ComboBox {
                     currentIndex: 0
-                    model: ["Default", "Pop", "Rocks", "Electronic","Classical","Metal","Dance","Country","Jazz","Bruce","Nostalgia","Opera","Voice"]
+                    model: [qsTr("Default"), qsTr("Pop"), qsTr("Rocks"), qsTr("Electronic"),
+                        qsTr("Classical"),qsTr("Metal"),qsTr("Dance"),qsTr("Country"),
+                        qsTr("Jazz"),qsTr("Bruce"),qsTr("Nostalgia"),qsTr("Opera"),qsTr("Voice")]
                     Layout.fillWidth: true
                     onCurrentIndexChanged: playerCore.presetEQChanged(currentIndex);
                 }
@@ -269,7 +271,7 @@ ApplicationWindow {
             }
 
             Label {
-                text: "Volume"
+                text: qsTr("Volume")
 
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 12
@@ -483,17 +485,17 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignHCenter
 
                 Button {
-                    text: "Files"
+                    text: qsTr("Files")
                     checked: true
                     onClicked: playerCore.onSwitchFiles()
                 }
                 Button {
-                    text: "Playlists"
+                    text: qsTr("Playlists")
                     checkable: true
                     onClicked: playerCore.onSwitchPlaylists()
                 }
                 Button {
-                    text: "Favourites"
+                    text: qsTr("Favourites")
                     checkable: true
                     onClicked: playerCore.onSwitchFavourites()
                 }

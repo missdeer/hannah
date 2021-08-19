@@ -401,7 +401,7 @@ void BassPlayer::setDriver(BassDriver &driver)
     m_driver = driver;
 }
 #if defined(Q_OS_WIN)
-bool Player::asioInit()
+bool BassPlayer::asioInit()
 {
     if (!BASS_ASIO_Init(-1, 0))
     {
@@ -438,16 +438,16 @@ bool Player::asioInit()
     return true;
 }
 
-DWORD Player::WasapiProc(void *buffer, DWORD length, void *user)
+DWORD BassPlayer::WasapiProc(void *buffer, DWORD length, void *user)
 {
-    Player *pThis = (Player *)user;
+    BassPlayer *pThis = (BassPlayer *)user;
     DWORD   c     = BASS_ChannelGetData(pThis->m_mixer, buffer, length);
     if (c == -1)
         c = 0; // an error, no data
     return c;
 }
 
-bool Player::wasapiInit()
+bool BassPlayer::wasapiInit()
 {
     // not playing anything via BASS, so don't need an update thread
     BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 0);
@@ -455,10 +455,10 @@ bool Player::wasapiInit()
     BASS_Init(0, 48000, 0, 0, NULL);
 
     // initialize the default WASAPI device (400ms buffer, 50ms update period, auto-select format)
-    if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT | BASS_WASAPI_EXCLUSIVE, 0.4, 0.05, &Player::WasapiProc, (void *)this))
+    if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT | BASS_WASAPI_EXCLUSIVE, 0.4, 0.05, &BassPlayer::WasapiProc, (void *)this))
     {
         // exclusive mode failed, try shared mode
-        if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT, 0.4, 0.05, &Player::WasapiProc, (void *)this))
+        if (!BASS_WASAPI_Init(-1, 0, 0, BASS_WASAPI_AUTOFORMAT, 0.4, 0.05, &BassPlayer::WasapiProc, (void *)this))
         {
             return false;
         }

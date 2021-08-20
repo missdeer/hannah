@@ -34,6 +34,7 @@ class QmlPlayer : public QObject
     Q_PROPERTY(QString coverUrl READ getCoverUrl WRITE setCoverUrl NOTIFY coverUrlChanged)
     Q_PROPERTY(QString songName READ getSongName WRITE setSongName NOTIFY songNameChanged)
 public:
+    Q_DISABLE_COPY_MOVE(QmlPlayer)
     explicit QmlPlayer(QObject *parent = nullptr);
     ~QmlPlayer();
     void showNormal();

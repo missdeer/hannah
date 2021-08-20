@@ -14,6 +14,7 @@ enum BassDriver
 class BassPlayer
 {
 public:
+    Q_DISABLE_COPY_MOVE(BassPlayer)
     BassPlayer();
     ~BassPlayer();
     bool    devInit();

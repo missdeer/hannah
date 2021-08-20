@@ -18,6 +18,7 @@ class OSD : public QWidget
     Q_OBJECT
 
 public:
+    Q_DISABLE_COPY_MOVE(OSD)
     explicit OSD(QWidget *parent = 0);
     ~OSD();
     void showOSD(QString tags, QString totalTime);

@@ -21,6 +21,7 @@ class LrcBar : public QWidget
     Q_OBJECT
 
 public:
+    Q_DISABLE_COPY_MOVE(LrcBar)
     LrcBar(Lyrics *lrc, BassPlayer *plr, QWidget *parent = nullptr);
     ~LrcBar();
 

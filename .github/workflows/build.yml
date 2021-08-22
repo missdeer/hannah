@@ -156,7 +156,7 @@ jobs:
           if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
           if not exist %CD%\jom\jom.exe nmake
           copy desktop\release\Hannah.exe ..\${{ matrix.qt_arch }}\gui\
-          windeployqt.exe ..\${{ matrix.qt_arch }}\gui\Hannah.exe
+          windeployqt.exe -qmldir=..\desktop\rc\qml ..\${{ matrix.qt_arch }}\gui\Hannah.exe
           copy registerProtocolHandler\release\registerProtocolHandler.exe ..\${{ matrix.qt_arch }}\gui\
           copy ..\lib\reverseProxy\*.dll ..\${{ matrix.qt_arch }}\gui\
           cd ..
@@ -302,7 +302,7 @@ jobs:
           if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
           if not exist %CD%\jom\jom.exe nmake
           copy desktop\release\Hannah.exe ..\${{ matrix.qt_arch }}\gui\
-          windeployqt.exe ..\${{ matrix.qt_arch }}\gui\Hannah.exe
+          windeployqt.exe -qmldir=..\desktop\rc\qml  ..\${{ matrix.qt_arch }}\gui\Hannah.exe
           copy registerProtocolHandler\release\registerProtocolHandler.exe ..\${{ matrix.qt_arch }}\gui\
           copy ..\lib\reverseProxy\*.dll ..\${{ matrix.qt_arch }}\gui\
           cd ..
@@ -434,7 +434,7 @@ jobs:
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j `nproc`
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
-          ${{ matrix.windeployqt }} $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
+          ${{ matrix.windeployqt }} -qmldir=../desktop/rc/qml  $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
           cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           cd ..
 
@@ -516,7 +516,7 @@ jobs:
       
       - name: package desktop
         run: |
-          macdeployqt "desktop/build/Hannah.app" -qmldir=. -verbose=1 -dmg
+          macdeployqt "desktop/build/Hannah.app" -qmldir=desktop/rc/qml -verbose=1 -dmg
           cp desktop/build/Hannah.dmg darwin-amd64/
 
       - name: package Chrome extension

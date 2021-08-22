@@ -466,13 +466,15 @@ jobs:
         qt_target: [desktop]
         qt_arch: [clang_64]
     env:
-      go_version: 1.16.5
+      go_version: 1.17
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest-stable'
-
-      - name: Set up Go 1.16
+          
+      - run: cd /Library/Developer/CommandLineTools/SDKs && sudo rm MacOSX.sdk && sudo ln -s MacOSX11.1.sdk MacOSX.sdk && sudo rm -rf MacOSX10.15.sdk
+      
+      - name: Set up Go 1.17
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.go_version }}

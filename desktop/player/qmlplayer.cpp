@@ -22,8 +22,8 @@ QmlPlayer::QmlPlayer(QObject *parent)
       m_lb(new LrcBar(m_lyrics, gBassPlayer))
 {
     gBassPlayer->devInit();
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(onUpdateTime()));
-    connect(m_lrcTimer, SIGNAL(timeout()), this, SLOT(onUpdateLrc()));
+    connect(m_timer, &QTimer::timeout, this, &QmlPlayer::onUpdateTime);
+    connect(m_lrcTimer, &QTimer::timeout, this, &QmlPlayer::onUpdateLrc);
 
     m_timer->start(27);
     m_lrcTimer->start(70);
@@ -50,10 +50,10 @@ QmlPlayer::QmlPlayer(QObject *parent)
     thumbnailToolBar->addButton(stopToolButton);
     thumbnailToolBar->addButton(backwardToolButton);
     thumbnailToolBar->addButton(forwardToolButton);
-    connect(playToolButton, SIGNAL(clicked()), this, SLOT(onPlay()));
-    connect(stopToolButton, SIGNAL(clicked()), this, SLOT(onPlayStop()));
-    connect(backwardToolButton, SIGNAL(clicked()), this, SLOT(onPlayPrevious()));
-    connect(forwardToolButton, SIGNAL(clicked()), this, SLOT(onPlayNext()));
+    connect(playToolButton, &QWinThumbnailToolButton::clicked, this, &QmlPlayer::onPlay);
+    connect(stopToolButton, &QWinThumbnailToolButton::clicked, this, &QmlPlayer::onPlayStop);
+    connect(backwardToolButton, &QWinThumbnailToolButton::clicked, this, &QmlPlayer::onPlayPrevious);
+    connect(forwardToolButton, &QWinThumbnailToolButton::clicked, this, &QmlPlayer::onPlayNext);
 #endif
 }
 
@@ -125,16 +125,16 @@ void QmlPlayer::presetEQChanged(int index)
     if (index >= 0 && index < presets.length())
     {
         auto &preset = presets[index];
-        m_eq0        = preset[0];
-        m_eq1        = preset[1];
-        m_eq2        = preset[2];
-        m_eq3        = preset[3];
-        m_eq4        = preset[4];
-        m_eq5        = preset[5];
-        m_eq6        = preset[6];
-        m_eq7        = preset[7];
-        m_eq8        = preset[8];
-        m_eq9        = preset[9];
+        setEq0(preset[0]);
+        setEq1(preset[1]);
+        setEq2(preset[2]);
+        setEq3(preset[3]);
+        setEq4(preset[4]);
+        setEq5(preset[5]);
+        setEq6(preset[6]);
+        setEq7(preset[7]);
+        setEq8(preset[8]);
+        setEq9(preset[9]);
         emit eq0Changed();
         emit eq1Changed();
         emit eq2Changed();
@@ -145,7 +145,6 @@ void QmlPlayer::presetEQChanged(int index)
         emit eq7Changed();
         emit eq8Changed();
         emit eq9Changed();
-        applyEQ();
     }
 }
 
@@ -405,18 +404,3 @@ void QmlPlayer::onPlayNext() {}
 void QmlPlayer::onUpdateTime() {}
 
 void QmlPlayer::onUpdateLrc() {}
-
-void QmlPlayer::applyEQ()
-{
-    Q_ASSERT(gBassPlayer);
-    gBassPlayer->setEQ(0, (int)m_eq0);
-    gBassPlayer->setEQ(1, (int)m_eq1);
-    gBassPlayer->setEQ(2, (int)m_eq2);
-    gBassPlayer->setEQ(3, (int)m_eq3);
-    gBassPlayer->setEQ(4, (int)m_eq4);
-    gBassPlayer->setEQ(5, (int)m_eq5);
-    gBassPlayer->setEQ(6, (int)m_eq6);
-    gBassPlayer->setEQ(7, (int)m_eq7);
-    gBassPlayer->setEQ(8, (int)m_eq8);
-    gBassPlayer->setEQ(9, (int)m_eq9);
-}

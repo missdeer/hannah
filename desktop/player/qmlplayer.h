@@ -166,7 +166,6 @@ private:
     QWinThumbnailToolButton *forwardToolButton;
 #endif
 
-    void  applyEQ();
     float arraySUM(int start, int end, float *array);
     void  updateFFT();
     void  showCoverPic(const QString &filePath);

@@ -7,7 +7,7 @@
 Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 {
     peer = new QtLocalPeer(this);
-    connect(peer, SIGNAL(messageReceived(const QString &)), SIGNAL(messageReceived(const QString &)));
+    connect(peer, &QtLocalPeer::messageReceived, this, &Application::messageReceived);
 }
 
 bool Application::event(QEvent *event)

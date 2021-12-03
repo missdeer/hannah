@@ -10,8 +10,6 @@
 #include <cstring>
 #include <memory.h>
 
-using namespace std;
-
 namespace spID3
 {
     struct ID3V2Header

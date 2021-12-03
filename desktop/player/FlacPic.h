@@ -9,8 +9,6 @@
 #include <cstring>
 #include <memory.h>
 
-using namespace std;
-
 namespace spFLAC
 {
     struct FlacMetadataBlockHeader

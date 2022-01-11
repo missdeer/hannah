@@ -10,9 +10,9 @@ require (
 	github.com/gdamore/tcell v1.4.0
 	github.com/gin-contrib/location v0.0.2
 	github.com/gin-gonic/gin v1.7.7
-	github.com/go-playground/validator/v10 v10.9.0 // indirect
+	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/gomodule/redigo v1.8.5
+	github.com/gomodule/redigo v1.8.8
 	github.com/json-iterator/go v1.1.12
 	github.com/klauspost/compress v1.13.6
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
@@ -24,11 +24,11 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/ushis/m3u v0.0.0-20150127162843-94396b784733
-	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
-	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9
-	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
+	golang.org/x/net v0.0.0-20220107192237-5cfca573fb4d
+	golang.org/x/sys v0.0.0-20220110181412-a018aaa089fe // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
-	gopkg.in/ini.v1 v1.64.0
+	gopkg.in/ini.v1 v1.66.2
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

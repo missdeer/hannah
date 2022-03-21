@@ -60,7 +60,7 @@ QString BassPlayer::openAudio(const QString &uri)
     if (QFile::exists(uri))
     {
         QString     ext       = QFileInfo(uri).suffix().toLower();
-        QStringList audioExts = {
+        static const QVector<QString> audioExts = {
             "mp3",
             "mp2",
             "mp1",
@@ -78,7 +78,7 @@ QString BassPlayer::openAudio(const QString &uri)
             "flac",
             "wv",
         };
-        if (!audioExts.contains(ext))
+        if (!audioExts.contains(ext, Qt::CaseInsensitive))
         {
             return "err";
         }

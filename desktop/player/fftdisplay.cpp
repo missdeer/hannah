@@ -7,17 +7,6 @@
 
 FFTDisplay::FFTDisplay(QWidget *parent) : QGroupBox(parent)
 {
-    sx                 = 10;
-    sy                 = 190;
-    margin             = 1;
-    width              = 10;
-    height             = 120;
-    acc                = 0.35;
-    maxSpeed           = 9;
-    speed              = 0.025;
-    forceD             = 6;
-    elasticCoefficient = 0.6;
-    minElasticStep     = 0.02;
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     std::memset(fftBarValue, 0, sizeof(fftBarValue));
@@ -34,7 +23,7 @@ void FFTDisplay::paintEvent(QPaintEvent * /*event*/)
     peakPen.setWidth(2);
     QBrush stickBrush(QColor(70, 130, 180, 180));
 
-    for (int i = 0; i < sizeof(fftBarValue) / sizeof(fftBarValue[0]); i++)
+    for (int i = 0; i < arraySize; i++)
     {
         int drawX = sx + (i * (width + margin));
 
@@ -52,7 +41,7 @@ void FFTDisplay::paintEvent(QPaintEvent * /*event*/)
 
 void FFTDisplay::peakSlideDown()
 {
-    for (int i = 0; i < sizeof(fftBarValue) / sizeof(fftBarValue[0]); i++)
+    for (int i = 0; i < arraySize; i++)
     {
         double realityDown = speed * peakSlideSpeed[i];
         if (fftBarPeakValue[i] - realityDown <= fftBarValue[i])

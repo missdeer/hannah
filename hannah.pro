@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    desktop \
-    registerProtocolHandler
+    desktop
+
+win32: SUBDIRS += registerProtocolHandler
     

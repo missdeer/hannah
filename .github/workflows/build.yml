@@ -139,11 +139,11 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: ${{ env.qt_ver }}
+          version: ${{ matrix.qt_ver }}
           target: ${{ env.qt_target }}
           arch: ${{ matrix.qt_arch }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==2.0.6'
+          aqtversion: '==2.1.0'
 
       - name: Set up jom
         shell: cmd
@@ -293,11 +293,11 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: ${{ env.qt_ver }}
+          version: ${{ matrix.qt_ver }}
           target: ${{ env.qt_target }}
           arch: ${{ matrix.qt_arch }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==2.0.6'
+          aqtversion: '==2.1.0'
 
       - name: Set up jom
         shell: cmd

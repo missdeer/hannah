@@ -528,10 +528,10 @@ jobs:
             qt_modules: "" 
           - qt_ver: 6.3.0
             qt_modules: "qt5compat qtimageformats" 
-        qt_target: [desktop]
-        qt_arch: [clang_64]
     env:
       go_version: 1.18.2
+      qt_target: [desktop]
+      qt_arch: [clang_64]
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -565,8 +565,8 @@ jobs:
         uses: jurplel/install-qt-action@v2
         with:
           version: ${{ matrix.qt_ver }}
-          target: ${{ matrix.qt_target }}
-          arch: ${{ matrix.qt_arch }}
+          target: ${{ env.qt_target }}
+          arch: ${{ env.qt_arch }}
           modules: ${{ matrix.qt_modules }}
           aqtversion: '==2.1.0'
 

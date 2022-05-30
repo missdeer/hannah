@@ -211,7 +211,7 @@ jobs:
             GOARCH: amd64
             BUILDRP: build-x64.bat
             msvc_arch: x64
-            clang_link: llvm-win-x64.zip
+            clang_link: llvm-win-x64.7z
           - qt_arch: win64_msvc2019_64
             qt_ver: 6.3.0
             qt_modules: "qt5compat qtimageformats"
@@ -221,7 +221,7 @@ jobs:
             GOARCH: amd64
             BUILDRP: build-x64.bat
             msvc_arch: x64
-            clang_link: llvm-win-x64.zip
+            clang_link: llvm-win-x64.7z
           - qt_arch: win32_msvc2019
             qt_ver: 5.15.2
             qt_modules: ""
@@ -231,7 +231,7 @@ jobs:
             GOARCH: 386
             BUILDRP: build-x86.bat
             msvc_arch: x86
-            clang_link: llvm-win-x86.zip
+            clang_link: llvm-win-x86.7z
     env:
       go_version: 1.18.2
       qt_target: desktop
@@ -261,8 +261,8 @@ jobs:
         run: |
           mkdir llvm
           cd llvm
-          curl.exe -o LLVM.zip -L ${{ secrets.CLANG_SERVER }}/${{ matrix.clang_link }}
-          7z.exe x LLVM.zip
+          curl.exe -o LLVM.7z -L ${{ secrets.CLANG_SERVER }}/${{ matrix.clang_link }}
+          7z.exe x LLVM.7z
           cd ..
 
       - name: Build Go executables
@@ -377,24 +377,6 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5-static
             qmake: /mingw32/qt5-static/bin/qmake.exe
-            windeployqt: ls.exe
-            GOARCH: 386
-          - qt_arch: mingw64_qt6-static-gcc
-            mingw_arch: MINGW64 
-            mingw_prefix: mingw-w64-x86_64
-            toolchains: gcc
-            mkspec: win32-g++
-            qt_build: qt6-static
-            qmake: /mingw64/qt6-static/bin/qmake.exe
-            windeployqt: ls.exe
-            GOARCH: amd64
-          - qt_arch: mingw32_qt6-static-gcc
-            mingw_arch: MINGW32
-            mingw_prefix: mingw-w64-i686
-            toolchains: gcc
-            mkspec: win32-g++
-            qt_build: qt6-static
-            qmake: /mingw32/qt6-static/bin/qmake.exe
             windeployqt: ls.exe
             GOARCH: 386
           - qt_arch: mingw64_qt5-gcc

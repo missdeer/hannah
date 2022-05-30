@@ -361,7 +361,7 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: windeployqt.exe
+            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt5-gcc
             mingw_arch: MINGW32
@@ -370,7 +370,7 @@ jobs:
             mkspec: win32-g++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: windeployqt.exe
+            windeployqt: ls.exe
             GOARCH: 386
           - qt_arch: mingw64_qt5-clang
             mingw_arch: MINGW64 
@@ -379,7 +379,7 @@ jobs:
             mkspec: win32-clang-g++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: windeployqt.exe
+            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt5-clang
             mingw_arch: MINGW32
@@ -388,7 +388,7 @@ jobs:
             mkspec: win32-clang-g++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: windeployqt.exe
+            windeployqt: ls.exe
             GOARCH: 386
     env:
       go_version: 1.16.5

@@ -199,9 +199,9 @@ int main(int argc, char *argv[])
             QString cmd = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
             ::ShellExecuteW(nullptr,
                             L"open",
-                            cmd.toStdWString().c_str(),
+                            (const wchar_t *)cmd.utf16(),
                             nullptr,
-                            QDir::toNativeSeparators(QCoreApplication::applicationDirPath()).toStdWString().c_str(),
+                            (const wchar_t *)QDir::toNativeSeparators(QCoreApplication::applicationDirPath()).utf16(),
                             SW_SHOWNORMAL);
         }
     }
@@ -221,6 +221,6 @@ int main(int argc, char *argv[])
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;
 
-    a.setQuitOnLastWindowClosed(false);
-    return a.exec();
+    QtSingleApplication::setQuitOnLastWindowClosed(false);
+    return QtSingleApplication::exec();
 }

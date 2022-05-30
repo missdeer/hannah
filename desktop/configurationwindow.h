@@ -33,7 +33,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 public slots:
-    void onOpenUrl(QUrl url);
+    void onOpenUrl(const QUrl& url);
 
     void onApplicationMessageReceived(const QString &message);
 

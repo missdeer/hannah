@@ -84,7 +84,7 @@ QString BassPlayer::openAudio(const QString &uri)
         }
         m_hNowPlay = BASS_StreamCreateFile(false,
 #if defined(Q_OS_WIN)
-                                           uri.toStdWString().c_str(),
+                                           (const wchar_t *)uri.utf16(),
 #else
                                            uri.toStdString().c_str(),
 #endif
@@ -96,7 +96,7 @@ QString BassPlayer::openAudio(const QString &uri)
     {
         m_hNowPlay = BASS_StreamCreateURL(
 #if defined(Q_OS_WIN)
-            uri.toStdWString().c_str(),
+            (const wchar_t *)uri.utf16(),
 #else
             uri.toStdString().c_str(),
 #endif
@@ -326,27 +326,27 @@ QString BassPlayer::getTotalTime()
     return "0:00";
 }
 
-int BassPlayer::getCurTimeMS()
+int BassPlayer::getCurTimeMS() const
 {
     return (int)(BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE)) * 1000);
 }
 
-int BassPlayer::getTotalTimeMS()
+int BassPlayer::getTotalTimeMS() const
 {
     return (int)(BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE)) * 1000);
 }
 
-double BassPlayer::getCurTimeSec()
+double BassPlayer::getCurTimeSec() const
 {
     return BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetPosition(m_hNowPlay, BASS_POS_BYTE));
 }
 
-double BassPlayer::getTotalTimeSec()
+double BassPlayer::getTotalTimeSec() const
 {
     return BASS_ChannelBytes2Seconds(m_hNowPlay, BASS_ChannelGetLength(m_hNowPlay, BASS_POS_BYTE));
 }
 
-DWORD BassPlayer::getLevel()
+DWORD BassPlayer::getLevel() const
 {
     DWORD level = BASS_ChannelGetLevel(m_hNowPlay);
     if (level != (DWORD)-1)
@@ -358,11 +358,12 @@ DWORD BassPlayer::getLevel()
 
 QString BassPlayer::getFileTotalTime(const QString &fileName)
 {
-    HSTREAM fileStream = BASS_StreamCreateFile(false, fileName.toStdWString().c_str(), 0, 0, BASS_UNICODE);
+    HSTREAM fileStream = BASS_StreamCreateFile(false, (const wchar_t *)fileName.utf16(), 0, 0, BASS_UNICODE);
     int     totalSec   = (int)BASS_ChannelBytes2Seconds(fileStream, BASS_ChannelGetLength(fileStream, BASS_POS_BYTE));
     BASS_StreamFree(fileStream);
-    int minute = totalSec / 60;
-    int second = totalSec % 60;
+    const int secondsInAMinute = 60;
+    int       minute           = totalSec / secondsInAMinute;
+    int       second           = totalSec % secondsInAMinute;
     if (second != -1)
     {
         return QString("%1:%2").arg(minute).arg(second, 2, 10, QChar('0'));
@@ -372,18 +373,18 @@ QString BassPlayer::getFileTotalTime(const QString &fileName)
 
 double BassPlayer::getFileSecond(const QString &fileName)
 {
-    HSTREAM fileStream = BASS_StreamCreateFile(false, fileName.toStdWString().c_str(), 0, 0, BASS_UNICODE);
+    HSTREAM fileStream = BASS_StreamCreateFile(false, (const wchar_t *)fileName.utf16(), 0, 0, BASS_UNICODE);
     double  totalSec   = BASS_ChannelBytes2Seconds(fileStream, BASS_ChannelGetLength(fileStream, BASS_POS_BYTE));
     BASS_StreamFree(fileStream);
     return totalSec;
 }
 
-void BassPlayer::setReverse(bool isEnable)
+void BassPlayer::setReverse(bool isEnable) const
 {
     BASS_ChannelSetAttribute(m_hNowPlay, BASS_ATTRIB_REVERSE_DIR, isEnable ? BASS_FX_RVS_REVERSE : BASS_FX_RVS_FORWARD);
 }
 
-void BassPlayer::updateReverb(int value)
+void BassPlayer::updateReverb(int value) const
 {
     BASS_DX8_REVERB p;
     BASS_FXGetParameters(m_hReverbFX, &p);

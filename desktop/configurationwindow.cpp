@@ -32,10 +32,11 @@
 #include "qmlplayer.h"
 #include "ui_configurationwindow.h"
 
-ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::ConfigurationWindow)
+ConfigurationWindow::ConfigurationWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::ConfigurationWindow), m_nam(new QNetworkAccessManager(this))
 {
     m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
-    m_nam      = new QNetworkAccessManager(this);
+
     ui->setupUi(this);
 
     ui->cbOutputDevices->setItemDelegate(new ComboBoxDelegate);
@@ -57,14 +58,19 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     onUseBuiltinPlayerStateChanged(!bUseExternalPlayer);
     auto state = m_settings->value("reverseProxyAutoRedirect", 2).toInt(&ok);
     if (ok)
+    {
         ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
+    }
     state = m_settings->value("reverseProxyRedirect", 2).toInt(&ok);
     if (ok)
+    {
         ui->reverseProxyRedirect->setCheckState(Qt::CheckState(state));
+    }
     auto port = m_settings->value("reverseProxyListenPort", 8090).toInt(&ok);
     if (ok)
+    {
         ui->reverseProxyListenPort->setValue(port);
-
+    }
     connect(ui->reverseProxyBindNetworkInterface,
             &QComboBox::currentTextChanged,
             this,
@@ -83,19 +89,19 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->reverseProxyProxyType, &QComboBox::currentTextChanged, this, &ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged);
     connect(ui->reverseProxyProxyAddress, &QLineEdit::textChanged, this, &ConfigurationWindow::onReverseProxyProxyAddressTextChanged);
 
-    QClipboard *clipboard = QGuiApplication::clipboard();
+    auto *clipboard = QGuiApplication::clipboard();
     connect(clipboard, &QClipboard::dataChanged, this, &ConfigurationWindow::onGlobalClipboardChanged);
 
-    auto configAction = new QAction(tr("&Configuration"), this);
+    auto *configAction = new QAction(tr("&Configuration"), this);
     connect(configAction, &QAction::triggered, this, &ConfigurationWindow::onShowConfiguration);
 
-    auto showHidePlayerAction = new QAction(tr("Show/Hide &Player"), this);
+    auto *showHidePlayerAction = new QAction(tr("Show/Hide &Player"), this);
     connect(showHidePlayerAction, &QAction::triggered, this, &ConfigurationWindow::onShowHideBuiltinPlayer);
 
-    auto playlistManageAction = new QAction(tr("Playlist Manage"), this);
+    auto *playlistManageAction = new QAction(tr("Playlist Manage"), this);
     connect(playlistManageAction, &QAction::triggered, this, &ConfigurationWindow::onShowPlaylistManage);
 
-    auto quitAction = new QAction(tr("&Quit"), this);
+    auto *quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
     m_trayIconMenu = new QMenu(this);
@@ -164,14 +170,14 @@ void ConfigurationWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void ConfigurationWindow::onOpenUrl(QUrl url)
+void ConfigurationWindow::onOpenUrl(const QUrl &url)
 {
     onApplicationMessageReceived(url.toString());
 }
 
 void ConfigurationWindow::onApplicationMessageReceived(const QString &message)
 {
-    QString u = message;
+    const QString &u       = message;
     QString pattern = "hannah://play";
     if (u.startsWith(pattern))
     {
@@ -247,7 +253,9 @@ void ConfigurationWindow::startReverseProxy()
 {
     bool b = StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
     if (!b)
+    {
         QMessageBox::critical(this, tr("Error"), tr("Starting reverse proxy failed!"));
+    }
 }
 
 void ConfigurationWindow::initOutputDevices()
@@ -319,10 +327,11 @@ void ConfigurationWindow::initOutputDevices()
 void ConfigurationWindow::initNetworkInterfaces()
 {
     auto interfaces = QNetworkInterface::allInterfaces();
-    for (const auto &i : interfaces)
+    for (const auto &networkInterface : interfaces)
     {
-        if (i.type() == QNetworkInterface::Ethernet || i.type() == QNetworkInterface::Wifi || i.type() == QNetworkInterface::Ppp)
-            ui->reverseProxyBindNetworkInterface->addItem(i.humanReadableName());
+        if (networkInterface.type() == QNetworkInterface::Ethernet || networkInterface.type() == QNetworkInterface::Wifi ||
+            networkInterface.type() == QNetworkInterface::Ppp)
+            ui->reverseProxyBindNetworkInterface->addItem(networkInterface.humanReadableName());
     }
 }
 void ConfigurationWindow::restartReverseProxy()
@@ -377,12 +386,12 @@ void ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged(const QStrin
     if (text == tr("Http"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
-        SetHttpProxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+        SetHttpProxy(GoString {(const char *)ba.data(), static_cast<ptrdiff_t>(ba.length())});
     }
     else if (text == tr("Socks5"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
-        SetSocks5Proxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+        SetSocks5Proxy(GoString {(const char *)ba.data(), static_cast<ptrdiff_t>(ba.length())});
     }
     else
     {
@@ -401,12 +410,12 @@ void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &t
     if (text == tr("Http"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
-        SetHttpProxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+        SetHttpProxy(GoString {(const char *)ba.data(), static_cast<ptrdiff_t>(ba.length())});
     }
     else if (text == tr("Socks5"))
     {
         QByteArray ba = ui->reverseProxyProxyAddress->text().toUtf8();
-        SetSocks5Proxy(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+        SetSocks5Proxy(GoString {(const char *)ba.data(), static_cast<ptrdiff_t>(ba.length())});
     }
     else
     {
@@ -420,28 +429,28 @@ void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &t
 void ConfigurationWindow::openLink(const QString &text)
 {
     static const QVector<QRegularExpression> patterns = {
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?discover\\/toplist\\?id=(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?playlist\\?id=(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?my\\/m\\/music\\/playlist\\?id=(\\d+)"),
-        QRegularExpression("^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/playlist\\/(\\d+)\\.html"),
-        QRegularExpression("^https?:\\/\\/www\\.kugou\\.com\\/yy\\/special\\/single\\/(\\d+)\\.html"),
-        QRegularExpression("^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/playlist_detail\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/playlist\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?song\\?id=(\\d+)"),
-        QRegularExpression("^https?:\\/\\/y\\.qq\\.com/n\\/yqq\\/song\\/(\\w+)\\.html"),
-        QRegularExpression("^https?:\\/\\/www\\.kugou\\.com\\/song\\/#hash=([0-9A-F]+)"),
-        QRegularExpression("^https?:\\/\\/(?:www\\.)kuwo.cn\\/play_detail\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/song\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/artist\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?artist\\?id=(\\d+)"),
-        QRegularExpression("^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/singer\\/(\\w+)\\.html"),
-        QRegularExpression("^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/singer_detail\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/artist\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/weapi\\/v1\\/album\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.163\\.com\\/(?:#\\/)?album\\?id=(\\d+)"),
-        QRegularExpression("^https?:\\/\\/y\\.qq\\.com\\/n\\/yqq\\/album\\/(\\w+)\\.html"),
-        QRegularExpression("^https?:\\/\\/(?:www\\.)?kuwo\\.cn\\/album_detail\\/(\\d+)"),
-        QRegularExpression("^https?:\\/\\/music\\.migu\\.cn\\/v3\\/music\\/album\\/(\\d+)")};
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/(?:#\/)?discover\/toplist\?id=(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/(?:#\/)?playlist\?id=(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/(?:#\/)?my\/m\/music\/playlist\?id=(\d+))"),
+        QRegularExpression(R"(^https?:\/\/y\.qq\.com\/n\/yqq\/playlist\/(\d+)\.html)"),
+        QRegularExpression(R"(^https?:\/\/www\.kugou\.com\/yy\/special\/single\/(\d+)\.html)"),
+        QRegularExpression(R"(^https?:\/\/(?:www\.)?kuwo\.cn\/playlist_detail\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.migu\.cn\/v3\/music\/playlist\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/(?:#\/)?song\?id=(\d+))"),
+        QRegularExpression(R"(^https?:\/\/y\.qq\.com/n\/yqq\/song\/(\w+)\.html)"),
+        QRegularExpression(R"(^https?:\/\/www\.kugou\.com\/song\/#hash=([0-9A-F]+))"),
+        QRegularExpression(R"(^https?:\/\/(?:www\.)kuwo.cn\/play_detail\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.migu\.cn\/v3\/music\/song\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/weapi\/v1\/artist\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/(?:#\/)?artist\?id=(\d+))"),
+        QRegularExpression(R"(^https?:\/\/y\.qq\.com\/n\/yqq\/singer\/(\w+)\.html)"),
+        QRegularExpression(R"(^https?:\/\/(?:www\.)?kuwo\.cn\/singer_detail\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.migu\.cn\/v3\/music\/artist\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/weapi\/v1\/album\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.163\.com\/(?:#\/)?album\?id=(\d+))"),
+        QRegularExpression(R"(^https?:\/\/y\.qq\.com\/n\/yqq\/album\/(\w+)\.html)"),
+        QRegularExpression(R"(^https?:\/\/(?:www\.)?kuwo\.cn\/album_detail\/(\d+))"),
+        QRegularExpression(R"(^https?:\/\/music\.migu\.cn\/v3\/music\/album\/(\d+))")};
     auto iter = std::find_if(patterns.begin(), patterns.end(), [&text](const auto &r) { return r.match(text).hasMatch(); });
     if (patterns.end() != iter)
     {
@@ -451,8 +460,8 @@ void ConfigurationWindow::openLink(const QString &text)
 
 void ConfigurationWindow::onGlobalClipboardChanged()
 {
-    QClipboard *clipboard = QGuiApplication::clipboard();
-    QString     text      = clipboard->text();
+    auto *clipboard = QGuiApplication::clipboard();
+    auto  text      = clipboard->text();
     openLink(text);
 }
 
@@ -460,7 +469,7 @@ void ConfigurationWindow::onReplyError(QNetworkReply::NetworkError code)
 {
     Q_UNUSED(code);
 #if !defined(QT_NO_DEBUG)
-    auto reply = qobject_cast<QNetworkReply *>(sender());
+    auto *reply = qobject_cast<QNetworkReply *>(sender());
     Q_ASSERT(reply);
     qDebug() << reply->errorString();
 #endif
@@ -468,7 +477,7 @@ void ConfigurationWindow::onReplyError(QNetworkReply::NetworkError code)
 
 void ConfigurationWindow::onReplyFinished()
 {
-    auto reply = qobject_cast<QNetworkReply *>(sender());
+    auto *reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
 #if !defined(QT_NO_DEBUG)
@@ -556,14 +565,16 @@ void ConfigurationWindow::handle(const QString &url, bool needConfirm)
     if (!fi.exists())
     {
         if (!needConfirm)
+        {
             QMessageBox::critical(this, tr("Error"), tr("External player path not configured properly"));
+        }
         return;
     }
 
     m_playlistContent.clear();
 
     QNetworkRequest req(QUrl::fromUserInput(QString("http://localhost:%1/m3u/generate?u=").arg(ui->reverseProxyListenPort->value()) + url));
-    auto            reply = m_nam->get(req);
+    auto           *reply = m_nam->get(req);
     connect(reply, &QNetworkReply::finished, this, &ConfigurationWindow::onReplyFinished);
     connect(reply, &QNetworkReply::readyRead, this, &ConfigurationWindow::onReplyReadyRead);
     connect(reply, &QNetworkReply::errorOccurred, this, &ConfigurationWindow::onReplyError);
@@ -581,7 +592,9 @@ void ConfigurationWindow::handle(const QString &url, bool needConfirm)
 
     if (needConfirm &&
         QMessageBox::question(this, tr("Confirm"), tr("Play song(s) by %1?").arg(player), QMessageBox::Ok | QMessageBox::Cancel) != QMessageBox::Ok)
+    {
         return;
+    }
 #if defined(Q_OS_MACOS)
     if (fi.isBundle() && player.endsWith(".app"))
     {
@@ -616,9 +629,9 @@ void ConfigurationWindow::handle(const QString &url, bool needConfirm)
     args.removeAll("");
     ::ShellExecuteW((HWND)winId(),
                     L"open",
-                    player.toStdWString().c_str(),
-                    args.join(" ").toStdWString().c_str(),
-                    workingDir.toStdWString().c_str(),
+                    (const wchar_t *)player.utf16(),
+                    (const wchar_t *)args.join(" ").utf16(),
+                    (const wchar_t *)workingDir.utf16(),
                     SW_SHOWNORMAL);
     return;
 #else

@@ -221,6 +221,6 @@ int main(int argc, char *argv[])
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;
 
-    QtSingleApplication::setQuitOnLastWindowClosed(false);
-    return QtSingleApplication::exec();
+    a.setQuitOnLastWindowClosed(false);
+    return a.exec();
 }

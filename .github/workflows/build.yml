@@ -530,8 +530,8 @@ jobs:
             qt_modules: "qt5compat qtimageformats" 
     env:
       go_version: 1.18.2
-      qt_target: [desktop]
-      qt_arch: [clang_64]
+      qt_target: desktop
+      qt_arch: clang_64
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:

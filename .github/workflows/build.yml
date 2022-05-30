@@ -523,7 +523,11 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        qt_ver: [5.15.2]
+        include:
+          - qt_ver: 5.15.2
+            qt_modules: "" 
+          - qt_ver: 6.3.0
+            qt_modules: "qt5compat qtimageformats" 
         qt_target: [desktop]
         qt_arch: [clang_64]
     env:
@@ -532,8 +536,6 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest-stable'
-          
-      - run: cd /Library/Developer/CommandLineTools/SDKs && sudo rm MacOSX.sdk && sudo ln -s MacOSX11.1.sdk MacOSX.sdk && sudo rm -rf MacOSX10.15.sdk
       
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -565,6 +567,8 @@ jobs:
           version: ${{ matrix.qt_ver }}
           target: ${{ matrix.qt_target }}
           arch: ${{ matrix.qt_arch }}
+          modules: ${{ matrix.qt_modules }}
+          aqtversion: '==2.1.0'
 
       - name: build macos
         run: |
@@ -595,5 +599,5 @@ jobs:
       - name: Upload artifact hannah-darwin-amd64
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: hannah-darwin-amd64
+          name: hannah-darwin-amd64-qt${{ matrix.qt_ver }}
           path: darwin-amd64

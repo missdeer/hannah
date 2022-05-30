@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     Application a(argc, argv);
     i18n(translator, qtTranslator);
     ConfigurationWindow  w;
-    w.connect(&a, &Application::openUrl, &w, qOverload<QUrl>(&ConfigurationWindow::onOpenUrl));
+    w.connect(&a, &Application::openUrl, &w, qOverload<const QUrl &>(&ConfigurationWindow::onOpenUrl));
 
     configurationWindow = &w;
 

@@ -62,7 +62,7 @@ jobs:
         include:
           - qt_arch: win64_msvc2019_64
             qt_ver: 5.15.2
-            qt_modules: "all"
+            qt_modules: ""
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
             toolchains: gcc
@@ -80,7 +80,7 @@ jobs:
             msvc_arch: x64
           - qt_arch: win32_msvc2019
             qt_ver: 5.15.2
-            qt_modules: "all"
+            qt_modules: ""
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: gcc
@@ -204,7 +204,7 @@ jobs:
         include:
           - qt_arch: win64_msvc2019_64
             qt_ver: 5.15.2
-            qt_modules: "all"
+            qt_modules: ""
             mingw_arch: MINGW64
             mingw_prefix: mingw-w64-x86_64
             toolchains: gcc
@@ -224,7 +224,7 @@ jobs:
             clang_link: llvm-win-x64.zip
           - qt_arch: win32_msvc2019
             qt_ver: 5.15.2
-            qt_modules: "all"
+            qt_modules: ""
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: gcc

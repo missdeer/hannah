@@ -78,7 +78,7 @@ QString BassPlayer::openAudio(const QString &uri)
             "flac",
             "wv",
         };
-        if (!audioExts.contains(ext, Qt::CaseInsensitive))
+        if (!audioExts.contains(ext))
         {
             return "err";
         }

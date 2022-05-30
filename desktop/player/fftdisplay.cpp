@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include <QBrush>
 #include <QColor>
 #include <QPainter>
@@ -7,6 +9,13 @@
 
 FFTDisplay::FFTDisplay(QWidget *parent) : QGroupBox(parent)
 {
+    height             = 120;
+    acc                = 0.35;
+    maxSpeed           = 9;
+    speed              = 0.025;
+    forceD             = 6;
+    elasticCoefficient = 0.6;
+    minElasticStep     = 0.02;
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     std::memset(fftBarValue, 0, sizeof(fftBarValue));

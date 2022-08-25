@@ -113,7 +113,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/translations/Hannah_zh_CN.ts
     OPTIONS -no-obsolete)
     qt_add_executable(${ProjectName}
-            ${CMAKE_CURRENT_SOURCE_DIR}/Hannah.rc
+            ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
             ${qrcs}
             ${UIS}
             ${HEADERS}
@@ -123,7 +123,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/translations/Hannah_zh_CN.ts)
     add_executable(${ProjectName}
-            ${CMAKE_CURRENT_SOURCE_DIR}/Hannah.rc
+            ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
             ${qrcs}
             ${UIS}
             ${HEADERS}

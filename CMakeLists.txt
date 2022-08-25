@@ -12,3 +12,8 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 
 add_subdirectory(lib)
 add_subdirectory(desktop)
+add_subdirectory(registerProtocolHandler)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+qt_finalize_project()
+endif()

@@ -1,0 +1,45 @@
+cmake_minimum_required(VERSION 3.15)
+project(basslib VERSION 1.0.0)
+
+add_library(basslib INTERFACE)
+
+target_include_directories(basslib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set(ARCH "amd64")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64")
+    set(ARCH "amd64")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+    # cmake reports AMD64 on Windows, but we might be building for 32-bit.
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(ARCH "amd64")
+    else()
+        set(ARCH "386")
+    endif()
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86")
+    set(ARCH "386")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "i386")
+    set(ARCH "386")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
+    set(ARCH "386")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+    set(ARCH "arm64")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
+    set(ARCH "arm64")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    set(ARCH "arm64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm*")
+    set(ARCH "arm64")
+endif()
+
+IF(WIN32)
+    target_link_directories(basslib INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/lib/windows/${ARCH}")
+    target_link_libraries(basslib INTERFACE
+            bass bass_fx bassasio bassmix basswasapi tags)
+ENDIF()
+
+IF(APPLE)
+    target_link_directories(basslib INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/lib/mac")
+    target_link_libraries(basslib INTERFACE
+            bass bass_fx tags)
+ENDIF()

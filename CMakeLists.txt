@@ -10,6 +10,8 @@ ELSE(CMAKE_BUILD_TYPE MATCHES Debug)
     set(BUILD_TYPE Release)
 ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+
 add_subdirectory(lib)
 add_subdirectory(desktop)
 add_subdirectory(registerProtocolHandler)

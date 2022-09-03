@@ -476,7 +476,7 @@ func (p *migu) ArtistSongs(id string) (songs Songs, err error) {
 		if err != nil {
 			return nil, err
 		}
-		log.Println(string(content))
+
 		var artistInfo miguSingerInfo
 		if err = json.Unmarshal(content, &artistInfo); err != nil {
 			return nil, err
@@ -646,17 +646,16 @@ func (p *migu) Name() string {
 }
 
 func (p *migu) encrypt(text string) (encryptedData string) {
-	// fmt.Println(text)
 	text = util.ToJson(util.ParseJson(bytes.NewBufferString(text).Bytes()))
 	randomBytes, err := util.GenRandomBytes(32)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return encryptedData
 	}
 	pwd := bytes.NewBufferString(hex.EncodeToString(randomBytes)).Bytes()
 	salt, err := util.GenRandomBytes(8)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return encryptedData
 	}
 	// key = []byte{0xaf, 0xb3, 0xac, 0x50, 0xcd, 0x1d, 0x23, 0x81, 0x58, 0x5f, 0xa7, 0xbc, 0xbd, 0x8c, 0xbe, 0x02, 0x56, 0x0f, 0xad, 0xe7, 0xd1, 0x7e, 0x2e, 0xb1, 0x14, 0x81, 0x6f, 0x27, 0xab, 0x7b, 0x6a, 0x75}
@@ -676,8 +675,6 @@ func (p *migu) encrypt(text string) (encryptedData string) {
 		rsaB = cryptography.RSAEncryptV2(pwd, pubKey)
 	}
 	sec := base64.StdEncoding.EncodeToString(rsaB)
-	// fmt.Println("data:", dat)
-	// fmt.Println("sec:", sec)
 	encryptedData = "data=" + url.QueryEscape(dat)
 	encryptedData = encryptedData + "&secKey=" + url.QueryEscape(sec)
 	return encryptedData

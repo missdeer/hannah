@@ -11,7 +11,7 @@ jobs:
             GOOS: linux
             LIBPATH: x86_64-linux-gnu
     env:
-      go_version: 1.19
+      go_version: 1.19.0
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -88,7 +88,7 @@ jobs:
             BUILDRP: build-x86.bat
             msvc_arch: x86
     env:
-      go_version: 1.19
+      go_version: 1.19.0
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -233,7 +233,7 @@ jobs:
             msvc_arch: x86
             clang_link: llvm-win-x86.7z
     env:
-      go_version: 1.19
+      go_version: 1.19.0
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -452,7 +452,7 @@ jobs:
             windeployqt: ls.exe
             GOARCH: 386
     env:
-      go_version: 1.19
+      go_version: 1.19.0
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -529,7 +529,7 @@ jobs:
           - qt_ver: 6.3.1
             qt_modules: "qt5compat qtimageformats" 
     env:
-      go_version: 1.19
+      go_version: 1.19.0
       qt_target: desktop
       qt_arch: clang_64
     steps:

@@ -196,13 +196,17 @@ int main(int argc, char *argv[])
         if (v1 != "URL:hannah Protocol" ||
             v2 != QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QString("\" \"%1\""))
         {
-            QString cmd = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
-            ::ShellExecuteW(nullptr,
-                            L"open",
-                            (const wchar_t *)cmd.utf16(),
-                            nullptr,
-                            (const wchar_t *)QDir::toNativeSeparators(QCoreApplication::applicationDirPath()).utf16(),
-                            SW_SHOWNORMAL);
+            auto cmd = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
+            auto workingDir = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
+            SHELLEXECUTEINFO execInfo;
+            ZeroMemory(&execInfo, sizeof(execInfo));
+            execInfo.lpFile = (const wchar_t *)cmd.utf16();
+            execInfo.lpDirectory = (const wchar_t *)workingDir.utf16();
+            execInfo.cbSize = sizeof(execInfo);
+            execInfo.lpVerb = L"runas";
+            execInfo.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI;
+            execInfo.nShow = SW_HIDE;
+            ShellExecuteEx(&execInfo);
         }
     }
 #    endif

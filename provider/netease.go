@@ -32,7 +32,7 @@ const (
 	neteaseDefaultRSAPublicKeyModulus  = "e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7"
 	neteaseDefaultRSAPublicKeyExponent = 0x10001
 	neteaseAPIGetSongsURL              = "http://music.163.com/weapi/song/enhance/player/url"
-	neteaseAPISearch                   = `http://music.163.com/api/search/pc`
+	neteaseAPISearch                   = `https://music.163.com/weapi/cloudsearch/get/web`
 	neteaseAPIGetLyric                 = `http://music.163.com/weapi/song/lyric?csrf_token=`
 	neteaseAPIHot                      = `http://music.163.com/discover/playlist/?order=hot&limit=%d&offset=%d`
 	neteaseAPIPlaylistDetail           = `http://music.163.com/weapi/v3/playlist/detail`
@@ -156,8 +156,20 @@ type neteaseSongInfo struct {
 }
 
 func (p *netease) SearchSongs(keyword string, page int, limit int) (SearchResult, error) {
-	body := fmt.Sprintf("limit=%d&offset=%d&s=%s&type=1", limit, (page-1)*limit, url.QueryEscape(keyword))
-	req, err := http.NewRequest("POST", neteaseAPISearch, strings.NewReader(body))
+	data := map[string]interface{}{
+		"limit":  limit,
+		"offset": (page - 1) * limit,
+		"s":      keyword,
+		"type":   1,
+	}
+
+	params := weapi(data)
+	values := url.Values{}
+	for k, vs := range params {
+		values.Add(k, vs.(string))
+	}
+	postBody := values.Encode()
+	req, err := http.NewRequest("POST", neteaseAPISearch, strings.NewReader(postBody))
 	if err != nil {
 		return nil, err
 	}
@@ -567,8 +579,7 @@ type neteaseArtistSongs struct {
 }
 
 func (p *netease) ArtistSongs(id string) (res Songs, err error) {
-	data := map[string]interface{}{
-	}
+	data := map[string]interface{}{}
 
 	params := weapi(data)
 	values := url.Values{}
@@ -638,8 +649,7 @@ type neteaseAlbumSongs struct {
 }
 
 func (p *netease) AlbumSongs(id string) (res Songs, err error) {
-	data := map[string]interface{}{
-	}
+	data := map[string]interface{}{}
 
 	params := weapi(data)
 	values := url.Values{}
@@ -771,8 +781,7 @@ func (p *netease) Login() error {
 }
 
 func (p *netease) RefreshToken() error {
-	data := map[string]interface{}{
-	}
+	data := map[string]interface{}{}
 
 	params := weapi(data)
 	values := url.Values{}

@@ -52,7 +52,7 @@ type kuwoSearchResult struct {
 			Pic      string `json:"pic"`
 			RID      int    `json:"rid"`
 			Album    string `json:"album"`
-			AlbumID  int    `json:"albumid"`
+			AlbumID  string `json:"albumid"`
 			AlbumPic string `json:"albumpic"`
 			Pic120   string `json:"pic120"`
 			Name     string `json:"name"`

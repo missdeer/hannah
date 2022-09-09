@@ -77,7 +77,7 @@ func TestKuwo_ArtistSongs(t *testing.T) {
 		t.Error("can't get provider")
 	}
 
-	songs, err := p.ArtistSongs("138904")
+	songs, err := p.ArtistSongs("5335193")
 	if err != nil {
 		t.Error(err)
 	}

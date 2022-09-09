@@ -21,15 +21,16 @@ import (
 )
 
 const (
-	kuwoAPISearch         = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=%s&pn=%d&rn=%d`
-	kuwoAPIToken          = `http://www.kuwo.cn/search/list?key=`
-	kuwoAPIConvertURL     = `http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3|aac|wma&response=url&rid=%s`
-	kuwoAPIGetLossless    = "http://mobi.kuwo.cn/mobi.s?f=kuwo&q="
-	kuwoAPIHot            = `http://www.kuwo.cn/www/categoryNew/getPlayListInfoUnderCategory?type=taglist&digest=10000&id=37&start=%d&count=%d`
-	kuwoAPIPlaylistDetail = `http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
-	kuwoAPIGetLyric       = `http://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=%s`
-	kuwoAPIArtistSongs    = `http://www.kuwo.cn/api/www/artist/artistMusic?artistid=%s&pn=%d&rn=%d`
-	kuwoAPIAlbumSongs     = `http://www.kuwo.cn/api/www/album/albumInfo?albumId=%s&pn=%d&rn=%d`
+	kuwoAPISearch         = `https://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=%s&pn=%d&rn=%d`
+	kuwoAPIToken          = `https://www.kuwo.cn/search/list?key=`
+	kuwoAPIConvertURL     = `https://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3|aac|wma&response=url&rid=%s`
+	kuwoAPIGetLossless    = "https://mobi.kuwo.cn/mobi.s?f=kuwo&q="
+	kuwoAPIHot            = `https://www.kuwo.cn/www/categoryNew/getPlayListInfoUnderCategory?type=taglist&digest=10000&id=37&start=%d&count=%d`
+	kuwoAPIPlaylistDetail = `https://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pn=0&rn=200&encode=utf-8&keyset=pl2012&pcmp4=1&pid=%s&vipver=MUSIC_9.0.2.0_W1&newver=1`
+	kuwoAPIGetLyric       = `https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=%s`
+	kuwoAPIPreArtistSongs = `https://www.kuwo.cn/api/www/artist/artist?artistid=%s`
+	kuwoAPIArtistSongs    = `https://www.kuwo.cn/api/www/artist/artistMusic?artistid=%s&pn=%d&rn=%d`
+	kuwoAPIAlbumSongs     = `https://www.kuwo.cn/api/www/album/albumInfo?albumId=%s&pn=%d&rn=%d`
 )
 
 var (

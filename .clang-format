@@ -57,8 +57,14 @@ ForEachMacros:
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex:           'std(A|a)fx.h'
-    Priority:        -6
-    SortPriority:    -6
+    Priority:        -99
+    SortPriority:    -99
+  - Regex:           '(W|w)indows.h'
+    Priority:        -90
+    SortPriority:    -90
+  - Regex:           '(W|w)indows(X|x).h'
+    Priority:        -89
+    SortPriority:    -89
   - Regex:           '^<[^Q][^\.]+>$'
     Priority:        -3
     SortPriority:    -5

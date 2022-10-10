@@ -150,7 +150,9 @@ jobs:
           target: ${{ env.qt_target }}
           arch: ${{ matrix.qt_arch }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==2.1.0'
+          cache: 'true'
+          cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
+          aqtversion: '==3.0.1'
 
       - name: Set up jom
         shell: cmd
@@ -283,7 +285,9 @@ jobs:
           target: ${{ env.qt_target }}
           arch: ${{ matrix.qt_arch }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==2.1.0'
+          cache: 'true'
+          cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
+          aqtversion: '==3.0.1'
 
       - name: Set up jom
         shell: cmd
@@ -463,7 +467,9 @@ jobs:
           target: ${{ env.qt_target }}
           arch: ${{ matrix.qt_arch }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==2.1.0'
+          cache: 'true'
+          cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
+          aqtversion: '==3.0.1'
 
       - name: Set up jom
         shell: cmd
@@ -734,7 +740,9 @@ jobs:
           target: ${{ env.qt_target }}
           arch: ${{ env.qt_arch }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==2.1.0'
+          cache: 'true'
+          cache-key-prefix: 'install-qt-action-${{ env.qt_arch }}-${{ matrix.qt_ver }}'
+          aqtversion: '==3.0.1'
 
       - name: build macos
         run: |

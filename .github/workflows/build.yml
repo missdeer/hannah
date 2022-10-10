@@ -1,6 +1,13 @@
 name: Build
 on: [push]
 
+env:
+  WINDOWS_BASEKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18851/w_BaseKit_p_2022.3.0.9573_offline.exe
+  WINDOWS_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18857/w_HPCKit_p_2022.3.0.9564_offline.exe
+  WINDOWS_CPP_COMPONENTS: intel.oneapi.win.cpp-compiler
+  WINDOWS_DPCPP_COMPONENTS: intel.oneapi.win.dpcpp-compiler
+  COMPILER_VERSION: 2022.2
+
 jobs:
   Linux:
     runs-on: ubuntu-latest
@@ -11,7 +18,7 @@ jobs:
             GOOS: linux
             LIBPATH: x86_64-linux-gnu
     env:
-      go_version: 1.19.0
+      go_version: 1.19.2
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -70,7 +77,7 @@ jobs:
             BUILDRP: build-x64.bat
             msvc_arch: x64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.3.1
+            qt_ver: 6.4.0
             qt_modules: "qt5compat qtimageformats"
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
@@ -88,7 +95,7 @@ jobs:
             BUILDRP: build-x86.bat
             msvc_arch: x86
     env:
-      go_version: 1.19.0
+      go_version: 1.19.2
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -131,7 +138,7 @@ jobs:
           mingw_arch: ${{ matrix.mingw_arch }}
         run: |
           cd lib\reverseProxy
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           set PATH=D:\a\_temp\msys\msys64\%mingw_arch%\bin;%PATH%;C:\hostedtoolcache\windows\go\${{ env.go_version }}\x64\bin
           call ${{ matrix.BUILDRP }}
           cd ..\..
@@ -162,8 +169,167 @@ jobs:
           mkdir -p ${{ matrix.qt_arch }}\gui
           mkdir build
           cd build
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          qmake -r CONFIG+=release ..
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          qmake -r CONFIG+=release  CONFIG+=qtquickcompiler ..
+          mkdir -p desktop\release\translations
+          if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
+          if not exist %CD%\jom\jom.exe nmake
+          copy desktop\release\Hannah.exe ..\${{ matrix.qt_arch }}\gui\
+          windeployqt.exe -qmldir=..\desktop\rc\qml ..\${{ matrix.qt_arch }}\gui\Hannah.exe
+          copy registerProtocolHandler\release\registerProtocolHandler.exe ..\${{ matrix.qt_arch }}\gui\
+          copy ..\lib\reverseProxy\*.dll ..\${{ matrix.qt_arch }}\gui\
+          cd ..
+
+      - shell: msys2 {0} 
+        run : |   
+          cp -r $PWD/build/desktop/release/translations $PWD/${{ matrix.qt_arch }}/gui/
+
+      - name: package Chrome extension
+        shell: msys2 {0}
+        run: |
+          cd $PWD/browser/chrome
+          zip $PWD/../../${{ matrix.qt_arch }}/hannah-chrome-extension.crx ./*
+          cd $PWD/../..
+
+      - name: package Firefox extension
+        shell: msys2 {0}
+        run: |
+          cd $PWD/browser/firefox
+          zip $PWD/../../${{ matrix.qt_arch }}/hannah-firefox-addon.xpi ./*
+          cd $PWD/../..
+          
+      - name: Upload artifact hannah-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: hannah-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
+          path: ${{ matrix.qt_arch }}
+
+  Windows-Intel-oneAPI: 
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - qt_arch: win64_msvc2019_64
+            qt_ver: 5.15.2
+            qt_modules: ""
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            GOARCH: amd64
+            BUILDRP: build-x64.bat
+            msvc_arch: x64
+          - qt_arch: win64_msvc2019_64
+            qt_ver: 6.4.0
+            qt_modules: "qt5compat qtimageformats"
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            GOARCH: amd64
+            BUILDRP: build-x64.bat
+            msvc_arch: x64
+    env:
+      go_version: 1.19.2
+      qt_target: desktop
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+          install: zip make git ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-zstd
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.go_version }}
+        id: go
+
+      - run: go version && go env
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: Build Go executables
+        shell: msys2 {0}
+        run: |
+          env GOARCH=${{ matrix.GOARCH }} PATH=/${{ matrix.mingw_arch }}/bin:$PATH:/C/hostedtoolcache/windows/go/${{ env.go_version }}/x64/bin make
+          cd lib/reverseProxy
+          ./update-def.sh
+          cd ../..
+          mkdir -p ${{ matrix.qt_arch }}/cui
+          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/bass.dll $PWD/${{ matrix.qt_arch }}/cui/
+          cp $PWD/output/bass/lib/windows/${{ matrix.GOARCH }}/plugins/*.dll $PWD/${{ matrix.qt_arch }}/cui/
+          cp $PWD/cmd/hannah/hannah.exe $PWD/${{ matrix.qt_arch }}/cui/
+          cp $PWD/cmd/reverseProxy/rp.exe $PWD/${{ matrix.qt_arch }}/cui/
+
+      - name: Build Reverse Proxy Library
+        shell: cmd
+        env:
+          vc_arch: ${{ matrix.msvc_arch }}
+          mingw_arch: ${{ matrix.mingw_arch }}
+        run: |
+          cd lib\reverseProxy
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          set PATH=D:\a\_temp\msys\msys64\%mingw_arch%\bin;%PATH%;C:\hostedtoolcache\windows\go\${{ env.go_version }}\x64\bin
+          call ${{ matrix.BUILDRP }}
+          cd ..\..
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ env.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          modules: ${{ matrix.qt_modules }}
+          aqtversion: '==2.1.0'
+
+      - name: Set up jom
+        shell: cmd
+        run: |
+          mkdir jom
+          cd jom
+          curl.exe -o jom.zip -L https://download.qt.io/official_releases/jom/jom_1_1_3.zip
+          if exist jom.zip 7z.exe x jom.zip
+          cd ..
+
+      - name: cache intel install
+        id: cache-install
+        uses: actions/cache@v2
+        with:
+          path: |
+              C:\Program Files (x86)\Intel\oneAPI\setvars-vcvarsall.bat
+              C:\Program Files (x86)\Intel\oneAPI\compiler
+          key: install-${{ env.CACHE_NUMBER }}-${{ env.WINDOWS_HPCKIT_URL }}-${{ env.WINDOWS_CPP_COMPONENTS }}-compiler-${{ hashFiles('**/scripts/cache_exclude_windows.sh') }}
+
+      - name: install intel
+        if: steps.cache-install.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth=1 https://github.com/oneapi-src/oneapi-ci.git oneapi-ci
+          cd oneapi-ci
+          scripts/install_windows.bat ${{ env.WINDOWS_HPCKIT_URL }} ${{ env.WINDOWS_CPP_COMPONENTS }}
+          
+      - name: restore registry on cache hit
+        if: steps.cache-install.outputs.cache-hit == 'true'
+        run:  |
+          git clone --depth=1 https://github.com/oneapi-src/oneapi-ci.git oneapi-ci
+          cd oneapi-ci
+          scripts/restore_registry.bat ${{ env.COMPILER_VERSION }}
+          
+      - name: Build GUI executables
+        shell: cmd
+        env:
+          vc_arch: ${{ matrix.msvc_arch }}
+        run: |
+          mkdir -p ${{ matrix.qt_arch }}\gui
+          mkdir build
+          cd build
+          dir "C:\Program Files (x86)\Intel\oneAPI\compiler"
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "C:\Program Files (x86)\Intel\oneAPI\compiler\2022.2.0\env\vars.bat"
+          set PATH="C:\Program Files (x86)\Intel\oneAPI\compiler\2022.2.0\windows\bin-llvm\";%CD%\jom;%PATH%
+          qmake -r CONFIG+=release -spec win32-clang-msvc  CONFIG+=qtquickcompiler ..
           mkdir -p desktop\release\translations
           if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
           if not exist %CD%\jom\jom.exe nmake
@@ -213,7 +379,7 @@ jobs:
             msvc_arch: x64
             clang_link: llvm-win-x64.7z
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.3.1
+            qt_ver: 6.4.0
             qt_modules: "qt5compat qtimageformats"
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
@@ -233,7 +399,7 @@ jobs:
             msvc_arch: x86
             clang_link: llvm-win-x86.7z
     env:
-      go_version: 1.19.0
+      go_version: 1.19.2
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -285,7 +451,7 @@ jobs:
           mingw_arch: ${{ matrix.mingw_arch }}
         run: |
           cd lib\reverseProxy
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           set PATH=D:\a\_temp\msys\msys64\%mingw_arch%\bin;%PATH%;C:\hostedtoolcache\windows\go\${{ env.go_version }}\x64\bin
           call ${{ matrix.BUILDRP }}
           cd ..\..
@@ -313,7 +479,7 @@ jobs:
         env:
           vc_arch: ${{ matrix.msvc_arch }}
         run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           set PATH=%PATH%;%CD%\llvm;%CD%\llvm\bin
           path
           dir
@@ -322,7 +488,7 @@ jobs:
           mkdir -p ${{ matrix.qt_arch }}\gui
           mkdir build
           cd build
-          qmake -r CONFIG+=release -spec win32-clang-msvc ..
+          qmake -r CONFIG+=release -spec win32-clang-msvc  CONFIG+=qtquickcompiler ..
           mkdir -p desktop\release\translations
           if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%
           if not exist %CD%\jom\jom.exe nmake
@@ -452,7 +618,7 @@ jobs:
             windeployqt: ls.exe
             GOARCH: 386
     env:
-      go_version: 1.19.0
+      go_version: 1.19.2
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -526,10 +692,10 @@ jobs:
         include:
           - qt_ver: 5.15.2
             qt_modules: "" 
-          - qt_ver: 6.3.1
+          - qt_ver: 6.4.0
             qt_modules: "qt5compat qtimageformats" 
     env:
-      go_version: 1.19.0
+      go_version: 1.19.2
       qt_target: desktop
       qt_arch: clang_64
     steps:

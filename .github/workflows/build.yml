@@ -144,7 +144,7 @@ jobs:
           cd ..\..
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qt_ver }}
           target: ${{ env.qt_target }}
@@ -279,7 +279,7 @@ jobs:
           cd ..\..
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qt_ver }}
           target: ${{ env.qt_target }}
@@ -461,7 +461,7 @@ jobs:
           cd ..\..
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qt_ver }}
           target: ${{ env.qt_target }}
@@ -734,7 +734,7 @@ jobs:
           mv $PWD/cmd/reverseProxy/rp darwin-amd64/
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qt_ver }}
           target: ${{ env.qt_target }}

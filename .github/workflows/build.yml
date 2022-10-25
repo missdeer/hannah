@@ -646,6 +646,20 @@ jobs:
           fetch-depth: 1
           ref: ${{ github.head_ref }}
 
+      - run: |
+          git clone https://github.com/missdeer/mingwdeployqt.git
+          
+      - name: Build mingwdeployqt
+        shell: msys2 {0}
+        run: |
+          cd mingwdeployqt
+          mkdir build
+          cd build
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
+          ninja
+          cp mingwdeployqt.exe /${{ matrix.mingw_arch }}/bin/
+          cd ../..
+          
       - name: Build Go executables
         shell: msys2 {0}
         run: |
@@ -666,9 +680,10 @@ jobs:
           mkdir -p $PWD/desktop/release/translations
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j `nproc`
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
-          ${{ matrix.windeployqt }} $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
           cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe $PWD/../${{ matrix.mingw_prefix }}/gui/registerProtocolHandler.exe
           cd ..
 
       - name: package Chrome extension

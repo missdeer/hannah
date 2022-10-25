@@ -538,90 +538,100 @@ jobs:
             mingw_prefix: mingw-w64-x86_64
             toolchains: gcc
             mkspec: win32-g++
+            c: gcc
+            cxx: g++
             qt_build: qt5-static
             qmake: /mingw64/qt5-static/bin/qmake.exe
-            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt5-static-gcc
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: gcc
             mkspec: win32-g++
+            c: gcc
+            cxx: g++
             qt_build: qt5-static
             qmake: /mingw32/qt5-static/bin/qmake.exe
-            windeployqt: ls.exe
             GOARCH: 386
           - qt_arch: mingw64_qt5-gcc
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
             toolchains: gcc
             mkspec: win32-g++
+            c: gcc
+            cxx: g++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt5-gcc
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: gcc
             mkspec: win32-g++
+            c: gcc
+            cxx: g++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: ls.exe
             GOARCH: 386
           - qt_arch: mingw64_qt5-clang
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
             toolchains: clang
             mkspec: win32-clang-g++
+            c: clang
+            cxx: clang++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt5-clang
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: clang
             mkspec: win32-clang-g++
+            c: clang
+            cxx: clang++
             qt_build: qt5
             qmake: qmake.exe
-            windeployqt: ls.exe
             GOARCH: 386
           - qt_arch: mingw64_qt6-gcc
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
             toolchains: gcc
             mkspec: win32-g++
+            c: gcc
+            cxx: g++
             qt_build: qt6
             qmake: qmake6.exe
-            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw64_qt6-clang
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
             toolchains: clang
             mkspec: win32-clang-g++
+            c: clang
+            cxx: clang++
             qt_build: qt6
             qmake: qmake6.exe
-            windeployqt: ls.exe
             GOARCH: amd64
           - qt_arch: mingw32_qt6-gcc
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: gcc
             mkspec: win32-g++
+            c: gcc
+            cxx: g++
             qt_build: qt6
             qmake: qmake6.exe
-            windeployqt: ls.exe
             GOARCH: 386
           - qt_arch: mingw32_qt6-clang
             mingw_arch: MINGW32
             mingw_prefix: mingw-w64-i686
             toolchains: clang
             mkspec: win32-clang-g++
+            c: clang
+            cxx: clang++
             qt_build: qt6
             qmake: qmake6.exe
-            windeployqt: ls.exe
             GOARCH: 386
     env:
       go_version: 1.19.2

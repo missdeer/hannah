@@ -6,7 +6,7 @@ env:
   WINDOWS_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18976/w_HPCKit_p_2022.3.1.19755_offline.exe
   WINDOWS_CPP_COMPONENTS: intel.oneapi.win.cpp-compiler
   WINDOWS_DPCPP_COMPONENTS: intel.oneapi.win.dpcpp-compiler
-  COMPILER_VERSION: 2022.2
+  COMPILER_VERSION: 2022.2.1
 
 jobs:
   Linux:
@@ -331,8 +331,8 @@ jobs:
           cd build
           dir "C:\Program Files (x86)\Intel\oneAPI\compiler"
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          call "C:\Program Files (x86)\Intel\oneAPI\compiler\2022.2.0\env\vars.bat"
-          set PATH="C:\Program Files (x86)\Intel\oneAPI\compiler\2022.2.0\windows\bin-llvm\";%CD%\jom;%PATH%
+          call "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\env\vars.bat"
+          set PATH="C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\bin-llvm\";%CD%\jom;%PATH%
           qmake -r CONFIG+=release -spec win32-clang-msvc  CONFIG+=qtquickcompiler ..
           mkdir -p desktop\release\translations
           if exist %CD%\jom\jom.exe jom.exe -j %NUMBER_OF_PROCESSORS%

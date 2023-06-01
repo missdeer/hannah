@@ -9,24 +9,21 @@ require (
 	github.com/djherbis/nio v2.0.3+incompatible
 	github.com/gdamore/tcell v1.4.0
 	github.com/gin-contrib/location v0.0.2
-	github.com/gin-gonic/gin v1.8.1
-	github.com/go-playground/validator/v10 v10.11.0 // indirect
-	github.com/goccy/go-json v0.9.11 // indirect
+	github.com/gin-gonic/gin v1.9.1
 	github.com/gomodule/redigo v1.8.9
 	github.com/json-iterator/go v1.1.12
 	github.com/klauspost/compress v1.15.9
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-pointer v0.0.1
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/missdeer/golib v1.0.4
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/rivo/uniseg v0.3.4 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5
+	github.com/ugorji/go v1.2.7 // indirect
 	github.com/ushis/m3u v0.0.0-20150127162843-94396b784733
-	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
-	golang.org/x/net v0.7.0
-	google.golang.org/protobuf v1.28.1 // indirect
+	golang.org/x/net v0.10.0
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0
 )

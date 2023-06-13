@@ -613,26 +613,6 @@ jobs:
             qt_build: qt6
             qmake: qmake6.exe
             GOARCH: amd64
-          - qt_arch: mingw32_qt6-gcc
-            mingw_arch: MINGW32
-            mingw_prefix: mingw-w64-i686
-            toolchains: gcc
-            mkspec: win32-g++
-            c: gcc
-            cxx: g++
-            qt_build: qt6
-            qmake: qmake6.exe
-            GOARCH: 386
-          - qt_arch: mingw32_qt6-clang
-            mingw_arch: MINGW32
-            mingw_prefix: mingw-w64-i686
-            toolchains: clang
-            mkspec: win32-clang-g++
-            c: clang
-            cxx: clang++
-            qt_build: qt6
-            qmake: qmake6.exe
-            GOARCH: 386
     env:
       go_version: 1.20.5
     steps:

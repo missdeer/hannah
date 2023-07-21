@@ -15,7 +15,3 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 add_subdirectory(lib)
 add_subdirectory(desktop)
 add_subdirectory(registerProtocolHandler)
-
-if(QT_VERSION_MAJOR EQUAL 6)
-qt_finalize_project()
-endif()

@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
-find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -34,4 +33,8 @@ else()
             ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
             main.cpp
             )
+endif()
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_project()
 endif()

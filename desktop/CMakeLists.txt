@@ -9,7 +9,9 @@ add_subdirectory(3rdparty)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Quick QuickWidgets QuickControls2 LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Quick QuickWidgets QuickControls2 LinguistTools)
-find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+endif()
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -18,7 +20,10 @@ set(CMAKE_AUTORCC ON) # if you have any .qrc files
 
 include_directories(${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/player)
 include_directories(${PROJECT_BINARY_DIR})
-add_compile_definitions(_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
+
+if(MSVC)
+    add_compile_definitions(_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
+endif()
 
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp 
@@ -110,8 +115,13 @@ IF(APPLE)
         )
 ENDIF()
 
+SET(
+    TS_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/Hannah_zh_CN.ts
+)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/translations/Hannah_zh_CN.ts
+    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES}
     OPTIONS -no-obsolete)
     qt_add_executable(${ProjectName}
             ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
@@ -122,7 +132,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             ${QM_FILES}
             )
 else()
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/translations/Hannah_zh_CN.ts)
+    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}  ${TS_FILES}
+    OPTIONS -no-obsolete)
     add_executable(${ProjectName}
             ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
             ${qrcs}
@@ -150,7 +161,6 @@ target_link_libraries(${ProjectName} PRIVATE
     Qt::Widgets
     Qt::Quick
     Qt::Network
-    Qt::Core5Compat
     Qt::QuickWidgets
     Qt::QuickControls2
     )
@@ -163,3 +173,12 @@ set_target_properties(${ProjectName} PROPERTIES
     WIN32_EXECUTABLE ON
     MACOSX_BUNDLE ON
     )
+
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(${ProjectName} PRIVATE
+        Qt::Core5Compat
+        )
+    qt_finalize_project()
+endif()
+    

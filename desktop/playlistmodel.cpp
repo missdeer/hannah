@@ -9,8 +9,9 @@ int PlaylistModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
     // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
-    if (parent.isValid())
+    if (parent.isValid()) {
         return 0;
+}
 
     return m_isFiltered ? m_filteredPlaylists.length() : m_playlists.length();
 }
@@ -18,15 +19,24 @@ int PlaylistModel::rowCount(const QModelIndex &parent) const
 QVariant PlaylistModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+    {
+        return {};
+    }
 
     if (role != Qt::DisplayRole)
-        return QVariant();
+    {
+        return {};
+    }
 
     if (index.row() < 0 || index.row() >= rowCount())
-        return QVariant();
-
-    return QVariant(m_isFiltered ? m_filteredPlaylists[index.row()] : m_playlists[index.row()]);
+    {
+        return {};
+    }
+    if (m_isFiltered)
+    {
+        return m_filteredPlaylists[index.row()];
+    }
+    return m_playlists[index.row()];
 }
 
 bool PlaylistModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -42,7 +52,9 @@ bool PlaylistModel::setData(const QModelIndex &index, const QVariant &value, int
 Qt::ItemFlags PlaylistModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
+    {
         return Qt::NoItemFlags;
+    }
 
     return m_isFiltered ? QAbstractListModel::flags(index) : Qt::ItemIsEditable; // FIXME: Implement me!
 }
@@ -51,7 +63,9 @@ bool PlaylistModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     beginInsertRows(parent, row, row + count - 1);
     for (int i = row; i < row + count; i++)
+    {
         m_playlists.insert(i, "");
+    }
     endInsertRows();
     return true;
 }
@@ -60,7 +74,9 @@ bool PlaylistModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows(parent, row, row + count - 1);
     for (int i = row + count; i > row; i--)
+    {
         m_playlists.removeAt(i - 1);
+    }
     endRemoveRows();
     return true;
 }

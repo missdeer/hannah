@@ -133,7 +133,7 @@ bool ParserM3u::writeM3UFile(const QString &file_str, const QList<QString> &item
     // On Windows \n will produce a <CR><CL> (=\r\n)
     // On Linux and OS X \n is <CR> (which remains \n)
 
-    QTextCodec *codec;
+    QTextCodec *codec = nullptr;
     if (useUtf8)
     {
         codec = QTextCodec::codecForName("UTF-8");
@@ -144,16 +144,16 @@ bool ParserM3u::writeM3UFile(const QString &file_str, const QList<QString> &item
         // see also http://tools.ietf.org/html/draft-pantos-http-live-streaming-07
         // check if the all items can be properly encoded to Latin1.
         codec = QTextCodec::codecForName("windows-1252");
-        for (int i = 0; i < items.size(); ++i)
+        for (const auto & item : items)
         {
-            if (!codec->canEncode(items.at(i)))
+            if (!codec->canEncode(item))
             {
                 // filepath contains incompatible character
                 QMessageBox::warning(nullptr,
                                      tr("Playlist Export Failed"),
                                      tr("File path contains characters, not allowed in m3u "
                                         "playlists.\n") +
-                                         tr("Export a m3u8 playlist instead!\n") + items.at(i));
+                                         tr("Export a m3u8 playlist instead!\n") + item);
                 return false;
             }
         }
@@ -179,7 +179,7 @@ bool ParserM3u::writeM3UFile(const QString &file_str, const QList<QString> &item
     out.setEncoding(QStringConverter::Utf8);
 #endif
     out << "#EXTM3U\n";
-    for (int i = 0; i < items.size(); ++i)
+    for (const auto & item : items)
     {
         out << "#EXTINF\n";
         // Write relative path if possible
@@ -187,11 +187,11 @@ bool ParserM3u::writeM3UFile(const QString &file_str, const QList<QString> &item
         {
             // QDir::relativePath() will return the absolutePath if it cannot compute the
             // relative Path
-            out << base_dir.relativeFilePath(items.at(i)) << "\n";
+            out << base_dir.relativeFilePath(item) << "\n";
         }
         else
         {
-            out << items.at(i) << "\n";
+            out << item << "\n";
         }
     }
     return true;

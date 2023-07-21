@@ -59,10 +59,8 @@ QList<QString> ParserPls::parse(const QString &sFilename)
             {
                 break;
             }
-            else
-            {
-                m_sLocations.append(psLine);
-            }
+
+            m_sLocations.append(psLine);
         }
 
         file.close();
@@ -71,14 +69,12 @@ QList<QString> ParserPls::parse(const QString &sFilename)
         {
             return m_sLocations;
         }
-        else
-        {
-            return QList<QString>(); // NULL pointer returned when no locations were found
-        }
+
+        return {}; // NULL pointer returned when no locations were found
     }
 
     file.close();
-    return QList<QString>(); // if we get here something went wrong :D
+    return {}; // if we get here something went wrong :D
 }
 
 long ParserPls::getNumEntries(QTextStream *stream)
@@ -97,11 +93,9 @@ long ParserPls::getNumEntries(QTextStream *stream)
 
         return temp.toLong();
     }
-    else
-    {
-        qDebug() << "ParserPls: pls file is not a playlist! \n";
-        return 0;
-    }
+
+    qDebug() << "ParserPls: pls file is not a playlist! \n";
+    return 0;
 }
 
 QString ParserPls::getFilePath(QTextStream *stream, const QString &basePath)
@@ -132,7 +126,7 @@ QString ParserPls::getFilePath(QTextStream *stream, const QString &basePath)
     }
 
     // Signal we reached the end
-    return QString();
+    return {};
 }
 
 bool ParserPls::writePLSFile(const QString &file_str, const QList<QString> &items, bool useRelativePath)

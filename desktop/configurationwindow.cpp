@@ -59,12 +59,12 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent)
     auto state = m_settings->value("reverseProxyAutoRedirect", 2).toInt(&ok);
     if (ok)
     {
-        ui->reverseProxyAutoRedirect->setCheckState(Qt::CheckState(state));
+        ui->reverseProxyAutoRedirect->setCheckState(static_cast<Qt::CheckState>(state));
     }
     state = m_settings->value("reverseProxyRedirect", 2).toInt(&ok);
     if (ok)
     {
-        ui->reverseProxyRedirect->setCheckState(Qt::CheckState(state));
+        ui->reverseProxyRedirect->setCheckState(static_cast<Qt::CheckState>(state));
     }
     auto port = m_settings->value("reverseProxyListenPort", 8090).toInt(&ok);
     if (ok)
@@ -251,7 +251,7 @@ void ConfigurationWindow::onBrowseExternalPlayerWorkingDirClicked()
 
 void ConfigurationWindow::startReverseProxy()
 {
-    bool b = StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), (ptrdiff_t)m_reverseProxyAddr.length()}, GoString {nullptr, 0});
+    bool b = StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), static_cast<ptrdiff_t>(m_reverseProxyAddr.length())}, GoString {nullptr, 0});
     if (!b)
     {
         QMessageBox::critical(this, tr("Error"), tr("Starting reverse proxy failed!"));
@@ -331,7 +331,9 @@ void ConfigurationWindow::initNetworkInterfaces()
     {
         if (networkInterface.type() == QNetworkInterface::Ethernet || networkInterface.type() == QNetworkInterface::Wifi ||
             networkInterface.type() == QNetworkInterface::Ppp)
+        {
             ui->reverseProxyBindNetworkInterface->addItem(networkInterface.humanReadableName());
+        }
     }
 }
 void ConfigurationWindow::restartReverseProxy()
@@ -356,7 +358,7 @@ void ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(c
     m_settings->sync();
 
     QByteArray ba = ui->reverseProxyBindNetworkInterface->currentText().toUtf8();
-    SetNetworkInterface(GoString {(const char *)ba.data(), (ptrdiff_t)ba.length()});
+    SetNetworkInterface(GoString {(const char *)ba.data(), static_cast<ptrdiff_t>(ba.length())});
     restartReverseProxy();
 }
 

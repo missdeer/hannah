@@ -108,7 +108,7 @@ void PlaylistManageWindow::on_btnAddPlaylist_clicked(bool)
 
 void PlaylistManageWindow::on_btnDeletePlaylist_clicked(bool)
 {
-    auto model = ui->lstPlaylist->selectionModel();
+    auto *model = ui->lstPlaylist->selectionModel();
     if (model->hasSelection())
     {
         Q_ASSERT(m_playlistModel);
@@ -144,7 +144,7 @@ void PlaylistManageWindow::on_btnAddSongs_clicked(bool)
 
 void PlaylistManageWindow::on_btnDeleteSongs_clicked(bool)
 {
-    auto model = ui->tblSongs->selectionModel();
+    auto *model = ui->tblSongs->selectionModel();
     if (model->hasSelection())
     {
         QList<int> rows;

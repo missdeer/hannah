@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     // check the correct BASS was loaded
     if (HIWORD(BASS_GetVersion()) != BASSVERSION)
     {
-        QMessageBox::critical(0, QObject::tr("Critical Error"), QObject::tr("An incorrect version of BASS.DLL was loaded"));
+        QMessageBox::critical(nullptr, QObject::tr("Critical Error"), QObject::tr("An incorrect version of BASS.DLL was loaded"));
         return -1;
     }
     BASS_SetConfig(BASS_CONFIG_UNICODE, TRUE);
@@ -143,32 +143,32 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("musicplayer");
 
 #if defined(Q_OS_MACOS)
-    Application a(argc, argv);
+    Application app(argc, argv);
     i18n(translator, qtTranslator);
-    ConfigurationWindow  w;
-    w.connect(&a, &Application::openUrl, &w, qOverload<const QUrl &>(&ConfigurationWindow::onOpenUrl));
+    ConfigurationWindow  configWin;
+    configWin.connect(&app, &Application::openUrl, &configWin, qOverload<const QUrl &>(&ConfigurationWindow::onOpenUrl));
 
-    configurationWindow = &w;
+    configurationWindow = &configWin;
 
     void registerHannahService();
     registerHannahService();
 #else
-    QtSingleApplication a(argc, argv);
+    QtSingleApplication app(argc, argv);
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Hannah");
     parser.addHelpOption();
     parser.addVersionOption();
 
-    parser.process(a);
+    parser.process(app);
 
     const QStringList args = parser.positionalArguments();
 
-    if (a.isRunning())
+    if (app.isRunning())
     {
         if (args.length() > 0)
         {
-            a.sendMessage(args.join("~"));
+            app.sendMessage(args.join("~"));
         }
         return 0;
     }
@@ -178,23 +178,23 @@ int main(int argc, char *argv[])
 #    endif
 
     i18n(translator, qtTranslator);
-    ConfigurationWindow w;
-    w.connect(&a, &QtSingleApplication::messageReceived, &w, &ConfigurationWindow::onApplicationMessageReceived);
-    configurationWindow = &w;
+    ConfigurationWindow configWin;
+    QObject::connect(&app, &QtSingleApplication::messageReceived, &configWin, &ConfigurationWindow::onApplicationMessageReceived);
+    configurationWindow = &configWin;
     if (args.length() > 0)
     {
-        w.onApplicationMessageReceived(args.join("~"));
+        configWin.onApplicationMessageReceived(args.join("~"));
     }
 #    if defined(Q_OS_WIN)
     else
     {
         QSettings mxKey("HKEY_CLASSES_ROOT\\hannah", QSettings::NativeFormat);
         QString   v1 = mxKey.value(".").toString();
-        QSettings mxOpenKey("HKEY_CLASSES_ROOT\\hannah\\shell\\open\\command", QSettings::NativeFormat);
+        QSettings mxOpenKey(R"(HKEY_CLASSES_ROOT\hannah\shell\open\command)", QSettings::NativeFormat);
         QString   v2 = mxOpenKey.value(".").toString();
 
         if (v1 != "URL:hannah Protocol" ||
-            v2 != QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QString("\" \"%1\""))
+            v2 != QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QStringLiteral(R"(" "%1")"))
         {
             auto cmd = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
             auto workingDir = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
@@ -225,6 +225,6 @@ int main(int argc, char *argv[])
     PlaylistManageWindow pmw;
     playlistManageWindow = &pmw;
 
-    a.setQuitOnLastWindowClosed(false);
-    return a.exec();
+    QtSingleApplication::setQuitOnLastWindowClosed(false);
+    return QtSingleApplication::exec();
 }

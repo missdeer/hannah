@@ -34,7 +34,7 @@ QList<QString> ParserCsv::parse(const QString &sFilename)
 
         // detect Location column
         int loc_coll = 0x7fffffff;
-        if (tokens.size())
+        if (!tokens.empty())
         {
             for (int i = 0; i < tokens[0].size(); ++i)
             {
@@ -67,14 +67,12 @@ QList<QString> ParserCsv::parse(const QString &sFilename)
         {
             return m_sLocations;
         }
-        else
-        {
-            return QList<QString>(); // NULL pointer returned when no locations were found
-        }
+
+        return {}; // NULL pointer returned when no locations were found
     }
 
     file.close();
-    return QList<QString>(); // if we get here something went wrong
+    return {}; // if we get here something went wrong
 }
 
 // Code was posted at http://www.qtcentre.org/threads/35511-Parsing-CSV-data

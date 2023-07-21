@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(desktop VERSION 1.0.0)
+project(Hannah VERSION 1.0.0)
 
 set(ProjectName Hannah)
 set(CMAKE_CXX_STANDARD 17)
@@ -20,66 +20,99 @@ set(CMAKE_AUTORCC ON) # if you have any .qrc files
 
 include_directories(${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/player)
 include_directories(${PROJECT_BINARY_DIR})
+set(Boost_NO_WARN_NEW_VERSIONS ON)
+
+find_package(Boost 1.78.0 REQUIRED system)
+
+if(Boost_FOUND)
+     include_directories(${Boost_INCLUDE_DIRS})
+     link_directories(${Boost_LIBRARY_DIRS})
+endif(Boost_FOUND)
+
+if(NOT APPLE)
+  find_package(ZLIB)
+  find_package(sqlite3)
+endif()
 
 if(MSVC)
+    # First check the command line variable VCPKG_TARGET_TRIPLET
+    if(DEFINED VCPKG_TARGET_TRIPLET)
+        set(TRIPLET ${VCPKG_TARGET_TRIPLET})
+    else()
+        # If it's not defined, check the environment variable
+        set(TRIPLET $ENV{VCPKG_TARGET_TRIPLET})
+    endif()
+
+    # Now check if TRIPLET ends with "-windows-static"
+    string(FIND "${TRIPLET}" "-windows-static" POSITION)
+    if(${POSITION} GREATER_EQUAL 0)
+        if(NOT MSVC)
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+        else()
+            add_compile_options("/MT$<$<CONFIG:Debug>:d>")
+            if(POLICY CMP0091)
+                cmake_policy(SET CMP0091 NEW)
+            endif()
+        endif()
+    endif()
     add_compile_definitions(_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
 endif()
 
 set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/configurationwindow.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/fftdisplay.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/lrcbar.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/lyrics.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/osd.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/bassplayer.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/shadowlabel.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/spslider.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/playlistmanagewindow.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/playlistmodel.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/qtlocalpeer.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/songlistmodel.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/sqlite3helper.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/comboboxdelegate.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/playlist.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/shadowplayer.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parsercsv.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parserm3u.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parserpls.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/trackfile.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/qmldialog.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/qmlplayer.cpp
+    main.cpp 
+    configurationwindow.cpp 
+    player/fftdisplay.cpp 
+    player/lrcbar.cpp 
+    player/lyrics.cpp 
+    player/osd.cpp 
+    player/bassplayer.cpp 
+    player/shadowlabel.cpp 
+    player/spslider.cpp 
+    player/qmlplayer.cpp
+    player/playlist.cpp 
+    player/shadowplayer.cpp 
+    playlistmanagewindow.cpp 
+    playlistmodel.cpp 
+    qtlocalpeer.cpp 
+    songlistmodel.cpp 
+    sqlite3helper.cpp 
+    comboboxdelegate.cpp 
+    parser.cpp 
+    parsercsv.cpp 
+    parserm3u.cpp 
+    parserpls.cpp 
+    trackfile.cpp 
+    qmldialog.cpp 
 )
 
     
 set(HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/configurationwindow.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/FlacPic.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/ID3v2Pic.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/fftdisplay.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/lrcbar.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/lyrics.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/osd.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/bassplayer.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/shadowlabel.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/spslider.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/playlistmanagewindow.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/playlistmodel.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/qtlocalpeer.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/qtlockedfile.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/songlistmodel.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/sqlite3helper.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/comboboxdelegate.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/playlist.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/shadowplayer.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parsercsv.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parserm3u.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/parserpls.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/trackfile.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/qmldialog.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/player/qmlplayer.h
+    configurationwindow.h 
+    player/FlacPic.h 
+    player/ID3v2Pic.h 
+    player/fftdisplay.h 
+    player/lrcbar.h 
+    player/lyrics.h 
+    player/osd.h 
+    player/bassplayer.h 
+    player/shadowlabel.h 
+    player/spslider.h 
+    player/playlist.h 
+    player/shadowplayer.h 
+    player/qmlplayer.h
+    playlistmanagewindow.h 
+    playlistmodel.h 
+    qtlocalpeer.h 
+    qtlockedfile.h 
+    songlistmodel.h 
+    sqlite3helper.h 
+    comboboxdelegate.h 
+    parser.h 
+    parsercsv.h 
+    parserm3u.h 
+    parserpls.h 
+    trackfile.h 
+    qmldialog.h 
     )
 
 file(GLOB_RECURSE
@@ -94,37 +127,37 @@ qt_add_resources(qrcs ${RESOURCES})
 
 IF(WIN32)
     list(APPEND SOURCES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/qtsinglecoreapplication.cpp 
-        ${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication.cpp
+        qtsinglecoreapplication.cpp 
+        qtsingleapplication.cpp
         )
     list(APPEND HEADERS 
-        ${CMAKE_CURRENT_SOURCE_DIR}/qtsinglecoreapplication.h 
-        ${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication.h
+        qtsinglecoreapplication.h 
+        qtsingleapplication.h
         )
 ENDIF()
 
 IF(APPLE)
     list(APPEND SOURCES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/application.cpp 
-        ${CMAKE_CURRENT_SOURCE_DIR}/service.mm
+        application.cpp 
+        service.mm
         )
     list(APPEND HEADERS 
-        ${CMAKE_CURRENT_SOURCE_DIR}/serviceslots.h 
-        ${CMAKE_CURRENT_SOURCE_DIR}/application.h 
-        ${CMAKE_CURRENT_SOURCE_DIR}/service.h
+        serviceslots.h 
+        application.h 
+        service.h
         )
 ENDIF()
 
 SET(
     TS_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/translations/Hannah_zh_CN.ts
+    translations/Hannah_zh_CN.ts
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES}
     OPTIONS -no-obsolete)
-    qt_add_executable(${ProjectName}
-            ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
+    qt_add_executable(${PROJECT_NAME}
+            ${PROJECT_NAME}.rc
             ${qrcs}
             ${UIS}
             ${HEADERS}
@@ -134,8 +167,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}  ${TS_FILES}
     OPTIONS -no-obsolete)
-    add_executable(${ProjectName}
-            ${CMAKE_CURRENT_SOURCE_DIR}/${ProjectName}.rc
+    add_executable(${PROJECT_NAME}
+            ${PROJECT_NAME}.rc
             ${qrcs}
             ${UIS}
             ${HEADERS}
@@ -144,20 +177,10 @@ else()
             )
 endif()
 
-IF(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    IF(MSVC)
-        add_compile_definitions(
-            BOOST_AUTO_LINK_NOMANGLE
-            )
-        target_link_directories(${ProjectName} PRIVATE "${Boost_INCLUDE_DIRS}/lib/${BUILD_TYPE}")
-    ENDIF(MSVC)
-ENDIF(Boost_FOUND)
-
-target_link_libraries(${ProjectName} PRIVATE
-    sqlite3
+target_link_libraries(${PROJECT_NAME} PRIVATE
     basslib
     reverseProxy
+    Boost::system
     Qt::Widgets
     Qt::Quick
     Qt::Network
@@ -165,20 +188,33 @@ target_link_libraries(${ProjectName} PRIVATE
     Qt::QuickControls2
     )
 
+if(SQLite3_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SQLite::SQLite3)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE sqlite3)
+endif()
+
+if(ZLIB_FOUND)
+  target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
+else()
+  target_link_libraries(${PROJECT_NAME} PRIVATE zlibstatic)
+endif()
+
 IF(APPLE) 
-    target_link_libraries(${ProjectName} PRIVATE "-framework Security")
+    target_link_libraries(${PROJECT_NAME} PRIVATE "-framework Security")
 ENDIF()
 
-set_target_properties(${ProjectName} PROPERTIES
-    WIN32_EXECUTABLE ON
-    MACOSX_BUNDLE ON
-    )
-
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    target_link_libraries(${ProjectName} PRIVATE
+    target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt::Core5Compat
         )
-    qt_finalize_project()
 endif()
     
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    WIN32_EXECUTABLE ON
+    MACOSX_BUNDLE ON
+)

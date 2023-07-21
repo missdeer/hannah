@@ -33,6 +33,8 @@ void ComboBoxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QSize ComboBoxDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index.data(Qt::AccessibleDescriptionRole).toString() == QStringLiteral("separator"))
-        return QSize(0, 10);
+    {
+        return {0, 10};
+    }
     return QItemDelegate::sizeHint(option, index);
 }

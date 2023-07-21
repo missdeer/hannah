@@ -34,7 +34,3 @@ else()
             main.cpp
             )
 endif()
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_project()
-endif()

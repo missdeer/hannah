@@ -18,6 +18,7 @@ set(CMAKE_AUTORCC ON) # if you have any .qrc files
 
 include_directories(${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/player)
 include_directories(${PROJECT_BINARY_DIR})
+add_compile_definitions(_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
 
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp 

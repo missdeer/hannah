@@ -11,7 +11,7 @@
 
 #include "playlistmodel.h"
 #include "songlistmodel.h"
-#include "sqlite3helper.h"
+#include "Sqlite3Helper.h"
 #include "ui_playlistmanagewindow.h"
 
 PlaylistManageWindow::PlaylistManageWindow(QWidget *parent)

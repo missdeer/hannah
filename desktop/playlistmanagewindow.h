@@ -48,9 +48,9 @@ private slots:
 
 private:
     Ui::PlaylistManageWindow *ui;
-    Sqlite3Helper *           m_sqlite3Helper;
-    PlaylistModel *           m_playlistModel;
-    SonglistModel *           m_songlistModel;
+    Sqlite3Helper *           m_sqlite3Helper{nullptr};
+    PlaylistModel *           m_playlistModel{nullptr};
+    SonglistModel *           m_songlistModel{nullptr};
 
     void createDataTables();
 };

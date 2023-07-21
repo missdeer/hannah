@@ -251,11 +251,11 @@ void ConfigurationWindow::onBrowseExternalPlayerWorkingDirClicked()
 
 void ConfigurationWindow::startReverseProxy()
 {
-    bool b = StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), static_cast<ptrdiff_t>(m_reverseProxyAddr.length())}, GoString {nullptr, 0});
-    if (!b)
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Starting reverse proxy failed!"));
-    }
+     bool b = StartReverseProxy(GoString {(const char *)m_reverseProxyAddr.data(), static_cast<ptrdiff_t>(m_reverseProxyAddr.length())}, GoString {nullptr, 0});
+     if (!b)
+     {
+         QMessageBox::critical(this, tr("Error"), tr("Starting reverse proxy failed!"));
+     }
 }
 
 void ConfigurationWindow::initOutputDevices()

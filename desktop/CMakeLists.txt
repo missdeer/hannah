@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+﻿cmake_minimum_required(VERSION 3.15)
 project(Hannah VERSION 1.0.0)
 
 set(ProjectName Hannah)
@@ -18,21 +18,24 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON) # if you have any .ui files
 set(CMAKE_AUTORCC ON) # if you have any .qrc files
 
-include_directories(${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/player)
+include_directories(${PROJECT_SOURCE_DIR} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/player
+    ${CMAKE_CURRENT_SOURCE_DIR}/sqlite
+    ${CMAKE_CURRENT_SOURCE_DIR}/network
+    )
 include_directories(${PROJECT_BINARY_DIR})
 set(Boost_NO_WARN_NEW_VERSIONS ON)
 
 find_package(Boost 1.78.0 REQUIRED system)
+if(NOT APPLE)
+  find_package(ZLIB)
+  find_package(sqlite3)
+endif()
 
 if(Boost_FOUND)
      include_directories(${Boost_INCLUDE_DIRS})
      link_directories(${Boost_LIBRARY_DIRS})
 endif(Boost_FOUND)
-
-if(NOT APPLE)
-  find_package(ZLIB)
-  find_package(sqlite3)
-endif()
 
 if(MSVC)
     # First check the command line variable VCPKG_TARGET_TRIPLET
@@ -195,16 +198,16 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::QuickControls2
     )
 
-if(SQLite3_FOUND)
+if(SQLite3_FOUND)                                               
     target_link_libraries(${PROJECT_NAME} PRIVATE SQLite::SQLite3)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE sqlite3)
-endif()
-
-if(ZLIB_FOUND)
-  target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
-else()
-  target_link_libraries(${PROJECT_NAME} PRIVATE zlibstatic)
+else()                                                          
+    target_link_libraries(${PROJECT_NAME} PRIVATE sqlite3)      
+endif()                                                         
+                                                                
+if(ZLIB_FOUND)                                                  
+  target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)     
+else()                                                          
+  target_link_libraries(${PROJECT_NAME} PRIVATE zlibstatic)     
 endif()
 
 IF(APPLE) 
@@ -213,6 +216,14 @@ ENDIF()
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
+endif()
+
+if(MSVC)
+    string(FIND "${TRIPLET}" "-windows-static" POSITION)
+    if(${POSITION} GREATER_EQUAL 0)
+        set_property(TARGET ${PROJECT_NAME} PROPERTY
+                MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
 endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)

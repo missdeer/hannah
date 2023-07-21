@@ -75,7 +75,9 @@ set(SOURCES
     playlistmodel.cpp 
     qtlocalpeer.cpp 
     songlistmodel.cpp 
-    sqlite3helper.cpp 
+    sqlite/Sqlite3Helper.cpp 
+    sqlite/Sqlite3DBManager.cpp
+    sqlite/Sqlite3Statement.cpp
     comboboxdelegate.cpp 
     parser.cpp 
     parsercsv.cpp 
@@ -83,6 +85,7 @@ set(SOURCES
     parserpls.cpp 
     trackfile.cpp 
     qmldialog.cpp 
+    network/networkreplyhelper.cpp
 )
 
     
@@ -105,7 +108,10 @@ set(HEADERS
     qtlocalpeer.h 
     qtlockedfile.h 
     songlistmodel.h 
-    sqlite3helper.h 
+    sqlite/Sqlite3Helper.h 
+    sqlite/Sqlite3DBManager.h
+    sqlite/Sqlite3Statement.h
+    sqlite/Sqlite3Constants.h
     comboboxdelegate.h 
     parser.h 
     parsercsv.h 
@@ -113,6 +119,7 @@ set(HEADERS
     parserpls.h 
     trackfile.h 
     qmldialog.h 
+    network/networkreplyhelper.h
     )
 
 file(GLOB_RECURSE

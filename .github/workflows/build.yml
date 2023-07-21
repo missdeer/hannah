@@ -2,11 +2,11 @@ name: Build
 on: [push]
 
 env:
-  WINDOWS_BASEKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/19078/w_BaseKit_p_2023.0.0.25940_offline.exe
-  WINDOWS_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/19085/w_HPCKit_p_2023.0.0.25931_offline.exe
+  WINDOWS_BASEKIT_URL: https:/registrationcenter-download.intel.com/akdlm/IRC_NAS/c961e083-5685-4f0b-ada5-c6cf16f561dd/w_BaseKit_p_2023.1.0.47256_offline.exe
+  WINDOWS_HPCKIT_URL: https:/registrationcenter-download.intel.com/akdlm/IRC_NAS/2a13d966-fcc5-4a66-9fcc-50603820e0c9/w_HPCKit_p_2023.1.0.46357_offline.exe
   WINDOWS_CPP_COMPONENTS: intel.oneapi.win.cpp-compiler
   WINDOWS_DPCPP_COMPONENTS: intel.oneapi.win.dpcpp-compiler
-  COMPILER_VERSION: 2023.0.0
+  COMPILER_VERSION: 2023.1.0
 
 jobs:
   Linux:
@@ -18,7 +18,7 @@ jobs:
             GOOS: linux
             LIBPATH: x86_64-linux-gnu
     env:
-      go_version: 1.20.5
+      go_version: 1.20.6
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -95,7 +95,7 @@ jobs:
             BUILDRP: build-x86.bat
             msvc_arch: x86
     env:
-      go_version: 1.20.5
+      go_version: 1.20.6
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -230,7 +230,7 @@ jobs:
             BUILDRP: build-x64.bat
             msvc_arch: x64
     env:
-      go_version: 1.20.5
+      go_version: 1.20.6
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -403,7 +403,7 @@ jobs:
             msvc_arch: x86
             clang_link: llvm-win-x86.7z
     env:
-      go_version: 1.20.5
+      go_version: 1.20.6
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -614,7 +614,7 @@ jobs:
             qmake: qmake6.exe
             GOARCH: amd64
     env:
-      go_version: 1.20.5
+      go_version: 1.20.6
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -670,7 +670,7 @@ jobs:
           mkdir -p $PWD/desktop/release/translations
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j `nproc`
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe -qmldir=$PWD/../desktop/rc/qml $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe $PWD/../${{ matrix.mingw_prefix }}/gui/registerProtocolHandler.exe
@@ -706,7 +706,7 @@ jobs:
           - qt_ver: 6.5.1
             qt_modules: "qt5compat qtimageformats" 
     env:
-      go_version: 1.20.5
+      go_version: 1.20.6
       qt_target: desktop
       qt_arch: clang_64
     steps:

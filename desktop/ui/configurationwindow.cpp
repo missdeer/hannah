@@ -271,7 +271,7 @@ void ConfigurationWindow::initOutputDevices()
     model->appendRow(item);
 
     BASS_DEVICEINFO info;
-    for (int a = 1; BASS_GetDeviceInfo(a, &info); a++)
+    for (int deviceIndex = 1; BASS_GetDeviceInfo(deviceIndex, &info); deviceIndex++)
     {
         if (info.flags & BASS_DEVICE_ENABLED)
         {
@@ -283,9 +283,9 @@ void ConfigurationWindow::initOutputDevices()
 #if defined(Q_OS_WIN)
 
     BASS_ASIO_DEVICEINFO asioinfo;
-    for (int a = 0; BASS_ASIO_GetDeviceInfo(a, &asioinfo); a++)
+    for (int deviceIndex = 0; BASS_ASIO_GetDeviceInfo(deviceIndex, &asioinfo); deviceIndex++)
     {
-        if (a == 0)
+        if (deviceIndex == 0)
         {
             item = new QStandardItem("ASIO");
             item->setFlags(item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable));
@@ -300,9 +300,9 @@ void ConfigurationWindow::initOutputDevices()
     }
 
     BASS_WASAPI_DEVICEINFO wasapiinfo;
-    for (int a = 0; BASS_WASAPI_GetDeviceInfo(a, &wasapiinfo); a++)
+    for (int deviceIndex = 0; BASS_WASAPI_GetDeviceInfo(deviceIndex, &wasapiinfo); deviceIndex++)
     {
-        if (a == 0)
+        if (deviceIndex == 0)
         {
             item = new QStandardItem("WASAPI");
             item->setFlags(item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable));

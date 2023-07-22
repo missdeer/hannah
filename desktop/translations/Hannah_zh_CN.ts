@@ -48,7 +48,7 @@
 <context>
     <name>ConfigurationWindow</name>
     <message>
-        <location filename="../configurationwindow.ui" line="14"/>
+        <location filename="../ui/configurationwindow.ui" line="14"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="255"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="255"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="255"/>
@@ -57,7 +57,7 @@
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="25"/>
+        <location filename="../ui/configurationwindow.ui" line="25"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="264"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="264"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="264"/>
@@ -66,7 +66,7 @@
         <translation>播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="31"/>
+        <location filename="../ui/configurationwindow.ui" line="31"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="256"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="256"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="256"/>
@@ -75,7 +75,7 @@
         <translation>使用内置播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="40"/>
+        <location filename="../ui/configurationwindow.ui" line="40"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="257"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="257"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="257"/>
@@ -84,7 +84,7 @@
         <translation>输出设备</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="52"/>
+        <location filename="../ui/configurationwindow.ui" line="52"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="258"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="258"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="258"/>
@@ -93,7 +93,7 @@
         <translation>使用外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="59"/>
+        <location filename="../ui/configurationwindow.ui" line="59"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="259"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="259"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="259"/>
@@ -102,8 +102,8 @@
         <translation>外部播放器路径</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="71"/>
-        <location filename="../configurationwindow.ui" line="102"/>
+        <location filename="../ui/configurationwindow.ui" line="71"/>
+        <location filename="../ui/configurationwindow.ui" line="102"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="260"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="263"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="260"/>
@@ -116,7 +116,7 @@
         <translation>…</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="80"/>
+        <location filename="../ui/configurationwindow.ui" line="80"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="261"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="261"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="261"/>
@@ -125,7 +125,7 @@
         <translation>外部播放器命令行参数</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="90"/>
+        <location filename="../ui/configurationwindow.ui" line="90"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="262"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="262"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="262"/>
@@ -134,7 +134,7 @@
         <translation>外部播放器工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="125"/>
+        <location filename="../ui/configurationwindow.ui" line="125"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="277"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="277"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="277"/>
@@ -143,7 +143,7 @@
         <translation>反向代理</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="131"/>
+        <location filename="../ui/configurationwindow.ui" line="131"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="265"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="265"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="265"/>
@@ -152,7 +152,7 @@
         <translation>监听端口</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="148"/>
+        <location filename="../ui/configurationwindow.ui" line="148"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="266"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="266"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="266"/>
@@ -161,17 +161,17 @@
         <translation>绑定网络接口</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="156"/>
+        <location filename="../ui/configurationwindow.ui" line="156"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="267"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="267"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="267"/>
         <location filename="../../cmake-msvs-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="267"/>
-        <location filename="../configurationwindow.cpp" line="51"/>
+        <location filename="../ui/configurationwindow.cpp" line="51"/>
         <source>-- Default --</source>
         <translation>--默认--</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="164"/>
+        <location filename="../ui/configurationwindow.ui" line="164"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="269"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="269"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="269"/>
@@ -180,7 +180,7 @@
         <translation>自动重定向</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="171"/>
+        <location filename="../ui/configurationwindow.ui" line="171"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="270"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="270"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="270"/>
@@ -189,7 +189,7 @@
         <translation>重定向</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="178"/>
+        <location filename="../ui/configurationwindow.ui" line="178"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="271"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="271"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="271"/>
@@ -198,39 +198,39 @@
         <translation>代理类型</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="186"/>
+        <location filename="../ui/configurationwindow.ui" line="186"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="272"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="272"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="272"/>
         <location filename="../../cmake-msvs-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="272"/>
-        <location filename="../configurationwindow.cpp" line="52"/>
+        <location filename="../ui/configurationwindow.cpp" line="52"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="191"/>
+        <location filename="../ui/configurationwindow.ui" line="191"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="273"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="273"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="273"/>
         <location filename="../../cmake-msvs-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="273"/>
-        <location filename="../configurationwindow.cpp" line="388"/>
-        <location filename="../configurationwindow.cpp" line="412"/>
+        <location filename="../ui/configurationwindow.cpp" line="388"/>
+        <location filename="../ui/configurationwindow.cpp" line="412"/>
         <source>Http</source>
         <translation>Http</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="196"/>
+        <location filename="../ui/configurationwindow.ui" line="196"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="274"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="274"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="274"/>
         <location filename="../../cmake-msvs-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="274"/>
-        <location filename="../configurationwindow.cpp" line="393"/>
-        <location filename="../configurationwindow.cpp" line="417"/>
+        <location filename="../ui/configurationwindow.cpp" line="393"/>
+        <location filename="../ui/configurationwindow.cpp" line="417"/>
         <source>Socks5</source>
         <translation>Socks5</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.ui" line="204"/>
+        <location filename="../ui/configurationwindow.ui" line="204"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="276"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_configurationwindow.h" line="276"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_configurationwindow.h" line="276"/>
@@ -239,94 +239,94 @@
         <translation>代理地址</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="95"/>
+        <location filename="../ui/configurationwindow.cpp" line="95"/>
         <source>&amp;Configuration</source>
         <translation>设置(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="101"/>
+        <location filename="../ui/configurationwindow.cpp" line="101"/>
         <source>Playlist Manage</source>
         <translation>播放列表管理</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="104"/>
+        <location filename="../ui/configurationwindow.cpp" line="104"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="108"/>
+        <location filename="../ui/configurationwindow.cpp" line="108"/>
         <source>Netease</source>
         <translation>网易云音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="109"/>
+        <location filename="../ui/configurationwindow.cpp" line="109"/>
         <source>QQ</source>
         <translation>QQ音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="110"/>
+        <location filename="../ui/configurationwindow.cpp" line="110"/>
         <source>Migu</source>
         <translation>咪咕音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="111"/>
+        <location filename="../ui/configurationwindow.cpp" line="111"/>
         <source>Kugou</source>
         <translation>酷狗音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="112"/>
+        <location filename="../ui/configurationwindow.cpp" line="112"/>
         <source>Kuwo</source>
         <translation>酷我音乐</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="228"/>
+        <location filename="../ui/configurationwindow.cpp" line="228"/>
         <source>External Player</source>
         <translation>外部播放器</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="248"/>
+        <location filename="../ui/configurationwindow.cpp" line="248"/>
         <source>Working Directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="257"/>
+        <location filename="../ui/configurationwindow.cpp" line="257"/>
         <source>Starting reverse proxy failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="265"/>
+        <location filename="../ui/configurationwindow.cpp" line="265"/>
         <source>Default Driver</source>
         <translation>默认驱动</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="571"/>
+        <location filename="../ui/configurationwindow.cpp" line="571"/>
         <source>External player path not configured properly</source>
         <translation>外部播放器路径没有正确设置</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="257"/>
-        <location filename="../configurationwindow.cpp" line="571"/>
-        <location filename="../configurationwindow.cpp" line="591"/>
+        <location filename="../ui/configurationwindow.cpp" line="257"/>
+        <location filename="../ui/configurationwindow.cpp" line="571"/>
+        <location filename="../ui/configurationwindow.cpp" line="591"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="98"/>
+        <location filename="../ui/configurationwindow.cpp" line="98"/>
         <source>Show/Hide &amp;Player</source>
         <translation>显示/隐藏播放器(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="591"/>
+        <location filename="../ui/configurationwindow.cpp" line="591"/>
         <source>Can&apos;t get song(s), maybe VIP is requested.</source>
         <translation>不能获取歌曲信息，可能需要VIP。</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="596"/>
+        <location filename="../ui/configurationwindow.cpp" line="596"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../configurationwindow.cpp" line="596"/>
+        <location filename="../ui/configurationwindow.cpp" line="596"/>
         <source>Play song(s) by %1?</source>
         <translation>使用%1播放歌曲？</translation>
     </message>
@@ -530,7 +530,7 @@
 <context>
     <name>ParserCsv</name>
     <message>
-        <location filename="../parsercsv.cpp" line="41"/>
+        <location filename="../parser/parsercsv.cpp" line="41"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
@@ -538,25 +538,25 @@
 <context>
     <name>ParserM3u</name>
     <message>
-        <location filename="../parserm3u.cpp" line="153"/>
-        <location filename="../parserm3u.cpp" line="165"/>
+        <location filename="../parser/parserm3u.cpp" line="153"/>
+        <location filename="../parser/parserm3u.cpp" line="165"/>
         <source>Playlist Export Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="154"/>
+        <location filename="../parser/parserm3u.cpp" line="154"/>
         <source>File path contains characters, not allowed in m3u playlists.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="156"/>
+        <location filename="../parser/parserm3u.cpp" line="156"/>
         <source>Export a m3u8 playlist instead!
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserm3u.cpp" line="165"/>
+        <location filename="../parser/parserm3u.cpp" line="165"/>
         <source>Could not create file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -564,12 +564,12 @@
 <context>
     <name>ParserPls</name>
     <message>
-        <location filename="../parserpls.cpp" line="137"/>
+        <location filename="../parser/parserpls.cpp" line="137"/>
         <source>Playlist Export Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../parserpls.cpp" line="137"/>
+        <location filename="../parser/parserpls.cpp" line="137"/>
         <source>Could not create file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -745,7 +745,7 @@
 <context>
     <name>PlaylistManageWindow</name>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="14"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="14"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="192"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="192"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="192"/>
@@ -754,7 +754,7 @@
         <translation>播放列表管理</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="44"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="44"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="194"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="194"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="194"/>
@@ -763,7 +763,7 @@
         <translation>添加播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="55"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="55"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="197"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="197"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="197"/>
@@ -772,7 +772,7 @@
         <translation>删除播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="66"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="66"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="200"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="200"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="200"/>
@@ -781,7 +781,7 @@
         <translation>导入播放列表(*.m3u; *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="77"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="77"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="203"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="203"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="203"/>
@@ -790,7 +790,7 @@
         <translation>保存播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="125"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="125"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="206"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="206"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="206"/>
@@ -799,7 +799,7 @@
         <translation>添加歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="136"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="136"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="209"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="209"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="209"/>
@@ -808,7 +808,7 @@
         <translation>删除歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.ui" line="147"/>
+        <location filename="../ui/playlistmanagewindow.ui" line="147"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="212"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_playlistmanagewindow.h" line="212"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_playlistmanagewindow.h" line="212"/>
@@ -817,42 +817,42 @@
         <translation>从播放列表导入歌曲(*.m3u; *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="118"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="118"/>
         <source>Import playlist</source>
         <translation>导入播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="118"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="118"/>
         <source>Playlist (*.m3u *.m3u8)</source>
         <translation>播放列表(*.m3u *.m3u8)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="124"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="124"/>
         <source>Export playlist</source>
         <translation>导出播放列表</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="124"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="124"/>
         <source>Playlist (*.m3u)</source>
         <translation>播放列表(*.m3u)</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="130"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="130"/>
         <source>Add song(s)</source>
         <translation>添加歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="130"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="130"/>
         <source>Input song url, one url per line:</source>
         <translation>输入歌曲URL，一行一条URL：</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="157"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="157"/>
         <source>Import song(s)</source>
         <translation>导入歌曲</translation>
     </message>
     <message>
-        <location filename="../playlistmanagewindow.cpp" line="157"/>
+        <location filename="../ui/playlistmanagewindow.cpp" line="157"/>
         <source>Songs (*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)</source>
         <translation>歌曲(*.m3u *.m3u8 *.mp1 *.mp2 *.mp3 *.wav *.ogg *.ape *.flac *.m4a *.aac *.caf *.wma *.opus)</translation>
     </message>
@@ -883,7 +883,7 @@
 <context>
     <name>QmlDialog</name>
     <message>
-        <location filename="../qmldialog.ui" line="14"/>
+        <location filename="../ui/qmldialog.ui" line="14"/>
         <location filename="../../cmake-build/desktop/Hannah_autogen/include/ui_qmldialog.h" line="48"/>
         <location filename="../../cmake-clang-mingw64-qt6-build/desktop/Hannah_autogen/include/ui_qmldialog.h" line="48"/>
         <location filename="../../cmake-msvc-sln/desktop/Hannah_autogen/include_RelWithDebInfo/ui_qmldialog.h" line="48"/>
@@ -1623,7 +1623,7 @@
 <context>
     <name>SonglistModel</name>
     <message>
-        <location filename="../songlistmodel.cpp" line="79"/>
+        <location filename="../model/songlistmodel.cpp" line="79"/>
         <source>URI</source>
         <translation>地址</translation>
     </message>

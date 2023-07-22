@@ -1,7 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.15)
 project(Hannah VERSION 1.0.0)
 
-set(ProjectName Hannah)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -19,9 +18,13 @@ set(CMAKE_AUTOUIC ON) # if you have any .ui files
 set(CMAKE_AUTORCC ON) # if you have any .qrc files
 
 include_directories(${PROJECT_SOURCE_DIR} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/player
     ${CMAKE_CURRENT_SOURCE_DIR}/sqlite
     ${CMAKE_CURRENT_SOURCE_DIR}/network
+    ${CMAKE_CURRENT_SOURCE_DIR}/ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/model
+    ${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication
     )
 include_directories(${PROJECT_BINARY_DIR})
 set(Boost_NO_WARN_NEW_VERSIONS ON)
@@ -63,7 +66,11 @@ endif()
 
 set(SOURCES
     main.cpp 
-    configurationwindow.cpp 
+    trackfile.cpp 
+    ui/configurationwindow.cpp 
+    ui/playlistmanagewindow.cpp 
+    ui/comboboxdelegate.cpp 
+    ui/qmldialog.cpp 
     player/fftdisplay.cpp 
     player/lrcbar.cpp 
     player/lyrics.cpp 
@@ -74,26 +81,26 @@ set(SOURCES
     player/qmlplayer.cpp
     player/playlist.cpp 
     player/shadowplayer.cpp 
-    playlistmanagewindow.cpp 
-    playlistmodel.cpp 
-    qtlocalpeer.cpp 
-    songlistmodel.cpp 
+    model/playlistmodel.cpp 
+    model/songlistmodel.cpp 
     sqlite/Sqlite3Helper.cpp 
     sqlite/Sqlite3DBManager.cpp
     sqlite/Sqlite3Statement.cpp
-    comboboxdelegate.cpp 
-    parser.cpp 
-    parsercsv.cpp 
-    parserm3u.cpp 
-    parserpls.cpp 
-    trackfile.cpp 
-    qmldialog.cpp 
+    parser/parser.cpp 
+    parser/parsercsv.cpp 
+    parser/parserm3u.cpp 
+    parser/parserpls.cpp 
+    qtsingleapplication/qtlocalpeer.cpp 
     network/networkreplyhelper.cpp
 )
 
     
 set(HEADERS
-    configurationwindow.h 
+    trackfile.h 
+    ui/configurationwindow.h 
+    ui/playlistmanagewindow.h 
+    ui/comboboxdelegate.h 
+    ui/qmldialog.h 
     player/FlacPic.h 
     player/ID3v2Pic.h 
     player/fftdisplay.h 
@@ -106,22 +113,18 @@ set(HEADERS
     player/playlist.h 
     player/shadowplayer.h 
     player/qmlplayer.h
-    playlistmanagewindow.h 
-    playlistmodel.h 
-    qtlocalpeer.h 
-    qtlockedfile.h 
-    songlistmodel.h 
+    model/playlistmodel.h 
+    model/songlistmodel.h 
     sqlite/Sqlite3Helper.h 
     sqlite/Sqlite3DBManager.h
     sqlite/Sqlite3Statement.h
     sqlite/Sqlite3Constants.h
-    comboboxdelegate.h 
-    parser.h 
-    parsercsv.h 
-    parserm3u.h 
-    parserpls.h 
-    trackfile.h 
-    qmldialog.h 
+    parser/parser.h 
+    parser/parsercsv.h 
+    parser/parserm3u.h 
+    parser/parserpls.h 
+    qtsingleapplication/qtlocalpeer.h 
+    qtsingleapplication/qtlockedfile.h 
     network/networkreplyhelper.h
     )
 
@@ -137,12 +140,12 @@ qt_add_resources(qrcs ${RESOURCES})
 
 IF(WIN32)
     list(APPEND SOURCES 
-        qtsinglecoreapplication.cpp 
-        qtsingleapplication.cpp
+        qtsingleapplication/qtsinglecoreapplication.cpp 
+        qtsingleapplication/qtsingleapplication.cpp
         )
     list(APPEND HEADERS 
-        qtsinglecoreapplication.h 
-        qtsingleapplication.h
+        qtsingleapplication/qtsinglecoreapplication.h 
+        qtsingleapplication/qtsingleapplication.h
         )
 ENDIF()
 

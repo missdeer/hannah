@@ -8,19 +8,23 @@
 #include <QSettings>
 #include <QtCore>
 
+#include "BeastServerRunner.h"
 #include "bass.h"
 #include "bassplayer.h"
 #include "configurationwindow.h"
 #include "playlistmanagewindow.h"
 #include "qmlplayer.h"
+
 #if defined(Q_OS_MACOS)
 #    include "application.h"
 #    include "serviceslots.h"
 #else
 #    if defined(Q_OS_WIN)
 #        include <Windows.h>
+
 #        include <shellapi.h>
 #        include <tchar.h>
+
 #        if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #            include <QtPlatformHeaders/QWindowsWindowFunctions>
 #        endif
@@ -142,10 +146,11 @@ int main(int argc, char *argv[])
 
     QIcon::setThemeName("musicplayer");
 
+    BeastServerRunner runner;
 #if defined(Q_OS_MACOS)
     Application app(argc, argv);
     i18n(translator, qtTranslator);
-    ConfigurationWindow  configWin;
+    ConfigurationWindow configWin(runner);
     configWin.connect(&app, &Application::openUrl, &configWin, qOverload<const QUrl &>(&ConfigurationWindow::onOpenUrl));
 
     configurationWindow = &configWin;
@@ -178,7 +183,7 @@ int main(int argc, char *argv[])
 #    endif
 
     i18n(translator, qtTranslator);
-    ConfigurationWindow configWin;
+    ConfigurationWindow configWin(runner);
     QObject::connect(&app, &QtSingleApplication::messageReceived, &configWin, &ConfigurationWindow::onApplicationMessageReceived);
     configurationWindow = &configWin;
     if (args.length() > 0)
@@ -196,16 +201,16 @@ int main(int argc, char *argv[])
         if (v1 != "URL:hannah Protocol" ||
             v2 != QChar('"') + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + QStringLiteral(R"(" "%1")"))
         {
-            auto cmd = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
-            auto workingDir = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
+            auto             cmd        = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/registerProtocolHandler.exe");
+            auto             workingDir = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
             SHELLEXECUTEINFO execInfo;
             ZeroMemory(&execInfo, sizeof(execInfo));
-            execInfo.lpFile = (const wchar_t *)cmd.utf16();
+            execInfo.lpFile      = (const wchar_t *)cmd.utf16();
             execInfo.lpDirectory = (const wchar_t *)workingDir.utf16();
-            execInfo.cbSize = sizeof(execInfo);
-            execInfo.lpVerb = L"runas";
-            execInfo.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI;
-            execInfo.nShow = SW_HIDE;
+            execInfo.cbSize      = sizeof(execInfo);
+            execInfo.lpVerb      = L"runas";
+            execInfo.fMask       = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI;
+            execInfo.nShow       = SW_HIDE;
             ShellExecuteEx(&execInfo);
         }
     }
@@ -226,5 +231,21 @@ int main(int argc, char *argv[])
     playlistManageWindow = &pmw;
 
     QtSingleApplication::setQuitOnLastWindowClosed(false);
+
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
+    bool      ok   = false;
+    auto      port = settings.value("reverseProxyListenPort", 9100).toInt(&ok);
+    if (ok)
+    {
+        runner.setPort(port);
+    }
+
+    runner.start();
+
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&runner]() {
+        runner.stop();
+        runner.wait();
+    });
+
     return QtSingleApplication::exec();
 }

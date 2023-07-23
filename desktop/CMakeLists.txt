@@ -25,11 +25,12 @@ include_directories(${PROJECT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/ui
     ${CMAKE_CURRENT_SOURCE_DIR}/model
     ${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication
+    ${CMAKE_CURRENT_SOURCE_DIR}/BeastServer
     )
 include_directories(${PROJECT_BINARY_DIR})
 set(Boost_NO_WARN_NEW_VERSIONS ON)
 
-find_package(Boost 1.78.0 REQUIRED system)
+find_package(Boost 1.78.0 REQUIRED system chrono container context coroutine date_time regex json)
 if(NOT APPLE)
   find_package(ZLIB)
   find_package(sqlite3)
@@ -64,6 +65,8 @@ if(MSVC)
     add_compile_definitions(_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
 endif()
 
+add_compile_definitions(_WIN32_WINNT=0x0601)
+
 set(SOURCES
     main.cpp 
     trackfile.cpp 
@@ -92,6 +95,13 @@ set(SOURCES
     parser/parserpls.cpp 
     qtsingleapplication/qtlocalpeer.cpp 
     network/networkreplyhelper.cpp
+    BeastServer/BeastHttpResponseHandler.cpp
+    BeastServer/BeastHttpSession.cpp
+    BeastServer/BeastServer.cpp
+    BeastServer/BeastServerRunner.cpp
+    BeastServer/BeastWebsocketSession.cpp
+    BeastServer/BeastWebsocketSessionManager.cpp
+    BeastServer/UrlQuery.cpp
 )
 
     
@@ -126,6 +136,13 @@ set(HEADERS
     qtsingleapplication/qtlocalpeer.h 
     qtsingleapplication/qtlockedfile.h 
     network/networkreplyhelper.h
+    BeastServer/BeastHttpResponseHandler.h
+    BeastServer/BeastHttpSession.h
+    BeastServer/BeastServer.h
+    BeastServer/BeastServerRunner.h
+    BeastServer/BeastWebsocketSession.h
+    BeastServer/BeastWebsocketSessionManager.h
+    BeastServer/UrlQuery.h
     )
 
 file(GLOB_RECURSE
@@ -175,7 +192,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             ${UIS}
             ${HEADERS}
             ${SOURCES}
-            ${QM_FILES}
+          #  ${QM_FILES}
             )
 else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}  ${TS_FILES}
@@ -192,8 +209,14 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     basslib
-    reverseProxy
     Boost::system
+    Boost::chrono 
+    Boost::container 
+    Boost::context 
+    Boost::coroutine 
+    Boost::date_time 
+    Boost::regex
+    Boost::json
     Qt::Widgets
     Qt::Quick
     Qt::Network

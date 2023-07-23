@@ -17,12 +17,14 @@ class QSettings;
 class QNetworkAccessManager;
 QT_END_NAMESPACE
 
+class BeastServerRunner;
+
 class ConfigurationWindow : public QMainWindow
 {
     Q_OBJECT
-    
+
 public:
-    ConfigurationWindow(QWidget *parent = nullptr);
+    explicit ConfigurationWindow(BeastServerRunner &runner, QWidget *parent = nullptr);
     ~ConfigurationWindow();
 
     void onSearch(const QString &s);
@@ -33,7 +35,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 public slots:
-    void onOpenUrl(const QUrl& url);
+    void onOpenUrl(const QUrl &url);
 
     void onApplicationMessageReceived(const QString &message);
 
@@ -83,12 +85,13 @@ private slots:
 
 private:
     Ui::ConfigurationWindow *ui;
-    QMenu *                m_trayIconMenu;
-    QSystemTrayIcon *      m_trayIcon;
-    QSettings *            m_settings;
-    QNetworkAccessManager *m_nam;
-    QByteArray             m_reverseProxyAddr;
-    QByteArray             m_playlistContent;
+    BeastServerRunner       &m_runner;
+    QMenu                   *m_trayIconMenu;
+    QSystemTrayIcon         *m_trayIcon;
+    QSettings               *m_settings;
+    QNetworkAccessManager   *m_nam;
+    QByteArray               m_reverseProxyAddr;
+    QByteArray               m_playlistContent;
 
     void handle(const QString &url, bool needConfirm);
     void openLink(const QString &text);

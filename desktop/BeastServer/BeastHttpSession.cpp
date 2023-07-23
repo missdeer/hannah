@@ -24,6 +24,11 @@
 #include "BeastHttpResponseHandler.h"
 #include "BeastWebsocketSessionManager.h"
 #include "UrlQuery.h"
+#include "ProviderAPI/kugou.h"
+#include "ProviderAPI/qq.h"
+#include "ProviderAPI/kuwo.h"
+#include "ProviderAPI/migu.h"
+#include "ProviderAPI/netease.h"
 
 namespace beast     = boost::beast;         // from <boost/beast.hpp>
 namespace http      = beast::http;          // from <boost/beast/http.hpp>
@@ -69,7 +74,26 @@ namespace
 
     using RegexHandlerDefSet                  = std::list<RegexHandlerDef>;
     static RegexHandlerDefSet regexHandlerMap = {
-        //   {std::regex("^/api/v1/newView/tree/([a-zA-Z0-9_]+)$"), http::verb::put, RESTfulAPI::newview_tree::put},
+        {std::regex("^/netease/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::netease::playlist},
+        {std::regex("^/netease/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::netease::playlist},
+        {std::regex("^/netease/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::netease::songinfo},
+        {std::regex("^/netease/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::netease::songinfo},
+        {std::regex("^/kuwo/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::kuwo::playlist},
+        {std::regex("^/kuwo/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::kuwo::playlist},
+        {std::regex("^/kuwo/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::kuwo::songinfo},
+        {std::regex("^/kuwo/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::kuwo::songinfo},
+        {std::regex("^/kugou/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::kugou::playlist},
+        {std::regex("^/kugou/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::kugou::playlist},
+        {std::regex("^/kugou/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::kugou::songinfo},
+        {std::regex("^/kugou/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::kugou::songinfo},
+        {std::regex("^/migu/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::migu::playlist},
+        {std::regex("^/migu/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::migu::playlist},
+        {std::regex("^/migu/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::migu::songinfo},
+        {std::regex("^/migu/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::migu::songinfo},
+        {std::regex("^/qq/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::qq::playlist},
+        {std::regex("^/qq/([a-zA-Z0-9_]+)$"), http::verb::get, ProviderAPI::qq::playlist},
+        {std::regex("^/qq/([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::qq::songinfo},
+        {std::regex("^/qq/([a-zA-Z0-9_]+)$"), http::verb::head, ProviderAPI::qq::songinfo},
     };
 } // namespace
 
@@ -98,14 +122,14 @@ template<class Body, class Allocator, class Send> void handle_request(http::requ
     if (req.method() != http::verb::get && req.method() != http::verb::head && req.method() != http::verb::delete_ &&
         req.method() != http::verb::post && req.method() != http::verb::put)
     {
-        return send(Cube::BeastHttpServer::bad_request(req, "Unknown HTTP-method"));
+        return send(BeastHttpServer::bad_request(req, "Unknown HTTP-method"));
     }
 
     auto target = req.target();
     // Request path must be absolute and not contain "..".
     if (target.empty() || target[0] != '/')
     {
-        return send(Cube::BeastHttpServer::bad_request(req, "Illegal request-target"));
+        return send(BeastHttpServer::bad_request(req, "Illegal request-target"));
     }
     std::string path(target);
     if (auto pos = path.find('?'); pos != std::string::npos)
@@ -144,7 +168,7 @@ template<class Body, class Allocator, class Send> void handle_request(http::requ
         return send(std::move(res));
     }
 
-    return send(Cube::BeastHttpServer::not_found(req, target));
+    return send(BeastHttpServer::not_found(req, target));
 }
 
 BeastHttpSession::queue::queue(BeastHttpSession &self) : self_(self)

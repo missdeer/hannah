@@ -102,6 +102,11 @@ set(SOURCES
     BeastServer/BeastWebsocketSession.cpp
     BeastServer/BeastWebsocketSessionManager.cpp
     BeastServer/UrlQuery.cpp
+    ProviderAPI/qq.cpp
+    ProviderAPI/netease.cpp
+    ProviderAPI/migu.cpp
+    ProviderAPI/kuwo.cpp
+    ProviderAPI/kugou.cpp
 )
 
     
@@ -143,6 +148,11 @@ set(HEADERS
     BeastServer/BeastWebsocketSession.h
     BeastServer/BeastWebsocketSessionManager.h
     BeastServer/UrlQuery.h
+    ProviderAPI/qq.h
+    ProviderAPI/netease.h
+    ProviderAPI/migu.h
+    ProviderAPI/kuwo.h
+    ProviderAPI/kugou.h
     )
 
 file(GLOB_RECURSE

@@ -39,7 +39,7 @@ public:
         m_websocket.set_option(
             boost::beast::websocket::stream_base::decorator([](boost::beast::websocket::response_type &res) {
                 res.set(boost::beast::http::field::server,
-                        std::string(BOOST_BEAST_VERSION_STRING) + " cube-api-fake-server");
+                        std::string(BOOST_BEAST_VERSION_STRING) + " hannah-api-fake-server");
             }));
         m_websocket.auto_fragment(true);
         m_websocket.write_buffer_bytes(20 * 1024 * 1024);

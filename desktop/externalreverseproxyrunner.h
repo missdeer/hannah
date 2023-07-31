@@ -10,7 +10,7 @@ class ExternalReverseProxyRunner : public QObject
     Q_OBJECT
 public:
     explicit ExternalReverseProxyRunner(QObject *parent = nullptr);
-
+    ~ExternalReverseProxyRunner();
     void start();
     void stop();
     void restart();

@@ -247,13 +247,12 @@ int main(int argc, char *argv[])
         builtinReverseProxyRunner.start();
     }
     QObject::connect(&app, &QCoreApplication::aboutToQuit, [&builtinReverseProxyRunner, &externalReverseProxyRunner]() {
-        builtinReverseProxyRunner.stop();
-        builtinReverseProxyRunner.wait();
-
         if (externalReverseProxyRunner.isRunning())
         {
             externalReverseProxyRunner.stop();
         }
+        builtinReverseProxyRunner.stop();
+        builtinReverseProxyRunner.wait();
     });
 
     return QtSingleApplication::exec();

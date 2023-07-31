@@ -138,8 +138,6 @@ ConfigurationWindow::ConfigurationWindow(BeastServerRunner &runner, ExternalReve
 
     m_trayIcon->show();
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &ConfigurationWindow::onSystemTrayIconActivated);
-
-    m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
 }
 
 ConfigurationWindow::~ConfigurationWindow()
@@ -341,9 +339,17 @@ void ConfigurationWindow::initNetworkInterfaces()
 }
 void ConfigurationWindow::restartReverseProxy()
 {
-    m_builtinReverseProxyRunner.stop();
-    m_builtinReverseProxyRunner.wait();
-    m_builtinReverseProxyRunner.start();
+    if (m_settings->value("useExternalReverseProxy", 2).toInt() == Qt::Checked)
+    {
+        m_externalReverseProxyRunner.stop();
+        m_externalReverseProxyRunner.start();
+    }
+    else
+    {
+        m_builtinReverseProxyRunner.stop();
+        m_builtinReverseProxyRunner.wait();
+        m_builtinReverseProxyRunner.start();
+    }
 }
 
 void ConfigurationWindow::onReverseProxyListenPortValueChanged(int port)
@@ -351,7 +357,7 @@ void ConfigurationWindow::onReverseProxyListenPortValueChanged(int port)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyListenPort", port);
     m_settings->sync();
-    m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
+
     restartReverseProxy();
 }
 
@@ -369,7 +375,7 @@ void ConfigurationWindow::onReverseProxyAutoRedirectStateChanged(int state)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyAutoRedirect", state);
     m_settings->sync();
-    
+
     restartReverseProxy();
 }
 
@@ -378,7 +384,7 @@ void ConfigurationWindow::onReverseProxyRedirectStateChanged(int state)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyRedirect", state);
     m_settings->sync();
-    
+
     restartReverseProxy();
 }
 

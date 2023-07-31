@@ -6,7 +6,6 @@ require (
 	github.com/andybalholm/brotli v1.0.5
 	github.com/bogem/id3v2 v1.2.0
 	github.com/bytedance/sonic v1.10.0-rc3 // indirect
-	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/djherbis/buffer v1.2.0
 	github.com/djherbis/nio v2.0.3+incompatible
 	github.com/gdamore/tcell v1.4.0

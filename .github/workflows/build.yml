@@ -666,13 +666,14 @@ jobs:
           mkdir -p $PWD/${{ matrix.mingw_prefix }}/gui
           mkdir build
           cd build
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin ${{ matrix.qmake }} -r CONFIG+=release ..
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_PREFIX_PATH=${{ matrix.mingw_arch }}/bin ..
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin cmake --build . --parallel
           mkdir -p $PWD/desktop/release/translations
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingw32-make.exe -j `nproc`
           cp $PWD/desktop/release/Hannah.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe $PWD/../${{ matrix.mingw_prefix }}/gui/Hannah.exe
           cp -r $PWD/desktop/release/translations $PWD/../${{ matrix.mingw_prefix }}/gui/
           cp $PWD/registerProtocolHandler/release/registerProtocolHandler.exe $PWD/../${{ matrix.mingw_prefix }}/gui/
+          cp $PWD/cmd/reverseProxy/rp.exe $PWD/${{ matrix.mingw_prefix }}/gui/
           env PATH=$PATH:/${{ matrix.mingw_arch }}/bin /${{ matrix.mingw_arch }}/bin/mingwdeployqt.exe $PWD/../${{ matrix.mingw_prefix }}/gui/registerProtocolHandler.exe
           cd ..
 

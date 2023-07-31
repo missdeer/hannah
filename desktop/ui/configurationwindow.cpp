@@ -16,9 +16,6 @@
 #include <QStandardItem>
 #include <QStandardPaths>
 
-#include "BeastServerRunner.h"
-#include "bass.h"
-
 #if defined(Q_OS_WIN)
 #    include <Windows.h>
 
@@ -29,14 +26,22 @@
 #    include "basswasapi.h"
 
 #endif
+
+#include "BeastServerRunner.h"
+#include "bass.h"
 #include "comboboxdelegate.h"
 #include "configurationwindow.h"
+#include "externalreverseproxyrunner.h"
 #include "playlistmanagewindow.h"
 #include "qmlplayer.h"
 #include "ui_configurationwindow.h"
 
-ConfigurationWindow::ConfigurationWindow(BeastServerRunner &runner, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::ConfigurationWindow), m_runner(runner), m_nam(new QNetworkAccessManager(this))
+ConfigurationWindow::ConfigurationWindow(BeastServerRunner &runner, ExternalReverseProxyRunner &externalReverseProxyRunner, QWidget *parent)
+    : QMainWindow(parent),
+      ui(new Ui::ConfigurationWindow),
+      m_builtinReverseProxyRunner(runner),
+      m_externalReverseProxyRunner(externalReverseProxyRunner),
+      m_nam(new QNetworkAccessManager(this))
 {
     m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
 
@@ -69,6 +74,12 @@ ConfigurationWindow::ConfigurationWindow(BeastServerRunner &runner, QWidget *par
     {
         ui->reverseProxyRedirect->setCheckState(static_cast<Qt::CheckState>(state));
     }
+    state = m_settings->value("useExternalReverseProxy", 2).toInt(&ok);
+    if (ok)
+    {
+        ui->cbUseExternalReverseProxy->setCheckState(static_cast<Qt::CheckState>(state));
+    }
+    ui->edtExternalReverseProxyPath->setText(m_settings->value("externalReverseProxyPath").toString());
     auto port = m_settings->value("reverseProxyListenPort", 8090).toInt(&ok);
     if (ok)
     {
@@ -91,7 +102,9 @@ ConfigurationWindow::ConfigurationWindow(BeastServerRunner &runner, QWidget *par
     connect(ui->reverseProxyRedirect, &QCheckBox::stateChanged, this, &ConfigurationWindow::onReverseProxyRedirectStateChanged);
     connect(ui->reverseProxyProxyType, &QComboBox::currentTextChanged, this, &ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged);
     connect(ui->reverseProxyProxyAddress, &QLineEdit::textChanged, this, &ConfigurationWindow::onReverseProxyProxyAddressTextChanged);
-
+    connect(ui->cbUseExternalReverseProxy, &QCheckBox::stateChanged, this, &ConfigurationWindow::onUseExternalReverseProxyStateChanged);
+    connect(ui->btnBrowseExternalReverseProxy, &QPushButton::clicked, this, &ConfigurationWindow::onBrowseExternalReverseProxy);
+    connect(ui->edtExternalReverseProxyPath, &QLineEdit::textChanged, this, &ConfigurationWindow::onExternalReverseProxyPathChanged);
     auto *clipboard = QGuiApplication::clipboard();
     connect(clipboard, &QClipboard::dataChanged, this, &ConfigurationWindow::onGlobalClipboardChanged);
 
@@ -126,7 +139,6 @@ ConfigurationWindow::ConfigurationWindow(BeastServerRunner &runner, QWidget *par
     m_trayIcon->show();
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &ConfigurationWindow::onSystemTrayIconActivated);
 
-    m_runner.loadConfigurations();
     m_reverseProxyAddr = QString("localhost:%1").arg(ui->reverseProxyListenPort->value()).toUtf8();
 }
 
@@ -329,9 +341,9 @@ void ConfigurationWindow::initNetworkInterfaces()
 }
 void ConfigurationWindow::restartReverseProxy()
 {
-    m_runner.stop();
-    m_runner.wait();
-    m_runner.start();
+    m_builtinReverseProxyRunner.stop();
+    m_builtinReverseProxyRunner.wait();
+    m_builtinReverseProxyRunner.start();
 }
 
 void ConfigurationWindow::onReverseProxyListenPortValueChanged(int port)
@@ -349,7 +361,6 @@ void ConfigurationWindow::onReverseProxyBindNetworkInterfaceCurrentTextChanged(c
     m_settings->setValue("reverseProxyBindNetworkInterface", text);
     m_settings->sync();
 
-    m_runner.setNetworkInterface(ui->reverseProxyBindNetworkInterface->currentText());
     restartReverseProxy();
 }
 
@@ -358,7 +369,7 @@ void ConfigurationWindow::onReverseProxyAutoRedirectStateChanged(int state)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyAutoRedirect", state);
     m_settings->sync();
-    m_runner.setAutoRedirect(state == Qt::Checked);
+    
     restartReverseProxy();
 }
 
@@ -367,7 +378,7 @@ void ConfigurationWindow::onReverseProxyRedirectStateChanged(int state)
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyRedirect", state);
     m_settings->sync();
-    m_runner.setRedirect(state == Qt::Checked);
+    
     restartReverseProxy();
 }
 
@@ -376,19 +387,6 @@ void ConfigurationWindow::onReverseProxyProxyTypeCurrentTextChanged(const QStrin
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyProxyType", text);
     m_settings->sync();
-    if (text == tr("Http"))
-    {
-        m_runner.setHttpProxy(ui->reverseProxyProxyAddress->text());
-    }
-    else if (text == tr("Socks5"))
-    {
-        m_runner.setSocks5Proxy(ui->reverseProxyProxyAddress->text());
-    }
-    else
-    {
-        m_runner.setHttpProxy(QStringLiteral(""));
-        m_runner.setSocks5Proxy(QStringLiteral(""));
-    }
     restartReverseProxy();
 }
 
@@ -397,20 +395,6 @@ void ConfigurationWindow::onReverseProxyProxyAddressTextChanged(const QString &t
     Q_ASSERT(m_settings);
     m_settings->setValue("reverseProxyProxyAddress", text);
     m_settings->sync();
-
-    if (text == tr("Http"))
-    {
-        m_runner.setHttpProxy(ui->reverseProxyProxyAddress->text());
-    }
-    else if (text == tr("Socks5"))
-    {
-        m_runner.setSocks5Proxy(ui->reverseProxyProxyAddress->text());
-    }
-    else
-    {
-        m_runner.setHttpProxy(QStringLiteral(""));
-        m_runner.setSocks5Proxy(QStringLiteral(""));
-    }
 
     restartReverseProxy();
 }
@@ -629,4 +613,29 @@ void ConfigurationWindow::handle(const QString &url, bool needConfirm)
     argv << localTempPlaylist;
     argv.removeAll("");
     QProcess::startDetached(player, argv, workingDir);
+}
+
+void ConfigurationWindow::onBrowseExternalReverseProxy()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Find Reverse Proxy"));
+    if (filePath.isEmpty() || !QFile::exists(filePath))
+    {
+        return;
+    }
+
+    ui->edtExternalReverseProxyPath->setText(filePath);
+}
+
+void ConfigurationWindow::onUseExternalReverseProxyStateChanged(int state)
+{
+    Q_ASSERT(m_settings);
+    m_settings->setValue("useExternalReverseProxy", state);
+    m_settings->sync();
+}
+
+void ConfigurationWindow::onExternalReverseProxyPathChanged(const QString &text)
+{
+    Q_ASSERT(m_settings);
+    m_settings->setValue("externalReverseProxyPath", text);
+    m_settings->sync();
 }

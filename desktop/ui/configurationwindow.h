@@ -17,6 +17,7 @@ class QSettings;
 class QNetworkAccessManager;
 QT_END_NAMESPACE
 
+class ExternalReverseProxyRunner;
 class BeastServerRunner;
 
 class ConfigurationWindow : public QMainWindow
@@ -24,15 +25,15 @@ class ConfigurationWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ConfigurationWindow(BeastServerRunner &runner, QWidget *parent = nullptr);
-    ~ConfigurationWindow();
+    explicit ConfigurationWindow(BeastServerRunner &builtinReverseProxyRunner,ExternalReverseProxyRunner& externalReverseProxyRunner, QWidget *parent = nullptr);
+    ~ConfigurationWindow() override;
 
     void onSearch(const QString &s);
     void onOpenUrl(const QString &s);
     void onOpenLink(const QString &s);
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 public slots:
     void onOpenUrl(const QUrl &url);
@@ -83,15 +84,22 @@ private slots:
 
     void onShowHideBuiltinPlayer();
 
+    void onBrowseExternalReverseProxy();
+
+    void onUseExternalReverseProxyStateChanged(int state);
+
+    void onExternalReverseProxyPathChanged(const QString &text);
+
 private:
-    Ui::ConfigurationWindow *ui;
-    BeastServerRunner       &m_runner;
-    QMenu                   *m_trayIconMenu;
-    QSystemTrayIcon         *m_trayIcon;
-    QSettings               *m_settings;
-    QNetworkAccessManager   *m_nam;
-    QByteArray               m_reverseProxyAddr;
-    QByteArray               m_playlistContent;
+    Ui::ConfigurationWindow    *ui;
+    BeastServerRunner          &m_builtinReverseProxyRunner;
+    ExternalReverseProxyRunner &m_externalReverseProxyRunner;
+    QMenu                      *m_trayIconMenu;
+    QSystemTrayIcon            *m_trayIcon;
+    QSettings                  *m_settings;
+    QNetworkAccessManager      *m_nam;
+    QByteArray                  m_reverseProxyAddr;
+    QByteArray                  m_playlistContent;
 
     void handle(const QString &url, bool needConfirm);
     void openLink(const QString &text);

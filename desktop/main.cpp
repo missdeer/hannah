@@ -12,6 +12,7 @@
 #include "bass.h"
 #include "bassplayer.h"
 #include "configurationwindow.h"
+#include "externalreverseproxyrunner.h"
 #include "playlistmanagewindow.h"
 #include "qmlplayer.h"
 
@@ -146,11 +147,12 @@ int main(int argc, char *argv[])
 
     QIcon::setThemeName("musicplayer");
 
-    BeastServerRunner runner;
+    BeastServerRunner          builtinReverseProxyRunner;
+    ExternalReverseProxyRunner externalReverseProxyRunner;
 #if defined(Q_OS_MACOS)
     Application app(argc, argv);
     i18n(translator, qtTranslator);
-    ConfigurationWindow configWin(runner);
+    ConfigurationWindow configWin(builtinReverseProxyRunner, externalReverseProxyRunner);
     configWin.connect(&app, &Application::openUrl, &configWin, qOverload<const QUrl &>(&ConfigurationWindow::onOpenUrl));
 
     configurationWindow = &configWin;
@@ -183,7 +185,7 @@ int main(int argc, char *argv[])
 #    endif
 
     i18n(translator, qtTranslator);
-    ConfigurationWindow configWin(runner);
+    ConfigurationWindow configWin(builtinReverseProxyRunner, externalReverseProxyRunner);
     QObject::connect(&app, &QtSingleApplication::messageReceived, &configWin, &ConfigurationWindow::onApplicationMessageReceived);
     configurationWindow = &configWin;
     if (args.length() > 0)
@@ -233,18 +235,25 @@ int main(int argc, char *argv[])
     QtSingleApplication::setQuitOnLastWindowClosed(false);
 
     QSettings settings(QSettings::IniFormat, QSettings::UserScope, "minidump.info", "Hannah");
-    bool      ok   = false;
-    auto      port = settings.value("reverseProxyListenPort", 9100).toInt(&ok);
-    if (ok)
+
+    if (settings.value("useExternalReverseProxy", 2).toInt() == Qt::Checked)
     {
-        runner.setPort(port);
+        externalReverseProxyRunner.applySettings(settings);
+        externalReverseProxyRunner.start();
     }
+    else
+    {
+        builtinReverseProxyRunner.applySettings(settings);
+        builtinReverseProxyRunner.start();
+    }
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&builtinReverseProxyRunner, &externalReverseProxyRunner]() {
+        builtinReverseProxyRunner.stop();
+        builtinReverseProxyRunner.wait();
 
-    runner.start();
-
-    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&runner]() {
-        runner.stop();
-        runner.wait();
+        if (externalReverseProxyRunner.isRunning())
+        {
+            externalReverseProxyRunner.stop();
+        }
     });
 
     return QtSingleApplication::exec();

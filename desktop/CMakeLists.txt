@@ -70,6 +70,7 @@ add_compile_definitions(_WIN32_WINNT=0x0601)
 set(SOURCES
     main.cpp 
     trackfile.cpp 
+    externalreverseproxyrunner.cpp
     ui/configurationwindow.cpp 
     ui/playlistmanagewindow.cpp 
     ui/comboboxdelegate.cpp 
@@ -112,6 +113,7 @@ set(SOURCES
     
 set(HEADERS
     trackfile.h 
+    externalreverseproxyrunner.h
     ui/configurationwindow.h 
     ui/playlistmanagewindow.h 
     ui/comboboxdelegate.h 
@@ -251,7 +253,7 @@ IF(APPLE)
 ENDIF()
 
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32 Mswsock.lib)
 endif()
 
 if(MSVC)

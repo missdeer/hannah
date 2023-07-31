@@ -209,6 +209,34 @@
          <widget class="QLineEdit" name="reverseProxyProxyAddress"/>
         </item>
         <item>
+         <widget class="QCheckBox" name="cbUseExternalReverseProxy">
+          <property name="text">
+           <string>Use External Reverse Proxy</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>External Reverse Proxy Path</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLineEdit" name="edtExternalReverseProxyPath"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnBrowseExternalReverseProxy">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <spacer name="verticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -233,7 +261,7 @@
      <x>0</x>
      <y>0</y>
      <width>679</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

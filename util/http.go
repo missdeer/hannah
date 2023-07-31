@@ -180,13 +180,14 @@ func createHttpClient() *http.Client {
 			transport := &http.Transport{
 				Proxy: http.ProxyURL(proxyURL),
 			}
+			dialer := &net.Dialer{}
 			transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
 				addr, _ = patchAddress(addr)
-				return transport.DialContext(ctx, network, addr)
+				return dialer.DialContext(ctx, network, addr)
 			}
 			transport.Dial = func(network, addr string) (net.Conn, error) {
 				addr, _ = patchAddress(addr)
-				return transport.Dial(network, addr)
+				return dialer.Dial(network, addr)
 			}
 			client.Transport = transport
 		}

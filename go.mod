@@ -27,7 +27,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/ushis/m3u v0.0.0-20150127162843-94396b784733
 	golang.org/x/arch v0.4.0 // indirect
-	golang.org/x/net v0.12.0
+	golang.org/x/net v0.17.0
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0

@@ -22,7 +22,7 @@ jobs:
             GOOS: linux
             LIBPATH: x86_64-linux-gnu
     env:
-      go_version: 1.20.6
+      go_version: 1.22
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -81,7 +81,7 @@ jobs:
             BUILDRP: build-x64.bat
             msvc_arch: x64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.5.1
+            qt_ver: 6.6.2
             qt_modules: "qt5compat qtimageformats"
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
@@ -99,7 +99,7 @@ jobs:
             BUILDRP: build-x86.bat
             msvc_arch: x86
     env:
-      go_version: 1.20.6
+      go_version: 1.22
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -225,7 +225,7 @@ jobs:
             BUILDRP: build-x64.bat
             msvc_arch: x64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.5.1
+            qt_ver: 6.6.2
             qt_modules: "qt5compat qtimageformats"
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
@@ -234,7 +234,7 @@ jobs:
             BUILDRP: build-x64.bat
             msvc_arch: x64
     env:
-      go_version: 1.20.6
+      go_version: 1.22
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -388,7 +388,7 @@ jobs:
             msvc_arch: x64
             clang_link: llvm-win-x64.7z
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.5.1
+            qt_ver: 6.6.2
             qt_modules: "qt5compat qtimageformats"
             mingw_arch: MINGW64 
             mingw_prefix: mingw-w64-x86_64
@@ -408,7 +408,7 @@ jobs:
             msvc_arch: x86
             clang_link: llvm-win-x86.7z
     env:
-      go_version: 1.20.6
+      go_version: 1.22
       qt_target: desktop
     steps:
       - uses: msys2/setup-msys2@v2
@@ -619,7 +619,7 @@ jobs:
             qmake: qmake6.exe
             GOARCH: amd64
     env:
-      go_version: 1.20.6
+      go_version: 1.22
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -709,10 +709,10 @@ jobs:
         include:
           - qt_ver: 5.15.2
             qt_modules: "" 
-          - qt_ver: 6.5.1
+          - qt_ver: 6.6.2
             qt_modules: "qt5compat qtimageformats" 
     env:
-      go_version: 1.20.6
+      go_version: 1.22
       qt_target: desktop
       qt_arch: clang_64
     steps:
